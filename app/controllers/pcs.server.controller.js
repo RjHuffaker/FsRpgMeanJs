@@ -53,7 +53,7 @@ exports.update = function(req, res) {
 };
 
 /**
- * Delete an Pc
+ * Delete a Pc
  */
 exports.delete = function(req, res) {
 	var pc = req.pc ;

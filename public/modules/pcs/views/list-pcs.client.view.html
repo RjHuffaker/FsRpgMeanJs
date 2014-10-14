@@ -1,19 +1,45 @@
 <section data-ng-controller="PcsController" data-ng-init="find()">
-    <div class="page-header">
-        <h1>Pcs</h1>
-    </div>
-    <div class="list-group">
-        <a data-ng-repeat="pc in pcs" data-ng-href="#!/pcs/{{pc._id}}" class="list-group-item">
-			<small class="list-group-item-text">
-				Posted on
-				<span data-ng-bind="pc.created | date:'medium'"></span>
-				by
-				<span data-ng-bind="pc.user.displayName"></span>
-			</small>
-			<h4 class="list-group-item-heading" data-ng-bind="pc.name"></h4>
-        </a>
-    </div>
+	<div class="page-header">
+		<h1>Player Characters</h1>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 col-sm-8 col-md-6">
+			<div class="input-group input-group-lg">
+				<span class="input-group-btn">
+					<button class="btn btn-default" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+					</button>
+				</span>
+				<input type="text" class="form-control" ng-model="searchText" placeholder="Search...">
+			</div>
+		</div>
+		<br class="hidden-sm"/>
+		<br class="hidden-sm"/>
+		<div class="col-xs-12 col-sm-4 col-md-6">
+			<button type="button" class="btn btn-lg btn-success text-center">
+				New Player Character
+			</button>
+		</div>
+	</div>
+	<br />
+	<br />
+	<div class="list-group">
+		<div class="col-xs-6 col-sm-4 col-md-3" data-ng-repeat="pc in pcs | filter:searchText">
+			<a data-ng-href="#!/pcs/{{pc._id}}" class="list-group-item">
+				<h4>
+					<i style="font-size: 80px;" class="glyphicon glyphicon-user"></i>
+				</h4>
+				<h4>
+					{{pc.name}}
+				</h4>
+				<small class="list-group-item-text text-muted">
+					Created on
+					<span data-ng-bind="pc.created | date:'short'"></span>
+				</small>
+			</a>
+		</div>
+	</div>
     <div class="alert alert-warning text-center" data-ng-hide="!pcs.$resolved || pcs.length">
-    	No Pcs yet, why don't you <a href="/#!/pcs/create">create one</a>?
+    	No Player Characters yet, why don't you <a href="/#!/pcs/create">create one</a>?
     </div>
 </section>

@@ -13,7 +13,16 @@ var PcSchema = new Schema({
 	name: {
 		type: String,
 		default: '',
-		required: 'Please fill Pc name',
+		trim: true
+	},
+	sex: {
+		type: String,
+		default: '',
+		trim: true
+	},
+	race: {
+		type: String,
+		default: '',
 		trim: true
 	},
 	created: {

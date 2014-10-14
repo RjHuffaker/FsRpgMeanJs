@@ -1,6 +1,7 @@
 <section data-ng-controller="PcsController" data-ng-init="findOne()">
 	<div class="page-header">
 		<h1 data-ng-bind="pc.name"></h1>
+		{{pc.sex}} {{pc.race}}
 	</div>
 	<div class="pull-right" data-ng-show="authentication.user._id == pc.user._id">
 		<a class="btn btn-primary" href="/#!/pcs/{{pc._id}}/edit">

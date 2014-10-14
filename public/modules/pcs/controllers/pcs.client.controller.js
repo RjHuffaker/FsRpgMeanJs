@@ -9,7 +9,9 @@ angular.module('pcs').controller('PcsController', ['$scope', '$stateParams', '$l
 		$scope.create = function() {
 			// Create new Pc object
 			var pc = new Pcs ({
-				name: this.name
+				name: this.name,
+				sex: this.sex,
+				race: this.race
 			});
 
 			// Redirect after save
@@ -18,6 +20,9 @@ angular.module('pcs').controller('PcsController', ['$scope', '$stateParams', '$l
 
 				// Clear form fields
 				$scope.name = '';
+				$scope.sex = '';
+				$scope.race = '';
+				
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
