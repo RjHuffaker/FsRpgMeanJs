@@ -1,0 +1,19 @@
+<section data-ng-controller="PcsController" data-ng-init="find()">
+    <div class="page-header">
+        <h1>Pcs</h1>
+    </div>
+    <div class="list-group">
+        <a data-ng-repeat="pc in pcs" data-ng-href="#!/pcs/{{pc._id}}" class="list-group-item">
+			<small class="list-group-item-text">
+				Posted on
+				<span data-ng-bind="pc.created | date:'medium'"></span>
+				by
+				<span data-ng-bind="pc.user.displayName"></span>
+			</small>
+			<h4 class="list-group-item-heading" data-ng-bind="pc.name"></h4>
+        </a>
+    </div>
+    <div class="alert alert-warning text-center" data-ng-hide="!pcs.$resolved || pcs.length">
+    	No Pcs yet, why don't you <a href="/#!/pcs/create">create one</a>?
+    </div>
+</section>
