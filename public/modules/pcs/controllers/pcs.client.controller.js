@@ -1,12 +1,91 @@
 'use strict';
 
 // Pcs controller
-angular.module('pcs').controller('PcsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Pcs',
-	function($scope, $stateParams, $location, Authentication, Pcs ) {
-		$scope.authentication = Authentication;
+var pcsModule = angular.module('pcs');
 
+pcsModule.controller('PcsController', ['$scope', '$stateParams', 'Authentication', 'Pcs', '$modal', '$log',
+	function($scope, $stateParams, Authentication, Pcs, $modal, $log) {
+		this.authentication = Authentication;
+		
+		// Find a list of Pcs
+		this.pcs = Pcs.query();
+		
+		// Open modal window to create PC
+		this.openCreateModal = function (size) {
+			var modalInstance = $modal.open({
+				templateUrl: 'modules/pcs/views/create-pc.client.view.html',
+				controller: function ($scope, $modalInstance){
+					$scope.ok = function () {
+						$modalInstance.close($scope.pc);
+					};
+
+					$scope.cancel = function () {
+						$modalInstance.dismiss('cancel');
+					};
+				},
+				size: size,
+				resolve: {
+					pc: function () {
+						console.log("resolve");
+						
+					}
+				}
+			});
+
+			modalInstance.result.then(function () {
+				$log.info('Modal dismissed at: ' + new Date());
+			});
+		};
+		
+		// Open modal window to update PC
+		this.openUpdateModal = function (size, selectPc) {
+			var modalInstance = $modal.open({
+				templateUrl: 'modules/pcs/views/edit-pc.client.view.html',
+				controller: function ($scope, $modalInstance, pc){
+					$scope.pc = pc;
+					
+					$scope.ok = function () {
+						$modalInstance.close($scope.pc);
+					};
+					
+					$scope.cancel = function () {
+						$modalInstance.dismiss('cancel');
+					};
+				},
+				size: size,
+				resolve: {
+					pc: function () {
+						return selectPc;
+					}
+				}
+			});
+
+			modalInstance.result.then(function (selectedItem) {
+				$scope.selected = selectedItem;
+			}, function () {
+				$log.info('Modal dismissed at: ' + new Date());
+			});
+		};
+		// Remove existing Pc
+		this.remove = function( pc ) {
+			if ( pc ) { pc.$remove();
+				for (var i in this.pcs ) {
+					if (this.pcs [i] === pc ) {
+						this.pcs.splice(i, 1);
+					}
+				}
+			} else {
+				this.pc.$remove(function() {
+				});
+			}
+		};
+		
+}]);
+
+pcsModule.controller('PcsCreateController', ['$scope', 'Pcs',
+	function($scope, Pcs ) {
 		// Create new Pc
-		$scope.create = function() {
+		this.create = function() {
 			// Create new Pc object
 			var pc = new Pcs ({
 				name: this.name,
@@ -14,57 +93,36 @@ angular.module('pcs').controller('PcsController', ['$scope', '$stateParams', '$l
 				race: this.race
 			});
 
-			// Redirect after save
 			pc.$save(function(response) {
-				$location.path('pcs/' + response._id);
-
-				// Clear form fields
-				$scope.name = '';
-				$scope.sex = '';
-				$scope.race = '';
 				
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
 		};
+	
+}]);
 
-		// Remove existing Pc
-		$scope.remove = function( pc ) {
-			if ( pc ) { pc.$remove();
-
-				for (var i in $scope.pcs ) {
-					if ($scope.pcs [i] === pc ) {
-						$scope.pcs.splice(i, 1);
-					}
-				}
-			} else {
-				$scope.pc.$remove(function() {
-					$location.path('pcs');
-				});
-			}
-		};
-
+pcsModule.controller('PcsUpdateController', ['$scope', 'Pcs',
+	function($scope, Pcs ) {
 		// Update existing Pc
-		$scope.update = function() {
-			var pc = $scope.pc ;
+		this.update = function(updatedPc) {
+			var pc = updatedPc;
 
 			pc.$update(function() {
-				$location.path('pcs/' + pc._id);
+
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
 		};
+}]);
 
-		// Find a list of Pcs
-		$scope.find = function() {
-			$scope.pcs = Pcs.query();
-		};
-
-		// Find existing Pc
-		$scope.findOne = function() {
-			$scope.pc = Pcs.get({ 
-				pcId: $stateParams.pcId
-			});
-		};
-	}
-]);
+pcsModule.directive('pcList', [function() {
+	return {
+		restrict: 'E',
+		transclude: true,
+		templateUrl: 'modules/pcs/views/pc-list-template.html',
+		link: function(scope, element, attrs){
+			
+		}
+	};
+}]);

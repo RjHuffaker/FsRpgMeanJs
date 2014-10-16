@@ -1,35 +1,37 @@
-<section data-ng-controller="PcsController" data-ng-init="findOne()">
-    <div class="page-header">
-        <h1>Edit Pc</h1>
-    </div>
-    <div class="col-md-12">
-        <form class="form-horizontal" data-ng-submit="update()" novalidate>
-            <fieldset>
-                <div class="form-group">
-                    <label class="control-label" for="name">Name</label>
-                    <div class="controls">
-                        <input type="text" data-ng-model="pc.name" id="name" class="form-control" placeholder="Name" required>
-                    </div>
-                </div>
+<section data-ng-controller="PcsUpdateController as pcUpdateCtrl" >
+	<div class="modal-header">
+		<h3 class="modal-title">Edit {{pc.name}}</h3>
+	</div>
+	<div class="modal-body">
+		<form name="updatePcForm">
+			<fieldset>
 				<div class="form-group">
-                    <label class="control-label" for="sex">Sex</label>
-                    <div class="controls">
-                        <input type="text" data-ng-model="pc.sex" id="sex" class="form-control" placeholder="Sex" required>
-                    </div>
-                </div>
-				<div class="form-group">
-                    <label class="control-label" for="race">Race</label>
-                    <div class="controls">
-                        <input type="text" data-ng-model="pc.race" id="race" class="form-control" placeholder="Race" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Update" class="btn btn-default">
-                </div>
-				<div data-ng-show="error" class="text-danger">
-					<strong data-ng-bind="error"></strong>
+					<label class="control-label" for="name">Name</label>
+					<div class="controls">
+						<input type="text" data-ng-model="pc.name" id="name" class="form-control" placeholder="Name" required>
+					</div>
 				</div>
-            </fieldset>
-        </form>
-    </div>
+				<div class="form-group">
+					<label class="control-label" for="sex">Sex</label>
+					<div class="controls">
+						<input type="text" data-ng-model="pc.sex" id="sex" class="form-control" placeholder="Sex" required>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="race">Race</label>
+					<div class="controls">
+						<input type="text" data-ng-model="pc.race" id="race" class="form-control" placeholder="Race" required>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-success btn-lg" ng-click="pcUpdateCtrl.update(pc); ok()">
+			Update & Close
+		</button>
+		<button class="btn btn-warning btn-lg" ng-click="cancel()">
+			Close
+		</button>
+	</div>
 </section>

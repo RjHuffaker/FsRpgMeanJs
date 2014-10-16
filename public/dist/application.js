@@ -265,13 +265,11 @@ angular.module('core').service('Menus', [
 ]);
 'use strict';
 
-// Configuring the Articles module
+// Configuring the PC module
 angular.module('pcs').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Pcs', 'pcs', 'dropdown', '/pcs(/create)?');
-		Menus.addSubMenuItem('topbar', 'pcs', 'List Pcs', 'pcs');
-		Menus.addSubMenuItem('topbar', 'pcs', 'New Pc', 'pcs/create');
+		Menus.addMenuItem('topbar', 'Player Characters', 'pcs', '/pcs');
 	}
 ]);
 'use strict';
@@ -284,18 +282,6 @@ angular.module('pcs').config(['$stateProvider',
 		state('listPcs', {
 			url: '/pcs',
 			templateUrl: 'modules/pcs/views/list-pcs.client.view.html'
-		}).
-		state('createPc', {
-			url: '/pcs/create',
-			templateUrl: 'modules/pcs/views/create-pc.client.view.html'
-		}).
-		state('viewPc', {
-			url: '/pcs/:pcId',
-			templateUrl: 'modules/pcs/views/view-pc.client.view.html'
-		}).
-		state('editPc', {
-			url: '/pcs/:pcId/edit',
-			templateUrl: 'modules/pcs/views/edit-pc.client.view.html'
 		});
 	}
 ]);
