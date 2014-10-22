@@ -5,100 +5,100 @@
  */
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors'),
-	Pc = mongoose.model('Pc'),
+	Card = mongoose.model('Card'),
 	_ = require('lodash');
 
 /**
- * Create a Pc
+ * Create a Card
  */
 exports.create = function(req, res) {
-	var pc = new Pc(req.body);
-	pc.user = req.user;
+	var card = new Card(req.body);
+	card.user = req.user;
 
-	pc.save(function(err) {
+	card.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(pc);
+			res.jsonp(card);
 		}
 	});
 };
 
 /**
- * Show the current Pc
+ * Show the current Card
  */
 exports.read = function(req, res) {
-	res.jsonp(req.pc);
+	res.jsonp(req.card);
 };
 
 /**
- * Update a Pc
+ * Update a Card
  */
 exports.update = function(req, res) {
-	var pc = req.pc ;
+	var card = req.card ;
 
-	pc = _.extend(pc , req.body);
-	
-	pc.save(function(err) {
+	card = _.extend(card , req.body);
+
+	card.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(pc);
+			res.jsonp(card);
 		}
 	});
 };
 
 /**
- * Delete a Pc
+ * Delete an Card
  */
 exports.delete = function(req, res) {
-	var pc = req.pc ;
+	var card = req.card ;
 
-	pc.remove(function(err) {
+	card.remove(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(pc);
+			res.jsonp(card);
 		}
 	});
 };
 
 /**
- * List of Pcs
+ * List of Cards
  */
-exports.list = function(req, res) { Pc.find( { user: req.user._id } ).sort('-created').populate('user', 'displayName').exec(function(err, pcs) {
+exports.list = function(req, res) { Card.find().sort('-created').populate('user', 'displayName').exec(function(err, cards) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(pcs);
+			res.jsonp(cards);
 		}
 	});
 };
 
 /**
- * Pc middleware
+ * Card middleware
  */
-exports.pcByID = function(req, res, next, id) { Pc.findById(id).populate('user', 'displayName').exec(function(err, pc) {
+exports.cardByID = function(req, res, next, id) { Card.findById(id).populate('user', 'displayName').exec(function(err, card) {
 		if (err) return next(err);
-		if (! pc) return next(new Error('Failed to load Pc ' + id));
-		req.pc = pc ;
+		if (! card) return next(new Error('Failed to load Card ' + id));
+		req.card = card ;
 		next();
 	});
 };
 
 /**
- * Pc authorization middleware
+ * Card authorization middleware
  */
 exports.hasAuthorization = function(req, res, next) {
-	if (req.pc.user.id !== req.user.id) {
+	if (req.card.user.id !== req.user.id) {
 		return res.status(403).send('User is not authorized');
 	}
 	next();

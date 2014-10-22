@@ -6,7 +6,7 @@ module.exports = function(app) {
 
 	// Pcs Routes
 	app.route('/pcs')
-		.get(pcs.list)
+		.get(users.requiresLogin, pcs.list)
 		.post(users.requiresLogin, pcs.create);
 
 	app.route('/pcs/:pcId')

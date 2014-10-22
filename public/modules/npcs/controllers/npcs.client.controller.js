@@ -34,7 +34,7 @@ angular.module('npcs').controller('NpcsController', ['$scope', '$stateParams', '
 				}
 			} else {
 				$scope.npc.$remove(function() {
-					$location.path('npcs');
+					
 				});
 			}
 		};
@@ -44,7 +44,7 @@ angular.module('npcs').controller('NpcsController', ['$scope', '$stateParams', '
 			var npc = $scope.npc ;
 
 			npc.$update(function() {
-				$location.path('npcs/' + npc._id);
+				
 			}, function(errorResponse) {
 				$scope.error = errorResponse.data.message;
 			});
@@ -52,7 +52,11 @@ angular.module('npcs').controller('NpcsController', ['$scope', '$stateParams', '
 
 		// Find a list of Npcs
 		$scope.find = function() {
-			$scope.npcs = Npcs.query();
+			$scope.npcs = Npcs.query(
+				function(response) {
+					console.log(response);
+				}
+			);
 		};
 
 		// Find existing Npc

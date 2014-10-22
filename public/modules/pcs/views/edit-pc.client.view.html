@@ -1,37 +1,40 @@
-<section data-ng-controller="PcsUpdateController as pcUpdateCtrl" >
-	<div class="modal-header">
-		<h3 class="modal-title">Edit {{pc.name}}</h3>
-	</div>
-	<div class="modal-body">
-		<form name="updatePcForm">
+<section data-ng-controller="PcsController as pcsCtrl" data-ng-init="pcsCtrl.findOne()">
+	<div class="page-header">
+        <h1>Edit <span data-ng-bind="pcsCtrl.pc.name"></span></h1>
+    </div>
+	<div class="col-md-12">
+		<form name="updatePcForm" data-ng-submit="pcsCtrl.update()" novalidate>
 			<fieldset>
 				<div class="form-group">
 					<label class="control-label" for="name">Name</label>
 					<div class="controls">
-						<input type="text" data-ng-model="pc.name" id="name" class="form-control" placeholder="Name" required>
+						<input type="text" data-ng-model="pcsCtrl.pc.name" id="name" class="form-control" placeholder="Name">
 					</div>
 				</div>
+				
 				<div class="form-group">
 					<label class="control-label" for="sex">Sex</label>
 					<div class="controls">
-						<input type="text" data-ng-model="pc.sex" id="sex" class="form-control" placeholder="Sex" required>
+						<input type="text" data-ng-model="pcsCtrl.pc.sex" id="sex" class="form-control" placeholder="Sex">
 					</div>
 				</div>
+				
 				<div class="form-group">
 					<label class="control-label" for="race">Race</label>
 					<div class="controls">
-						<input type="text" data-ng-model="pc.race" id="race" class="form-control" placeholder="Race" required>
+						<input type="text" data-ng-model="pcsCtrl.pc.race" id="race" class="form-control" placeholder="Race">
 					</div>
+				</div>
+				
+				<div class="form-group col-xs-offset-4 col-sm-offset-6 col-md-offset-8">
+					<input type="submit" value="Save & Close"
+						class="col-xs-8 btn btn-success">
+					<a type="button" href="#!/pcs"
+						class="col-xs-4 btn btn-warning" >
+							Close
+					</a>
 				</div>
 			</fieldset>
 		</form>
-	</div>
-	<div class="modal-footer">
-		<button class="btn btn-success btn-lg" ng-click="pcUpdateCtrl.update(pc); ok()">
-			Update & Close
-		</button>
-		<button class="btn btn-warning btn-lg" ng-click="cancel()">
-			Close
-		</button>
 	</div>
 </section>
