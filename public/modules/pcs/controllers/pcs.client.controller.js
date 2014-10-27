@@ -1,8 +1,8 @@
 'use strict';
 
-// Pcs controller
 var pcsModule = angular.module('pcs');
 
+// Pcs Controller
 pcsModule.controller('PcsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Pcs', '$log',
 	function($scope, $stateParams, $location, Authentication, Pcs, $log) {
 		this.authentication = Authentication;

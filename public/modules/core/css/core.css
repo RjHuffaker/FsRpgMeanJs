@@ -13,3 +13,28 @@
 .ng-valid.ng-dirty{
     border-color:#78FA89;
 }
+.card_basic
+{
+	background-image: url('../img/card_001.png');
+	background-repeat: no-repeat;
+	background-size: 250px 350px;
+	-webkit-transition: opacity .3s, left .3s, top .3s, width .3s, height .3s;
+	-moz-transition: opacity .3s, left .3s, top .3s, width .3s, height .3s;
+	-o-transition: opacity .3s, left .3s, top .3s, width .3s, height .3s;
+	transition: opacity .3s, left .3s, top .3s, width .3s, height .3s;
+}
+.card_basic:hover {
+	z-index: 9999;
+	-webkit-transition: none;
+	-moz-transition: none;
+	-o-transition: none;
+	transition: none;
+}
+.overlap
+{
+	margin-left: -225px !important;
+}
+.card-list
+{
+	display: inline-block !important;
+}
