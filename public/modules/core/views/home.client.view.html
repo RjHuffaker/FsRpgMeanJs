@@ -1,18 +1,7 @@
 <section data-ng-controller="HomeController">
 
-<div class="demo-container" style="border: solid black;">
-	<div gridster="gridsterOpts" style="position: relative; overflow-x: auto; overflow-y: hidden; border: solid black; max-height: 450px;">
-        <ul style="list-style: none;" class="card-list">
-            <li card-slide ng-repeat="item in CardSRVC.cardList" 
-				ng-class="{overlap: item.overlap}"
-				style="position: absolute;" class="card_basic" 
-				gridster-item="customItemMap" ng-click="toggleOverlap($index)" >
-				<h1 class="text-center">{{item.name}}</h1>
-				<div class="text-center">Row: {{item.position[0]}}</div>
-				<div class="text-center">Column: {{item.position[1]}}</div>
-			</li>
-        </ul>
-    </div>
+<div style="border: solid black;">
+	
 </div>
 
 </section>
