@@ -3,7 +3,7 @@
 var coreModule = angular.module('core');
 
 // Core Controller
-coreModule.controller('HomeController', ['$scope', 'Authentication', 'CardService',
+coreModule.controller('HomeController', ['$scope', 'Authentication', 'CardService', 
 	function($scope, Authentication, CardService) {
 		// This provides Authentication context.
 		$scope.authentication = Authentication;
