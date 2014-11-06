@@ -1,20 +1,22 @@
 <section data-ng-controller="HomeController">
 
 <div class="deck-panel">
-	<ol ng-model="CardSRVC.cardList"
-		class="deck-list" >
-		<li card-panel card="$index" ng-repeat="card in CardSRVC.cardList"
-			style="z-index: {{CardSRVC.cardList.length - $index}}"
-			ng-class="{ overlap: card.overlap, invisible: card.invisible }"
-			ng-click="toggleOverlap($index)"
-			class="card-panel">
-			<div style="padding: 10px;">
-			<span>{{card.name}}</span>
-			<span class="pull-right">{{CardSRVC.cardList.length - $index}}</span>
+	<ul class="card-list">
+		<li card-slot ng-repeat="card in CardSRVC.cardList"
+			ng-class="{'overlap': card.overlap}"
+			style="z-index: {{CardSRVC.cardList.length - $index}}" >
+			<div card-panel card="card" index="$index"
+				ng-mousemove="" ng-click="">
+				<span class="pull-right">{{card.name}}</span>
+				<h1 class="text-center">Card {{card.name}}</h1>
+				<h3 class="text-center">{{card.index}} : {{$index}}</h3>
+				<h5 class="text-center" ><span ng-hide="card.overlap">Not </span>Overlapped</h5>
 			</div>
 		</li>
 	</ol>
 </div>
+
 <input type="button" value="add" ng-click="CardSRVC.addCard()">
 <input type="button" value="remove" ng-click="CardSRVC.removeCard()">
+
 </section>

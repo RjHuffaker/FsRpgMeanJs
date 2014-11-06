@@ -13,62 +13,120 @@
 .ng-valid.ng-dirty{
     border-color:#78FA89;
 }
+
 .deck-panel{
-	border: solid black;
+	border: solid 1px #555;
 	overflow-x: auto;
+	overflow-y: hidden;
 	width: 100%;
 	height: 400px;
 }
-.deck-list
-{
+
+.card-list, [card-slot]{
 	list-style: none;
 	white-space: nowrap;
-	-webkit-transition-delay: 5ms; /* Safari */
-	transition-delay: 5ms;
-	-webkit-transition: 600ms ease;
-	-moz-transition: 600ms ease;
-	-o-transition: 600ms ease;
-	-ms-transition: 600ms ease;
-	transition: 600ms ease;
+	display: inline-block;
+	position: relative;
 }
-.card-panel
+
+[card-panel]
 {
-	top: 0px;
-	left: 0px;
 	width: 250px;
 	height: 350px;
 	position: relative;
 	display: inline-block;
 	background-image: url('../img/card_001.png');
 	background-repeat: no-repeat;
-	background-size: 250px 350px;
-	-webkit-transition-delay: 5ms; /* Safari */
-	-moz-transition-delay: 5ms; /* Firefox */
-	-o-transition-delay: 5ms;
-	transition-delay: 5ms;
-	-webkit-transition: 600ms ease;
-	-moz-transition: 600ms ease;
-	-o-transition: 600ms ease;
-	-ms-transition: 600ms ease;
-	transition: 600ms ease;
+	background-size: 100%;
 }
-.card-moving
-{
-	-webkit-transition-delay: 0; /* Safari */
-	-moz-transition-delay: 0; /* Firefox */
-	-o-transition-delay: 0;
-	transition-delay: 0;
-	-webkit-transition: 0;
-	-moz-transition: 0;
-	-o-transition: 0;
-	-ms-transition: 0;
-	transition: 0;
+
+[card-slot], [card-panel]:not(.dragging){
+	position: relative;
+	-webkit-transition-delay: 50ms;
+	transition-delay: 50ms;
+	-webkit-transition: 1.5s ease;
+	-moz-transition: 1.5s ease;
+	-o-transition: 1.5s ease;
+	-ms-transition: 1.5s ease;
+	transition: .5s ease;
 }
-.overlap
+
+[card-slot].dragging, [card-panel].dragging {
+	opacity: 0.9;
+	z-index: 9999;
+}
+
+[card-slot].overlap:not(:first-child)
 {
 	margin-left: -225px;
 }
-.invisible
-{
-	visibility: hidden;
+
+.slide-right > [card-slot], .slide-left > [card-slot]{
+	left: 0;
+	margin-left: 0;
+	margin-right: 0;
+	width: 250px;
 }
+
+/* SLIDE-LEFT */
+.slide-left > [card-slot].ng-move:not(.overlap) {
+	margin-left: 250px;
+	width: 0;
+}
+
+.slide-left > [card-slot].ng-move-active:not(.overlap){
+	margin-left: 0;
+	width: 250px;
+}
+
+/* SLIDE-LEFT OVERLAP */
+.slide-left > [card-slot].overlap.ng-move {
+	margin-left: -200px;
+	width: 225px;
+}
+
+.slide-left > [card-slot].overlap.ng-move-active{
+	margin-left: -225px;
+	width: 250px;
+}
+
+/* SLIDE-RIGHT */
+.slide-right > [card-slot].ng-move:not(.overlap) {
+	margin-right: -250px;
+}
+
+.slide-right > [card-slot].ng-move-active:not(.overlap) {
+	margin-right: 0;
+}
+
+.slide-right > [card-slot].ng-animate:not(.overlap) + [card-slot]{
+	transition: none !important;
+	margin-left: 0;
+	margin-right: 250px;
+}
+
+.slide-right > [card-slot].ng-animate:not(.overlap) + [card-slot] + [card-slot]{
+	margin-left: -250px;
+	margin-right: 0;
+}
+
+/* SLIDE-RIGHT OVERLAP */
+.slide-right > [card-slot].overlap.ng-move {
+	margin-right: -25px;
+}
+
+.slide-right > [card-slot].overlap.ng-move-active {
+	margin-right: 0;
+}
+
+.slide-right > .overlap.ng-animate + [card-slot].overlap{
+	transition-property: none !important;
+	margin-left: -225px;
+	margin-right: 25px;
+}
+
+.slide-right > .overlap.ng-animate + [card-slot].overlap + [card-slot].overlap{
+	margin-left: -250px;
+	margin-right: 0;
+}
+
