@@ -116,16 +116,26 @@ angular.module('core')
 					
 					moveCard(_cardX, _cardY);
 					
+					console.log('_travelX: '+(_mouseX-_startX)+' _offsetX: '+_offsetX);
+					
 					if(_card.overlap){
 						if(_cardX + _offsetX < 225){
-							shiftLeft();
+							if(_mouseX - _startX < 0 ){
+								console.log('_travelX: '+(_mouseX-_startX)+' shiftLeft: '+_cardX+' / '+_offsetX);
+								shiftLeft();
+							}
 						} else if (_cardX + _offsetX > 250){
-							shiftRight();
+							if(_mouseX - _startX > 0){
+								console.log('_travelX: '+(_mouseX-_startX)+' shiftRight: '+_cardX+' / '+_offsetX);
+								shiftRight();
+							}
 						}
 					} else {
 						if(_cardX + _offsetX < 0){
+							console.log('_mouseX - _startX: '+_mouseX - _startX+'shiftLeft: '+_cardX+' / '+_offsetX);
 							shiftLeft();
-						} else if (_cardX + _offsetX > _width){
+						} else if (_cardX + _offsetX > 250){
+							console.log('_mouseX - _startX: '+_mouseX - _startX+'shiftRight: '+_cardX+' / '+_offsetX);
 							shiftRight();
 						}
 					}
@@ -188,6 +198,7 @@ angular.module('core')
 				
 				function toggleOverlap(){
 					if(_card.index !== 0){
+						console.log("toggle overlap");
 			//			CardService.toggleOverlap(_index);
 					}
 				}
@@ -205,4 +216,29 @@ angular.module('core')
 				
 			}
 		};
-	}]);
+	}])
+	.animation('.shuffle', function() {
+		return {
+			//call done when the animation is over
+			enter : function(element, done) {},
+			leave : function(element, done) {},
+			move : function(element, done) {},
+
+			//this is called BEFORE the class is added
+			beforeAddClass : function(element, className, done) {},
+
+			//this is called AFTER the class is added
+			addClass : function(element, className, done) {},
+
+			//this is called BEFORE the class is removed
+			beforeRemoveClass : function(element, className, done) {},
+
+			//this is called AFTER the class is removed
+			removeClass : function(element, className, done) {},
+
+			/* this is called to ask if the current animation can be
+			   disabled given the new animation className. This callback
+			   is entirely optional and is called on each animation callback */
+			allowCancel : function(element, event, className) {} 
+		};
+	});
