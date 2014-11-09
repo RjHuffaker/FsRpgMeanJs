@@ -1,17 +1,20 @@
 angular.module('core')
-	.directive('cardPanel', ['$document', '$parse', '$rootScope', 'CardService', function($document, $parse, $rootScope, CardService){
+	.directive('cardPanel', ['$document', '$parse', '$rootScope', function($document, $parse, $rootScope){
 		'use strict';
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
 				
-				var _startX, _startY, _startCol,
-					_mouseX, _mouseY, _mouseCol,
-					_cardX, _cardY, _cardCol,
+				var _startX, _startY, 
+					_mouseX, _mouseY,
+					_moveX, _moveY,
+					_cardX, _cardY,
+					_startCol, _mouseCol, _cardCol,
 					_offsetX, _offsetY, _width;
+					
+				var _moved = false;
 				
 				var _card = $parse(attrs.card) || null;
-				var _index = $parse(attrs.index) || null;
 				
 				var _hasTouch = ('ontouchstart' in document.documentElement);
 				var _pressEvents = 'touchstart mousedown';
@@ -30,7 +33,6 @@ angular.module('core')
 					
 					if (!enable)return;
 					// add listeners.
-					scope.$watch(attrs.index, onIndexChange);
 					scope.$watch(attrs.card, onCardChange);
 					scope.$on('$destroy', onDestroy);
 					element.on(_pressEvents, onPress);
@@ -40,10 +42,6 @@ angular.module('core')
 				};
 				var onDestroy = function (enable) {
 					toggleListeners(false);
-				};
-				
-				var onIndexChange = function(newVal, oldVal){
-					_index = newVal;
 				};
 				
 				var onCardChange = function(newVal, oldVal){
@@ -94,10 +92,12 @@ angular.module('core')
 					_offsetX = event.offsetX;
 					_offsetY = event.offsetY;
 					
-					getColumnOffset(_card.index);
+					_moved = false;
 					
 					_width = element[0].offsetWidth;
-					_startCol = getColumnOffset(_card.index);
+					_startCol = _card.column;
+					
+					console.log('_card.index:'+_card.index);
 					
 					$document.on(_moveEvents, onMove);
 					$document.on(_releaseEvents, onRelease);
@@ -108,45 +108,44 @@ angular.module('core')
 					_mouseX = (event.pageX || event.originalEvent.touches[0].pageX);
 					_mouseY = (event.pageY || event.originalEvent.touches[0].pageY);
 					
-					_mouseCol = getColumnOffset(_card.index);
+					_mouseCol = _card.column;
 					_cardCol = _mouseCol - _startCol;
 					
-					_cardX = _mouseX - _startX - _cardCol;
-					_cardY = _mouseY - _startY;
+					_moveX = _mouseX - _startX;
+					_moveY = _mouseY - _startY;
+					
+					_cardX = _moveX - _cardCol;
+					_cardY = _moveY;
 					
 					moveCard(_cardX, _cardY);
 					
-					console.log('_travelX: '+(_mouseX-_startX)+' _offsetX: '+_offsetX);
-					
 					if(_card.overlap){
 						if(_cardX + _offsetX < 225){
-							if(_mouseX - _startX < 0 ){
-								console.log('_travelX: '+(_mouseX-_startX)+' shiftLeft: '+_cardX+' / '+_offsetX);
+							if(_moveX < 0){
 								shiftLeft();
+								_moved = true;
 							}
 						} else if (_cardX + _offsetX > 250){
-							if(_mouseX - _startX > 0){
-								console.log('_travelX: '+(_mouseX-_startX)+' shiftRight: '+_cardX+' / '+_offsetX);
+							if(_moveX > 0){
 								shiftRight();
+								_moved = true;
 							}
 						}
 					} else {
 						if(_cardX + _offsetX < 0){
-							console.log('_mouseX - _startX: '+_mouseX - _startX+'shiftLeft: '+_cardX+' / '+_offsetX);
 							shiftLeft();
+							_moved = true;
 						} else if (_cardX + _offsetX > 250){
-							console.log('_mouseX - _startX: '+_mouseX - _startX+'shiftRight: '+_cardX+' / '+_offsetX);
 							shiftRight();
+							_moved = true;
 						}
 					}
 				};
 				
 				var onRelease = function(){
 					event.preventDefault();
-					if(_cardX > -_width){
-						if(_cardX < _width){
-							toggleOverlap();
-						}
+					if(!_moved){
+						toggleOverlap();
 					}
 					
 					element.removeClass('dragging');
@@ -157,35 +156,15 @@ angular.module('core')
 					$document.off(_releaseEvents, onRelease);
 				};
 				
-				var column;
-				
-				function getColumnOffset(index){
-					var column = 0;
-					for(var i = 0; i < index; i++){
-						if(CardService.cardList[i].overlap){
-							column += 25;
-						} else {
-							column += 250;
-						}
-					}
-					return column;
-				}
-				
 				function shiftLeft(){
-					element.parent().parent().removeClass('slide-left');
-					element.parent().parent().addClass('slide-right');
-					$rootScope.$broadcast('cardDeck:onCardMoved', {
-						oldIndex: _index,
-						newIndex: _index - 1
+					$rootScope.$broadcast('cardDeck:shiftLeft', {
+						index: _card.index
 					});
 				}
 				
 				function shiftRight(){
-					element.parent().parent().removeClass('slide-right');
-					element.parent().parent().addClass('slide-left');
-					$rootScope.$broadcast('cardDeck:onCardMoved', {
-						oldIndex: _index,
-						newIndex: _index + 1
+					$rootScope.$broadcast('cardDeck:shiftRight', {
+						index: _card.index
 					});
 				}
 				
@@ -198,8 +177,9 @@ angular.module('core')
 				
 				function toggleOverlap(){
 					if(_card.index !== 0){
-						console.log("toggle overlap");
-			//			CardService.toggleOverlap(_index);
+						$rootScope.$broadcast('cardDeck:toggleOverlap', {
+							index: _card.index
+						});
 					}
 				}
 				
@@ -207,38 +187,4 @@ angular.module('core')
 				
 			}
 		};
-	}])
-	.directive('cardSlot', ['CardService', function(CardService){
-		'use strict';
-		return {
-			restrict: 'A',
-			link: function(scope, element, attr) {
-				
-			}
-		};
-	}])
-	.animation('.shuffle', function() {
-		return {
-			//call done when the animation is over
-			enter : function(element, done) {},
-			leave : function(element, done) {},
-			move : function(element, done) {},
-
-			//this is called BEFORE the class is added
-			beforeAddClass : function(element, className, done) {},
-
-			//this is called AFTER the class is added
-			addClass : function(element, className, done) {},
-
-			//this is called BEFORE the class is removed
-			beforeRemoveClass : function(element, className, done) {},
-
-			//this is called AFTER the class is removed
-			removeClass : function(element, className, done) {},
-
-			/* this is called to ask if the current animation can be
-			   disabled given the new animation className. This callback
-			   is entirely optional and is called on each animation callback */
-			allowCancel : function(element, event, className) {} 
-		};
-	});
+	}]);

@@ -11,23 +11,23 @@ coreModule.controller('HomeController', ['$scope', 'Authentication', 'CardServic
 		// Link to data service
 		$scope.CardSRVC = CardService;
 		
-		var onCardMoved = function(event, object){
-			var oldIndex = object.oldIndex;
-			var newIndex = object.newIndex;
-			moveCard(object.oldIndex, object.newIndex);
+		var shiftLeft = function(event, object){
+			$scope.CardSRVC.shiftLeft(object.index);
 		};
 		
-		function moveCard(indexA, indexB){
-			var index_a = $scope.CardSRVC.cardList[indexA].index;
-			var index_b = $scope.CardSRVC.cardList[indexB].index;
-			$scope.CardSRVC.cardList[indexA].index = index_b;
-			$scope.CardSRVC.cardList[indexB].index = index_a;
-			$scope.CardSRVC.cardList.sort(function(a, b){
-				return a.index - b.index;
-			});
-		}
+		var shiftRight = function(event, object){
+			$scope.CardSRVC.shiftRight(object.index);
+		};
 		
-		$scope.$on('cardDeck:onCardMoved', onCardMoved);
+		var toggleOverlap = function(event, object){
+			var _card = object.index;
+			if(_card > 0){
+				$scope.CardSRVC.toggleOverlap(object.index);
+			}
+		};
 		
+		$scope.$on('cardDeck:shiftLeft', shiftLeft);
+		$scope.$on('cardDeck:shiftRight', shiftRight);
+		$scope.$on('cardDeck:toggleOverlap', toggleOverlap);
 	}
 ]);

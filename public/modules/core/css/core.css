@@ -29,19 +29,25 @@
 	position: relative;
 }
 
-[card-panel]
-{
+[card-panel]{
 	width: 250px;
 	height: 350px;
-	position: relative;
+	margin-top: 25px;
+	position: absolute;
 	display: inline-block;
 	background-image: url('../img/card_001.png');
 	background-repeat: no-repeat;
 	background-size: 100%;
 }
 
-[card-slot], [card-panel]:not(.dragging){
-	position: relative;
+[card-panel]:hover{
+	margin-top: 0;
+	transition: .5s ease-in-out;
+}
+
+.card-slot, [card-panel]:not(.dragging){
+	left: 0;
+	position: absolute;
 	-webkit-transition-delay: 50ms;
 	transition-delay: 50ms;
 	-webkit-transition: 1.5s ease;
@@ -51,156 +57,9 @@
 	transition: .5s ease-in-out;
 }
 
-[card-slot].dragging, [card-panel].dragging {
-	opacity: 0.9;
+.card-slot.dragging, [card-panel].dragging {
+	position: absolute;
+	opacity: 0.95;
 	z-index: 9999;
-}
-
-[card-slot].overlap:not(:first-child)
-{
-	margin-left: -225px;
-}
-
-.slide-right > [card-slot], .slide-left > [card-slot]{
-	left: 0;
-	margin-right: 0;
-	width: 250px;
-}
-
-/* SLIDE-LEFT */
-.slide-left > [card-slot].ng-move:not(.overlap){
-	margin-left: 250px;
-	width: 0;
-	border: dotted red;
-}
-
-.slide-left > [card-slot].ng-move-active:not(.overlap){
-	margin-left: 0;
-	width: 250px;
-	border: dotted orange;
-}
-
-.slide-left > [card-slot].ng-move.overlap{
-	margin-left: -200px;
-	width: 225px;
-	border: dotted green;
-}
-
-.slide-left > [card-slot].ng-move-active.overlap{
-	margin-left: -225px;
-	width: 250px;
-	border: dotted blue;
-}
-
-/**/
-
-.slide-left > [card-slot].ng-move:not(.overlap) + [card-slot]:not(.overlap){
-	
-	border: solid red;
-}
-
-.slide-left > [card-slot].ng-move:not(.overlap) + [card-slot].overlap{
-	
-	border: solid orange;
-}
-
-.slide-left > [card-slot].ng-move.overlap + [card-slot]:not(.overlap){
-	border: solid green;
-}
-
-.slide-left > [card-slot].ng-move.overlap + [card-slot].overlap{
-	
-	border: solid blue;
-}
-
-/* */
-
-/* SLIDE-RIGHT */
-
-.slide-right > [card-slot].ng-move + [card-slot] + [card-slot] ~ [card-slot]{
-	transition: none !important;
-}
-
-.slide-right > [card-slot].ng-move:not(.overlap) {
-	margin-right: -250px;
-}
-
-.slide-right > [card-slot].ng-move-active:not(.overlap) {
-	margin-right: 0;
-}
-
-.slide-right > [card-slot].ng-move.overlap {
-	margin-right: -25px;
-}
-
-.slide-right > [card-slot].ng-move-active.overlap {
-	margin-right: 0;
-}
-
-.slide-right > [card-slot].ng-move:not(.overlap) + [card-slot]:not(.overlap){
-	transition: none !important;
-	margin-left: 0;
-	margin-right: 250px;
-	border: solid 1px green;
-}
-
-.slide-right > [card-slot].ng-move:not(.overlap) + [card-slot].overlap{
-	transition: none !important;
-	margin-left: -225;
-	margin-right: 250px;
-	border: dotted 1px green;
-}
-
-.slide-right > [card-slot].ng-move.overlap + [card-slot]:not(.overlap){
-	transition: none !important;
-	margin-left: 0;
-	margin-right: 25px;
-	border: dotted 1px yellow;
-}
-
-.slide-right > [card-slot].ng-move.overlap + [card-slot].overlap{
-	transition: none !important;
-	margin-left: -225px;
-	margin-right: 25px;
-	border: solid 1px yellow;
-}
-
-.slide-right > [card-slot].ng-move:not(.overlap) + [card-slot]:not(.overlap) + [card-slot]:not(.overlap){
-	margin-left: -250px;
-	border: solid 1px orange;
-}
-
-.slide-right > [card-slot].ng-move:not(.overlap) + [card-slot]:not(.overlap) + [card-slot].overlap{
-	margin-left: -475px;
-	border: dotted 1px orange;
-}
-
-.slide-right > [card-slot].ng-move:not(.overlap) + [card-slot].overlap + [card-slot]:not(.overlap){
-	margin-left: -250px;
-	border: solid 1px red;
-}
-
-.slide-right > [card-slot].ng-move:not(.overlap) + [card-slot].overlap + [card-slot].overlap{
-	margin-left: -475px;
-	border: dotted 1px red;
-}
-
-.slide-right > [card-slot].ng-move.overlap + [card-slot]:not(.overlap) + [card-slot]:not(.overlap){
-	margin-left: -25px;
-	border: dotted 1px purple;
-}
-
-.slide-right > [card-slot].ng-move.overlap + [card-slot]:not(.overlap) + [card-slot].overlap{
-	margin-left: -250px;
-	border: solid 1px purple;
-}
-
-.slide-right > [card-slot].ng-move.overlap + [card-slot].overlap + [card-slot]:not(.overlap){
-	margin-left: -25px;
-	border: dotted 1px blue;
-}
-
-.slide-right > [card-slot].ng-move.overlap + [card-slot].overlap + [card-slot].overlap{
-	margin-left: -250px;
-	border: solid 1px blue;
+	transition-property: none !important;
 }

@@ -7,45 +7,102 @@ angular.module('core').factory('CardService', [
 		var service = {};
 		
 		service.cardList = [
-			{ index: 0, name: '0', overlap: false },
-			{ index: 1, name: '1', overlap: false },
-			{ index: 2, name: '2', overlap: false },
-			{ index: 3, name: '3', overlap: false },
-			{ index: 4, name: '4', overlap: true },
-			{ index: 5, name: '5', overlap: true },
-			{ index: 6, name: '6', overlap: true },
-			{ index: 7, name: '7', overlap: true }
+			{ index: 0, name: 'Card A', column: 0, overlap: false },
+			{ index: 1, name: 'Card B', column: 250, overlap: false },
+			{ index: 2, name: 'Card C', column: 500, overlap: false },
+			{ index: 3, name: 'Card D', column: 750, overlap: false },
+			{ index: 4, name: 'Card E', column: 1000, overlap: false },
+			{ index: 5, name: 'Card F', column: 1250, overlap: false }
 		];
 		
-		service.addCard = function(){
-			var newIndex = this.cardList.length;
+		function cardByIndex(index){
+			for(var i = 0, l = service.cardList.length; i < l; i++) {
+				if(service.cardList[i].index === index) {
+					return i;
+				}
+			}
+		}
+		
+		service.shiftLeft = function(index){
+			if(index > 0){
+				var _old = cardByIndex(index);
+				var _new = cardByIndex(index-1);
 				
-			this.cardList.push({
-				index: newIndex,
-				name: 'Item '+newIndex,
-				overlap: true
-			});
+				if(service.cardList[_old].overlap){
+			//		service.toggleOverlap(index);
+				}
+				
+				console.log('shiftLeft: '+_old+' to '+_new);
+				if(service.cardList[_old].overlap){
+					service.cardList[_new].column += 25;
+				} else {
+					service.cardList[_new].column += 250;
+				}
+				
+				if(service.cardList[_new].overlap){
+					service.cardList[_old].column -= 25;
+				} else {
+					service.cardList[_old].column -= 250;
+				}
+				service.cardList[_old].index = index-1;
+				service.cardList[_new].index = index;
+				
+			}
+			if(service.cardList[cardByIndex(0)].overlap){
+				service.toggleOverlap(0);
+			}
 		};
 		
-		service.removeCard = function(){
-			this.cardList.splice(this.cardList.length-1, 1);
+		service.shiftRight = function(index){
+			if(index < service.cardList.length - 1){
+				var _old = cardByIndex(index);
+				var _new = cardByIndex(index+1);
+				
+				if(service.cardList[_old].overlap){
+			//		service.toggleOverlap(index);
+				}
+				
+				if(service.cardList[_old].overlap){
+					service.cardList[_new].column -= 25;
+				} else {
+					service.cardList[_new].column -= 250;
+				}
+				
+				if(service.cardList[_new].overlap){
+					service.cardList[_old].column += 25;
+				} else {
+					service.cardList[_old].column += 250;
+				}
+				service.cardList[_old].index = index+1;
+				service.cardList[_new].index = index;
+			}
+			if(service.cardList[cardByIndex(0)].overlap){
+				service.toggleOverlap(0);
+			}
 		};
 		
 		service.toggleOverlap = function(index){
-			this.cardList[index].overlap = !this.cardList[index].overlap;
-		};
-		
-		service.reorderList = function(oldIndex, newIndex){
-			if(newIndex >= 0 && newIndex <= this.cardList.length){
-				var index_old = this.cardList[oldIndex].index;
-				var index_new = this.cardList[newIndex].index;
-				this.cardList[oldIndex].index = index_new;
-				this.cardList[newIndex].index = index_old;
-				this.cardList.sort(function(a, b){
-					return a.index - b.index;
-				});
+			var _card = cardByIndex(index);
+			if(service.cardList[_card].overlap){
+				for(var i = 0, l = service.cardList.length; i < l; i++) {
+					if(service.cardList[i].index > index-1){
+						service.cardList[i].column += 225;
+					}
+				}
+				service.cardList[_card].overlap = false;
+			} else {
+				for(var i = 0, l = service.cardList.length; i < l; i++) {
+					if(service.cardList[i].index > index-1){
+						service.cardList[i].column -= 225;
+					}
+				}
+				service.cardList[_card].overlap = true;
 			}
 		};
+		
+		
+		
+		
 		
 		return service;
 	}]);
