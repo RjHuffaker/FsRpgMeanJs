@@ -3,67 +3,33 @@
 var pcsModule = angular.module('pcs');
 
 // Pcs Controller
-pcsModule.controller('PcsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Pcs', '$log',
-	function($scope, $stateParams, $location, Authentication, Pcs, $log) {
+pcsModule.controller('PcsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Pcs', 'PcsBreadSRVC', '$log', 
+	function($scope, $stateParams, $location, Authentication, Pcs, PcsBreadSRVC, $log) {
 		this.authentication = Authentication;
-
-		// Create new Pc
-		this.create = function() {
-			// Create new Pc object
-			var pc = new Pcs ({
-				name: this.name,
-				sex: this.sex,
-				race: this.race
-			});
-
-			// Redirect after save
-			pc.$save(function(response) {
-				$location.path('pcs');
-
-				// Clear form fields
-				this.name = '';
-			}, function(errorResponse) {
-				this.error = errorResponse.data.message;
-			});
+		
+		this.pcsBreadSRVC = PcsBreadSRVC;
+		
+		this.go = function(path){
+			$location.path(path);
 		};
 		
-		// Find a list of Pcs
-		this.find = function() {
-			this.pcList = Pcs.query();
-		};
-
-		// Find existing Pc
-		this.findOne = function() {
-			this.pc = Pcs.get({
-				pcId: $stateParams.pcId
-			});
+		var shiftLeft = function(event, object){
+			PcsBreadSRVC.shiftLeft(object.index);
 		};
 		
-		// Update existing Pc
-		this.update = function() {
-			var pc = this.pc ;
-
-			pc.$update(function() {
-				$location.path('pcs');
-			}, function(errorResponse) {
-				this.error = errorResponse.data.message;
-			});
+		var shiftRight = function(event, object){
+			PcsBreadSRVC.shiftRight(object.index);
 		};
 		
-		// Remove existing Pc
-		this.remove = function( pc ) {
-			if ( pc ) { pc.$remove();
-				for (var i in this.pcs ) {
-					if (this.pcs [i] === pc ) {
-						this.pcs.splice(i, 1);
-					}
-				}
-			} else {
-				this.pc.$remove(function() {
-					$location.path('pcs');
-				});
+		var toggleOverlap = function(event, object){
+			var _card = object.index;
+			if(_card > 0){
+				PcsBreadSRVC.toggleOverlap(object.index);
 			}
-			this.find();
 		};
+		
+		$scope.$on('cardDeck:shiftLeft', shiftLeft);
+		$scope.$on('cardDeck:shiftRight', shiftRight);
+		$scope.$on('cardDeck:toggleOverlap', toggleOverlap);
 		
 }]);

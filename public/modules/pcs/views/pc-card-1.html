@@ -1,0 +1,197 @@
+<div class="panel-content">
+	<table width="100%" height="20%">
+		<tbody>
+			<tr height="55%">
+				<td>
+					<label for="name"><strong>Name: </strong></label>
+				</td>
+				<td colspan="3">
+					<input id="name" class="fill-width" type="text"
+						 ng-model="card.name" stop-event/>
+				</td>
+			</tr>
+
+			<tr height="45%">
+				<td width="25%">
+					<label for="race"><strong>Race:  </strong></label>
+				</td>
+				<td width="30%">
+					<div id="race">
+						{{card.race}}
+					</div>
+				</td>
+				<td width="15%">
+					<label for="sex"><strong>Sex: </strong></label>
+				</td>
+				<td width="30%">
+					<select id="sex" class="fill-width"
+						ng-model="PcSRVC.pc.sex" ng-change="updatePc()"
+						ng-options="sex for sex in GlobalSRVC.sexArray"
+						stop-event>
+					</select>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<table width="100%" height="80%">
+		<tbody>
+			<tr height="15%">
+				<td width="20%">
+					<img id="strDie"
+						ng-src={{PcSRVC.pc.strDie.card_image}}
+						ng-click="PcAbilitySRVC.chooseAbility(1)"
+						alt="{{PcSRVC.pc.strDie.name}}"
+						class="diceImage shadow_heavy" />
+				</td>
+				<td width="30%">
+					<label for="strDie">
+						<strong>STR</strong>ength
+					</label>
+				</td>
+				<td width="20%">
+					<img id="phyDie"
+						ng-src={{PcSRVC.pc.phyDie.card_image}}
+						ng-click="PcAbilitySRVC.chooseAbility(2)"
+						alt="{{PcSRVC.pc.phyDie.name}}"
+						class="diceImage shadow_heavy" />
+				</td>
+				<td width="30%">
+					<label for="phyDie">
+						<strong>PHY</strong>sique
+					</label>
+				</td>	
+			</tr>
+
+			<tr height="10%">
+				<td colspan="2" class="text-right">
+					<div class="text-10px"><strong>Block Defense:</strong></div>
+					<div class="text-9px">Item + (STR or PHY)</div>
+				</td>
+				<td colspan="2" class="text-center">
+					<small>
+						{{PcSRVC.pc.block}}
+					</small>
+				</td>
+			</tr>
+
+			<tr height="15%">
+				<td width="15%">
+					<img id="fleDie"
+						ng-src={{PcSRVC.pc.fleDie.card_image}}
+						ng-click="PcAbilitySRVC.chooseAbility(3)"
+						alt="{{PcSRVC.pc.fleDie.name}}"
+						class="diceImage shadow_heavy" />
+				</td>
+				<td width="35%">
+					<label for="fleDie">
+						<strong>FLE</strong>xibility
+					</label>
+				</td>
+				
+				<td width="15%">
+					<img id="dexDie"
+						ng-src={{PcSRVC.pc.dexDie.card_image}}
+						ng-click="PcAbilitySRVC.chooseAbility(4)"
+						alt="{{PcSRVC.pc.dexDie.name}}"
+						class="diceImage shadow_heavy" />
+				</td>
+				<td width="35%">
+					<label for="dexDie">
+						<strong>DEX</strong>terity
+					</label>
+				</td>
+			</tr>
+
+			<tr height="10%">
+				<td colspan="2" class="text-right">
+					<div class="text-10px"><strong>Dodge Defense:</strong></div>
+					<div class="text-9px">2d(FLE or DEX)</div>
+				</td>
+				<td colspan="2" class="text-center">
+					<small>
+						{{PcSRVC.pc.dodge}}
+					</small>
+				</td>
+			</tr>
+
+			<tr height="15%">
+				<td width="15%">
+					<img id="acuDie"
+						ng-src={{PcSRVC.pc.acuDie.card_image}}
+						ng-click="PcAbilitySRVC.chooseAbility(5)"
+						alt="{{PcSRVC.pc.acuDie.name}}"
+						class="diceImage shadow_heavy" />
+				</td>
+				<td width="35%">
+					<label for="acuDie">
+						<strong>ACU</strong>ity
+					</label>
+				</td>
+				<td width="15%">
+					<img id="intDie"
+						ng-src={{PcSRVC.pc.intDie.card_image}}
+						ng-click="PcAbilitySRVC.chooseAbility(6)"
+						alt="{{PcSRVC.pc.intDie.name}}"
+						class="diceImage shadow_heavy" />
+				</td>
+				<td width="35%">
+					<label for="intDie">
+						<strong>INT</strong>ellect
+					</label>
+				</td>
+			</tr>
+
+			<tr height="10%">
+				<td colspan="2" class="text-right">
+					<div class="text-10px"><strong>Alertness Defense:</strong></div>
+					<div class="text-9px">2d(ACU or INT)</div>
+				</td>
+				<td colspan="2" class="text-center">
+					<small>
+						{{PcSRVC.pc.alertness}}
+					</small>
+				</td>
+			</tr>
+
+			<tr height="15%">
+				<td width="15%">
+					<img id="wisDie"
+						ng-src={{PcSRVC.pc.wisDie.card_image}}
+						ng-click="PcAbilitySRVC.chooseAbility(7)"
+						alt="{{PcSRVC.pc.wisDie.name}}"
+						class="diceImage shadow_heavy" />
+				</td>
+				<td width="35%">
+					<label for="wisDie">
+						<strong>WIS</strong>dom
+					</label>
+				</td>
+				<td width="15%">
+					<img id="chaDie"
+						ng-src={{PcSRVC.pc.chaDie.card_image}}
+						ng-click="PcAbilitySRVC.chooseAbility(8)"
+						alt="{{PcSRVC.pc.chaDie.name}}"
+						class="diceImage shadow_heavy" />
+				</td>
+				<td width="35%">
+					<label for="chaDie">
+						<strong>CHA</strong>risma
+					</label>
+				</td>
+			</tr>
+
+			<tr height="10%">
+				<td colspan="2" class="text-right">
+					<div class="text-10px"><strong>Tenacity Defense:</strong></div>
+					<div class="text-9px">2d(WIS or CHA)</div>
+				</td>
+				<td colspan="2" class="text-center">
+					<small>
+						{{PcSRVC.pc.tenacity}}
+					</small>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

@@ -1,28 +1,5 @@
 <section data-ng-controller="HomeController">
 
-<div class="deck-panel">
-	<ul class="card-list">
-		<li ng-repeat="card in CardSRVC.cardList" class="card-slot"
-			style="z-index: {{CardSRVC.cardList.length - card.index}}"
-			ng-style="{left: ((card.column) + 'px')}">
-			<div card-panel card="card"
-				ng-mousemove="" ng-click="">
-				<span class="pull-right">{{card.name}}</span>
-				<br />
-				<span class="pull-right">{{card.index}}</span>
-				<h1 class="text-center">{{card.name}}</h1>
-				<h3 class="text-center">{{card.index}} : {{$index}}</h3>
-				<h5 class="text-center" ><span ng-hide="card.overlap">Not </span>Overlapped</h5>
-				<h5 class="text-center">Column: {{card.column}}</h5>
-			</div>
-		</li>
-	</ol>
-</div>
 
-<ol>
-	<li ng-repeat="card in CardSRVC.cardList">
-		Name: {{card.name}},  Index: {{card.index}},  Column: {{card.column}}
-	</li>
-</ol>
 
 </section>

@@ -19,7 +19,7 @@
 	overflow-x: auto;
 	overflow-y: hidden;
 	width: 100%;
-	height: 450px;
+	height: 425px;
 }
 
 .card-list, [card-slot]{
@@ -32,7 +32,7 @@
 [card-panel]{
 	width: 250px;
 	height: 350px;
-	margin-top: 25px;
+	margin-top: 50px;
 	position: absolute;
 	display: inline-block;
 	background-image: url('../img/card_001.png');
@@ -40,9 +40,10 @@
 	background-size: 100%;
 }
 
-[card-panel]:hover{
+[card-panel].overlap:hover{
 	margin-top: 0;
-	transition: .5s ease-in-out;
+	position: absolute;
+	transition: .5s up down ease-in-out;
 }
 
 .card-slot, [card-panel]:not(.dragging){
@@ -50,16 +51,140 @@
 	position: absolute;
 	-webkit-transition-delay: 50ms;
 	transition-delay: 50ms;
-	-webkit-transition: 1.5s ease;
-	-moz-transition: 1.5s ease;
-	-o-transition: 1.5s ease;
-	-ms-transition: 1.5s ease;
+	-webkit-transition: .5s ease;
+	-moz-transition: .5s ease;
+	-o-transition: .5s ease;
+	-ms-transition: .5s ease;
 	transition: .5s ease-in-out;
 }
 
-.card-slot.dragging, [card-panel].dragging {
-	position: absolute;
-	opacity: 0.95;
+.card-slot.dragging, [card-panel].dragging:not(.overlap) {
 	z-index: 9999;
-	transition-property: none !important;
+	transition-property: none;
+}
+
+[card-panel].overlap.dragging{
+	margin-top: 0;
+	position: absolute;
+}
+
+.black-line{
+	margin: 2px 0;
+	border: solid 1px black;
+	background-color: black;
+	height: 0;
+}
+
+.fill-height{
+	height: 100% !important;
+}
+
+.fill-width{
+	width: 100% !important;
+}
+
+.fill-parent{
+	height: 100% !important;
+	width: 100% !important;
+}
+
+.bullet-list{
+	margin: 1% 4%;
+	padding: 1% 4%;
+	list-style-type: disc;
+}
+
+.label-list{
+	margin: 0 4%;
+	padding: 0 4%;
+	list-style-type: none;
+}
+
+.panel-content{
+	height: 100%;
+	width: 100%;
+	padding: 5%;
+}
+
+.shadow_light{
+	-webkit-filter: drop-shadow(1px 1px 1px #444);
+	-moz-box-shadow: 10px 40px 20px #00f;
+	filter:         drop-shadow(1px 1px 1px #444);
+}
+
+.shadow_light:hover{
+	-webkit-filter: drop-shadow(2px 2px 2px #000);
+	-moz-box-shadow: 10px 40px 20px #00f;
+	filter:         drop-shadow(2px 2px 2px #000);
+}
+
+.shadow_heavy{
+	-webkit-filter: drop-shadow(2px 2px 2px #444);
+	-moz-box-shadow: 10px 40px 20px #00f;
+	filter:         drop-shadow(2px 2px 2px #444);
+}
+
+.shadow_heavy:hover{
+	-webkit-filter: drop-shadow(3px 3px 3px #000);
+	-moz-box-shadow: 10px 40px 20px #00f;
+	filter:         drop-shadow(3px 3px 3px #000);
+	cursor: pointer;
+}
+
+.diceImage{
+	width: 36px;
+}
+
+.text-15px{
+	font-size: 15px;
+}
+
+.text-13px{
+	font-size: 13px;
+}
+
+.text-12px{
+	font-size: 12px;
+}
+
+.text-11px{
+	font-size: 11px;
+}
+
+.text-10px{
+	font-size: 10px;
+}
+
+.text-9px{
+	font-size: 9px;
+}
+
+.logo-augment{
+	height: 36px;
+	width: 100px;
+	margin-right: 2%;
+}
+
+.logo-feat{
+	height: 36px;
+	width: 58px;
+	margin-right: 2%;
+}
+
+.logo-item{
+	height: 36px;
+	width: 65px;
+	margin-right: 2%;
+}
+
+.logo-npc{
+	height: 36px;
+	width: 72px;
+	margin-right: 2%;
+}
+
+.logo-trait{
+	height: 36px;
+	width: 72px;
+	margin-right: 2%;
 }

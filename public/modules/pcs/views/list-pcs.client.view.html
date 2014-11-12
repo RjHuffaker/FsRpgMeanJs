@@ -1,4 +1,4 @@
-<section data-ng-controller="PcsController as pcsCtrl" data-ng-init="pcsCtrl.find()">
+<section data-ng-controller="PcsController as pcsCtrl" data-ng-init="pcsCtrl.pcsBreadSRVC.browsePcs()">
 	<div class="page-header">
 		<h1>Player Characters</h1>
 	</div>
@@ -27,15 +27,15 @@
 	<br />
 	<br />
 	<div class="list-group">
-		<div class="col-xs-6 col-sm-4 col-md-3" data-ng-repeat="pc in pcsCtrl.pcList | filter:searchText">
+		<div class="col-xs-6 col-sm-4 col-md-3" data-ng-repeat="pc in pcsCtrl.pcsBreadSRVC.pcList | filter:searchText">
 			<div class="list-group-item">
 				<h4>
 					<i style="font-size: 80px;" class="glyphicon glyphicon-user"></i>
 				</h4>
 				<h4>
-					{{pc.name}}
+					{{pc.cardList.pcCard1.name}}
 				</h4>
-					{{pc.sex}} {{pc.race}}
+					{{pc.cardList.pcCard1.sex}} {{pc.cardList.pcCard1.race}}
 				<br />
 				<small class="list-group-item-text text-muted">
 					Created by {{pc.user.displayName}} on
@@ -45,7 +45,7 @@
 					<a class="btn btn-sm btn-primary" href="/#!/pcs/{{pc._id}}/edit">
 						<i class="glyphicon glyphicon-edit"></i>
 					</a>
-					<a class="btn btn-sm btn-danger" data-ng-click="pcsCtrl.remove(pc);">
+					<a class="btn btn-sm btn-danger" data-ng-click="pcsCtrl.pcsBreadSRVC.deletePc(pc);">
 						<i class="glyphicon glyphicon-trash"></i>
 					</a>
 				</div>
