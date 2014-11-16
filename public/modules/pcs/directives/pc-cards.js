@@ -2,42 +2,30 @@
 
 var pcsModule = angular.module('pcs');
 
-// pc-card-1 directive
+// pc-card directive
 pcsModule
 	.directive('pcCard', function () {
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/pcs/views/pc-card-basic.html',
-			scope: {
-				card: '='
-			}
+			templateUrl: '../modules/pcs/views/pc-card.html'
 		};
 	})
-	.directive('pcCard1', function () {
+	.directive('pc1', function () {
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/pcs/views/pc-card-1.html',
-			scope: {
-				card: '='
-			}
+			templateUrl: '../modules/pcs/views/pc-1.html'
 		};
 	})
-	.directive('pcCard2', function () {
+	.directive('pc2', function () {
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/pcs/views/pc-card-2.html',
-			scope: {
-				card: '='
-			}
+			templateUrl: '../modules/pcs/views/pc-2.html'
 		};
 	})
-	.directive('pcCard3', function () {
+	.directive('pc3', function () {
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/pcs/views/pc-card-3.html',
-			scope: {
-				card: '='
-			}
+			templateUrl: '../modules/pcs/views/pc-3.html'
 		};
 	})
 	.directive('stopEvent', function () {

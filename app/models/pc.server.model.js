@@ -6,6 +6,42 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
+var Dice = {
+	name: {
+		type: String,
+		default: 'd__'
+	},
+	image: {
+		type: String,
+		default: 'modules/core/img/d___.png'
+	},
+	sides: {
+		type: Number,
+		default: 0
+	},
+	order: {
+		type: Number,
+		default: 0
+	}
+};
+
+var DiceSchema = new Schema(Dice);
+
+/**
+ * Ability Schema
+ */
+var AbilitySchema = new Schema({
+	name: {
+		type: String,
+		default: ''
+	},
+	order: {
+		type: Number,
+		default: 0
+	},
+	dice: Dice
+});
+
 /**
  * Pc Schema
  */
@@ -18,15 +54,15 @@ var PcSchema = new Schema({
 		type: Date,
 		default: Date.now
 	},
-	cardList:{
-		pcCard1: {
+	cards:{
+		pc1: {
 			index: {
 				type: Number,
 				default: 0
 			},
 			cardType: {
 				type: String,
-				default: 'pcCard1'
+				default: 'pc1'
 			},
 			column: {
 				type: Number,
@@ -40,19 +76,26 @@ var PcSchema = new Schema({
 				type: String,
 				default: ''
 			},
+			sex: {
+				type: String,
+				default: '---'
+			},
 			race: {
 				type: String,
 				default: 'Weolda'
-			}
+			},
+			abilities: [ AbilitySchema ],
+			
+			dicepool: [ DiceSchema ]
 		},
-		pcCard2: {
+		pc2: {
 			index: {
 				type: Number,
 				default: 1
 			},
 			cardType: {
 				type: String,
-				default: 'pcCard2'
+				default: 'pc2'
 			},
 			column: {
 				type: Number,
@@ -67,14 +110,14 @@ var PcSchema = new Schema({
 				default: 0
 			}
 		},
-		pcCard3: {
+		pc3: {
 			index: {
 				type: Number,
 				default: 2
 			},
 			cardType: {
 				type: String,
-				default: 'pcCard3'
+				default: 'pc3'
 			},
 			column: {
 				type: Number,

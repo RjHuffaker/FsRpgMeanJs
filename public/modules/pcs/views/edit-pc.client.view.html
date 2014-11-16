@@ -1,6 +1,6 @@
 <section data-ng-controller="PcsController as pcsCtrl" data-ng-init="pcsCtrl.pcsBreadSRVC.readPc()">
 	<div class="page-header">
-        <h2>Edit <span data-ng-bind="pcsCtrl.pcsBreadSRVC.pc.cardList.pcCard1.name"></span></h2>
+        <h2>Edit <span data-ng-bind="pcsCtrl.pcsBreadSRVC.pc.cards.pc1.name"></span></h2>
     </div>
 	<div class="col-md-12">
 		<form name="updatePcForm" novalidate>
@@ -8,8 +8,8 @@
 				
 				<div class="deck-panel">
 					<ul class="card-list">
-						<li ng-repeat="(key, card) in pcsCtrl.pcsBreadSRVC.pc.cardList" class="card-slot"
-							style="z-index: {{pcsCtrl.pcsBreadSRVC.cardListLength() - card.index}}; left: {{card.column}};"
+						<li ng-repeat="(key, card) in pcsCtrl.pcsBreadSRVC.pc.cards" class="card-slot"
+							style="z-index: {{pcsCtrl.pcsDeckSRVC.cardsTotal() - card.index}}; left: {{card.column}};"
 							ng-style="{left: ((card.column) + 'px')}">
 							<div card-panel pc-card card="card"
 								ng-class="{overlap: card.overlap}"
@@ -19,15 +19,16 @@
 					</ol>
 				</div>
 				
+				
 				<div class="form-group col-xs-offset-4 col-sm-offset-5 col-md-offset-6">
 					<input type="submit" value="Save"
-						ng-click="pcsCtrl.pcsBreadSRVC.editPc();"
+						ng-click="pcsCtrl.savePc();"
 						class="col-xs-4 btn btn-success">
 					<input type="submit" value="Save & Exit"
-						ng-click="pcsCtrl.pcsBreadSRVC.editPc(); pcsCtrl.go('pcs');"
+						ng-click="pcsCtrl.savePc(); pcsCtrl.exitPc();"
 						class="col-xs-4 btn btn-warning">
 					<input type="submit" value="Exit Without Saving"
-						ng-click="pcsCtrl.go('pcs');"
+						ng-click="pcsCtrl.exitPc();"
 						class="col-xs-4 btn btn-danger">
 				</div>
 				
@@ -35,5 +36,5 @@
 			</fieldset>
 		</form>
 	</div>
-	
+	<div dice-modal ng-show="pcsCtrl.pc1SRVC.diceModalShown" class="fill-height"></div>
 </section>

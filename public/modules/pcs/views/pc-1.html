@@ -25,8 +25,8 @@
 				</td>
 				<td width="30%">
 					<select id="sex" class="fill-width"
-						ng-model="PcSRVC.pc.sex" ng-change="updatePc()"
-						ng-options="sex for sex in GlobalSRVC.sexArray"
+						ng-model="card.sex"
+						ng-options="sex for sex in pcsCtrl.dataSRVC.sexArray"
 						stop-event>
 					</select>
 				</td>
@@ -38,10 +38,10 @@
 		<tbody>
 			<tr height="15%">
 				<td width="20%">
-					<img id="strDie"
-						ng-src={{PcSRVC.pc.strDie.card_image}}
-						ng-click="PcAbilitySRVC.chooseAbility(1)"
-						alt="{{PcSRVC.pc.strDie.name}}"
+					<img id="strDie" stop-event
+						ng-src={{card.abilities[0].dice.image}}
+						ng-click="pcsCtrl.pc1SRVC.chooseAbility(0)"
+						alt="{{card.abilities[0].dice.name}}"
 						class="diceImage shadow_heavy" />
 				</td>
 				<td width="30%">
@@ -50,10 +50,10 @@
 					</label>
 				</td>
 				<td width="20%">
-					<img id="phyDie"
-						ng-src={{PcSRVC.pc.phyDie.card_image}}
-						ng-click="PcAbilitySRVC.chooseAbility(2)"
-						alt="{{PcSRVC.pc.phyDie.name}}"
+					<img id="phyDie" stop-event
+						ng-src={{card.abilities[1].dice.image}}
+						ng-click="pcsCtrl.pc1SRVC.chooseAbility(1)"
+						alt="{{card.abilities[1].dice.name}}"
 						class="diceImage shadow_heavy" />
 				</td>
 				<td width="30%">
@@ -77,10 +77,10 @@
 
 			<tr height="15%">
 				<td width="15%">
-					<img id="fleDie"
-						ng-src={{PcSRVC.pc.fleDie.card_image}}
-						ng-click="PcAbilitySRVC.chooseAbility(3)"
-						alt="{{PcSRVC.pc.fleDie.name}}"
+					<img id="fleDie" stop-event
+						ng-src={{card.abilities[2].dice.image}}
+						ng-click="pcsCtrl.pc1SRVC.chooseAbility(2)"
+						alt="{{card.abilities[2].dice.name}}"
 						class="diceImage shadow_heavy" />
 				</td>
 				<td width="35%">
@@ -90,10 +90,10 @@
 				</td>
 				
 				<td width="15%">
-					<img id="dexDie"
-						ng-src={{PcSRVC.pc.dexDie.card_image}}
-						ng-click="PcAbilitySRVC.chooseAbility(4)"
-						alt="{{PcSRVC.pc.dexDie.name}}"
+					<img id="dexDie" stop-event
+						ng-src={{card.abilities[3].dice.image}}
+						ng-click="pcsCtrl.pc1SRVC.chooseAbility(3)"
+						alt="{{card.abilities[3].dice.name}}"
 						class="diceImage shadow_heavy" />
 				</td>
 				<td width="35%">
@@ -117,10 +117,10 @@
 
 			<tr height="15%">
 				<td width="15%">
-					<img id="acuDie"
-						ng-src={{PcSRVC.pc.acuDie.card_image}}
-						ng-click="PcAbilitySRVC.chooseAbility(5)"
-						alt="{{PcSRVC.pc.acuDie.name}}"
+					<img id="acuDie" stop-event
+						ng-src={{card.abilities[4].dice.image}}
+						ng-click="pcsCtrl.pc1SRVC.chooseAbility(4)"
+						alt="{{card.abilities[4].dice.name}}"
 						class="diceImage shadow_heavy" />
 				</td>
 				<td width="35%">
@@ -129,10 +129,10 @@
 					</label>
 				</td>
 				<td width="15%">
-					<img id="intDie"
-						ng-src={{PcSRVC.pc.intDie.card_image}}
-						ng-click="PcAbilitySRVC.chooseAbility(6)"
-						alt="{{PcSRVC.pc.intDie.name}}"
+					<img id="intDie" stop-event
+						ng-src={{card.abilities[5].dice.image}}
+						ng-click="pcsCtrl.pc1SRVC.chooseAbility(5)"
+						alt="{{card.abilities[5].dice.name}}"
 						class="diceImage shadow_heavy" />
 				</td>
 				<td width="35%">
@@ -156,10 +156,10 @@
 
 			<tr height="15%">
 				<td width="15%">
-					<img id="wisDie"
-						ng-src={{PcSRVC.pc.wisDie.card_image}}
-						ng-click="PcAbilitySRVC.chooseAbility(7)"
-						alt="{{PcSRVC.pc.wisDie.name}}"
+					<img id="wisDie" stop-event
+						ng-src={{card.abilities[6].dice.image}}
+						ng-click="pcsCtrl.pc1SRVC.chooseAbility(6)"
+						alt="{{card.abilities[6].dice.name}}"
 						class="diceImage shadow_heavy" />
 				</td>
 				<td width="35%">
@@ -168,10 +168,10 @@
 					</label>
 				</td>
 				<td width="15%">
-					<img id="chaDie"
-						ng-src={{PcSRVC.pc.chaDie.card_image}}
-						ng-click="PcAbilitySRVC.chooseAbility(8)"
-						alt="{{PcSRVC.pc.chaDie.name}}"
+					<img id="chaDie" stop-event
+						ng-src={{card.abilities[7].dice.image}}
+						ng-click="pcsCtrl.pc1SRVC.chooseAbility(7)"
+						alt="{{card.abilities[7].dice.name}}"
 						class="diceImage shadow_heavy" />
 				</td>
 				<td width="35%">

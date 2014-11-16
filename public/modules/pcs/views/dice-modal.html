@@ -1,0 +1,87 @@
+<div class='modal-overlay' ng-click='pcsCtrl.pc1SRVC.hideDiceModal()'></div>
+<div class='modal-dialog'>
+	<div class='modal-close' ng-click='pcsCtrl.pc1SRVC.hideDiceModal()'>X</div>
+	
+		<div style="height: 25%;">
+			<div class="col-xs-7">
+				<h4 >Choose <br />{{pcsCtrl.pc1SRVC._ability.name}} Die:</h4>
+				
+			</div>
+			<div class="col-xs-4 row text-center">
+				<img ng-src={{pcsCtrl.pc1SRVC._ability.dice.image}}
+					ng-click="pcsCtrl.pc1SRVC.hideDiceModal()"
+					alt="{{pcsCtrl.pcBreadSRVC._ability.dice.name}}"
+					style="margin-top: 25%"
+					class="fill-width shadow_heavy" />
+			</div>
+		</div>
+		<div style="height: 25%; padding: 5% -5% -5% -5%;">
+			<div class="col-xs-4">
+				<img ng-src="modules/core/img/d___.png"
+					ng-click="pcsCtrl.pc1SRVC.chooseDie(0)"
+					alt={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[0].name}}
+					class="fill-width shadow_heavy" />
+			</div>
+			<div class="col-xs-4">
+				<img ng-show="pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[1].order"
+					ng-src={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[1].image}}
+					ng-click="pcsCtrl.pc1SRVC.chooseDie(1)"
+					alt={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[1].name}}
+					class="fill-width shadow_heavy" />
+			</div>
+			<div class="col-xs-4">
+				<img ng-show="pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[2].order"
+					ng-src={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[2].image}}
+					ng-click="pcsCtrl.pc1SRVC.chooseDie(2)"
+					alt={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[2].name}}
+					class="fill-width shadow_heavy" />
+			</div>
+		</div>
+		<div style="height: 25%; padding: 5% -5% -5% -5%;">
+			<div class="col-xs-4">
+				<img ng-show="pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[3].order"
+					ng-src={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[3].image}}
+					ng-click="pcsCtrl.pc1SRVC.chooseDie(3)"
+					alt={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[3].name}}
+					class="fill-width shadow_heavy" />
+			</div>
+			<div class="col-xs-4">
+				<img ng-show="pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[4].order"
+					ng-src={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[4].image}}
+					ng-click="pcsCtrl.pc1SRVC.chooseDie(4)"
+					alt={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[4].name}}
+					class="fill-width shadow_heavy" />
+			</div>
+			<div class="col-xs-4">
+				<img ng-show="pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[5].order"
+					ng-src={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[5].image}}
+					ng-click="pcsCtrl.pc1SRVC.chooseDie(5)"
+					alt={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[5].name}}
+					class="fill-width shadow_heavy" />
+			</div>
+		</div>
+		<div style="height: 25%; padding: 5% -5% -5% -5%;">
+			<div class="col-xs-4">
+				<img ng-show="pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[6].order"
+					ng-src={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[6].image}}
+					ng-click="pcsCtrl.pc1SRVC.chooseDie(6)"
+					alt={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[6].name}}
+					class="fill-width shadow_heavy" />
+			</div>
+			<div class="col-xs-4">
+				<img ng-show="pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[7].order"
+					ng-src={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[7].image}}
+					ng-click="pcsCtrl.pc1SRVC.chooseDie(7)"
+					alt={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[7].name}}
+					class="fill-width shadow_heavy" />
+			</div>
+			<div class="col-xs-4">
+				<img ng-show="pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[8].order"
+					ng-src={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[8].image}}
+					ng-click="pcsCtrl.pc1SRVC.chooseDie(8)"
+					alt={{pcsCtrl.pcsBreadSRVC.pc.cards.pc1.dicepool[8].name}}
+					class="fill-width shadow_heavy" />
+			</div>
+		</div>
+
+</div>

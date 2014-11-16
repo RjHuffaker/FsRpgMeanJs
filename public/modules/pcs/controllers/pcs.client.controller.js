@@ -3,28 +3,55 @@
 var pcsModule = angular.module('pcs');
 
 // Pcs Controller
-pcsModule.controller('PcsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Pcs', 'PcsBreadSRVC', '$log', 
-	function($scope, $stateParams, $location, Authentication, Pcs, PcsBreadSRVC, $log) {
-		this.authentication = Authentication;
+pcsModule.controller('PcsController', ['$scope', '$location', '$log', 'DataSRVC', 'PcsBreadSRVC', 'PcsDeckSRVC', 'Pc1SRVC',
+	function($scope, $location, $log, DataSRVC, PcsBreadSRVC, PcsDeckSRVC, Pc1SRVC){
+		
+		this.dataSRVC = DataSRVC;
 		
 		this.pcsBreadSRVC = PcsBreadSRVC;
 		
-		this.go = function(path){
-			$location.path(path);
+		this.pcsDeckSRVC = PcsDeckSRVC;
+		
+		this.pc1SRVC = Pc1SRVC;
+		
+		this.newPc = function(){
+			PcsBreadSRVC.addPc();
+			PcsBreadSRVC.pcNew = true;
+			PcsBreadSRVC.pcSaved = false;
+		};
+		
+		this.openPc = function(pc){
+			$location.path('pcs/'+pc._id+'/edit');
+			PcsBreadSRVC.pcNew = false;
+			PcsBreadSRVC.pcSaved = false;
+		};
+		
+		this.savePc = function(){
+			PcsBreadSRVC.editPc();
+			PcsBreadSRVC.pcNew = false;
+			PcsBreadSRVC.pcSaved = true;
+		};
+		
+		this.exitPc = function(){
+			if(PcsBreadSRVC.pcNew){
+				console.log('newpc');
+				PcsBreadSRVC.deletePc();
+			}
+			$location.path('pcs');
 		};
 		
 		var shiftLeft = function(event, object){
-			PcsBreadSRVC.shiftLeft(object.index);
+			PcsDeckSRVC.shiftLeft(object.index);
 		};
 		
 		var shiftRight = function(event, object){
-			PcsBreadSRVC.shiftRight(object.index);
+			PcsDeckSRVC.shiftRight(object.index);
 		};
 		
 		var toggleOverlap = function(event, object){
 			var _card = object.index;
 			if(_card > 0){
-				PcsBreadSRVC.toggleOverlap(object.index);
+				PcsDeckSRVC.toggleOverlap(object.index);
 			}
 		};
 		

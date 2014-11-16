@@ -1,0 +1,75 @@
+<div class="card-modal panel-content">
+	<div style="height: 25%;">
+		<div class="col-xs-8">
+			<h4 >Choose <br />{{pcsCtrl.pc1SRVC._ability}} Die:</h4>
+			{{pcsCtrl.pcBreadSRVC.cards.pc1.name}}
+		</div>
+		<div class="col-xs-4 row text-center">
+			<img ng-src={{pcsCtrl.pcBreadSRVC.cards.pc1.dicepool[0].image}}
+				ng-click="PcAbilitySRVC.diceModalShown = false;"
+				alt="{{pcsCtrl.pcBreadSRVC.cards.pc1.dicepool[0].name}}"
+				style="margin-top: 25%"
+				class="fill_width shadow_heavy" />
+		</div>
+	</div>
+	<div style="height: 25%; margin: 5% -5% -5% -5%;">
+		<div class="col-xs-4">
+			<img ng-src={{pcsCtrl.pcBreadSRVC.cards.pc1.dicepool[0].image}}
+				ng-click="PcAbilitySRVC.chooseDie(0)"
+				alt={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[1]].name}}
+				class="fill_width shadow_heavy" />
+		</div>
+		<div class="col-xs-4">
+			<img ng-src={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[2]].modal_image}}
+				ng-click="PcAbilitySRVC.chooseDie(PcSRVC.pc.dicepool[2])"
+				alt={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[2]].name}}
+				class="fill_width shadow_heavy" />
+		</div>
+		<div class="col-xs-4">
+			<img ng-src={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[3]].modal_image}}
+				ng-click="PcAbilitySRVC.chooseDie(PcSRVC.pc.dicepool[3])"
+				alt={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[3]].name}}
+				class="fill_width shadow_heavy" />
+		</div>
+	</div>
+	<div style="height: 25%; margin: 5% -5% -5% -5%;">
+		<div class="col-xs-4">
+			<img ng-src={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[4]].modal_image}}
+				ng-click="PcAbilitySRVC.chooseDie(PcSRVC.pc.dicepool[4])"
+				alt={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[4]].name}}
+				class="fill_width shadow_heavy" />
+		</div>
+		<div class="col-xs-4">
+			<img ng-src={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[5]].modal_image}}
+				ng-click="PcAbilitySRVC.chooseDie(PcSRVC.pc.dicepool[5])"
+				alt={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[5]].name}}
+				class="fill_width shadow_heavy" />
+		</div>
+		<div class="col-xs-4">
+			<img ng-src={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[6]].modal_image}}
+				ng-click="PcAbilitySRVC.chooseDie(PcSRVC.pc.dicepool[6])"
+				alt={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[6]].name}}
+				class="fill_width shadow_heavy" />
+		</div>
+	</div>
+	<div style="height: 25%; margin: 5% -5% -5% -5%;">
+		<div class="col-xs-4">
+			<img ng-src={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[7]].modal_image}}
+				ng-click="PcAbilitySRVC.chooseDie(PcSRVC.pc.dicepool[7])"
+				alt={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[7]].name}}
+				class="fill_width shadow_heavy" />
+		</div>
+		<div class="col-xs-4">
+			<img ng-src={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[8]].modal_image}}
+				ng-click="PcAbilitySRVC.chooseDie(PcSRVC.pc.dicepool[8])"
+				alt={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[8]].name}}
+				class="fill_width shadow_heavy" />
+		</div>
+		<div class="col-xs-4">
+			<img ng-src={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[9]].modal_image}}
+				ng-click="PcAbilitySRVC.chooseDie(PcSRVC.pc.dicepool[9])"
+				alt={{GlobalSRVC.diceList[PcSRVC.pc.dicepool[9]].name}}
+				class="fill_width shadow_heavy" />
+		</div>
+	</div>
+</div>

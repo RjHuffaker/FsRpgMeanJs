@@ -1,6 +1,7 @@
+'use strict';
+
 angular.module('core')
 	.directive('cardPanel', ['$document', '$parse', '$rootScope', function($document, $parse, $rootScope){
-		'use strict';
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -96,8 +97,6 @@ angular.module('core')
 					
 					_width = element[0].offsetWidth;
 					_startCol = _card.column;
-					
-					console.log('_card.index:'+_card.index);
 					
 					$document.on(_moveEvents, onMove);
 					$document.on(_releaseEvents, onRelease);
