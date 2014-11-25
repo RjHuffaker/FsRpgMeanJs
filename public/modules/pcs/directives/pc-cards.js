@@ -28,6 +28,30 @@ pcsModule
 			templateUrl: '../modules/pcs/views/pc-3.html'
 		};
 	})
+	.directive('pcTrait', function () {
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/pcs/views/trait-card.html'
+		};
+	})
+	.directive('pcFeat', function () {
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/pcs/views/feat-card.html'
+		};
+	})
+	.directive('pcAugment', function () {
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/pcs/views/augment-card.html'
+		};
+	})
+	.directive('pcItem', function () {
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/pcs/views/item-card.html'
+		};
+	})
 	.directive('stopEvent', function () {
 		return {
 			restrict: 'A',

@@ -1,22 +1,38 @@
-<section data-ng-controller="PcsController as pcsCtrl" data-ng-init="pcsCtrl.pcsBreadSRVC.readPc()">
-	<div class="page-header">
-        <h2>Edit <span data-ng-bind="pcsCtrl.pcsBreadSRVC.pc.cards.pc1.name"></span></h2>
-    </div>
+<section data-ng-controller="PcsController as pcsCtrl" data-ng-init="pcsCtrl.pcs.readPc()">
+	<h2>Edit <span data-ng-bind="pcsCtrl.pcs.pc.cards[0].name"></span></h2>
 	<div class="col-md-12">
 		<form name="updatePcForm" novalidate>
 			<fieldset>
-				
-				<div class="deck-panel">
-					<ul class="card-list">
-						<li ng-repeat="(key, card) in pcsCtrl.pcsBreadSRVC.pc.cards" class="card-slot"
-							style="z-index: {{pcsCtrl.pcsDeckSRVC.cardsTotal() - card.index}}; left: {{card.column}};"
-							ng-style="{left: ((card.column) + 'px')}">
-							<div card-panel pc-card card="card"
-								ng-class="{overlap: card.overlap}"
-								ng-mousemove="" ng-click="">
+				<div>
+					<div class='modal-overlay' ng-show="pcsCtrl.pcsCard1.diceBoxShown" ng-click='pcsCtrl.pcsCard1.hideDiceBox()'></div>
+					<div style="overflow: hidden;">
+						<div class='dice-box text-center'
+							ng-style="{left: ((pcsCtrl.pcs.pc.cards[0].column) + 'px')}"
+							ng-class="{diceBoxShown: pcsCtrl.pcsCard1.diceBoxShown}">
+							<div style="height: 20px; color: yellow;">
+								<b>Choose {{pcsCtrl.pcsCard1.chosenAbility.name}} Die:</b>
 							</div>
-						</li>
-					</ol>
+							<img ng-repeat="dice in pcsCtrl.pcs.pc.cards[0].dicepool track by $index"
+								ng-src={{dice.image}} alt={{dice.name}}
+								ng-show="dice.order || $index == 0"
+								ng-click="pcsCtrl.pcsCard1.chooseDie(dice.order)"
+								class="shadow-light dice-box-image" />
+						</div>
+						<div class="deck-panel">
+							<ul class="card-list" ng-style="{width: (pcsCtrl.deckWidth() + 'px')}">
+								<li card-slot card="card"
+									ng-repeat="card in pcsCtrl.pcs.pc.cards"
+									style="z-index: {{9998 - card.x_index}};"
+									ng-style="{'left': ((card.x_coord) + 'px'), 'top': ((card.y_coord) + 'px')}">
+									<div card-panel pc-card card="card"
+										style="z-index: {{pcsCtrl.pcs.pc.cards.length - card.x_index + 1}}"
+										ng-class="{'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap}"
+										ng-mousemove="" ng-click="">
+									</div>
+								</li>
+							</ol>
+						</div>
+					</div>
 				</div>
 				
 				
@@ -34,7 +50,7 @@
 				
 				
 			</fieldset>
+			
 		</form>
 	</div>
-	<div dice-modal ng-show="pcsCtrl.pc1SRVC.diceModalShown" class="fill-height"></div>
 </section>

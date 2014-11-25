@@ -1,68 +1,56 @@
 'use strict';
 
 // Cards controller
-angular.module('cards').controller('CardsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Cards', '$log',
-	function($scope, $stateParams, $location, Authentication, Cards, $log) {
-		$scope.authentication = Authentication;
-
-		// Create new Card
-		$scope.create = function() {
-			// Create new Card object
-			var card = new Cards ({
-				name: this.name
-			});
-
-			// Redirect after save
-			card.$save(function(response) {
-				$location.path('cards/' + response._id);
-
-				// Clear form fields
-				$scope.name = '';
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
+angular.module('cards').controller('CardsController', ['$scope', '$location', '$log', 'Cards', 'CardsDeck',
+	function($scope, $location, $log, Cards, CardsDeck) {
+		
+		this.cards = Cards;
+		
+		this.cardsDeck = CardsDeck;
+		
+		this.newCard = function(){
+			Cards.addCard();
+			Cards.cardNew = true;
+			Cards.cardSaved = false;
 		};
 		
-		// Find a list of Cards
-		$scope.find = function() {
-			$scope.cards = Cards.query();
-		};
-
-		// Find existing Card
-		$scope.findOne = function() {
-			$scope.card = Cards.get({ 
-				cardId: $stateParams.cardId
-			});
+		this.openCard = function(card){
+			$location.path('cards/'+card._id+'/edit');
+			Cards.cardNew = false;
+			Cards.cardSaved = false;
 		};
 		
-		// Update existing Card
-		$scope.update = function() {
-			var card = $scope.card ;
-
-			card.$update(function() {
-				$location.path('cards/' + card._id);
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
+		this.saveCard = function(){
+			Cards.editCard();
+			Cards.cardNew = false;
+			Cards.cardSaved = true;
 		};
-
-		// Remove existing Card
-		$scope.remove = function( card ) {
-			if ( card ) { card.$remove();
-
-				for (var i in $scope.cards ) {
-					if ($scope.cards [i] === card ) {
-						$scope.cards.splice(i, 1);
-					}
-				}
-			} else {
-				$scope.card.$remove(function() {
-					$location.path('cards');
-				});
+		
+		this.exitCard = function(){
+			if(Cards.cardNew){
+				Cards.deleteCard();
+			}
+			$location.path('cards');
+		};
+		
+		var shiftLeft = function(event, object){
+			CardsDeck.shiftLeft(object.index);
+		};
+		
+		var shiftRight = function(event, object){
+			CardsDeck.shiftRight(object.index);
+		};
+		
+		var toggleOverlap = function(event, object){
+			var _card = object.index;
+			if(_card > 0){
+				CardsDeck.toggleOverlap(object.index);
 			}
 		};
-
 		
+		$scope.$on('cardDeck:shiftLeft', shiftLeft);
+		$scope.$on('cardDeck:shiftRight', shiftRight);
+		$scope.$on('cardDeck:toggleOverlap', toggleOverlap);
 		
 	}
 ]);

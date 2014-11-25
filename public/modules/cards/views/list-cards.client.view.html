@@ -1,9 +1,9 @@
-<section data-ng-controller="CardsController" data-ng-init="find()">
+<section data-ng-controller="CardsController as cardsCtrl" data-ng-init="cardsCtrl.cards.browseCards()">
 	<div class="page-header">
 		<h1>Cards</h1>
 	</div>
 	<div class="list-group">
-		<a data-ng-repeat="card in cards" data-ng-href="#!/cards/{{card._id}}" class="list-group-item">
+		<a data-ng-repeat="card in cardsCtrl.cards.cardList" data-ng-href="#!/cards/{{card._id}}" class="list-group-item">
 			<small class="list-group-item-text">
 				Posted on
 				<span data-ng-bind="card.created | date:'medium'"></span>
@@ -13,7 +13,21 @@
 			<h4 class="list-group-item-heading" data-ng-bind="card.name"></h4>
 		</a>
 	</div>
-	<div class="alert alert-warning text-center" data-ng-hide="!cards.$resolved || cards.length">
-		No Cards yet, why don't you <a href="/#!/cards/create">create one</a>?
+	
+	<div>
+		<div class="deck-panel">
+			<ul class="card-list">
+				<li ng-repeat="card in cardsCtrl.cards.cardList" class="card-slot"
+					style="z-index: {{cardsCtrl.cards.cardList.length - card.index}}; left: {{card.column}};"
+					ng-style="{left: ((card.column) + 'px')}">
+					<div card-panel feature-card card="card"
+						ng-class="{overlap: card.overlap}"
+						ng-mousemove="" ng-click="">
+					</div>
+				</li>
+			</ol>
+		</div>
 	</div>
+	
+	
 </section>

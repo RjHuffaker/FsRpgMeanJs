@@ -7,244 +7,281 @@
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
 	display: none !important;
 }
-.ng-invalid.ng-dirty{
+.ng-invalid.ng-dirty {
     border-color:#FA787E;
 }
-.ng-valid.ng-dirty{
+.ng-valid.ng-dirty {
     border-color:#78FA89;
 }
 
-.deck-panel{
+.deck-panel {
 	border: solid 1px #555;
 	overflow-x: auto;
 	overflow-y: hidden;
 	width: 100%;
-	height: 425px;
+	height: 450px;
 }
 
-.card-list, [card-slot]{
-	list-style: none;
+.card-list {
 	white-space: nowrap;
-	display: inline-block;
+	list-style: none;
 	position: relative;
 }
 
-[card-panel]{
+[pc-1] {
+	background-image: url('../img/card_001.png');
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+[pc-2] {
+	background-image: url('../img/card_002.png');
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+[pc-3] {
+	background-image: url('../img/card_002.png');
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+[pc-trait] {
+	background-image: url('../img/card_033.png');
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+[pc-feat] {
+	background-image: url('../img/card_042.png');
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+[pc-augment] {
+	background-image: url('../img/card_059.png');
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+[card-slot] {
 	width: 250px;
 	height: 350px;
 	margin-top: 50px;
 	position: absolute;
 	display: inline-block;
-	background-image: url('../img/card_001.png');
-	background-repeat: no-repeat;
-	background-size: 100%;
 }
 
-[card-panel].overlap:hover{
-	margin-top: 0;
-	position: absolute;
-	transition: .5s up down ease-in-out;
-}
-
-.card-slot, [card-panel]:not(.dragging){
-	left: 0;
-	position: absolute;
-	-webkit-transition-delay: 50ms;
-	transition-delay: 50ms;
-	-webkit-transition: .5s ease;
-	-moz-transition: .5s ease;
-	-o-transition: .5s ease;
-	-ms-transition: .5s ease;
-	transition: .5s ease-in-out;
-}
-
-.card-modal{
+[card-panel] {
 	width: 250px;
 	height: 350px;
 	position: absolute;
-	background-image: url('../img/card_001.png');
-	background-repeat: no-repeat;
-	background-size: 100%;
+	display: inline-block;
 }
 
-.card-slot.dragging, [card-panel].dragging:not(.overlap) {
+[card-slot]:not(.dragging), [card-panel]:not(.dragging) {
+	position: absolute;
+	-webkit-transition: .5s ease-in-out;
+	-moz-transition: .5s ease-in-out;
+	-o-transition: .5s ease-in-out;
+	-ms-transition: .5s ease-in-out;
+	transition: .5s ease-in-out;
+}
+
+[card-slot].dragging, [card-panel].dragging {
 	z-index: 9999;
 	transition-property: none;
 }
 
-[card-panel].overlap.dragging{
-	margin-top: 0;
-	position: absolute;
-}
-
-.black-line{
+.black-line {
 	margin: 2px 0;
 	border: solid 1px black;
 	background-color: black;
 	height: 0;
 }
 
-.fill-height{
+.fill-height {
 	height: 100% !important;
 }
 
-.fill-width{
+.fill-width {
 	width: 100% !important;
 }
 
-.fill-parent{
+.fill-parent {
 	height: 100% !important;
 	width: 100% !important;
 }
 
-.bullet-list{
+.bullet-list {
 	margin: 1% 4%;
 	padding: 1% 4%;
 	list-style-type: disc;
 }
 
-.label-list{
+.label-list {
 	margin: 0 4%;
 	padding: 0 4%;
 	list-style-type: none;
 }
 
-.panel-content{
+.panel-content {
 	height: 100%;
 	width: 100%;
 	padding: 5%;
 }
 
-.shadow_light{
-	-webkit-filter: drop-shadow(1px 1px 1px #444);
+.shadow-light {
+	-webkit-filter: drop-shadow(1px 2px 3px #000);
 	-moz-box-shadow: 10px 40px 20px #00f;
-	filter:         drop-shadow(1px 1px 1px #444);
+	filter:         drop-shadow(1px 1px 1px #000);
 }
 
-.shadow_light:hover{
-	-webkit-filter: drop-shadow(2px 2px 2px #000);
+.shadow-light:hover {
+	-webkit-filter: drop-shadow(2px 3px 4px #000);
 	-moz-box-shadow: 10px 40px 20px #00f;
 	filter:         drop-shadow(2px 2px 2px #000);
 }
 
-.shadow_heavy{
-	-webkit-filter: drop-shadow(2px 2px 2px #444);
+.shadow-heavy {
+	-webkit-filter: drop-shadow(2px 3px 4px #000);
 	-moz-box-shadow: 10px 40px 20px #00f;
-	filter:         drop-shadow(2px 2px 2px #444);
+	filter:         drop-shadow(2px 2px 2px #000);
 }
 
-.shadow_heavy:hover{
-	-webkit-filter: drop-shadow(3px 3px 3px #000);
+.shadow-heavy:hover {
+	-webkit-filter: drop-shadow(4px 5px 6px #000);
 	-moz-box-shadow: 10px 40px 20px #00f;
 	filter:         drop-shadow(3px 3px 3px #000);
 	cursor: pointer;
 }
 
-.diceImage{
+.glow-lesser {
+	-webkit-filter: drop-shadow(2px 3px 4px white);
+	-moz-box-shadow: 2px 3px 4px #00f;
+	filter:         drop-shadow(2px 3px 4px white);
+}
+
+.glow-lesser:hover {
+	-webkit-filter: drop-shadow(4px 6px 8px white);
+	-moz-box-shadow: 4px 6px 8px #00f;
+	filter:         drop-shadow(4px 6px 8px white);
+	cursor: pointer;
+}
+
+.dice-image {
+	-webkit-transition: all 1s linear;
+	transition: all 1s linear;
 	width: 36px;
 }
 
-.text-15px{
+.text-15px {
 	font-size: 15px;
 }
 
-.text-13px{
+.text-13px {
 	font-size: 13px;
 }
 
-.text-12px{
+.text-12px {
 	font-size: 12px;
 }
 
-.text-11px{
+.text-11px {
 	font-size: 11px;
 }
 
-.text-10px{
+.text-10px {
 	font-size: 10px;
 }
 
-.text-9px{
+.text-9px {
 	font-size: 9px;
 }
 
-.logo-augment{
+.logo-augment {
 	height: 36px;
 	width: 100px;
 	margin-right: 2%;
 }
 
-.logo-feat{
+.logo-feat {
 	height: 36px;
 	width: 58px;
 	margin-right: 2%;
 }
 
-.logo-item{
+.logo-item {
 	height: 36px;
 	width: 65px;
 	margin-right: 2%;
 }
 
-.logo-npc{
+.logo-npc {
 	height: 36px;
 	width: 72px;
 	margin-right: 2%;
 }
 
-.logo-trait{
+.logo-trait {
 	height: 36px;
 	width: 72px;
 	margin-right: 2%;
 }
 
-.card-trait
-{
+.card-trait {
 	background-image: url('../img/card_001.png');
 	background-repeat: no-repeat;
 	background-size: 250px 350px;
 }
 
-
-[dice-modal] > .modal-dialog{
-	height: 350px;
+.dice-box{
+	-webkit-transition: linear .5s;
+	transition: linear .5s;
+	z-index:10000;
+	position: relative;
+	margin-bottom: -125px;
+	padding: 0 25px 25px 25px;
+	height: 125px;
 	width: 250px;
-	background-image: url('../img/card_001.png');
+	overflow: hidden;
+	background-image: url('../img/wood-drawer.png');
 	background-repeat: no-repeat;
-	background-size: 250px 350px;
+	background-size: 250px 125px;
+}
+
+.dice-box:not(.diceBoxShown){
+	top: -125px;
+}
+
+.dice-box.diceBoxShown{
+	top: 0;
+}
+
+.dice-box-image {
+	display: inline-block;
+	margin: 2px;
+	width: 36px;
 }
 
 .modal-overlay {
-	position:absolute;
+	-webkit-transition: all linear .5s;
+	transition: all linear .5s;
 	z-index:9999;
-	top:0;
-	left:0;
-	width:100%;
-	height:100%;
+	position: relative;
+	height: 450px;
+	width: 100%;
+	margin-bottom: -450px;
 	background-color:#000000;
-	opacity: 0.5;
+	opacity: 0.1;
 }
-.modal-dialog {
-	z-index:10000;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	-webkit-transform: translate(-50%, -50%);
-	-moz-transform: translate(-50%, -50%);
-	background-color: transparent;
-	-webkit-filter: drop-shadow(4px 4px 16px #000);
-	filter:         drop-shadow(4px 4px 16px #000);
+
+.modal-overlay.ng-hide-add.ng-hide-add-active,
+.modal-overlay.ng-hide-remove{
+	opacity: 0;
 }
-.modal-close {
-	position: absolute;
-	z-index: 10000;
-	top: 3px;
-	right: 5px;
-	padding: 5px;
-	cursor: pointer;
-	font-size: 120%;
-	display: inline-block;
-	font-weight: bold;
-	font-family: 'arial', 'sans-serif';
+
+.modal-overlay.ng-hide-remove.ng-hide-remove-active,
+.modal-overlay.ng-hide-add{
+	opacity: 0.1;
 }
