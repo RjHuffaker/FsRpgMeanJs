@@ -2,8 +2,8 @@
 var cardsModule = angular.module('pcs');
 
 // Factory-service for managing PC card deck.
-cardsModule.factory('PcsTraits', ['Pcs',
-	function(Pcs){
+cardsModule.factory('PcsTraits', ['Pcs', 'PcsCardDeck', 
+	function(Pcs, PcsCardDeck){
 		var service = {};
 		
 		// Factor Trait Limit
@@ -13,23 +13,23 @@ cardsModule.factory('PcsTraits', ['Pcs',
 		};
 		
 		service.validateTraits = function(){
-			for(var iA = 0; iA < Pcs.pc.cards[1].traitLimit; iA++){
-				if(!this.traitAtLevel(iA * 4)){
-					this.addTrait(iA * 4);
+			for(var ia = 0; ia < Pcs.pc.cards[1].traitLimit; ia++){
+				if(!this.traitAtLevel(ia * 4)){
+					this.addTrait(ia * 4);
 				}
 			}
-			for(var iC = 0; iC < Pcs.pc.cards.length; iC++){
-				if(Pcs.pc.cards[iC].level > Pcs.pc.cards[1].level){
-					this.removeTrait(iC);
+			for(var ic = 0; ic < Pcs.pc.cards.length; ic++){
+				if(Pcs.pc.cards[ic].level > Pcs.pc.cards[1].level){
+					PcsCardDeck.removeCard(ic);
 				}
 			}
 		};
 		
 		service.traitAtLevel = function(level){
 			var traitAtLevel = false;
-			for(var iB = 0; iB < Pcs.pc.cards.length; iB++){
-				if(Pcs.pc.cards[iB].cardType === 'pcTrait'){
-					if(Pcs.pc.cards[iB].level === level){
+			for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
+				if(Pcs.pc.cards[ib].cardType === 'trait'){
+					if(Pcs.pc.cards[ib].level === level){
 						traitAtLevel = true;
 					}
 				}
@@ -39,27 +39,16 @@ cardsModule.factory('PcsTraits', ['Pcs',
 		
 		service.addTrait = function(level){
 			var newTrait = {
-				cardType: 'pcTrait',
+				cardType: 'trait',
 				x_index: Pcs.pc.cards.length,
 				y_index: 0,
-				x_coord: Pcs.pc.cards[Pcs.cardBy_X_Index(Pcs.pc.cards.length - 1)].x_coord + 250,
+				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 250,
 				y_coord: 0,
-				overlap: false,
+				x_overlap: false,
+				y_overlap: false,
 				level: level
 			};
 			Pcs.pc.cards.push(newTrait);
-		};
-		
-		service.removeTrait = function(card){
-			var removeIndex = Pcs.pc.cards[card].x_index;
-			var removeColumn = Pcs.pc.cards[card].overlap ? 25 : 250;
-			Pcs.pc.cards.splice(card, 1);
-			for(var iD = 0; iD < Pcs.pc.cards.length; iD++){
-				if(Pcs.pc.cards[iD].x_index > removeIndex){
-					Pcs.pc.cards[iD].x_index -= 1;
-					Pcs.pc.cards[iD].x_coord -= removeColumn;
-				}
-			}
 		};
 		
 		return service;

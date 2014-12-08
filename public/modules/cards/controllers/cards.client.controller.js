@@ -33,24 +33,47 @@ angular.module('cards').controller('CardsController', ['$scope', '$location', '$
 			$location.path('cards');
 		};
 		
-		var shiftLeft = function(event, object){
-			CardsDeck.shiftLeft(object.index);
+		var moveHorizontal = function(event, object){
+			console.log('moveHorizontal');
+		};
+
+		var moveDiagonalUp = function(event, object){
+			console.log('moveDiagonalUp');
+		};
+
+		var moveDiagonalDown = function(event, object){
+			console.log('moveDiagonalDown');
 		};
 		
-		var shiftRight = function(event, object){
-			CardsDeck.shiftRight(object.index);
+		var moveVertical = function(event, object){
+			console.log('moveVertical');
+		};
+		
+		var unstackLeft = function(event, object){
+			console.log('unstackLeft');
+		};
+		
+		var unstackRight = function(event, object){
+			console.log('unstackRight');
 		};
 		
 		var toggleOverlap = function(event, object){
-			var _card = object.index;
-			if(_card > 0){
-				CardsDeck.toggleOverlap(object.index);
-			}
+			console.log('toggleOverlap');
 		};
 		
-		$scope.$on('cardDeck:shiftLeft', shiftLeft);
-		$scope.$on('cardDeck:shiftRight', shiftRight);
-		$scope.$on('cardDeck:toggleOverlap', toggleOverlap);
+		var onReleaseCard = function(){
+			console.log('onReleaseCard');
+		};
+		
+		$scope.$on('cardSlot:moveHorizontal', moveHorizontal);
+		$scope.$on('cardSlot:moveDiagonalUp', moveDiagonalUp);
+		$scope.$on('cardSlot:moveDiagonalDown', moveDiagonalDown);
+		$scope.$on('cardSlot:moveVertical', moveVertical);
+		
+		$scope.$on('cardDeck:unstackLeft', unstackLeft);
+		$scope.$on('cardDeck:unstackRight', unstackRight);
+		$scope.$on('cardPanel:toggleOverlap', toggleOverlap);
+		$scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 		
 	}
 ]);

@@ -51,40 +51,65 @@ pcsModule.controller('PcsController', ['$scope', '$location', '$log', 'DataSRVC'
 			$location.path('pcs');
 		};
 		
-		var shiftUp = function(event, object){
-			PcsCardDeck.shiftUp(object.card);
+		var moveHorizontal = function(event, object){
+			if((object.panel.y_overlap && object.panel.y_index === 0) || Pcs.pc.cards[Pcs.lowestCard(object.panel.x_index)].y_index === 0){
+				PcsCardDeck.switchHorizontal(object.slot, object.panel);
+			} else {
+				PcsCardDeck.unstackCard(object.slot, object.panel);
+			}
 		};
-		
-		var shiftDown = function(event, object){
-			PcsCardDeck.shiftDown(object.card);
+
+		var moveDiagonalUp = function(event, object){
+			if((object.panel.y_index === 0 && object.panel.y_overlap) || Pcs.pc.cards[Pcs.lowestCard(object.panel.x_index)].y_index === 0){
+				PcsCardDeck.stackUnder(object.slot, object.panel);
+			} else {
+				PcsCardDeck.unstackCard(object.slot, object.panel);
+			}
 		};
-		
-		var shiftLeft = function(event, object){
-			PcsCardDeck.shiftLeft(object.card);
-		};
-		
-		var shiftRight = function(event, object){
-			PcsCardDeck.shiftRight(object.card);
-		};
-		
-		var toggle_X_Overlap = function(event, object){
-			var _card = object.card;
-			if(_card.x_index > 0){
-				PcsCardDeck.toggle_X_Overlap(_card);
+
+		var moveDiagonalDown = function(event, object){
+			if((object.panel.y_index === 0 && object.panel.y_overlap) || Pcs.pc.cards[Pcs.lowestCard(object.panel.x_index)].y_index === 0){
+				PcsCardDeck.stackOver(object.slot, object.panel);
+			} else {
+				PcsCardDeck.unstackCard(object.slot, object.panel);
 			}
 		};
 		
-		var toggle_Y_Overlap = function(event, object){
-			var _card = object.card;
-			PcsCardDeck.toggle_Y_Overlap(_card);
+		var moveVertical = function(event, object){
+			PcsCardDeck.switchVertical(object.slot, object.panel);
 		};
 		
-		$scope.$on('cardDeck:shiftUp', shiftUp);
-		$scope.$on('cardDeck:shiftDown', shiftDown);
-		$scope.$on('cardDeck:shiftLeft', shiftLeft);
-		$scope.$on('cardDeck:shiftRight', shiftRight);
-		$scope.$on('cardDeck:toggle_X_Overlap', toggle_X_Overlap);
-		$scope.$on('cardDeck:toggle_Y_Overlap', toggle_Y_Overlap);
+		var unstackLeft = function(event, object){
+			if(object.panel.y_index > 0){
+				PcsCardDeck.unstackCard({x_index: -1}, object.panel);
+			}
+		};
+		
+		var unstackRight = function(event, object){
+			if(object.panel.y_index > 0){
+				var unstack_index = Pcs.pc.cards[Pcs.lastCard()].x_index + 1;
+				PcsCardDeck.unstackCard({x_index: unstack_index}, object.panel);
+			}
+		};
+		
+		var toggleOverlap = function(event, object){
+			PcsCardDeck.toggleOverlap(object.panel);
+		};
+		
+		var onReleaseCard = function(){
+			PcsCardDeck.onReleaseCard();
+		};
+		
+		$scope.$on('cardSlot:moveHorizontal', moveHorizontal);
+		$scope.$on('cardSlot:moveDiagonalUp', moveDiagonalUp);
+		$scope.$on('cardSlot:moveDiagonalDown', moveDiagonalDown);
+		$scope.$on('cardSlot:moveVertical', moveVertical);
+		
+		$scope.$on('cardDeck:unstackLeft', unstackLeft);
+		$scope.$on('cardDeck:unstackRight', unstackRight);
+		$scope.$on('cardPanel:toggleOverlap', toggleOverlap);
+		$scope.$on('cardPanel:onReleaseCard', onReleaseCard);
+		
 		
 		$scope.$on('pcsCard1:updateStrPhy', function(event, object){
 			PcsCard1.factorBlock(object._str, object._phy);
@@ -107,7 +132,7 @@ pcsModule.controller('PcsController', ['$scope', '$location', '$log', 'DataSRVC'
 		
 		//Watch for change in EXP input
 		$scope.$watch('pcsCtrl.pcsCard2.EXP', function(newValue, oldValue){
-			if(Pcs.pc.cards){
+			if(Pcs.pc.cards && newValue !== oldValue){
 				PcsCard2.EXP = parseInt(newValue);
 				Pcs.pc.cards[1].experience = parseInt(newValue);
 			}
@@ -115,8 +140,11 @@ pcsModule.controller('PcsController', ['$scope', '$location', '$log', 'DataSRVC'
 		
 		//Watch for change in experience
 		$scope.$watch('pcsCtrl.pcs.pc.cards[1].experience', function(newValue, oldValue){
-			if(Pcs.pc.cards){
+			if(Pcs.pc.cards && newValue !== oldValue){
 				PcsCard2.factorExperience();
+				if(newValue !== PcsCard2.EXP){
+					PcsCard2.EXP = newValue;
+				}
 			}
 		});
 		

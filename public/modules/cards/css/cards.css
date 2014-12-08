@@ -1,0 +1,47 @@
+.panel-content {
+	height: 100%;
+	width: 100%;
+	padding: 5%;
+}
+
+.bullet-list {
+	margin: 1% 4%;
+	padding: 1% 4%;
+	list-style-type: disc;
+}
+
+.label-list {
+	margin: 0 4%;
+	padding: 0 4%;
+	list-style-type: none;
+}
+
+.logo-augment {
+	height: 36px;
+	width: 100px;
+	margin-right: 2%;
+}
+
+.logo-feat {
+	height: 36px;
+	width: 58px;
+	margin-right: 2%;
+}
+
+.logo-item {
+	height: 36px;
+	width: 65px;
+	margin-right: 2%;
+}
+
+.logo-npc {
+	height: 36px;
+	width: 72px;
+	margin-right: 2%;
+}
+
+.logo-trait {
+	height: 36px;
+	width: 72px;
+	margin-right: 2%;
+}

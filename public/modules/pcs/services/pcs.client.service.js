@@ -43,7 +43,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 		
 		service.deckWidth = function(){
 			if(this.pc.cards){
-				return this.pc.cards[this.lastCard()].x_coord + 250;
+				return this.pc.cards[this.lastCard()].x_coord + 275;
 			} else {
 				return 1000;
 			}
@@ -54,9 +54,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 			var _card = {};
 			for(var i = 0; i < this.pc.cards.length; i++) {
 				if(this.pc.cards[i].x_index === x_index){
-					if(this.pc.cards[i].y_index > (_card.y_index || 0)){
+					if(this.pc.cards[i].y_index > (_card.y_index || -1)){
 						_lowest = i;
-						console.log(this.pc.cards[i]);
 						_card = this.pc.cards[i];
 					}
 				}
@@ -176,10 +175,10 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						x_coord: 500,
 						y_coord: 0,
 						x_overlap: false,
-						y_overlap: false,
+						y_overlap: false
 					},
 					{
-						cardType: 'pcTrait',
+						cardType: 'trait',
 						x_index: 3,
 						y_index: 0,
 						x_coord: 750,

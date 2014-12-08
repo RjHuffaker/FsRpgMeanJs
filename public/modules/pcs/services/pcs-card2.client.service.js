@@ -9,6 +9,10 @@ pcsModule.factory('PcsCard2', ['$rootScope', 'Pcs',
 		
 		service.EXP = 0;
 		
+		if(Pcs.pc.cards){
+			service.EXP = Pcs.pc.cards[1].experience;
+		}
+		
 		service.factorExperience = function(){
 			var mLevel = 0;
 			var mExperience = Number(Pcs.pc.cards[1].experience);
