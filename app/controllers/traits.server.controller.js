@@ -4,103 +4,103 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-	errorHandler = require('./errors'),
-	Card = mongoose.model('Card'),
+    errorHandler = require('./errors'),
+	Trait = mongoose.model('Trait'),
 	_ = require('lodash');
 
 /**
- * Create a Card
+ * Create a Trait
  */
 exports.create = function(req, res) {
-	var card = new Card(req.body);
-	card.user = req.user;
-
-	card.save(function(err) {
+	var trait = new Trait(req.body);
+	trait.user = req.user;
+	
+	trait.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(card);
+			res.jsonp(trait);
 		}
 	});
 };
 
 /**
- * Show the current Card
+ * Show the current Trait
  */
 exports.read = function(req, res) {
-	res.jsonp(req.card);
+	res.jsonp(req.trait);
 };
 
 /**
- * Update a Card
+ * Update a Trait
  */
 exports.update = function(req, res) {
-	var card = req.card;
+	var trait = req.trait;
 
-	card = _.extend(card, req.body);
+	trait = _.extend(trait, req.body);
 
-	card.save(function(err) {
+	trait.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(card);
+			res.jsonp(trait);
 		}
 	});
 };
 
 /**
- * Delete an Card
+ * Delete n Trait
  */
 exports.delete = function(req, res) {
-	var card = req.card ;
+	var trait = req.trait ;
 
-	card.remove(function(err) {
+	trait.remove(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(card);
+			res.jsonp(trait);
 		}
 	});
 };
 
 /**
- * List of Cards
+ * List of Traits
  */
-exports.list = function(req, res) {
-	Card.find().sort('-created').populate('user', 'displayName').exec(function(err, cards) {
+exports.list = function(req, res){
+	Trait.find().exec(function(err, traits){
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(cards);
+			res.jsonp(traits);
 		}
 	});
 };
 
 /**
- * Card middleware
+ * Trait middleware
  */
-exports.cardByID = function(req, res, next, id) {
-	Card.findById(id).populate('user', 'displayName').exec(function(err, card){
+exports.traitByID = function(req, res, next, id){
+	Trait.findById(id).populate('user', 'displayName').exec(function(err, trait){
 		if (err) return next(err);
-		if (! card) return next(new Error('Failed to load Card ' + id));
-		req.card = card;
+		if (! trait) return next(new Error('Failed to load Trait ' + id));
+		req.trait = trait;
 		next();
 	});
 };
 
 /**
- * Card authorization middleware
+ * Trait authorization middleware
  */
 exports.hasAuthorization = function(req, res, next){
-	if(req.card.user.id !== req.user.id){
+	if (req.trait.user.id !== req.user.id) {
 		return res.status(403).send('User is not authorized');
 	}
 	next();

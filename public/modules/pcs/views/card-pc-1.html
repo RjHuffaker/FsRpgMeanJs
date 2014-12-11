@@ -26,7 +26,7 @@
 				<td width="30%">
 					<select id="sex" class="fill-width"
 						ng-model="card.sex"
-						ng-options="sex for sex in pcsCtrl.dataSRVC.sexArray"
+						ng-options="sex for sex in dataSRVC.sexArray"
 						stop-event>
 					</select>
 				</td>
@@ -40,7 +40,7 @@
 				<td width="20%">
 					<img id="strDie" stop-event
 						ng-src={{card.abilities[0].dice.image}}
-						ng-click="pcsCtrl.pcsCard1.chooseAbility(0)"
+						ng-click="pcsCard1.chooseAbility(0)"
 						alt="{{card.abilities[0].dice.name}}"
 						class="dice-image shadow-heavy" />
 				</td>
@@ -52,7 +52,7 @@
 				<td width="20%">
 					<img id="phyDie" stop-event
 						ng-src={{card.abilities[1].dice.image}}
-						ng-click="pcsCtrl.pcsCard1.chooseAbility(1)"
+						ng-click="pcsCard1.chooseAbility(1)"
 						alt="{{card.abilities[1].dice.name}}"
 						class="dice-image shadow-heavy" />
 				</td>
@@ -79,7 +79,7 @@
 				<td width="15%">
 					<img id="fleDie" stop-event
 						ng-src={{card.abilities[2].dice.image}}
-						ng-click="pcsCtrl.pcsCard1.chooseAbility(2)"
+						ng-click="pcsCard1.chooseAbility(2)"
 						alt="{{card.abilities[2].dice.name}}"
 						class="dice-image shadow-heavy" />
 				</td>
@@ -92,7 +92,7 @@
 				<td width="15%">
 					<img id="dexDie" stop-event
 						ng-src={{card.abilities[3].dice.image}}
-						ng-click="pcsCtrl.pcsCard1.chooseAbility(3)"
+						ng-click="pcsCard1.chooseAbility(3)"
 						alt="{{card.abilities[3].dice.name}}"
 						class="dice-image shadow-heavy" />
 				</td>
@@ -119,7 +119,7 @@
 				<td width="15%">
 					<img id="acuDie" stop-event
 						ng-src={{card.abilities[4].dice.image}}
-						ng-click="pcsCtrl.pcsCard1.chooseAbility(4)"
+						ng-click="pcsCard1.chooseAbility(4)"
 						alt="{{card.abilities[4].dice.name}}"
 						class="dice-image shadow-heavy" />
 				</td>
@@ -131,7 +131,7 @@
 				<td width="15%">
 					<img id="intDie" stop-event
 						ng-src={{card.abilities[5].dice.image}}
-						ng-click="pcsCtrl.pcsCard1.chooseAbility(5)"
+						ng-click="pcsCard1.chooseAbility(5)"
 						alt="{{card.abilities[5].dice.name}}"
 						class="dice-image shadow-heavy" />
 				</td>
@@ -158,7 +158,7 @@
 				<td width="15%">
 					<img id="wisDie" stop-event
 						ng-src={{card.abilities[6].dice.image}}
-						ng-click="pcsCtrl.pcsCard1.chooseAbility(6)"
+						ng-click="pcsCard1.chooseAbility(6)"
 						alt="{{card.abilities[6].dice.name}}"
 						class="dice-image shadow-heavy" />
 				</td>
@@ -170,7 +170,7 @@
 				<td width="15%">
 					<img id="chaDie" stop-event
 						ng-src={{card.abilities[7].dice.image}}
-						ng-click="pcsCtrl.pcsCard1.chooseAbility(7)"
+						ng-click="pcsCard1.chooseAbility(7)"
 						alt="{{card.abilities[7].dice.name}}"
 						class="dice-image shadow-heavy" />
 				</td>

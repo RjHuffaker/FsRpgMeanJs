@@ -4,14 +4,15 @@
 	overflow-y: hidden;
 	position: relative;
 	width: 100%;
-	height: 500px;
+	height: 550px;
 }
 
 [card-deck] {
 	white-space: nowrap;
 	list-style: none;
 	position: absolute;
-	margin: 50px 25px;
+	margin: 0 25px;
+	height: 100% 500px;
 	-webkit-transition: .4s linear all;
 	-moz-transition: .4s linear all;
 	-o-transition: .4s linear all;
@@ -32,7 +33,7 @@
 }
 
 [card-pc-3] {
-	background-image: url('../img/card_002.png');
+	background-image: url('../img/card_006.png');
 	background-repeat: no-repeat;
 	background-size: 100%;
 }
@@ -44,7 +45,7 @@
 }
 
 [card-feat] {
-	background-image: url('../img/card_042.png');
+	background-image: url('../img/card_041.png');
 	background-repeat: no-repeat;
 	background-size: 100%;
 }
@@ -56,12 +57,12 @@
 }
 
 [card-item] {
-	background-image: url('../img/card_033.png');
+	background-image: url('../img/card_016.png');
 	background-repeat: no-repeat;
 	background-size: 100%;
 }
 
-[card-slot], [card-panel]{
+[card-slot], [card-panel] {
 	width: 250px;
 	height: 350px;
 	display: inline-block;
@@ -74,6 +75,20 @@
 }
 
 [card-slot].dragging, [card-panel].dragging {
-	z-index: 9999;
+	z-index: 4999;
 	transition-property: none;
 }
+
+[card-slot].ng-enter {
+	margin-top: -400px;
+}
+
+[card-slot].ng-leave.ng-leave-active {
+	margin-top: 400px;
+}
+
+[card-slot].ng-leave,
+[card-slot].ng-enter.ng-enter-active {
+	margin-top: 0;
+}
+

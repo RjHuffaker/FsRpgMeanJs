@@ -7,9 +7,9 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 /**
- * Card Schema
+ * Item Schema
  */
-var CardSchema = new Schema({
+var ItemSchema = new Schema({
 	name: {
 		type: String,
 		default: '',
@@ -25,4 +25,4 @@ var CardSchema = new Schema({
 	}
 });
 
-mongoose.model('Card', CardSchema);
+mongoose.model('Item', ItemSchema);

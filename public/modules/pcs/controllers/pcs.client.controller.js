@@ -3,48 +3,48 @@
 var pcsModule = angular.module('pcs');
 
 // Pcs Controller
-pcsModule.controller('PcsController', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs', 'PcsCardDeck', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
+pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs', 'PcsCardDeck', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
 	function($scope, $location, $log, DataSRVC, Pcs, PcsCardDeck, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems){
 		
-		this.dataSRVC = DataSRVC;
+		$scope.dataSRVC = DataSRVC;
 		
-		this.pcs = Pcs;
+		$scope.pcs = Pcs;
 		
-		this.pcsCardDeck = PcsCardDeck;
+		$scope.pcsCardDeck = PcsCardDeck;
 		
-		this.pcsCard1 = PcsCard1;
+		$scope.pcsCard1 = PcsCard1;
 		
-		this.pcsCard2 = PcsCard2;
+		$scope.pcsCard2 = PcsCard2;
 		
-		this.pcsCard3 = PcsCard3;
+		$scope.pcsCard3 = PcsCard3;
 		
-		this.pcsTraits = PcsTraits;
+		$scope.pcsTraits = PcsTraits;
 		
-		this.pcsFeats = PcsFeats;
+		$scope.pcsFeats = PcsFeats;
 		
-		this.pcsAugments = PcsAugments;
+		$scope.pcsAugments = PcsAugments;
 		
-		this.pcsItems = PcsItems;
+		$scope.pcsItems = PcsItems;
 		
-		this.newPc = function(){
+		$scope.newPc = function(){
 			Pcs.addPc();
 			Pcs.pcNew = true;
 			Pcs.pcSaved = false;
 		};
 		
-		this.openPc = function(pc){
+		$scope.openPc = function(pc){
 			$location.path('pcs/'+pc._id+'/edit');
 			Pcs.pcNew = false;
 			Pcs.pcSaved = false;
 		};
 		
-		this.savePc = function(){
+		$scope.savePc = function(){
 			Pcs.editPc();
 			Pcs.pcNew = false;
 			Pcs.pcSaved = true;
 		};
 		
-		this.exitPc = function(){
+		$scope.exitPc = function(){
 			if(Pcs.pcNew){
 				Pcs.deletePc();
 			}
@@ -131,7 +131,7 @@ pcsModule.controller('PcsController', ['$scope', '$location', '$log', 'DataSRVC'
 		});
 		
 		//Watch for change in EXP input
-		$scope.$watch('pcsCtrl.pcsCard2.EXP', function(newValue, oldValue){
+		$scope.$watch('pcsCard2.EXP', function(newValue, oldValue){
 			if(Pcs.pc.cards && newValue !== oldValue){
 				PcsCard2.EXP = parseInt(newValue);
 				Pcs.pc.cards[1].experience = parseInt(newValue);
@@ -139,7 +139,7 @@ pcsModule.controller('PcsController', ['$scope', '$location', '$log', 'DataSRVC'
 		});
 		
 		//Watch for change in experience
-		$scope.$watch('pcsCtrl.pcs.pc.cards[1].experience', function(newValue, oldValue){
+		$scope.$watch('pcs.pc.cards[1].experience', function(newValue, oldValue){
 			if(Pcs.pc.cards && newValue !== oldValue){
 				PcsCard2.factorExperience();
 				if(newValue !== PcsCard2.EXP){
@@ -149,7 +149,7 @@ pcsModule.controller('PcsController', ['$scope', '$location', '$log', 'DataSRVC'
 		});
 		
 		//Watch for changes in level
-		$scope.$watch('pcsCtrl.pcs.pc.cards[1].level', function(newValue, oldValue, scope){
+		$scope.$watch('pcs.pc.cards[1].level', function(newValue, oldValue, scope){
 			if(Pcs.pc.cards){
 				PcsCard2.factorHealth();
 				PcsCard2.factorStamina();

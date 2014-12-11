@@ -40,8 +40,9 @@ cardsModule.factory('PcsFeats', ['Pcs', 'PcsCardDeck',
 		
 		service.addFeat = function(level){
 			var newFeat = {
+				name: 'Level '+level+' Feat',
 				cardType: 'feat',
-				x_index: Pcs.pc.cards.length,
+				x_index: Pcs.pc.cards[Pcs.lastCard()].x_index + 1,
 				y_index: 0,
 				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 250,
 				y_coord: 0,

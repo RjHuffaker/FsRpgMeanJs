@@ -1,32 +1,32 @@
 'use strict';
 
 // Cards controller
-angular.module('cards').controller('CardsController', ['$scope', '$location', '$log', 'Cards', 'CardsDeck',
+angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 'Cards', 'CardsDeck',
 	function($scope, $location, $log, Cards, CardsDeck) {
 		
-		this.cards = Cards;
+		$scope.cards = Cards;
 		
-		this.cardsDeck = CardsDeck;
+		$scope.cardsDeck = CardsDeck;
 		
-		this.newCard = function(){
+		$scope.newCard = function(){
 			Cards.addCard();
 			Cards.cardNew = true;
 			Cards.cardSaved = false;
 		};
 		
-		this.openCard = function(card){
+		$scope.openCard = function(card){
 			$location.path('cards/'+card._id+'/edit');
 			Cards.cardNew = false;
 			Cards.cardSaved = false;
 		};
 		
-		this.saveCard = function(){
+		$scope.saveCard = function(){
 			Cards.editCard();
 			Cards.cardNew = false;
 			Cards.cardSaved = true;
 		};
 		
-		this.exitCard = function(){
+		$scope.exitCard = function(){
 			if(Cards.cardNew){
 				Cards.deleteCard();
 			}

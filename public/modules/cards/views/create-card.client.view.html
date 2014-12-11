@@ -1,14 +1,14 @@
-<section data-ng-controller="CardsController">
+<section data-ng-controller="CardsController as cardsCtrl">
     <div class="page-header">
         <h1>New Card</h1>
     </div>
     <div class="col-md-12">
-        <form class="form-horizontal" data-ng-submit="create()" novalidate>
+        <form class="form-horizontal" data-ng-submit="cardsCtrl.newCard()" novalidate>
             <fieldset>
                 <div class="form-group">
                     <label class="control-label" for="name">Name</label>
                     <div class="controls">
-                        <input type="text" data-ng-model="name" id="name" class="form-control" placeholder="Name">
+                        <input type="text" data-ng-model="cardsCtrl.name" id="name" class="form-control" placeholder="Name">
                     </div>
                 </div>
                 <div class="form-group">

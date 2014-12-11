@@ -4,103 +4,103 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-	errorHandler = require('./errors'),
-	Card = mongoose.model('Card'),
+    errorHandler = require('./errors'),
+	Item = mongoose.model('Item'),
 	_ = require('lodash');
 
 /**
- * Create a Card
+ * Create a Item
  */
 exports.create = function(req, res) {
-	var card = new Card(req.body);
-	card.user = req.user;
-
-	card.save(function(err) {
+	var item = new Item(req.body);
+	item.user = req.user;
+	
+	item.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(card);
+			res.jsonp(item);
 		}
 	});
 };
 
 /**
- * Show the current Card
+ * Show the current Item
  */
 exports.read = function(req, res) {
-	res.jsonp(req.card);
+	res.jsonp(req.item);
 };
 
 /**
- * Update a Card
+ * Update a Item
  */
 exports.update = function(req, res) {
-	var card = req.card;
+	var item = req.item;
 
-	card = _.extend(card, req.body);
+	item = _.extend(item, req.body);
 
-	card.save(function(err) {
+	item.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(card);
+			res.jsonp(item);
 		}
 	});
 };
 
 /**
- * Delete an Card
+ * Delete a Item
  */
 exports.delete = function(req, res) {
-	var card = req.card ;
+	var item = req.item ;
 
-	card.remove(function(err) {
+	item.remove(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(card);
+			res.jsonp(item);
 		}
 	});
 };
 
 /**
- * List of Cards
+ * List of Items
  */
-exports.list = function(req, res) {
-	Card.find().sort('-created').populate('user', 'displayName').exec(function(err, cards) {
+exports.list = function(req, res){
+	Item.find().exec(function(err, items){
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(cards);
+			res.jsonp(items);
 		}
 	});
 };
 
 /**
- * Card middleware
+ * Item middleware
  */
-exports.cardByID = function(req, res, next, id) {
-	Card.findById(id).populate('user', 'displayName').exec(function(err, card){
+exports.itemByID = function(req, res, next, id){
+	Item.findById(id).populate('user', 'displayName').exec(function(err, item){
 		if (err) return next(err);
-		if (! card) return next(new Error('Failed to load Card ' + id));
-		req.card = card;
+		if (! item) return next(new Error('Failed to load Item ' + id));
+		req.item = item;
 		next();
 	});
 };
 
 /**
- * Card authorization middleware
+ * Item authorization middleware
  */
 exports.hasAuthorization = function(req, res, next){
-	if(req.card.user.id !== req.user.id){
+	if (req.item.user.id !== req.user.id) {
 		return res.status(403).send('User is not authorized');
 	}
 	next();

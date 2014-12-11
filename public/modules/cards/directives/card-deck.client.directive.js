@@ -365,7 +365,7 @@ cardsModule
 					}
 					
 					if(_slot.y_overlap){
-						bottomEdge = _offset.top + 35;
+						bottomEdge = _offset.top + 50;
 					}
 					
 					return mouseX >= leftEdge && mouseX <= rightEdge && mouseY >= topEdge && mouseY <= bottomEdge;

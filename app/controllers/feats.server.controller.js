@@ -4,103 +4,103 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-	errorHandler = require('./errors'),
-	Card = mongoose.model('Card'),
+    errorHandler = require('./errors'),
+	Feat = mongoose.model('Feat'),
 	_ = require('lodash');
 
 /**
- * Create a Card
+ * Create a Feat
  */
 exports.create = function(req, res) {
-	var card = new Card(req.body);
-	card.user = req.user;
-
-	card.save(function(err) {
+	var feat = new Feat(req.body);
+	feat.user = req.user;
+	
+	feat.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(card);
+			res.jsonp(feat);
 		}
 	});
 };
 
 /**
- * Show the current Card
+ * Show the current Feat
  */
 exports.read = function(req, res) {
-	res.jsonp(req.card);
+	res.jsonp(req.feat);
 };
 
 /**
- * Update a Card
+ * Update a Feat
  */
 exports.update = function(req, res) {
-	var card = req.card;
+	var feat = req.feat;
 
-	card = _.extend(card, req.body);
+	feat = _.extend(feat, req.body);
 
-	card.save(function(err) {
+	feat.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(card);
+			res.jsonp(feat);
 		}
 	});
 };
 
 /**
- * Delete an Card
+ * Delete a Feat
  */
 exports.delete = function(req, res) {
-	var card = req.card ;
+	var feat = req.feat ;
 
-	card.remove(function(err) {
+	feat.remove(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(card);
+			res.jsonp(feat);
 		}
 	});
 };
 
 /**
- * List of Cards
+ * List of Feats
  */
-exports.list = function(req, res) {
-	Card.find().sort('-created').populate('user', 'displayName').exec(function(err, cards) {
+exports.list = function(req, res){
+	Feat.find().exec(function(err, feats){
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(cards);
+			res.jsonp(feats);
 		}
 	});
 };
 
 /**
- * Card middleware
+ * Feat middleware
  */
-exports.cardByID = function(req, res, next, id) {
-	Card.findById(id).populate('user', 'displayName').exec(function(err, card){
+exports.featByID = function(req, res, next, id){
+	Feat.findById(id).populate('user', 'displayName').exec(function(err, feat){
 		if (err) return next(err);
-		if (! card) return next(new Error('Failed to load Card ' + id));
-		req.card = card;
+		if (! feat) return next(new Error('Failed to load Feat ' + id));
+		req.feat = feat;
 		next();
 	});
 };
 
 /**
- * Card authorization middleware
+ * Feat authorization middleware
  */
 exports.hasAuthorization = function(req, res, next){
-	if(req.card.user.id !== req.user.id){
+	if (req.feat.user.id !== req.user.id) {
 		return res.status(403).send('User is not authorized');
 	}
 	next();

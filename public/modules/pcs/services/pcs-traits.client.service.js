@@ -39,8 +39,9 @@ cardsModule.factory('PcsTraits', ['Pcs', 'PcsCardDeck',
 		
 		service.addTrait = function(level){
 			var newTrait = {
+				name: 'Level '+level+' Trait',
 				cardType: 'trait',
-				x_index: Pcs.pc.cards.length,
+				x_index: Pcs.pc.cards[Pcs.lastCard()].x_index + 1,
 				y_index: 0,
 				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 250,
 				y_coord: 0,

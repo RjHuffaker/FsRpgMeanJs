@@ -39,10 +39,11 @@ cardsModule.factory('PcsAugments', ['Pcs', 'PcsCardDeck',
 		
 		service.addAugment = function(level){
 			var newAugment = {
+				name: 'Level '+level+' Augment',
 				cardType: 'augment',
-				x_index: Pcs.pc.cards.length,
-				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 250,
+				x_index: Pcs.pc.cards[Pcs.lastCard()].x_index + 1,
 				y_index: 0,
+				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 250,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,

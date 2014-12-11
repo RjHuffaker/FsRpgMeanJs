@@ -4,103 +4,103 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-	errorHandler = require('./errors'),
-	Card = mongoose.model('Card'),
+    errorHandler = require('./errors'),
+	Augment = mongoose.model('Augment'),
 	_ = require('lodash');
 
 /**
- * Create a Card
+ * Create a Augment
  */
 exports.create = function(req, res) {
-	var card = new Card(req.body);
-	card.user = req.user;
-
-	card.save(function(err) {
+	var augment = new Augment(req.body);
+	augment.user = req.user;
+	
+	augment.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(card);
+			res.jsonp(augment);
 		}
 	});
 };
 
 /**
- * Show the current Card
+ * Show the current Augment
  */
 exports.read = function(req, res) {
-	res.jsonp(req.card);
+	res.jsonp(req.augment);
 };
 
 /**
- * Update a Card
+ * Update a Augment
  */
 exports.update = function(req, res) {
-	var card = req.card;
+	var augment = req.augment;
 
-	card = _.extend(card, req.body);
+	augment = _.extend(augment, req.body);
 
-	card.save(function(err) {
+	augment.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(card);
+			res.jsonp(augment);
 		}
 	});
 };
 
 /**
- * Delete an Card
+ * Delete a Augment
  */
 exports.delete = function(req, res) {
-	var card = req.card ;
+	var augment = req.augment ;
 
-	card.remove(function(err) {
+	augment.remove(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(card);
+			res.jsonp(augment);
 		}
 	});
 };
 
 /**
- * List of Cards
+ * List of Augments
  */
-exports.list = function(req, res) {
-	Card.find().sort('-created').populate('user', 'displayName').exec(function(err, cards) {
+exports.list = function(req, res){
+	Augment.find().exec(function(err, augments){
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(cards);
+			res.jsonp(augments);
 		}
 	});
 };
 
 /**
- * Card middleware
+ * Augment middleware
  */
-exports.cardByID = function(req, res, next, id) {
-	Card.findById(id).populate('user', 'displayName').exec(function(err, card){
+exports.augmentByID = function(req, res, next, id){
+	Augment.findById(id).populate('user', 'displayName').exec(function(err, augment){
 		if (err) return next(err);
-		if (! card) return next(new Error('Failed to load Card ' + id));
-		req.card = card;
+		if (! augment) return next(new Error('Failed to load Augment ' + id));
+		req.augment = augment;
 		next();
 	});
 };
 
 /**
- * Card authorization middleware
+ * Augment authorization middleware
  */
 exports.hasAuthorization = function(req, res, next){
-	if(req.card.user.id !== req.user.id){
+	if (req.augment.user.id !== req.user.id) {
 		return res.status(403).send('User is not authorized');
 	}
 	next();

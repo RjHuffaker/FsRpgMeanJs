@@ -178,6 +178,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						y_overlap: false
 					},
 					{
+						name: 'Level 0 Trait',
 						cardType: 'trait',
 						x_index: 3,
 						y_index: 0,

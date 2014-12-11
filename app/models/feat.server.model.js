@@ -7,9 +7,9 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 /**
- * Card Schema
+ * Trait Schema
  */
-var CardSchema = new Schema({
+var FeatSchema = new Schema({
 	name: {
 		type: String,
 		default: '',
@@ -25,4 +25,4 @@ var CardSchema = new Schema({
 	}
 });
 
-mongoose.model('Card', CardSchema);
+mongoose.model('Feat', FeatSchema);
