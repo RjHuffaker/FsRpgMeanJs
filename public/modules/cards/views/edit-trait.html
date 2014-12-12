@@ -8,14 +8,14 @@
 			<strong>{{card.name}}</strong>
 			<div card-menu class="pull-right"></div>
 			<hr class="black-line" ng-show="card.name">
-			Level {{card.level}} Trait
+			Level {{card.level}} Trait (Edit Mode)
 			<br />
 		</h5>
 	</div>
 	<span class="pull-right">
 		<b>X:</b> {{card.x_index}}
-		<span ng-show="card.x_overlap">(-)</span> 
-		<span ng-hide="card.x_overlap">(+)</span> 
+		<span ng-show="card.x_overlap">(-)</span>
+		<span ng-hide="card.x_overlap">(+)</span>
 		 / 
 		<b>Y:</b> {{card.y_index}}
 		<span ng-show="card.y_overlap">(-)</span>

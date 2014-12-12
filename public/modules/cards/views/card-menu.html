@@ -1,0 +1,14 @@
+<div class="dropdown" stop-event
+	ng-hide="card.x_overlap || card.y_overlap">
+	<a class="dropdown-toggle"
+		style="height: 16px; width: 16px;"
+		id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true"
+		ng-hide="card.x_overlap || card.y_overlap" stop-event>
+		<img class="menu-icon" src="/modules/core/img/threelines.png" alt="Menu">
+	</a>
+	<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1">
+		<li role="presentation" ng-show="card.locked"><a role="menuitem" tabindex="-1" ng-click="toggleCardLock(card)">Unlock</a></li>
+		<li role="presentation" ng-hide="card.locked"><a role="menuitem" tabindex="-1" ng-click="toggleCardLock(card)">Lock</a></li>
+		<li role="presentation"><a role="menuitem" tabindex="-1" ng-click="cards.deleteCard(card)">Delete</a></li>
+	</ul>
+</div>

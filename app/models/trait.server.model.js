@@ -12,7 +12,7 @@ var mongoose = require('mongoose'),
 var TraitSchema = new Schema({
 	name: {
 		type: String,
-		default: '',
+		default: 'Trait',
 		trim: true
 	},
 	created: {
@@ -22,6 +22,18 @@ var TraitSchema = new Schema({
 	user: {
 		type: Schema.ObjectId,
 		ref: 'User'
+	},
+	locked: {
+		type: Boolean,
+		default: false
+	},
+	cardType: {
+		type: String,
+		default: 'trait'
+	},
+	cardNumber: {
+		type: Number,
+		default: 0
 	}
 });
 

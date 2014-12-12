@@ -34,10 +34,22 @@ cardsModule
 			templateUrl: '../modules/cards/views/card-trait.html'
 		};
 	})
+	.directive('editTrait', function () {
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/cards/views/edit-trait.html'
+		};
+	})
 	.directive('cardFeat', function () {
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/cards/views/card-feat.html'
+		};
+	})
+	.directive('editFeat', function () {
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/cards/views/edit-feat.html'
 		};
 	})
 	.directive('cardAugment', function () {
@@ -46,10 +58,28 @@ cardsModule
 			templateUrl: '../modules/cards/views/card-augment.html'
 		};
 	})
+	.directive('editAugment', function () {
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/cards/views/edit-augment.html'
+		};
+	})
 	.directive('cardItem', function () {
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/cards/views/card-item.html'
+		};
+	})
+	.directive('editItem', function () {
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/cards/views/edit-item.html'
+		};
+	})
+	.directive('cardMenu', function () {
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/cards/views/card-menu.html'
 		};
 	})
 	.directive('stopEvent', function () {

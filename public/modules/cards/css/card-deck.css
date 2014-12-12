@@ -4,14 +4,14 @@
 	overflow-y: hidden;
 	position: relative;
 	width: 100%;
-	height: 550px;
+	height: 500px;
 }
 
 [card-deck] {
 	white-space: nowrap;
 	list-style: none;
 	position: absolute;
-	margin: 0 25px;
+	margin: 50px 25px;
 	height: 100% 500px;
 	-webkit-transition: .4s linear all;
 	-moz-transition: .4s linear all;
@@ -38,25 +38,25 @@
 	background-size: 100%;
 }
 
-[card-trait] {
+[card-trait], [edit-trait] {
 	background-image: url('../img/card_033.png');
 	background-repeat: no-repeat;
 	background-size: 100%;
 }
 
-[card-feat] {
+[card-feat], [edit-feat] {
 	background-image: url('../img/card_041.png');
 	background-repeat: no-repeat;
 	background-size: 100%;
 }
 
-[card-augment] {
+[card-augment], [edit-augment] {
 	background-image: url('../img/card_059.png');
 	background-repeat: no-repeat;
 	background-size: 100%;
 }
 
-[card-item] {
+[card-item], [edit-item] {
 	background-image: url('../img/card_016.png');
 	background-repeat: no-repeat;
 	background-size: 100%;

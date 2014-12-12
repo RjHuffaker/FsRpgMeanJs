@@ -1,4 +1,4 @@
-<div ng-switch on="card.cardType" class="fill-parent">
+<div ng-show="card.locked" ng-switch on="card.cardType" class="fill-parent">
 	<div ng-switch-when="pc1" card="card" card-pc-1 class="fill-parent"></div>
 	<div ng-switch-when="pc2" card="card" card-pc-2 class="fill-parent"></div>
 	<div ng-switch-when="pc3" card="card" card-pc-3 class="fill-parent"></div>
@@ -6,4 +6,13 @@
 	<div ng-switch-when="feat" card="card" card-feat class="fill-parent"></div>
 	<div ng-switch-when="augment" card="card" card-augment class="fill-parent"></div>
 	<div ng-switch-when="item" card="card" card-item class="fill-parent"></div>
+</div>
+<div ng-hide="card.locked" ng-switch on="card.cardType" class="fill-parent">
+	<div ng-switch-when="pc1" card="card" card-pc-1 class="fill-parent"></div>
+	<div ng-switch-when="pc2" card="card" card-pc-2 class="fill-parent"></div>
+	<div ng-switch-when="pc3" card="card" card-pc-3 class="fill-parent"></div>
+	<div ng-switch-when="trait" card="card" edit-trait class="fill-parent"></div>
+	<div ng-switch-when="feat" card="card" edit-feat class="fill-parent"></div>
+	<div ng-switch-when="augment" card="card" edit-augment class="fill-parent"></div>
+	<div ng-switch-when="item" card="card" edit-item class="fill-parent"></div>
 </div>

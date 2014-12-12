@@ -14,6 +14,11 @@ angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 
 			Cards.cardSaved = false;
 		};
 		
+		$scope.toggleCardLock = function(card){
+			Cards.card = card;
+			Cards.card.locked = !Cards.card.locked;
+		};
+		
 		$scope.openCard = function(card){
 			$location.path('cards/'+card._id+'/edit');
 			Cards.cardNew = false;
@@ -31,6 +36,14 @@ angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 
 				Cards.deleteCard();
 			}
 			$location.path('cards');
+		};
+		
+		$scope.editCard = function(card){
+			console.log(card);
+		};
+		
+		$scope.deleteCard = function(card){
+			
 		};
 		
 		var moveHorizontal = function(event, object){

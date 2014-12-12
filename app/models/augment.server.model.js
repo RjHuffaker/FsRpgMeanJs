@@ -12,7 +12,7 @@ var mongoose = require('mongoose'),
 var AugmentSchema = new Schema({
 	name: {
 		type: String,
-		default: '',
+		default: 'Augment',
 		trim: true
 	},
 	created: {
@@ -22,6 +22,14 @@ var AugmentSchema = new Schema({
 	user: {
 		type: Schema.ObjectId,
 		ref: 'User'
+	},
+	cardType: {
+		type: String,
+		default: 'augment'
+	},
+	cardNumber: {
+		type: Number,
+		default: 0
 	}
 });
 

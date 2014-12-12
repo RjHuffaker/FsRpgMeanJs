@@ -7,12 +7,12 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 /**
- * Trait Schema
+ * Feat Schema
  */
 var FeatSchema = new Schema({
 	name: {
 		type: String,
-		default: '',
+		default: 'Feat',
 		trim: true
 	},
 	created: {
@@ -22,6 +22,14 @@ var FeatSchema = new Schema({
 	user: {
 		type: Schema.ObjectId,
 		ref: 'User'
+	},
+	cardType: {
+		type: String,
+		default: 'feat'
+	},
+	cardNumber: {
+		type: Number,
+		default: 0
 	}
 });
 

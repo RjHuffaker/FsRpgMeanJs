@@ -33,90 +33,83 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 		var service = {};
 		
 		service.card = {};
-
+		
 		service.cardList = [];
+		
+		service.cardType = 0;
 		
 		service.cardNew = false;
 		
 		service.cardSaved = false;
 		
-		// BROWSE traits
-		service.browseTraits = function() {
-			this.cardList = Traits.query();
-			for(var i = 0; i < service.cardList; i++){
+		service.setCardList = function(){
+			for(var i = 0; i < service.cardList.length; i++){
 				service.cardList[i].x_index = service.cardList[i].cardNumber - 1;
 				service.cardList[i].y_index = 0;
-				service.cardList[i].x_coord = 0;
+				service.cardList[i].x_coord = service.cardList[i].x_index * 250;
 				service.cardList[i].y_coord = 0;
 			}
-			console.log(this.cardList);
 		};
 		
-		// BROWSE feats
-		service.browseFeats = function() {
-			this.cardList = Feats.query(
-				function(response) {
-				}
-			);
-			for(var i = 0; i < this.cardList; i++){
-				this.cardList[i].x_index = this.cardList[i].cardNumber - 1;
-				this.cardList[i].y_index = 0;
-				this.cardList[i].x_coord = this.cardList[i].x_index * 250;
-				this.cardList[i].y_coord = 0;
+		// BROWSE cards
+		service.browseCards = function(cardType){
+			service.cardType = cardType;
+			switch(service.cardType){
+				case 1:
+					service.cardList = Traits.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+				case 2:
+					service.cardList = Feats.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+				case 3:
+					service.cardList = Augments.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+				case 4:
+					service.cardList = Items.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
 			}
-		};
-		
-		// BROWSE augments
-		service.browseAugments = function() {
-			this.cardList = Augments.query(
-				function(response) {
-					for(var i = 0; i < this.cardList; i++){
-						this.cardList[i].x_index = this.cardList[i].cardNumber - 1;
-						this.cardList[i].y_index = 0;
-						this.cardList[i].x_coord = this.cardList[i].x_index * 250;
-						this.cardList[i].y_coord = 0;
-					}
-				}
-			);
-		};
-		
-		// BROWSE Items
-		service.browseItems = function() {
-			this.cardList = Items.query(
-				function(response) {
-					for(var i = 0; i < this.cardList; i++){
-						this.cardList[i].x_index = this.cardList[i].cardNumber - 1;
-						this.cardList[i].y_index = 0;
-						this.cardList[i].x_coord = this.cardList[i].x_index * 250;
-						this.cardList[i].y_coord = 0;
-					}
-				}
-			);
 		};
 		
 		// READ single Card
-		service.readTrait = function() {
-			this.card = Traits.get({
-				traitId: $stateParams.traitId
-			});
-		};
-		
-		service.readFeat = function() {
-			this.card = Feats.get({
-				featId: $stateParams.featId
-			});
-		};
-		
-		service.readAugment = function() {
-			this.card = Augments.get({
-				augmentId: $stateParams.augmentId
-			});
-		};
-		
-		service.readItem = function() {
-			this.card = Items.get({
-				itemId: $stateParams.itemId
-			});
+		service.readCard = function(){
+			switch(service.cardType){
+				case 1:
+					service.card = Traits.get({
+						traitId: $stateParams.traitId
+					});
+					break;
+				case 2:
+					service.card = Feats.get({
+						featId: $stateParams.featId
+					});
+					break;
+				case 3:
+					service.card = Augments.get({
+						augmentId: $stateParams.augmentId
+					});
+					break;
+				case 4:
+					service.card = Items.get({
+						itemId: $stateParams.itemId
+					});
+					break;
+			}
 		};
 		
 		// EDIT existing Card
@@ -124,71 +117,73 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 			var card = this.card;
 			
 			card.$update(function() {
-				
+			
 			}, function(errorResponse) {
 				this.error = errorResponse.data.message;
 			});
 		};
 		
 		// ADD a new Card
-		service.addTrait = function() {
-			this.card = new Traits ({});
-			
-			this.card.$save(function(response) {
-				$location.path('traits/'+response._id+'/edit');
-			}, function(errorResponse) {
-		//		this.error = errorResponse.data.message;
-				console.log(errorResponse);
-			});
-		};
-		
-		service.addFeat = function() {
-			this.card = new Feats ({});
-			
-			this.card.$save(function(response) {
-				$location.path('feats/'+response._id+'/edit');
-			}, function(errorResponse) {
-		//		this.error = errorResponse.data.message;
-				console.log(errorResponse);
-			});
-		};
-		
-		service.addAugment = function() {
-			this.card = new Augments ({});
-			
-			this.card.$save(function(response) {
-				$location.path('augments/'+response._id+'/edit');
-			}, function(errorResponse) {
-		//		this.error = errorResponse.data.message;
-				console.log(errorResponse);
-			});
-		};
-		
-		service.addItem = function() {
-			this.card = new Items ({});
-			
-			this.card.$save(function(response) {
-				$location.path('items/'+response._id+'/edit');
-			}, function(errorResponse) {
-		//		this.error = errorResponse.data.message;
-				console.log(errorResponse);
-			});
+		service.addCard = function(){
+			switch(service.cardType){
+				case 1:
+					this.card = new Traits ({
+						cardNumber: this.cardList.length + 1
+					});
+					this.card.$save(function(response) {
+						service.browseCards(service.cardType);
+					}, function(errorResponse) {
+						console.log(errorResponse);
+					});
+					break;
+				case 2:
+					this.card = new Feats ({
+						cardNumber: this.cardList.length + 1
+					});
+					this.card.$save(function(response) {
+						service.browseCards(service.cardType);
+					}, function(errorResponse) {
+						console.log(errorResponse);
+					});
+					break;
+				case 3:
+					this.card = new Augments ({
+						cardNumber: this.cardList.length + 1
+					});
+					this.card.$save(function(response) {
+						service.browseCards(service.cardType);
+					}, function(errorResponse) {
+						console.log(errorResponse);
+					});
+					break;
+				case 4:
+					this.card = new Items ({
+						cardNumber: this.cardList.length + 1
+					});
+					this.card.$save(function(response){
+						service.browseCards(service.cardType);
+					}, function(errorResponse){
+						console.log(errorResponse);
+					});
+					break;
+			}
 		};
 		
 		// DELETE existing Card
-		service.deleteCard = function(card) {
-			if ( card ) { card.$remove();
-				for (var i in this.cardlist ) {
-					if (this.cardlist [i] === card ) {
+		service.deleteCard = function(card){
+			if (card) {
+				card.$remove();
+				for(var i in this.cardlist){
+					if (this.cardlist[i] === card ) {
 						this.cardlist.splice(i, 1);
 					}
 				}
 			} else {
-				this.card.$remove(function() {
+				this.card.$remove(function(){
 					$location.path('cards');
 				});
 			}
-			this.browseCards();
+			this.browseCards(this.cardType);
 		};
 		
 		return service;

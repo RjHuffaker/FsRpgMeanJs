@@ -16,23 +16,24 @@
 				</ol>
 			</div>
 		</div>
-		<input type="submit" value="Traits"
-			ng-click="cards.browseTraits()"
-			class="col-xs-2 btn btn-success">
-		<input type="submit" value="Feats"
-			ng-click="cards.browseFeats()"
-			class="col-xs-2 btn btn-success">
-		<input type="submit" value="Augments"
-			ng-click="cards.browseAugments()"
-			class="col-xs-2 btn btn-success">
-		<input type="submit" value="Items"
-			ng-click="cards.browseItems()"
-			class="col-xs-2 btn btn-success">
-		<input type="submit" value="New"
-			ng-click=""
-			class="col-xs-2 btn btn-warning">
-		<input type="submit" value="Save"
-			ng-click=""
-			class="col-xs-2 btn btn-danger">
+		<div class="col-xs-12">
+			<input type="submit" value="Traits"
+				ng-click="cards.browseCards(1)"
+				class="col-xs-2 btn btn-success">
+			<input type="submit" value="Feats"
+				ng-click="cards.browseCards(2)"
+				class="col-xs-2 btn btn-success">
+			<input type="submit" value="Augments"
+				ng-click="cards.browseCards(3)"
+				class="col-xs-2 btn btn-success">
+			<input type="submit" value="Items"
+				ng-click="cards.browseCards(4)"
+				class="col-xs-2 btn btn-success">
+			<input type="submit" value="Add Card"
+				ng-click="cards.addCard()"
+				class="col-xs-2 btn btn-warning">
+		</div>
+		
+		
 	</div>
 </section>

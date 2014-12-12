@@ -12,7 +12,7 @@ var mongoose = require('mongoose'),
 var ItemSchema = new Schema({
 	name: {
 		type: String,
-		default: '',
+		default: 'Item',
 		trim: true
 	},
 	created: {
@@ -22,6 +22,14 @@ var ItemSchema = new Schema({
 	user: {
 		type: Schema.ObjectId,
 		ref: 'User'
+	},
+	cardType: {
+		type: String,
+		default: 'item'
+	},
+	cardNumber: {
+		type: Number,
+		default: 0
 	}
 });
 

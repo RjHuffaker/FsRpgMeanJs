@@ -16,6 +16,16 @@
 	list-style-type: none;
 }
 
+[card-menu] {
+	display: inline-block;
+	cursor: pointer;
+}
+
+.menu-icon {
+	height: 16px;
+	width: 16px;
+}
+
 .logo-augment {
 	height: 36px;
 	width: 100px;
