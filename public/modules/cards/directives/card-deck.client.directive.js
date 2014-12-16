@@ -264,7 +264,7 @@ cardsModule
 						var moveX = Math.abs(object.moveX);
 						var moveY = Math.abs(object.moveY);
 						if(_slot.x_index !== _panel.x_index){
-							if(moveY * 3 > moveX){
+							if(moveY * 2 > moveX){
 								if(object.moveY < 0 && !_slot.x_overlap){
 								// Moving up
 									$rootScope.$broadcast('cardSlot:moveDiagonalUp', {
@@ -285,7 +285,7 @@ cardsModule
 								});
 							}
 						} else if(_slot.x_index === _panel.x_index && _slot.y_index !== _panel.y_index){
-							if(moveY > moveX * 3 && !object.panel.y_overlap){
+							if(moveY > moveX * 2 && !object.panel.y_overlap){
 								$rootScope.$broadcast('cardSlot:moveVertical', {
 									slot: _slot,
 									panel: _panel

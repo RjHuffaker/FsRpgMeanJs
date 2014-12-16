@@ -147,9 +147,9 @@ body {
 	transition: all linear .5s;
 	z-index:9999;
 	position: relative;
-	height: 450px;
+	height: 500px;
 	width: 100%;
-	margin-bottom: -450px;
+	margin-bottom: -500px;
 	background-color:#000000;
 	opacity: 0.1;
 }

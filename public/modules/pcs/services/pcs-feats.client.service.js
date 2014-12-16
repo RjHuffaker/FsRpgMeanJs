@@ -8,19 +8,19 @@ cardsModule.factory('PcsFeats', ['Pcs', 'PcsCardDeck',
 		
 		// Factor Feat Limit
 		service.factorFeatLimit = function(){
-			Pcs.pc.cards[1].featLimit = Math.ceil((Pcs.pc.cards[1].level) / 4) || 0;
-			Pcs.pc.cards[1].featDeck = Pcs.pc.cards[1].level;
+			Pcs.pc.featLimit = Math.ceil((Pcs.pc.level) / 4) || 0;
+			Pcs.pc.featDeck = Pcs.pc.level;
 			this.validateFeats();
 		};
 		
 		service.validateFeats = function(){
-			for(var ia = 0; ia < Pcs.pc.cards[1].featDeck; ia++){
+			for(var ia = 0; ia < Pcs.pc.featDeck; ia++){
 				if(!this.featAtLevel(ia + 1)){
 					this.addFeat(ia + 1);
 				}
 			}
 			for(var ic = 0; ic < Pcs.pc.cards.length; ic++){
-				if(Pcs.pc.cards[ic].level > Pcs.pc.cards[1].level){
+				if(Pcs.pc.cards[ic].level > Pcs.pc.level){
 					PcsCardDeck.removeCard(ic);
 				}
 			}
@@ -48,6 +48,7 @@ cardsModule.factory('PcsFeats', ['Pcs', 'PcsCardDeck',
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
+				locked: true,
 				level: level
 			};
 			Pcs.pc.cards.push(newFeat);

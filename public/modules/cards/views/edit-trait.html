@@ -1,24 +1,62 @@
-<div class="panel-content pull-left">
-	<div ng-show="card.name">
-		<img ng-show="card.cardType"
-			src="modules/cards/img/logo_trait.png"
-			alt="Trait"
-			class="logo-trait pull-left" />
-		<h5 ng-show="card.name" style="margin-top: 0">
-			<strong>{{card.name}}</strong>
-			<div card-menu class="pull-right"></div>
-			<hr class="black-line" ng-show="card.name">
-			Level {{card.level}} Trait (Edit Mode)
-			<br />
-		</h5>
+<div class="content-table"
+	style="font-size: {{card.fontSize}}px;">
+	<div class="content-row">
+		<div class="content-cell-top">
+			<div card-menu></div>
+			<div>
+				<img src="modules/cards/img/logo_trait.png"
+					alt="Trait" class="logo-trait pull-left" />
+				<h5 style="margin-top: 0">
+					<input type="text"  style="margin-top: -1px; width: 152px"
+						class="clear-input name-trait text-bold"
+						ng-model="card.name" stop-event>
+					<hr class="black-line">
+					<span>Keywords</span> Trait <span ng-show="card.level >= 0">Level {{card.level}}</span>
+					<br />
+				</h5>
+			</div>
+			<textarea elastic ng-change="resize()" rows="1"
+				class="clear-input text-center text-descriptive"
+				ng-model="card.description" stop-event>
+			</textarea>
+		</div>
 	</div>
-	<span class="pull-right">
-		<b>X:</b> {{card.x_index}}
-		<span ng-show="card.x_overlap">(-)</span>
-		<span ng-hide="card.x_overlap">(+)</span>
-		 / 
-		<b>Y:</b> {{card.y_index}}
-		<span ng-show="card.y_overlap">(-)</span>
-		<span ng-hide="card.y_overlap">(+)</span>
-	</span>
+	<div class="content-row">
+		<div class="content-cell-bottom">
+			<div ng-show="card.benefit.show" style="margin: 4% 0 4% 0">
+				<strong>Benefit: </strong>
+				<textarea class="clear-input" rows="1"
+					elastic ng-change="resize()" 
+					ng-model="card.benefit.content" stop-event>
+				</textarea>
+			</div>
+			<div ng-show="card.cs_quote" style="margin: 2% 4% 0 4%">
+				"<strong>Critical Success: </strong>{{card.cs_quote}}"
+			</div>
+			<div edit-action="card.action_1"
+				actionTypes="dataSRVC.actionTypes"
+				ng-show="card.action_1.show">
+			</div>
+			<div edit-action="card.action_2"
+				actionTypes="dataSRVC.actionTypes"
+				ng-show="card.action_2.show">
+			</div>
+			<div edit-action="card.action_3"
+				actionTypes="dataSRVC.actionTypes"
+				ng-show="card.action_3.show">
+			</div>
+			<span class="pull-left">
+				<b>X:</b> {{card.x_index}}
+				<span ng-show="card.x_overlap">(-)</span>
+				<span ng-hide="card.x_overlap">(+)</span>
+				 / 
+				<b>Y:</b> {{card.y_index}}
+				<span ng-show="card.y_overlap">(-)</span>
+				<span ng-hide="card.y_overlap">(+)</span>
+			</span>
+			<span class="pull-right">
+				{{card.cardNumber}}
+			</span>
+		</div>
+	</div>
 </div>

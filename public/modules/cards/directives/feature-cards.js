@@ -82,11 +82,53 @@ cardsModule
 			templateUrl: '../modules/cards/views/card-menu.html'
 		};
 	})
-	.directive('stopEvent', function () {
+	.directive('cardAction', function () {
 		return {
 			restrict: 'A',
-			link: function (scope, element, attr) {
-				element.bind('mousedown', function (e) {
+			templateUrl: '../modules/cards/views/card-action.html'
+		};
+	})
+	.directive('editAction', function () {
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/cards/views/edit-action.html',
+			scope: {
+				editAction: '='
+			}
+		};
+	})
+	.directive('elastic', [
+		'$timeout',
+		function($timeout) {
+			return{
+				restrict: 'A',
+				link: function($scope, element) {
+					$scope.resize = function() {
+						console.log('resize');
+						if(element[0].scrollHeight > 0){
+							return element[0].style.height = "" + element[0].scrollHeight + "px";
+						}
+					};
+					$timeout($scope.resize, 100);
+				}
+			};
+		}
+	])
+	.directive('stopEvent', function(){
+		return{
+			restrict: 'A',
+			link: function(scope, element, attr){
+				element.bind('mousedown', function(e){
+					e.stopPropagation();
+				});
+			}
+		};
+	})
+	.directive('stopClick', function(){
+		return{
+			restrict: 'A',
+			link: function(scope, element, attr){
+				element.bind('click', function(e){
 					e.stopPropagation();
 				});
 			}

@@ -1,49 +1,35 @@
 'use strict';
 
 // Cards controller
-angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 'Cards', 'CardsDeck',
-	function($scope, $location, $log, Cards, CardsDeck) {
+angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Cards', 'CardsDeck',
+	function($scope, $location, $log, DataSRVC, Cards, CardsDeck) {
+		
+		$scope.dataSRVC = DataSRVC;
 		
 		$scope.cards = Cards;
 		
 		$scope.cardsDeck = CardsDeck;
 		
-		$scope.newCard = function(){
-			Cards.addCard();
-			Cards.cardNew = true;
-			Cards.cardSaved = false;
+		$scope.roles = [
+			{"id": 1, "name": "Manager", "assignable": true},
+			{"id": 2, "name": "Developer", "assignable": true},
+			{"id": 3, "name": "Reporter", "assignable": true}
+		];
+
+		$scope.member = {roles: []};
+		$scope.selected_items = [];
+		
+		$scope.unlockCard = function(card){
+			card.locked = false;
 		};
 		
-		$scope.toggleCardLock = function(card){
-			Cards.card = card;
-			Cards.card.locked = !Cards.card.locked;
-		};
-		
-		$scope.openCard = function(card){
-			$location.path('cards/'+card._id+'/edit');
-			Cards.cardNew = false;
-			Cards.cardSaved = false;
-		};
-		
-		$scope.saveCard = function(){
-			Cards.editCard();
-			Cards.cardNew = false;
-			Cards.cardSaved = true;
-		};
-		
-		$scope.exitCard = function(){
-			if(Cards.cardNew){
-				Cards.deleteCard();
-			}
-			$location.path('cards');
-		};
-		
-		$scope.editCard = function(card){
-			console.log(card);
+		$scope.confirmCard = function(card){
+			Cards.editCard(card);
+			card.locked = true;
 		};
 		
 		$scope.deleteCard = function(card){
-			
+			Cards.deleteCard(card);
 		};
 		
 		var moveHorizontal = function(event, object){

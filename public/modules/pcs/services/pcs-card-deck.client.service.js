@@ -6,6 +6,8 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 	function(Pcs){
 		var service = {};
 		
+		var x_dim = 250;
+		var y_dim = 350;
 		var x_tab = 25;
 		var y_tab = 50;
 		var x_cover = 225;
@@ -88,12 +90,12 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 							Pcs.pc.cards[ia].x_index += 1;
 							if(slot_x_index > 0){
 								if(panel_x_overlap){
-									Pcs.pc.cards[ia].x_coord += x_tab;
+									Pcs.pc.cards[ia].x_coord += x_cover;
 								} else {
-									Pcs.pc.cards[ia].x_coord += 250;
+									Pcs.pc.cards[ia].x_coord += x_dim;
 								}
 							} else {
-								Pcs.pc.cards[ia].x_coord = 250;
+								Pcs.pc.cards[ia].x_coord = x_dim;
 								Pcs.pc.cards[ia].x_overlap = false;
 							}
 						} else if(Pcs.pc.cards[ia].x_index === panel_x_index){
@@ -103,7 +105,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 								if(slot_x_overlap){
 									Pcs.pc.cards[ia].x_coord -= x_tab;
 								} else {
-									Pcs.pc.cards[ia].x_coord -= 250;
+									Pcs.pc.cards[ia].x_coord -= x_dim;
 								}
 							} else {
 								Pcs.pc.cards[ia].x_coord = 0;
@@ -124,7 +126,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 								if(panel_x_overlap){
 									Pcs.pc.cards[ib].x_coord -= x_tab;
 								} else {
-									Pcs.pc.cards[ib].x_coord -= 250;
+									Pcs.pc.cards[ib].x_coord -= x_dim;
 								}
 							} else {
 								Pcs.pc.cards[ib].x_coord = 0;
@@ -137,10 +139,10 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 								if(slot_x_overlap){
 									Pcs.pc.cards[ib].x_coord += x_tab;
 								} else {
-									Pcs.pc.cards[ib].x_coord += 250;
+									Pcs.pc.cards[ib].x_coord += x_dim;
 								}
 							} else {
-								Pcs.pc.cards[ib].x_coord = 250;
+								Pcs.pc.cards[ib].x_coord = x_dim;
 								Pcs.pc.cards[ib].x_overlap = false;
 							}
 						} else if(panel_x_index === 0 && slot_x_overlap){
@@ -256,7 +258,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 						Pcs.pc.cards[ia].y_index += panel_lowest_index + 1;
 					}
 					if(Pcs.pc.cards[ia].x_index > slot_x_index){
-						Pcs.pc.cards[ia].x_coord -= 250;
+						Pcs.pc.cards[ia].x_coord -= x_dim;
 						Pcs.pc.cards[ia].x_index -= 1;
 					}
 				}
@@ -272,7 +274,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 						Pcs.pc.cards[ib].y_index += slot_y_index + 1;
 					}
 					if(Pcs.pc.cards[ib].x_index > panel_x_index){
-						Pcs.pc.cards[ib].x_coord -= 250;
+						Pcs.pc.cards[ib].x_coord -= x_dim;
 						Pcs.pc.cards[ib].x_index -= 1;
 						if(Pcs.pc.cards[ib].x_index === panel_x_index && Pcs.pc.cards[ib].y_index > slot_y_index){
 							Pcs.pc.cards[ib].y_coord += panel_lowest_coord + y_tab;
@@ -312,7 +314,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 						Pcs.pc.cards[ia].y_index += panel_lowest_index + 1;
 					}
 					if(Pcs.pc.cards[ia].x_index > slot_x_index){
-						Pcs.pc.cards[ia].x_coord -= 250;
+						Pcs.pc.cards[ia].x_coord -= x_dim;
 						Pcs.pc.cards[ia].x_index -= 1;
 					}
 				}
@@ -327,7 +329,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 						Pcs.pc.cards[ib].y_index += panel_lowest_index + 1;
 					}
 					if(Pcs.pc.cards[ib].x_index > panel_x_index){
-						Pcs.pc.cards[ib].x_coord -= 250;
+						Pcs.pc.cards[ib].x_coord -= x_dim;
 						Pcs.pc.cards[ib].x_index -= 1;
 					}
 				}
@@ -355,13 +357,13 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 					// Unstack multiple cards to the left
 						for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
 							if(Pcs.pc.cards[ia].x_index > panel_x_index){
-								Pcs.pc.cards[ia].x_coord += 250;
+								Pcs.pc.cards[ia].x_coord += x_dim;
 								Pcs.pc.cards[ia].x_index += 1;
 							}
 							if(Pcs.pc.cards[ia].x_index === panel_x_index){
 								if(panel_y_overlap){
 									if(Pcs.pc.cards[ia].y_index < panel_y_index){
-										Pcs.pc.cards[ia].x_coord += 250;
+										Pcs.pc.cards[ia].x_coord += x_dim;
 										Pcs.pc.cards[ia].x_index += 1;
 									} else if(Pcs.pc.cards[ia].y_index >= panel_y_index){
 										Pcs.pc.cards[ia].y_coord -= panel_y_coord;
@@ -374,11 +376,11 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 						for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
 							if(Pcs.pc.cards[ib].x_index >= panel_x_index){
 								if(Pcs.pc.cards[ib].x_index === panel_x_index && Pcs.pc.cards[ib].y_index > panel_y_index){
-									Pcs.pc.cards[ib].y_coord -= 350;
+									Pcs.pc.cards[ib].y_coord -= y_dim;
 									Pcs.pc.cards[ib].y_index -= 1;
 								}
 								if(ib !== panel_index){
-									Pcs.pc.cards[ib].x_coord += 250;
+									Pcs.pc.cards[ib].x_coord += x_dim;
 									Pcs.pc.cards[ib].x_index += 1;
 								}
 							}
@@ -394,13 +396,13 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 					// Unstack multiple cards to the right
 						for(var ic = 0; ic < Pcs.pc.cards.length; ic++){
 							if(Pcs.pc.cards[ic].x_index > panel_x_index){
-								Pcs.pc.cards[ic].x_coord += 250;
+								Pcs.pc.cards[ic].x_coord += x_dim;
 								Pcs.pc.cards[ic].x_index += 1;
 							}
 							if(Pcs.pc.cards[ic].x_index === panel_x_index){
 								if(Pcs.pc.cards[ic].y_index >= panel_y_index){
 									Pcs.pc.cards[ic].x_index += 1;
-									Pcs.pc.cards[ic].x_coord += 250;
+									Pcs.pc.cards[ic].x_coord += x_dim;
 									Pcs.pc.cards[ic].y_index -= panel_y_index;
 									Pcs.pc.cards[ic].y_coord -= panel_y_coord;
 								}
@@ -410,15 +412,15 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 					// Unstack single (un-overlapped) card to the right
 						for(var id = 0; id < Pcs.pc.cards.length; id++){
 							if(Pcs.pc.cards[id].x_index > panel_x_index){
-								Pcs.pc.cards[id].x_coord += 250;
+								Pcs.pc.cards[id].x_coord += x_dim;
 								Pcs.pc.cards[id].x_index += 1;
 							}
 							if(Pcs.pc.cards[id].x_index === panel_x_index && Pcs.pc.cards[id].y_index > panel_y_index){
-								Pcs.pc.cards[id].y_coord -= 350;
+								Pcs.pc.cards[id].y_coord -= y_dim;
 								Pcs.pc.cards[id].y_index -= 1;
 							}
 						}
-						Pcs.pc.cards[panel_index].x_coord += 250;
+						Pcs.pc.cards[panel_index].x_coord += x_dim;
 						Pcs.pc.cards[panel_index].x_index += 1;
 						Pcs.pc.cards[panel_index].y_coord = 0;
 						Pcs.pc.cards[panel_index].y_index = 0;
@@ -481,7 +483,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 								Pcs.pc.cards[ia].y_coord = Pcs.pc.cards[ia].y_index * y_tab;
 								Pcs.pc.cards[ia].y_overlap = true;
 							} else if(Pcs.pc.cards[ia].y_index > card_y_index){
-								Pcs.pc.cards[ia].y_coord = y_cover + Pcs.pc.cards[ia].y_index * y_tab;
+								Pcs.pc.cards[ia].y_coord = card_y_cover + Pcs.pc.cards[ia].y_index * y_tab;
 								if(Pcs.pc.cards[ia].y_index < lowest_y_index){
 									Pcs.pc.cards[ia].y_overlap = true;
 								}
@@ -505,9 +507,9 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 		
 		service.removeCard = function(card){
 			var card_x_index = Pcs.pc.cards[card].x_index;
-			var card_width = Pcs.pc.cards[card].x_overlap ? x_tab : 250;
+			var card_width = Pcs.pc.cards[card].x_overlap ? x_tab : Pcs.pc.cards[card].x_dim;
 			var card_y_index = Pcs.pc.cards[card].y_index;
-			var card_height = Pcs.pc.cards[card].y_overlap ? y_tab : 350;
+			var card_height = Pcs.pc.cards[card].y_overlap ? y_tab : Pcs.pc.cards[card].y_dim;
 			var lowest_y_index = Pcs.pc.cards[Pcs.lowestCard(card_x_index)].y_index;
 			Pcs.pc.cards.splice(card, 1);
 			for(var id = 0; id < Pcs.pc.cards.length; id++){

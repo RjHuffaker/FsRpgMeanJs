@@ -1,7 +1,38 @@
 .panel-content {
 	height: 100%;
 	width: 100%;
-	padding: 5%;
+	padding: 13px;
+}
+
+.content-table
+{
+	height: 350px;
+	width: 250px;
+	display: table;
+	padding: 13px;
+}
+
+.content-row
+{
+	display: table-row;
+}
+
+.content-cell
+{
+	display: table-cell;
+	vertical-align: center;
+}
+
+.content-cell-top
+{
+	display: table-cell;
+	vertical-align: top;
+}
+
+.content-cell-bottom
+{
+	display: table-cell;
+	vertical-align: bottom;
 }
 
 .bullet-list {
@@ -16,14 +47,62 @@
 	list-style-type: none;
 }
 
-[card-menu] {
-	display: inline-block;
+[card-menu]{
+	position: absolute;
+	top: -8px;
+	left: 240px;
 	cursor: pointer;
 }
 
-.menu-icon {
-	height: 16px;
-	width: 16px;
+.card-delete {
+	position: absolute;
+	top: 334px;
+	left: 234px;
+	cursor: pointer;
+}
+
+.card-icon {
+	font-size: 16px;
+}
+
+.text-bold {
+	font-weight: bold;
+}
+
+.text-descriptive {
+	overflow: hidden;
+	min-height: 20px;
+	min-width: 224px;
+	max-width: 224px;
+	resize: none;
+	white-space: normal;
+	font-style: italic;
+}
+
+.number-picker {
+	width: 40px;
+}
+
+.clear-input {
+	display: inline-block;
+	padding: 0;
+	border: none;
+	background: transparent;
+}
+
+.dashboard{
+	-webkit-transition: linear .5s;
+	transition: linear .5s;
+	z-index:10000;
+	position: relative;
+	padding: 13px;
+	top: 350px;
+	height: 150px;
+	width: 250px;
+	overflow: auto;
+	background-image: url('../img/dashboard.png');
+	background-repeat: no-repeat;
+	background-size: 250px 150px;
 }
 
 .logo-augment {
@@ -53,5 +132,4 @@
 .logo-trait {
 	height: 36px;
 	width: 72px;
-	margin-right: 2%;
 }

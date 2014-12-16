@@ -45,8 +45,11 @@ cardsModule.factory('PcsAugments', ['Pcs', 'PcsCardDeck',
 				y_index: 0,
 				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 250,
 				y_coord: 0,
+				x_dim: 250,
+				y_dim: 350,
 				x_overlap: false,
 				y_overlap: false,
+				locked: true,
 				level: level
 			};
 			Pcs.pc.cards.push(newAugment);

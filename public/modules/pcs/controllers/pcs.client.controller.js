@@ -132,15 +132,15 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 		
 		//Watch for change in EXP input
 		$scope.$watch('pcsCard2.EXP', function(newValue, oldValue){
-			if(Pcs.pc.cards && newValue !== oldValue){
+			if(Pcs.pc && newValue !== oldValue){
 				PcsCard2.EXP = parseInt(newValue);
-				Pcs.pc.cards[1].experience = parseInt(newValue);
+				Pcs.pc.experience = parseInt(newValue);
 			}
 		});
 		
 		//Watch for change in experience
-		$scope.$watch('pcs.pc.cards[1].experience', function(newValue, oldValue){
-			if(Pcs.pc.cards && newValue !== oldValue){
+		$scope.$watch('pcs.pc.experience', function(newValue, oldValue){
+			if(Pcs.pc && newValue !== oldValue){
 				PcsCard2.factorExperience();
 				if(newValue !== PcsCard2.EXP){
 					PcsCard2.EXP = newValue;
@@ -149,8 +149,8 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 		});
 		
 		//Watch for changes in level
-		$scope.$watch('pcs.pc.cards[1].level', function(newValue, oldValue, scope){
-			if(Pcs.pc.cards){
+		$scope.$watch('pcs.pc.level', function(newValue, oldValue, scope){
+			if(Pcs.pc){
 				PcsCard2.factorHealth();
 				PcsCard2.factorStamina();
 				PcsTraits.factorTraitLimit();

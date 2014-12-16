@@ -23,10 +23,6 @@ var TraitSchema = new Schema({
 		type: Schema.ObjectId,
 		ref: 'User'
 	},
-	locked: {
-		type: Boolean,
-		default: false
-	},
 	cardType: {
 		type: String,
 		default: 'trait'
@@ -34,6 +30,14 @@ var TraitSchema = new Schema({
 	cardNumber: {
 		type: Number,
 		default: 0
+	},
+	fontSize: {
+		type: Number,
+		default: 10
+	},
+	description: {
+		type: String,
+		default: ''
 	}
 });
 

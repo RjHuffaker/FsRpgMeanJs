@@ -19,50 +19,50 @@ pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
 		
 		service.chooseAbility = function(ability){
 			this.diceBoxShown = true;
-			this.chosenAbility = Pcs.pc.cards[0].abilities[ability];
+			this.chosenAbility = Pcs.pc.abilities[ability];
 		};
 		
 		service.chooseDie = function(dice){
-			this.chosenDie = Pcs.pc.cards[0].dicepool[dice];
+			this.chosenDie = Pcs.pc.dicepool[dice];
 			
 			this.previousDie = this.chosenAbility.dice;
 			
-			Pcs.pc.cards[0].dicepool[dice] = Pcs.pc.cards[0].dicepool[0];
+			Pcs.pc.dicepool[dice] = Pcs.pc.dicepool[0];
 			
 			if(this.previousDie.order > 0){
-				Pcs.pc.cards[0].dicepool[this.previousDie.order] = this.previousDie;
+				Pcs.pc.dicepool[this.previousDie.order] = this.previousDie;
 			}
 			
-			Pcs.pc.cards[0].abilities[this.chosenAbility.order].dice = this.chosenDie;
+			Pcs.pc.abilities[this.chosenAbility.order].dice = this.chosenDie;
 			
 			this.hideDiceBox();
 			switch(this.chosenAbility.order){
 				case 0:
 				case 1:
 					$rootScope.$broadcast('pcsCard1:updateStrPhy', {
-						_str: Pcs.pc.cards[0].abilities[0],
-						_phy: Pcs.pc.cards[0].abilities[1]
+						_str: Pcs.pc.abilities[0],
+						_phy: Pcs.pc.abilities[1]
 					});
 					break;
 				case 2:
 				case 3:
 					$rootScope.$broadcast('pcsCard1:updateFleDex', {
-						_fle: Pcs.pc.cards[0].abilities[2],
-						_dex: Pcs.pc.cards[0].abilities[3]
+						_fle: Pcs.pc.abilities[2],
+						_dex: Pcs.pc.abilities[3]
 					});
 					break;
 				case 4:
 				case 5:
 					$rootScope.$broadcast('pcsCard1:updateAcuInt', {
-						_acu: Pcs.pc.cards[0].abilities[4],
-						_int: Pcs.pc.cards[0].abilities[5]
+						_acu: Pcs.pc.abilities[4],
+						_int: Pcs.pc.abilities[5]
 					});
 					break;
 				case 6:
 				case 7:
 					$rootScope.$broadcast('pcsCard1:updateWisCha', {
-						_wis: Pcs.pc.cards[0].abilities[6],
-						_cha: Pcs.pc.cards[0].abilities[7]
+						_wis: Pcs.pc.abilities[6],
+						_cha: Pcs.pc.abilities[7]
 					});
 					break;
 			}
@@ -70,33 +70,33 @@ pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
 		
 		service.factorBlock = function(_str, _phy){
 			if (Number(_str.dice.sides) > Number(_phy.dice.sides)){
-				Pcs.pc.cards[0].block = '2' + _str.dice.name;
+				Pcs.pc.block = '2' + _str.dice.name;
 			} else {
-				Pcs.pc.cards[0].block = '2' + _phy.dice.name;
+				Pcs.pc.block = '2' + _phy.dice.name;
 			}
 		};
 		
 		service.factorDodge = function(_fle, _dex){
 			if (Number(_fle.dice.sides) > Number(_dex.dice.sides)){
-				Pcs.pc.cards[0].dodge = '2' + _fle.dice.name;
+				Pcs.pc.dodge = '2' + _fle.dice.name;
 			} else {
-				Pcs.pc.cards[0].dodge = '2' + _dex.dice.name;
+				Pcs.pc.dodge = '2' + _dex.dice.name;
 			}
 		};
 		
 		service.factorAlertness = function(_acu, _int){
 			if (Number(_acu.dice.sides) > Number(_int.dice.sides)){
-				Pcs.pc.cards[0].alertness = '2' + _acu.dice.name;
+				Pcs.pc.alertness = '2' + _acu.dice.name;
 			} else {
-				Pcs.pc.cards[0].alertness = '2' + _int.dice.name;
+				Pcs.pc.alertness = '2' + _int.dice.name;
 			}
 		};
 		
 		service.factorTenacity = function(_wis, _cha){
 			if (Number(_wis.dice.sides) > Number(_cha.dice.sides)){
-				Pcs.pc.cards[0].tenacity = '2' + _wis.dice.name;
+				Pcs.pc.tenacity = '2' + _wis.dice.name;
 			} else {
-				Pcs.pc.cards[0].tenacity = '2' + _cha.dice.name;
+				Pcs.pc.tenacity = '2' + _cha.dice.name;
 			}
 		};
 		

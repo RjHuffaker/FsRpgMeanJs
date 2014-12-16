@@ -42,12 +42,25 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 		
 		service.cardSaved = false;
 		
+		service.lockCard = function(card){
+			card.locked = true;
+			card.x_index = card.cardNumber - 1;
+			card.y_index = 0;
+			card.x_coord = card.x_index * 250;
+			card.y_coord = 0;
+		};
+		
+		service.unlockCard = function(card){
+			card.locked = false;
+			card.x_index = card.cardNumber - 1;
+			card.y_index = 0;
+			card.x_coord = card.x_index * 250;
+			card.y_coord = 0;
+		};
+		
 		service.setCardList = function(){
 			for(var i = 0; i < service.cardList.length; i++){
-				service.cardList[i].x_index = service.cardList[i].cardNumber - 1;
-				service.cardList[i].y_index = 0;
-				service.cardList[i].x_coord = service.cardList[i].x_index * 250;
-				service.cardList[i].y_coord = 0;
+				service.unlockCard(service.cardList[i]);
 			}
 		};
 		
@@ -87,37 +100,37 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 		};
 		
 		// READ single Card
-		service.readCard = function(){
+		service.readCard = function(card){
+			var cardId = card._id;
 			switch(service.cardType){
 				case 1:
-					service.card = Traits.get({
-						traitId: $stateParams.traitId
+					card = Traits.get({
+						traitId: cardId
 					});
 					break;
 				case 2:
-					service.card = Feats.get({
-						featId: $stateParams.featId
+					card = Feats.get({
+						featId: cardId
 					});
 					break;
 				case 3:
-					service.card = Augments.get({
-						augmentId: $stateParams.augmentId
+					card = Augments.get({
+						augmentId: cardId
 					});
 					break;
 				case 4:
-					service.card = Items.get({
-						itemId: $stateParams.itemId
+					card = Items.get({
+						itemId: cardId
 					});
 					break;
 			}
+			service.unlockCard(card);
 		};
 		
 		// EDIT existing Card
-		service.editCard = function() {
-			var card = this.card;
-			
-			card.$update(function() {
-			
+		service.editCard = function(card) {
+			card.$update(function(response) {
+				service.lockCard(card);
 			}, function(errorResponse) {
 				this.error = errorResponse.data.message;
 			});
@@ -131,7 +144,8 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						cardNumber: this.cardList.length + 1
 					});
 					this.card.$save(function(response) {
-						service.browseCards(service.cardType);
+						service.cardList.push(service.card);
+						service.unlockCard(service.card);
 					}, function(errorResponse) {
 						console.log(errorResponse);
 					});
@@ -141,7 +155,8 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						cardNumber: this.cardList.length + 1
 					});
 					this.card.$save(function(response) {
-						service.browseCards(service.cardType);
+						service.cardList.push(service.card);
+						service.unlockCard(service.card);
 					}, function(errorResponse) {
 						console.log(errorResponse);
 					});
@@ -151,7 +166,8 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						cardNumber: this.cardList.length + 1
 					});
 					this.card.$save(function(response) {
-						service.browseCards(service.cardType);
+						service.cardList.push(service.card);
+						service.unlockCard(service.card);
 					}, function(errorResponse) {
 						console.log(errorResponse);
 					});
@@ -161,7 +177,8 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						cardNumber: this.cardList.length + 1
 					});
 					this.card.$save(function(response){
-						service.browseCards(service.cardType);
+						service.cardList.push(service.card);
+						service.unlockCard(service.card);
 					}, function(errorResponse){
 						console.log(errorResponse);
 					});
@@ -171,19 +188,20 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 		
 		// DELETE existing Card
 		service.deleteCard = function(card){
-			if (card) {
+			if(card){
 				card.$remove();
-				for(var i in this.cardlist){
-					if (this.cardlist[i] === card ) {
-						this.cardlist.splice(i, 1);
+				for(var i in service.cardList){
+					if(this.cardList[i] === card ) {
+						this.cardList.splice(i, 1);
+					}
+					if (this.cardList[i] && this.cardList[i].cardNumber > card.cardNumber){
+						console.log(this.cardList[i].cardNumber +' / '+ card.cardNumber);
+						this.cardList[i].cardNumber -= 1;
+						this.cardList[i].x_index -= 1;
+						this.cardList[i].x_coord -= card.x_dim;
 					}
 				}
-			} else {
-				this.card.$remove(function(){
-					$location.path('cards');
-				});
 			}
-			this.browseCards(this.cardType);
 		};
 		
 		return service;

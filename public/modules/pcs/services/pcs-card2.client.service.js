@@ -9,45 +9,45 @@ pcsModule.factory('PcsCard2', ['$rootScope', 'Pcs',
 		
 		service.EXP = 0;
 		
-		if(Pcs.pc.cards){
-			service.EXP = Pcs.pc.cards[1].experience;
+		if(Pcs.pc){
+			service.EXP = Pcs.pc.experience;
 		}
 		
 		service.factorExperience = function(){
 			var mLevel = 0;
-			var mExperience = Number(Pcs.pc.cards[1].experience);
+			var mExperience = Number(Pcs.pc.experience);
 			for (var increment = 8; increment <= mExperience; increment++){
 				mLevel++;
 				mExperience = mExperience - increment;
 			}
-			Pcs.pc.cards[1].level = mLevel;
+			Pcs.pc.level = mLevel;
 		};
 		
 		service.factorHealth = function(){
-			Pcs.pc.cards[1].healthLimit = 
+			Pcs.pc.healthLimit = 
 				Math.round(
-					(Number(Pcs.pc.cards[0].abilities[0].dice.sides) +
-						Number(Pcs.pc.cards[0].abilities[1].dice.sides)
-					) * ((Pcs.pc.cards[1].level || 0)/16 + 1));
-			Pcs.pc.cards[1].healthCurrent =
-				Number(Pcs.pc.cards[1].healthLimit - Pcs.pc.cards[1].injury);
+					(Number(Pcs.pc.abilities[0].dice.sides) +
+						Number(Pcs.pc.abilities[1].dice.sides)
+					) * ((Pcs.pc.level || 0)/16 + 1));
+			Pcs.pc.healthCurrent =
+				Number(Pcs.pc.healthLimit - Pcs.pc.injury);
 		};
 		
 		service.factorStamina = function(){
-			Pcs.pc.cards[1].staminaLimit = 
+			Pcs.pc.staminaLimit = 
 				Math.round(
-					(Number(Pcs.pc.cards[0].abilities[0].dice.sides) +
-						Number(Pcs.pc.cards[0].abilities[1].dice.sides)
-					) * ((Pcs.pc.cards[1].level || 0)/16 + 1));
-			Pcs.pc.cards[1].staminaCurrent =
-				Number(Pcs.pc.cards[1].healthLimit - Pcs.pc.cards[1].injury);
+					(Number(Pcs.pc.abilities[0].dice.sides) +
+						Number(Pcs.pc.abilities[1].dice.sides)
+					) * ((Pcs.pc.level || 0)/16 + 1));
+			Pcs.pc.staminaCurrent =
+				Number(Pcs.pc.healthLimit - Pcs.pc.injury);
 		};
 		
 		service.factorCarryingCapacity = function(){
-			Pcs.pc.cards[1].carryCurrent = 0;
-			Pcs.pc.cards[1].carryLimit =
-				Number(Pcs.pc.cards[0].abilities[0].dice.sides) +
-				Number(Pcs.pc.cards[0].abilities[1].dice.sides);
+			Pcs.pc.carryCurrent = 0;
+			Pcs.pc.carryLimit =
+				Number(Pcs.pc.abilities[0].dice.sides) +
+				Number(Pcs.pc.abilities[1].dice.sides);
 		};
 		
 		return service;
