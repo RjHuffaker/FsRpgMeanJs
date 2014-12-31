@@ -2,18 +2,18 @@
 	<div class="col-md-12 fill-height">
 		<div style="overflow: hidden;">
 			<div class="deck-panel">
-				<div card-deck style="width: 1000px; margin-top: 0;">
+				<div card-deck style="width: 1000px; margin-top: 75px;">
 					<ul>
 						<li card-slot card="card"
 							ng-repeat="card in cards.cardList"
 							style="z-index: {{9998 - card.x_coord/25 + card.y_index}};
 								left: {{card.x_coord}}px; top: {{card.y_coord}}px;">
-							<div card-panel card-feature card="card"
+							<div card-panel card-layout card="card"
 								ng-class="{'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap}"
 								ng-mousemove="" ng-click="">
 							</div>
 						</li>
-					</ol>
+					</ul>
 				</div>
 			</div>
 		</div>
@@ -31,10 +31,8 @@
 				ng-click="cards.browseCards(4)"
 				class="col-xs-2 btn btn-success">
 			<input type="submit" value="Add Card"
-				ng-click="cards.addCard()"
+				ng-click="cards.addCard(1)"
 				class="col-xs-2 btn btn-warning">
 		</div>
-		
-		
 	</div>
 </section>

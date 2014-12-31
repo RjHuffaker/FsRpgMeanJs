@@ -10,28 +10,6 @@ angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 
 		
 		$scope.cardsDeck = CardsDeck;
 		
-		$scope.roles = [
-			{"id": 1, "name": "Manager", "assignable": true},
-			{"id": 2, "name": "Developer", "assignable": true},
-			{"id": 3, "name": "Reporter", "assignable": true}
-		];
-
-		$scope.member = {roles: []};
-		$scope.selected_items = [];
-		
-		$scope.unlockCard = function(card){
-			card.locked = false;
-		};
-		
-		$scope.confirmCard = function(card){
-			Cards.editCard(card);
-			card.locked = true;
-		};
-		
-		$scope.deleteCard = function(card){
-			Cards.deleteCard(card);
-		};
-		
 		var moveHorizontal = function(event, object){
 			console.log('moveHorizontal');
 		};

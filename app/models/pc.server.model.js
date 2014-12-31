@@ -4,26 +4,8 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
+	Dice = require('./dice.server.model'),
 	Schema = mongoose.Schema;
-
-var Dice = {
-	name: {
-		type: String,
-		default: 'd__'
-	},
-	image: {
-		type: String,
-		default: 'modules/core/img/d___.png'
-	},
-	sides: {
-		type: Number,
-		default: 0
-	},
-	order: {
-		type: Number,
-		default: 0
-	}
-};
 
 var DiceSchema = new Schema(Dice);
 
@@ -66,8 +48,12 @@ var PcSchema = new Schema({
 		type: String,
 		default: 'Weolda'
 	},
-	abilities: [],
-	dicepool: [],
+	abilities: [
+		AbilitySchema
+	],
+	dicepool: [
+		DiceSchema
+	],
 	block: {
 		type: String,
 		default: '2d__'

@@ -23,21 +23,158 @@ angular.module('core').factory('DataSRVC', [
 			{order: 9, name: 'd12', sides: 12, image: 'modules/core/img/d_12.png'}
 		];
 		
-		service.actionTypes = [
-			'-',
+		service.targetTypes = [
 			'Utility',
-			'Close 1/1',
-			'Close 2/1',
-			'Close 3/1',
-			'Close Area 2x2',
-			'Close Area 3x3',
-			'Close Area 4x4',
-			'Distant 8/1',
-			'Distant 12/1',
-			'Distant 16/1',
-			'Distant Area 8/2x2',
-			'Distant Area 12/3x3',
-			'Distant Area 16/4x4'
+			'Close',
+			'Close Area',
+			'Distant',
+			'Distant Area'
+		];
+		
+		service.closeDetails = [
+			'1/1', '1/2', '1/3', '1/4',
+			'2/1', '2/2', '2/3', '2/4',
+			'3/1', '3/2', '3/3', '3/4',
+			'4/1', '4/2', '4/3'
+		];
+		
+		service.closeAreaDetails = [
+			'2x2', '3x3', '4x4', '5x5'
+		];
+		
+		service.distantDetails = [
+			'4/1', '6/1', '8/1', '10/1',
+			'12/1', '14/1', '16/1', '18/1',
+			'20/1', '22/1', '24/1'
+		];
+		
+		service.distantAreaDetails = [
+			'8/2x2', '10/2x2', '12/2x2', '16/2x2',
+			'10/3x3', '12/3x3', '16/3x3', '20/3x3',
+			'12/4x4', '16/4x4', '20/4x4'
+		];
+		
+		service.actionKeywords = [
+			'Default',
+			'Single-use',
+			'Thrown',
+			'Reflexive',
+			'Melee',
+			'Ranged',
+			'Evocation',
+			'Invocation'
+		];
+		
+		service.actionFrequency = [
+			'Free',
+			'Count: 1',
+			'Count: 2',
+			'Count: 3',
+			'Count: 4',
+			'Count: 5',
+			'Disruptive',
+			'Responsive'
+		];
+		
+		service.dice = [
+			'1d4',
+			'1d6',
+			'1d8',
+			'1d10',
+			'1d12'
+		];
+		
+		service.abilities = [
+			'STR',
+			'PHY',
+			'FLE',
+			'DEX',
+			'ACU',
+			'INT',
+			'WIS',
+			'CHA'
+		];
+		
+		service.attackTypes = [
+			'Melee',
+			'Ranged',
+			'Evocation',
+			'Invocation'
+		];
+		
+		service.defenseTypes = [
+			'Block',
+			'Dodge',
+			'Alertness',
+			'Tenacity'
+		];
+		
+		service.prerequisites = [
+			'1d10 STR',
+			'1d10 PHY',
+			'1d10 FLE',
+			'1d10 DEX',
+			'1d10 ACU',
+			'1d10 INT',
+			'1d10 WIS',
+			'1d10 CHA'
+		];
+		
+		service.archetypes = [
+			'General',
+			'Guardian',
+			'Hunter',
+			'Mastermind',
+			'Champion'
+		];
+		
+		service.allegiances = [
+			'Unaligned',
+			'Nymaria',
+			'Vakhelos',
+			'Heresy',
+			'Inquisition'
+		];
+		
+		service.races = [
+			'Weolda',
+			'Algharr',
+			'Durhok',
+			'Feyal',
+			'Sylthaun'
+		];
+		
+		service.itemTypes = [
+			'Melee',
+			'Melee / Ranged',
+			'Melee / Invocation',
+			'Ranged',
+			'Ranged / Melee',
+			'Ranged / Evocation',
+			'Evocation',
+			'Evocation / Invocation',
+			'Evocation / Ranged',
+			'Invocation',
+			'Invocation / Evocation',
+			'Invocation / Melee'
+		];
+		
+		service.itemSlots = [
+			'One-handed',
+			'Two-handed',
+			'One-handed or Paired',
+			'One-handed or Two-handed',
+			'Armor',
+			'Shield',
+			'Gloves',
+			'Boots',
+			'Cloak',
+			'Amulet',
+			'Ring',
+			'Belt',
+			'Helmet',
+			'Consumable',
+			'Provision'
 		];
 		
 		return service;

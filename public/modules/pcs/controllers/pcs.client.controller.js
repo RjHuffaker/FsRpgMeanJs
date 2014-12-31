@@ -150,7 +150,7 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 		
 		//Watch for changes in level
 		$scope.$watch('pcs.pc.level', function(newValue, oldValue, scope){
-			if(Pcs.pc){
+			if(Pcs.pc.abilities){
 				PcsCard2.factorHealth();
 				PcsCard2.factorStamina();
 				PcsTraits.factorTraitLimit();

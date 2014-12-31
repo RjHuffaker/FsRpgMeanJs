@@ -1,0 +1,26 @@
+<div ng-if="cardAction.prompt.show">
+	<pre ng-if="card.locked" class="card-input text-descriptive text-center">
+		{{card.description.content}}
+	</pre>
+	<textarea ng-if="!card.locked" class="card-input text-descriptive text-center"
+		elastic-textarea ng-change="resize()" rows="1"
+		ng-model="card.description.content" stop-event>
+	</textarea>
+</div>
+
+<div ng-if="cardAction.frequency === 'Free'
+	|| cardAction.frequency === 'Responsive'
+	|| cardAction.frequency === 'Disruptive'"
+	style="white-space: normal;">
+	<div ng-if="$parent.$parent.card.locked">
+		<strong>Prompt: </strong>{{cardAction.prompt.content}}
+	</div>
+	<div ng-if="!$parent.$parent.card.locked">
+		<label style="position: absolute;" for="prompt">Prompt: </label>
+		<textarea elastic-textarea stop-event ng-change="resize()"
+			ng-model="editAction.prompt.content"
+			id="prompt" class="fill-width card-input" 
+			style="text-indent: 3.9em;" rows="1">
+		</textarea>
+	</div>
+</div>

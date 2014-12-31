@@ -4,6 +4,7 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
+	Action = require('./action.server.model'),
 	Schema = mongoose.Schema;
 
 /**
@@ -31,14 +32,42 @@ var TraitSchema = new Schema({
 		type: Number,
 		default: 0
 	},
-	fontSize: {
-		type: Number,
-		default: 10
+	keyword: {
+		type: String
+	},
+	prerequisite: {
+		type: String
 	},
 	description: {
-		type: String,
-		default: ''
-	}
+		show: {
+			type: Boolean,
+			default: false
+		},
+		content: {
+			type: String
+		}
+	},
+	benefit: {
+		show: {
+			type: Boolean,
+			default: false
+		},
+		content: {
+			type: String
+		},
+		criticalSuccess: {
+			show: {
+				type: Boolean,
+				default: false
+			},
+			content: {
+				type: String
+			}
+		}
+	},
+	actions: [
+		Action
+	]
 });
 
 mongoose.model('Trait', TraitSchema);

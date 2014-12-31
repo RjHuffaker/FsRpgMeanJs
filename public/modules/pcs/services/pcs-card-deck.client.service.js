@@ -483,7 +483,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 								Pcs.pc.cards[ia].y_coord = Pcs.pc.cards[ia].y_index * y_tab;
 								Pcs.pc.cards[ia].y_overlap = true;
 							} else if(Pcs.pc.cards[ia].y_index > card_y_index){
-								Pcs.pc.cards[ia].y_coord = card_y_cover + Pcs.pc.cards[ia].y_index * y_tab;
+								Pcs.pc.cards[ia].y_coord = y_cover + Pcs.pc.cards[ia].y_index * y_tab;
 								if(Pcs.pc.cards[ia].y_index < lowest_y_index){
 									Pcs.pc.cards[ia].y_overlap = true;
 								}

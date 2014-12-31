@@ -3,9 +3,8 @@
 		<div >
 			<div class='modal-overlay' ng-show="pcsCard1.diceBoxShown" ng-click='pcsCard1.hideDiceBox()'></div>
 			<div style="overflow: hidden;">
-				<div class="dice-box text-center"
+				<div class="dice-box text-center" ng-hide="card.locked"
 					ng-style="{left: ((pcs.pc.cards[0].x_coord + 25) + 'px')}"
-					ng-hide="card.locked"
 					ng-class="{diceBoxShown: pcsCard1.diceBoxShown}">
 					<div style="height: 20px; color: lightblue;">
 						<b>Choose {{pcsCard1.chosenAbility.name}} Die:</b>
@@ -19,13 +18,12 @@
 				<div class="deck-panel">
 					<div card-deck ng-mouseleave=""
 						ng-style="{'width': (pcs.deckWidth() + 'px')}">
-						<ul >
+						<ul>
 							<li card-slot card="card"
 								ng-repeat="card in pcs.pc.cards"
 								style="z-index: {{4998 - card.x_coord/25 + card.y_index}};
-									left: {{card.x_coord}}px;
-									top: {{card.y_coord}}px;">
-								<div card-panel card-feature card="card"
+									left: {{card.x_coord}}px; top: {{card.y_coord}}px;">
+								<div card-panel card-layout card="card"
 									ng-class="{'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap}"
 									ng-mousemove="" ng-click="">
 								</div>

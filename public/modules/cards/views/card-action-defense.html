@@ -1,0 +1,130 @@
+<div ng-if="cardAction.usage === 'Defense'" style="white-space: normal;">
+	<div ng-if="$parent.$parent.card.locked">
+		<strong>{{cardAction.defense.defenseType}} Defense: </strong>
+		{{cardAction.defense.dice_a}}
+		<span ng-hide="cardAction.defense.dice_a">1d__</span>
+		+
+		{{cardAction.defense.dice_b}}
+		<span ng-hide="cardAction.defense.dice_b">1d__</span>
+		<div ng-if="cardAction.defense.success.show">
+			<strong>Success: </strong>{{cardAction.defense.success.content}}
+		</div>
+		<div ng-if="cardAction.defense.criticalSuccess.show">
+			<strong>Critical Success: </strong>{{cardAction.defense.criticalSuccess.content}}
+		</div>
+	</div>
+	<div ng-if="!$parent.$parent.card.locked">
+		<div class="dropdown">
+			<a id="cardDropdown" class="dropdown-toggle"
+				ng-click="dropdown" aria-expanded="true">
+				<span ng-hide="cardAction.defense.defenseType">[Type]</span>
+				{{cardAction.defense.defenseType}} Defense: 
+			</a>
+			<div class="dropdown-menu" aria-labelledby="cardDropdown">
+				<ul class="col-xs-5 card-menu-list">
+					<li role="presentation" class="dropdown-header">Defense Type</li>
+					<li ng-repeat="defenseType in $parent.$parent.$parent.dataSRVC.defenseTypes"><label>
+						<input type="radio" value="{{defenseType}}"
+							ng-model="cardAction.defense.defenseType">
+						{{defenseType}}
+					</label></li>
+				</ul>
+				<ul class="col-xs-7 card-menu-list">
+					<li role="presentation" class="dropdown-header">Defense Options</li>
+					<li><label>
+						<input type="checkbox" ng-model="cardAction.defense.success.show"> Success
+					</label></li>
+					<li ng-show="cardAction.usage === 'Defense'"><label>
+						<input type="checkbox" ng-model="cardAction.defense.criticalSuccess.show"> Critical Success
+					</label></li>
+				</ul>
+			</div>
+		</div>
+		
+		<div class="dropdown">
+			<a id="cardDropdown" class="dropdown-toggle"
+				ng-click="dropdown" aria-expanded="true">
+				{{cardAction.defense.dice_a}}
+				<span ng-hide="cardAction.defense.dice_a">1d__</span>
+			</a>
+			<div class="dropdown-menu" aria-labelledby="cardDropdown">
+				<ul class="col-xs-4 card-menu-list" stop-click>
+					<li role="presentation" class="dropdown-header"><strong>Fixed Die</Strong></li>
+					<li ng-repeat="dice in $parent.$parent.$parent.dataSRVC.dice"><label>
+						<input type="radio" value="{{dice}}"
+							ng-model="cardAction.defense.dice_a">
+						{{dice}}
+					</label></li>
+				</ul>
+				<ul class="col-xs-4 card-menu-list" stop-click>
+					<li role="presentation" class="dropdown-header"><strong>Physical</Strong></li>
+					<li ng-repeat="ability in $parent.$parent.$parent.dataSRVC.abilities" ng-if="$index < 4"><label>
+						<input type="radio" value="{{ability}}"
+							ng-model="cardAction.defense.dice_a">
+						{{ability}}
+					</label></li>
+				</ul>
+				<ul class="col-xs-4 card-menu-list" stop-click>
+					<li role="presentation" class="dropdown-header"><strong>Mental</Strong></li>
+					<li ng-repeat="ability in $parent.$parent.$parent.dataSRVC.abilities" ng-if="$index > 3"><label>
+						<input type="radio" value="{{ability}}"
+							ng-model="cardAction.defense.dice_a">
+						{{ability}}
+					</label></li>
+				</ul>
+			</div>
+		</div>
+		+
+		<div class="dropdown">
+			<a id="cardDropdown" class="dropdown-toggle"
+				ng-click="dropdown" aria-expanded="true">
+				{{cardAction.defense.dice_b}}
+				<span ng-hide="cardAction.defense.dice_b">1d__</span>
+			</a>
+			<div class="dropdown-menu" aria-labelledby="cardDropdown">
+				<ul class="col-xs-4 card-menu-list" stop-click>
+					<li role="presentation" class="dropdown-header"><strong>Fixed Die</Strong></li>
+					<li ng-repeat="dice in $parent.$parent.$parent.dataSRVC.dice"><label>
+						<input type="radio" value="{{dice}}"
+							ng-model="cardAction.defense.dice_b">
+						{{dice}}
+					</label></li>
+				</ul>
+				<ul class="col-xs-4 card-menu-list" stop-click>
+					<li role="presentation" class="dropdown-header"><strong>Physical</Strong></li>
+					<li ng-repeat="ability in $parent.$parent.$parent.dataSRVC.abilities" ng-if="$index < 4"><label>
+						<input type="radio" value="{{ability}}"
+							ng-model="cardAction.defense.dice_b">
+						{{ability}}
+					</label></li>
+				</ul>
+				<ul class="col-xs-4 card-menu-list" stop-click>
+					<li role="presentation" class="dropdown-header"><strong>Mental</Strong></li>
+					<li ng-repeat="ability in $parent.$parent.$parent.dataSRVC.abilities" ng-if="$index > 3"><label>
+						<input type="radio" value="{{ability}}"
+							ng-model="cardAction.defense.dice_b">
+						{{ability}}
+					</label></li>
+				</ul>
+			</div>
+		</div>
+		<div ng-if="cardAction.defense.success.show">
+			<label style="position: absolute;" for="defenseSuccess">Success: </label>
+			<textarea elastic-textarea stop-event
+				ng-model="cardAction.defense.success.content"
+				id="defenseSuccess"
+				class="fill-width card-input"
+				style="text-indent: 4.5em;" rows="1">
+			</textarea>
+		</div>
+		<div ng-if="cardAction.defense.criticalSuccess.show">
+			<label style="position: absolute;" for="defenseCriticalSuccess">Critical Success: </label>
+			<textarea elastic-textarea stop-event
+				ng-model="cardAction.defense.criticalSuccess.content"
+				id="defenseCriticalSuccess"
+				class="fill-width card-input"
+				style="text-indent: 8.3em;" rows="1">
+			</textarea>
+		</div>
+	</div>
+</div>

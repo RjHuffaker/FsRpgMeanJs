@@ -4,6 +4,7 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
+	Action = require('./action.server.model'),
 	Schema = mongoose.Schema;
 
 /**
@@ -30,7 +31,41 @@ var FeatSchema = new Schema({
 	cardNumber: {
 		type: Number,
 		default: 0
-	}
+	},
+	keyword: {
+		type: String
+	},
+	prerequisite: {
+		type: String
+	},
+	description: {
+		show: {
+			type: Boolean,
+			default: false
+		},
+		content: {
+			type: String
+		}
+	},
+	benefit: {
+		show: {
+			type: Boolean,
+			default: false
+		},
+		content: {
+			type: String
+		},
+		criticalSuccess: {
+			show: {
+				type: Boolean,
+				default: false
+			},
+			content: {
+				type: String
+			}
+		}
+	},
+	actions: [Action]
 });
 
 mongoose.model('Feat', FeatSchema);

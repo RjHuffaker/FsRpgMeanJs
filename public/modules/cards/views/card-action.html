@@ -1,65 +1,9 @@
-<div ng-show="cardAction.toggle">
-	<span class="pull-left" ng-show="cardAction.name">
-		<strong>{{cardAction.name}}</strong>
-	</span>
-	<span class="pull-right" ng-show="cardAction.type">
-		{{cardAction.type}}
-	</span>
+<div ng-show="cardAction.show">
+	<div card-action-title></div>
+	<div card-action-keywords></div>
+	<div card-action-prompt></div>
+	<div card-action-effect></div>
+	<div card-action-attack></div>
+	<div card-action-defense></div>
 	<br />
-	<hr class="black-line">
-	<div ng-show="cardAction.keywords">
-		<span class="pull-left">
-			<strong>{{cardAction.keywords}}</strong>
-		</span>
-		<span class="pull-right" ng-show="cardAction.frequency">
-			{{cardAction.frequency}}
-		</span>
-		<span class="pull-right" ng-show="cardAction.count">
-			<strong>Count: </strong>{{cardAction.count}}
-		</span>
-		<br />
-	</div>
-	<div ng-show="cardAction.prompt">
-		<strong>Prompt: </strong>{{cardAction.prompt}}
-	</div>
-	<div ng-show="cardAction.effect">
-		<strong>Effect: </strong>{{cardAction.effect}}
-	</div>
-	<div ng-show="cardAction.defense">
-		<strong>Defense: </strong>{{cardAction.defense}}
-	</div>
-	<div ng-show="cardAction.attack">
-		<strong>Attack: </strong>{{cardAction.attack}}
-	</div>
-	<div ng-show="cardAction.hit">
-		<strong>Hit: </strong>{{cardAction.hit}}
-	</div>
-	<div ng-show="cardAction.critical_success">
-		<strong>Critical Success: </strong>{{cardAction.critical_success}}
-	</div>
-	<ul class="bullet_list" ng-show="cardAction.bullet_1">
-		<li ng-show="cardAction.bullet_1">
-			{{cardAction.bullet_1}}
-		</li>
-		<li ng-show="cardAction.bullet_2">
-			{{cardAction.bullet_2}}
-		</li>
-		<li ng-show="cardAction.bullet_3">
-			{{cardAction.bullet_3}}
-		</li>
-	</ul>
-	<ul class="label_list" ng-show="cardAction.label_1_title">
-		<li ng-show="cardAction.label_1_title">
-			<strong>{{cardAction.label_1_title}}: </strong>
-			{{cardAction.label_1_data}}
-		</li>
-		<li ng-show="cardAction.label_2_title">
-			<strong>{{cardAction.label_2_title}}: </strong>
-			{{cardAction.label_2_data}}
-		</li>
-		<li ng-show="cardAction.label_3_title">
-			<strong>{{cardAction.label_3_title}}: </strong>
-			{{cardAction.label_3_data}}
-		</li>
-	</ul>
 </div>

@@ -1,0 +1,177 @@
+<hr class="black-line">
+<div style="font-size: 12px;" class="title-row">
+	<div ng-if="card.cardType !== 'item'" class="title-block">
+		<strong ng-if="card.locked">
+			{{card.keyword}} {{card.prerequisite}}
+		</strong>
+		<strong ng-if="card.locked && !card.keyword && !card.prerequisite">
+			[Prerequisites]
+		</strong>
+		<div ng-if="!card.locked" class="dropdown dropup">
+			<a id="cardDropdown" class="dropdown-toggle"
+				ng-click="dropdown" aria-expanded="true">
+				<strong>
+					{{card.keyword}} {{card.prerequisite}}
+				</strong>
+				<strong ng-if="!card.keyword && !card.prerequisite">
+					[Prerequisites]
+				</strong>
+			</a>
+			<ul class='dropdown-menu card-menu-list' aria-labelledby="cardDropdown" stop-click>
+				<li role="presentation" class="dropdown-header">Prerequisite</li>
+				<li ><label>
+					<input type="radio" ng-model="card.prerequisite" value="">
+					None
+				</label></li>
+				<li ng-repeat="prerequisite in dataSRVC.prerequisites"><label>
+					<input type="radio" ng-model="card.prerequisite" value="{{prerequisite}}">
+					{{prerequisite}}
+				</label></li>
+			</ul>
+		</div>
+	</div>
+	<div ng-if="card.cardType === 'item'" class="title-block">
+		<strong ng-if="card.locked">
+			{{card.itemSlot}}
+		</strong>
+		<strong ng-if="card.locked && !card.itemSlot">
+			[Item Slot]
+		</strong>
+		<div ng-if="!card.locked" class="dropdown dropup">
+			<a id="cardDropdown" class="dropdown-toggle"
+				ng-click="dropdown" aria-expanded="true">
+				<strong>
+					{{card.itemSlot}}
+				</strong>
+				<strong ng-if="!card.itemSlot">
+					[Item Slot]
+				</strong>
+			</a>
+			<div class="dropdown-menu" aria-labelledby="cardDropdown">
+				<ul class='row card-menu-list' stop-click>
+					<li role="presentation" class="col-xs-12 dropdown-header">Weapons & Implements</li>
+					<li role="presentation" class="col-xs-6"><label>
+						<input type="radio" ng-model="card.itemSlot" value="One-handed">
+						One-handed
+					</label></li>
+					<li role="presentation" class="col-xs-6"><label>
+						<input type="radio" ng-model="card.itemSlot" value="Two-handed">
+						Two-handed
+					</label></li>
+					<li role="presentation" class="col-xs-12"><label>
+						<input type="radio" ng-model="card.itemSlot" value="One-handed or Paired">
+						One-handed or Paired
+					</label></li>
+					<li role="presentation" class="col-xs-12"><label>
+						<input type="radio" ng-model="card.itemSlot" value="One-handed or Two-handed">
+						One-handed or Two-handed
+					</label></li>
+					
+					<li role="presentation" class="col-xs-12 dropdown-header">Armor & Accessories</li>
+					<li role="presentation" class="col-xs-4"><label>
+						<input type="radio" ng-model="card.itemSlot" value="Armor">
+						Armor
+					</label></li>
+					<li role="presentation" class="col-xs-4"><label>
+						<input type="radio" ng-model="card.itemSlot" value="Boots">
+						Boots
+					</label></li>
+					<li role="presentation" class="col-xs-4"><label>
+						<input type="radio" ng-model="card.itemSlot" value="Ring">
+						Ring
+					</label></li>
+					
+					<li role="presentation" class="col-xs-4"><label>
+						<input type="radio" ng-model="card.itemSlot" value="Shield">
+						Shield
+					</label></li>
+					<li role="presentation" class="col-xs-4"><label>
+						<input type="radio" ng-model="card.itemSlot" value="Cloak">
+						Cloak
+					</label></li>
+					<li role="presentation" class="col-xs-4"><label>
+						<input type="radio" ng-model="card.itemSlot" value="Helmet">
+						Helmet
+					</label></li>
+					
+					<li role="presentation" class="col-xs-4"><label>
+						<input type="radio" ng-model="card.itemSlot" value="Gloves">
+						Gloves
+					</label></li>
+					<li role="presentation" class="col-xs-4"><label>
+						<input type="radio" ng-model="card.itemSlot" value="Amulet">
+						Amulet
+					</label></li>
+					<li role="presentation" class="col-xs-4"><label>
+						<input type="radio" ng-model="card.itemSlot" value="Belt">
+						Belt
+					</label></li>
+					
+					<li role="presentation" class="col-xs-12 dropdown-header">Miscellaneous</li>
+					<li role="presentation" class="col-xs-6"><label>
+						<input type="radio" ng-model="card.itemSlot" value="Consumable">
+						Consumable
+					</label></li>
+					<li role="presentation" class="col-xs-6"><label>
+						<input type="radio" ng-model="card.itemSlot" value="Provision">
+						Provision
+					</label></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div ng-if="card.cardType === 'item'" class="title-block pull-right">
+		<div ng-if="card.locked" class="title-block">
+			<strong>W:</strong>
+			{{card.weight}}
+			/
+			<strong>C:</strong>
+			{{card.cost}}
+		</div>
+		<div ng-if="!card.locked" class="dropdown dropup">
+			<a id="cardDropdown" class="dropdown-toggle"
+				ng-click="dropdown" aria-expanded="true">
+				<strong>W:</strong>
+				{{card.weight}}
+				/
+				<strong>C:</strong> 
+				{{card.cost}}
+			</a>
+			<div class="dropdown-menu dropdown-menu-right dropup number-picker" style="width: 120px;">
+				<h5 class="text-center"><strong>Item Weight</strong></h5>
+				<div class="input-group input-group-sm">
+					<a type="button" class="input-group-addon btn btn-default"
+						ng-click="$parent.cards.changeWeight(card, 0)" stop-click stop-event>
+						<i class="glyphicon glyphicon-minus"></i>
+					</a>
+					<input type="text" class="form-control text-center"
+						ng-model="card.weight" stop-click stop-event/>
+					<a type="button" class="input-group-addon btn btn-default"
+						ng-click="$parent.cards.changeWeight(card, 1);" stop-click stop-event>
+						<i class="glyphicon glyphicon-plus"></i>
+					</a>
+				</div>
+				<h5 class="text-center"><strong>Item Cost</strong></h5>
+				<div class="input-group input-group-sm">
+					<a type="button" class="input-group-addon btn btn-default" 
+						ng-click="$parent.cards.changeCost(card, 0);" stop-click stop-event>
+						<i class="glyphicon glyphicon-minus"></i>
+					</a>
+					<input type="text" class="form-control text-center"
+						ng-model="card.cost" stop-click stop-event/>
+					<a type="button" class="input-group-addon btn btn-default"
+						ng-click="$parent.cards.changeCost(card, 1)" stop-click stop-event>
+						<i class="glyphicon glyphicon-plus"></i>
+					</a>
+				</div>
+			</div>
+	</div>
+</div>
+<div style="font-size: 12px;" class="title-row">
+	<span>
+		&COPY 2015 R. j. Huffaker
+	</span>
+	<span class="pull-right text-capitalize">
+		{{card.cardType}} {{card.cardNumber}}/{{cards.cardList.length}}
+	</span>
+</div>
