@@ -1,6 +1,6 @@
 .deck-panel {
 	border: solid 1px #555;
-	overflow-x: auto;
+	overflow-x: hidden;
 	overflow-y: hidden;
 	position: relative;
 	width: 100%;
