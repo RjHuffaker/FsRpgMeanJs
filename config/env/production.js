@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://' + (process.env.DB_1_PORT_27017_TCP_ADDR || 'localhost') + '/fsrpg',
+	db: 'mongodb://<dbuser>:<dbpassword>@ds029811.mongolab.com:29811/heroku_app32937815',
 	assets: {
 		lib: {
 			css: [
@@ -19,16 +19,17 @@ module.exports = {
 				'public/lib/angular-ui-utils/ui-utils.min.js',
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.min.js'
 			]
-		},
-		css: [
-			'public/modules/**/css/*.css'
-		],
-		js: [
-			'public/config.js',
-			'public/application.js',
-			'public/modules/*/*.js',
-			'public/modules/*/*[!tests]*/*.js'
-		]
+			},
+			css: [
+				'public/modules/**/css/*.css'
+			],
+			js: [
+				'public/config.js',
+				'public/application.js',
+				'public/modules/*/*.js',
+				'public/modules/*/*[!tests]*/*.js'
+			]
+		}
 		// ,
 		// css: 'public/dist/application.min.css',
 		// js: 'public/dist/application.min.js'
