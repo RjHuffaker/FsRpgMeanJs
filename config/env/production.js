@@ -19,17 +19,16 @@ module.exports = {
 				'public/lib/angular-ui-utils/ui-utils.min.js',
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.min.js'
 			]
-			},
-			css: [
-				'public/modules/**/css/*.css'
-			],
-			js: [
-				'public/config.js',
-				'public/application.js',
-				'public/modules/*/*.js',
-				'public/modules/*/*[!tests]*/*.js'
-			]
-		}
+		},
+		css: [
+			'public/modules/**/css/*.css'
+		],
+		js: [
+			'public/config.js',
+			'public/application.js',
+			'public/modules/*/*.js',
+			'public/modules/*/*[!tests]*/*.js'
+		]
 		// ,
 		// css: 'public/dist/application.min.css',
 		// js: 'public/dist/application.min.js'
