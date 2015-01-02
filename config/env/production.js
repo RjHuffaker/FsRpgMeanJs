@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-	db: 'mongodb://<dbuser>:<dbpassword>@ds029811.mongolab.com:29811/heroku_app32937815',
+	db: 'mongodb://heroku_app32937815:<dbpassword>@ds029811.mongolab.com:29811/heroku_app32937815',
 	assets: {
 		lib: {
 			css: [
@@ -20,18 +20,8 @@ module.exports = {
 				'public/lib/angular-bootstrap/ui-bootstrap-tpls.min.js'
 			]
 		},
-		css: [
-			'public/modules/**/css/*.css'
-		],
-		js: [
-			'public/config.js',
-			'public/application.js',
-			'public/modules/*/*.js',
-			'public/modules/*/*[!tests]*/*.js'
-		]
-		// ,
-		// css: 'public/dist/application.min.css',
-		// js: 'public/dist/application.min.js'
+		css: 'public/dist/application.min.css',
+		js: 'public/dist/application.min.js'
 	},
 	facebook: {
 		clientID: process.env.FACEBOOK_ID || 'APP_ID',
