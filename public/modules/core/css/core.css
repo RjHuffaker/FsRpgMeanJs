@@ -1,7 +1,7 @@
 body {
 	height: 100%;
 	width: 100%;
-	background-image: url('../img/darkwood4.png');
+	background-image: url('../modules/cards/img/darkwood4.png');
 	background-size: 100%;
 }
 
@@ -123,7 +123,7 @@ body {
 	height: 125px;
 	width: 250px;
 	overflow: hidden;
-	background-image: url('../img/wood-drawer.png');
+	background-image: url('../modules/cards/img/wood-drawer.png');
 	background-repeat: no-repeat;
 	background-size: 250px 125px;
 }
