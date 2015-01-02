@@ -229,7 +229,7 @@ cardsModule
 					
 					// Small delay for touch devices to allow for native window scrolling
 					if(_hasTouch){
-						cancelPress();
+		//				cancelPress();
 						_pressTimer = setTimeout(function(){
 							cancelPress();
 							onLongPress(event);
@@ -244,7 +244,7 @@ cardsModule
 				};
 				
 				var cancelPress = function(){
-					clearTimeout(_pressTimer);
+			//		clearTimeout(_pressTimer);
 					$document.off(_moveEvents, cancelPress);
 					$document.off(_releaseEvents, cancelPress);
 					$document.on(_pressEvents, onPress);
