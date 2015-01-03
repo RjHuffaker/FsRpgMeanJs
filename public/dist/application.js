@@ -174,8 +174,6 @@ cardsModule
 				
 				var _panel = $parse(attrs.card) || null;
 				
-				console.log(document.documentElement);
-				
 				var _hasTouch = ('ontouchstart' in document.documentElement);
 				var _pressEvents = 'touchstart mousedown';
 				var _moveEvents = 'touchmove mousemove';
@@ -225,6 +223,7 @@ cardsModule
 				
 				 // When the element is clicked start the drag behaviour
 				var onPress = function(event){
+					console.log(event);
 					
 					// Disable press events until current press event is resolved
 					$document.off(_pressEvents, onPress);
@@ -232,7 +231,6 @@ cardsModule
 					// Small delay for touch devices to allow for native window scrolling
 					if(_hasTouch){
 						console.log('Yes touchy!');
-						console.log(event);
 						cancelPress();
 						_pressTimer = setTimeout(function(){
 							cancelPress();
