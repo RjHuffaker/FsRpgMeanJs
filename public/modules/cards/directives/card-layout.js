@@ -32,7 +32,8 @@ cardsModule
 		return{
 			restrict: 'A',
 			link: function(scope, element, attr){
-				element.bind('mousedown', function(e){
+				var _pressEvents = 'touchstart mousedown';
+				element.bind(_pressEvents, function(e){
 					e.stopPropagation();
 				});
 			}

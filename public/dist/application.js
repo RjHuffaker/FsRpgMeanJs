@@ -229,7 +229,6 @@ cardsModule
 					
 					// Small delay for touch devices to allow for native window scrolling
 					if(_hasTouch){
-						console.log('Yes touchy!');
 						cancelPress();
 						_pressTimer = setTimeout(function(){
 							cancelPress();
@@ -779,7 +778,8 @@ cardsModule
 		return{
 			restrict: 'A',
 			link: function(scope, element, attr){
-				element.bind('mousedown', function(e){
+				var _pressEvents = 'touchstart mousedown';
+				element.bind(_pressEvents, function(e){
 					e.stopPropagation();
 				});
 			}

@@ -75,7 +75,6 @@ cardsModule
 					
 					// Small delay for touch devices to allow for native window scrolling
 					if(_hasTouch){
-						console.log('Yes touchy!');
 						cancelPress();
 						_pressTimer = setTimeout(function(){
 							cancelPress();
