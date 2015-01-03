@@ -4,7 +4,7 @@ var cardsModule = angular.module('cards');
 
 // Directive for managing card decks.
 cardsModule
-	.directive('cardPanel', ['$document', '$parse', '$rootScope', function($document, $parse, $rootScope){
+	.directive('cardPanel', ['$parse', '$rootScope', function($parse, $rootScope){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -15,6 +15,8 @@ cardsModule
 					_panelX, _panelY,
 					_startCol, _mouseCol, _panelCol,
 					_startRow, _mouseRow, _panelRow;
+				
+				var $document = $(document);
 				
 				var _stacked = false;
 				
