@@ -202,7 +202,7 @@ cardsModule
 					
 					// prevent native drag
 					if(! _hasTouch){
-						console.log('touchy-touchy');
+						console.log('No touchy!');
 						element.on('mousedown', function(){
 							return false;
 						});
@@ -229,17 +229,17 @@ cardsModule
 					
 					// Small delay for touch devices to allow for native window scrolling
 					if(_hasTouch){
+						console.log('Yes touchy!');
 						console.log(event);
 						cancelPress();
 						_pressTimer = setTimeout(function(){
 							cancelPress();
-							console.log('touchy-longpress');
 							onLongPress(event);
 						}, 100);
 						
 						$document.on(_moveEvents, cancelPress);
 						$document.on(_releaseEvents, cancelPress);
-					}else{
+					}else if(!_hasTouch){
 						onLongPress(event);
 					}
 
