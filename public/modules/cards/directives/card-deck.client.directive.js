@@ -69,7 +69,6 @@ cardsModule
 				
 				 // When the element is clicked start the drag behaviour
 				var onPress = function(event){
-					console.log(event);
 					
 					// Disable press events until current press event is resolved
 					$document.off(_pressEvents, onPress);
@@ -167,6 +166,7 @@ cardsModule
 				
 				// Callback function to move a single card or each card in a vertical stack
 				var onMoveCard = function(event, object){
+					event.preventDefault();
 					if(_panel.x_index === object.panel.x_index){
 						if(_panel.y_index === object.panel.y_index){
 							element.css({
