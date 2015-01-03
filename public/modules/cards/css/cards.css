@@ -182,7 +182,7 @@ div.dropdown-menu {
 	height: 150px;
 	width: 250px;
 	overflow: auto;
-	background-image: url('../modules/cards/img/dashboard.png');
+	background-image: url('/modules/cards/img/dashboard.png');
 	background-repeat: no-repeat;
 	background-size: 250px 150px;
 }
@@ -212,25 +212,25 @@ div.dropdown-menu {
 }
 
 .card-trait {
-	background-image: url('../modules/cards/img/card_033.png');
+	background-image: url('/modules/cards/img/card_033.png');
 	background-repeat: no-repeat;
 	background-size: 100%;
 }
 
 .card-feat {
-	background-image: url('../modules/cards/img/card_041.png');
+	background-image: url('/modules/cards/img/card_041.png');
 	background-repeat: no-repeat;
 	background-size: 100%;
 }
 
 .card-augment {
-	background-image: url('../modules/cards/img/card_059.png');
+	background-image: url('/modules/cards/img/card_059.png');
 	background-repeat: no-repeat;
 	background-size: 100%;
 }
 
 .card-item {
-	background-image: url('../modules/cards/img/card_016.png');
+	background-image: url('/modules/cards/img/card_016.png');
 	background-repeat: no-repeat;
 	background-size: 100%;
 }
