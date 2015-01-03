@@ -11,14 +11,7 @@ pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
 		service.previousDie = {};
 		service.chosenAbility = {};
 		
-		service.diceBoxShown = false;
-		
-		service.hideDiceBox = function(){
-			this.diceBoxShown = !this.diceBoxShown;
-		};
-		
 		service.chooseAbility = function(ability){
-			this.diceBoxShown = true;
 			this.chosenAbility = Pcs.pc.abilities[ability];
 		};
 		
@@ -35,7 +28,6 @@ pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
 			
 			Pcs.pc.abilities[this.chosenAbility.order].dice = this.chosenDie;
 			
-			this.hideDiceBox();
 			switch(this.chosenAbility.order){
 				case 0:
 				case 1:
@@ -99,8 +91,6 @@ pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
 				Pcs.pc.tenacity = '2' + _cha.dice.name;
 			}
 		};
-		
-		
 		
 		return service;
 	}]);

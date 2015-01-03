@@ -39,6 +39,13 @@
 	overflow: hidden;
 }
 
+.dice-dropdown {
+	white-space: normal;
+	padding: 6px;
+	font-size: 12px;
+	list-style-type: none;
+}
+
 .card-menu-list {
 	white-space: normal;
 	padding-left: 6px;
@@ -104,13 +111,6 @@ a.dropdown-toggle:hover {
 	top: 342px;
 	left: 238px;
 	font-size: 16px;
-	cursor: pointer;
-}
-
-.card-delete {
-	position: absolute;
-	top: 334px;
-	left: 234px;
 	cursor: pointer;
 }
 

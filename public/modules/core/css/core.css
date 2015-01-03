@@ -21,7 +21,8 @@ body {
     border-color:#78FA89;
 }
 
-.navbar .nav > li {
+.navbar {
+	position: absolute;
 	z-index: 10000;
 }
 
@@ -83,12 +84,6 @@ body {
 	cursor: pointer;
 }
 
-.dice-image {
-	-webkit-transition: all 1s linear;
-	transition: all 1s linear;
-	width: 36px;
-}
-
 .text-15px {
 	font-size: 15px;
 }
@@ -111,55 +106,4 @@ body {
 
 .text-9px {
 	font-size: 9px;
-}
-
-.dice-box{
-	-webkit-transition: linear .5s;
-	transition: linear .5s;
-	z-index:10000;
-	position: relative;
-	margin-bottom: -125px;
-	padding: 0 25px 25px 25px;
-	height: 125px;
-	width: 250px;
-	overflow: hidden;
-	background-image: url('/modules/cards/img/wood-drawer.png');
-	background-repeat: no-repeat;
-	background-size: 250px 125px;
-}
-
-.dice-box:not(.diceBoxShown){
-	top: -125px;
-}
-
-.dice-box.diceBoxShown{
-	top: 0;
-}
-
-.dice-box-image {
-	display: inline-block;
-	margin: 2px;
-	width: 36px;
-}
-
-.modal-overlay {
-	-webkit-transition: all linear .5s;
-	transition: all linear .5s;
-	z-index:9999;
-	position: relative;
-	height: 500px;
-	width: 100%;
-	margin-bottom: -500px;
-	background-color:#000000;
-	opacity: 0.1;
-}
-
-.modal-overlay.ng-hide-add.ng-hide-add-active,
-.modal-overlay.ng-hide-remove{
-	opacity: 0;
-}
-
-.modal-overlay.ng-hide-remove.ng-hide-remove-active,
-.modal-overlay.ng-hide-add{
-	opacity: 0.1;
 }

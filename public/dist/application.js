@@ -81,18 +81,6 @@ angular.module('cards').config(['$stateProvider',
 		state('listCards', {
 			url: '/cards',
 			templateUrl: 'modules/cards/views/list-cards.client.view.html'
-		}).
-		state('createCard', {
-			url: '/cards/create',
-			templateUrl: 'modules/cards/views/create-card.client.view.html'
-		}).
-		state('viewCard', {
-			url: '/cards/:cardId',
-			templateUrl: 'modules/cards/views/view-card.client.view.html'
-		}).
-		state('editCard', {
-			url: '/cards/:cardId/edit',
-			templateUrl: 'modules/cards/views/edit-card.client.view.html'
 		});
 	}
 ]);
@@ -2484,14 +2472,7 @@ pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
 		service.previousDie = {};
 		service.chosenAbility = {};
 		
-		service.diceBoxShown = false;
-		
-		service.hideDiceBox = function(){
-			this.diceBoxShown = !this.diceBoxShown;
-		};
-		
 		service.chooseAbility = function(ability){
-			this.diceBoxShown = true;
 			this.chosenAbility = Pcs.pc.abilities[ability];
 		};
 		
@@ -2508,7 +2489,6 @@ pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
 			
 			Pcs.pc.abilities[this.chosenAbility.order].dice = this.chosenDie;
 			
-			this.hideDiceBox();
 			switch(this.chosenAbility.order){
 				case 0:
 				case 1:
@@ -2572,8 +2552,6 @@ pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
 				Pcs.pc.tenacity = '2' + _cha.dice.name;
 			}
 		};
-		
-		
 		
 		return service;
 	}]);

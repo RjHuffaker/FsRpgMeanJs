@@ -1,4 +1,21 @@
 <div class="panel-content">
+	<div class="dropdown card-icon-top-left">
+		<a id="cardDropdown" class="dropdown-toggle"
+			ng-click="dropdown" aria-expanded="true">
+			<i class="card-icon glyphicon glyphicon-cog"></i>
+		</a>
+		<ul class="card-menu-list dropdown-menu" aria-labelledby="cardDropdown">
+			<li ng-click="savePc();"><label>
+				<i class="glyphicon glyphicon-ok alert-success"></i> Save Character
+			</label></li>
+			<li ng-click="savePc(); exitPc();"><label>
+				<i class="glyphicon glyphicon-remove alert-danger"></i> Save & Exit
+			</label></li>
+			<li ng-click="exitPc();"><label>
+				<i class="glyphicon glyphicon-exit alert-warning"></i> Exit Without Saving
+			</label></li>
+		</ul>
+	</div>
 	<table width="100%" height="20%">
 		<tbody>
 			<tr height="55%">
@@ -38,23 +55,45 @@
 		<tbody>
 			<tr height="15%">
 				<td width="20%">
-					<img id="strDie" stop-event
-						ng-src={{pcs.pc.abilities[0].dice.image}}
-						ng-click="pcsCard1.chooseAbility(0)"
-						alt="{{pcs.pc.abilities[0].dice.name}}"
-						class="dice-image shadow-heavy" />
+					<div class="dropdown">
+						<a id="strDropdown" class="dropdown-toggle"
+							ng-click="dropdown; pcsCard1.chooseAbility(0);" aria-expanded="true">
+							<img stop-event
+								ng-src={{pcs.pc.abilities[0].dice.image}}
+								alt="{{pcs.pc.abilities[0].dice.name}}"
+								class="dice-image">
+						</a>
+						<div class="dice-dropdown dropdown-menu" aria-labelledby="strDropdown">
+							<img ng-repeat="dice in pcs.pc.dicepool track by $index"
+								ng-src={{dice.image}} alt={{dice.name}}
+								ng-show="dice.order || $index == 0"
+								ng-click="pcsCard1.chooseDie(dice.order)"
+								class="col-xs-4" />
+						</div>
+					</div>
 				</td>
 				<td width="30%">
-					<label for="strDie">
+					<label for="strDropdown">
 						<strong>STR</strong>ength
 					</label>
 				</td>
 				<td width="20%">
-					<img id="phyDie" stop-event
-						ng-src={{pcs.pc.abilities[1].dice.image}}
-						ng-click="pcsCard1.chooseAbility(1)"
-						alt="{{pcs.pc.abilities[1].dice.name}}"
-						class="dice-image shadow-heavy" />
+					<div class="dropdown">
+						<a id="cardDropdown" class="dropdown-toggle"
+							ng-click="dropdown; pcsCard1.chooseAbility(1);" aria-expanded="true">
+							<img id="phyDie" stop-event
+								ng-src={{pcs.pc.abilities[1].dice.image}}
+								alt="{{pcs.pc.abilities[1].dice.name}}"
+								class="dice-image" />
+						</a>
+						<div class="dice-dropdown dropdown-menu" aria-labelledby="cardDropdown">
+							<img ng-repeat="dice in pcs.pc.dicepool track by $index"
+								ng-src={{dice.image}} alt={{dice.name}}
+								ng-show="dice.order || $index == 0"
+								ng-click="pcsCard1.chooseDie(dice.order)"
+								class="col-xs-4" />
+						</div>
+					</div>
 				</td>
 				<td width="30%">
 					<label for="phyDie">
@@ -77,11 +116,22 @@
 
 			<tr height="15%">
 				<td width="15%">
-					<img id="fleDie" stop-event
-						ng-src={{pcs.pc.abilities[2].dice.image}}
-						ng-click="pcsCard1.chooseAbility(2)"
-						alt="{{pcs.pc.abilities[2].dice.name}}"
-						class="dice-image shadow-heavy" />
+					<div class="dropdown">
+						<a id="cardDropdown" class="dropdown-toggle"
+							ng-click="dropdown; pcsCard1.chooseAbility(2);" aria-expanded="true">
+							<img id="fleDie" stop-event
+								ng-src={{pcs.pc.abilities[2].dice.image}}
+								alt="{{pcs.pc.abilities[2].dice.name}}"
+								class="dice-image" />
+						</a>
+						<div class="dice-dropdown dropdown-menu" aria-labelledby="cardDropdown">
+							<img ng-repeat="dice in pcs.pc.dicepool track by $index"
+								ng-src={{dice.image}} alt={{dice.name}}
+								ng-show="dice.order || $index == 0"
+								ng-click="pcsCard1.chooseDie(dice.order)"
+								class="col-xs-4" />
+						</div>
+					</div>
 				</td>
 				<td width="35%">
 					<label for="fleDie">
@@ -90,11 +140,22 @@
 				</td>
 				
 				<td width="15%">
-					<img id="dexDie" stop-event
-						ng-src={{pcs.pc.abilities[3].dice.image}}
-						ng-click="pcsCard1.chooseAbility(3)"
-						alt="{{pcs.pc.abilities[3].dice.name}}"
-						class="dice-image shadow-heavy" />
+					<div class="dropdown">
+						<a id="cardDropdown" class="dropdown-toggle"
+							ng-click="dropdown; pcsCard1.chooseAbility(3);" aria-expanded="true">
+							<img id="dexDie" stop-event
+								ng-src={{pcs.pc.abilities[3].dice.image}}
+								alt="{{pcs.pc.abilities[3].dice.name}}"
+								class="dice-image" />
+						</a>
+						<div class="dice-dropdown dropdown-menu" aria-labelledby="cardDropdown">
+							<img ng-repeat="dice in pcs.pc.dicepool track by $index"
+								ng-src={{dice.image}} alt={{dice.name}}
+								ng-show="dice.order || $index == 0"
+								ng-click="pcsCard1.chooseDie(dice.order)"
+								class="col-xs-4" />
+						</div>
+					</div>
 				</td>
 				<td width="35%">
 					<label for="dexDie">
@@ -117,11 +178,22 @@
 
 			<tr height="15%">
 				<td width="15%">
-					<img id="acuDie" stop-event
-						ng-src={{pcs.pc.abilities[4].dice.image}}
-						ng-click="pcsCard1.chooseAbility(4)"
-						alt="{{pcs.pc.abilities[4].dice.name}}"
-						class="dice-image shadow-heavy" />
+					<div class="dropdown">
+						<a id="cardDropdown" class="dropdown-toggle"
+							ng-click="dropdown; pcsCard1.chooseAbility(4);" aria-expanded="true">
+							<img id="acuDie" stop-event
+								ng-src={{pcs.pc.abilities[4].dice.image}}
+								alt="{{pcs.pc.abilities[4].dice.name}}"
+								class="dice-image" />
+						</a>
+						<div class="dice-dropdown dropdown-menu" aria-labelledby="cardDropdown">
+							<img ng-repeat="dice in pcs.pc.dicepool track by $index"
+								ng-src={{dice.image}} alt={{dice.name}}
+								ng-show="dice.order || $index == 0"
+								ng-click="pcsCard1.chooseDie(dice.order)"
+								class="col-xs-4" />
+						</div>
+					</div>
 				</td>
 				<td width="35%">
 					<label for="acuDie">
@@ -129,11 +201,22 @@
 					</label>
 				</td>
 				<td width="15%">
-					<img id="intDie" stop-event
-						ng-src={{pcs.pc.abilities[5].dice.image}}
-						ng-click="pcsCard1.chooseAbility(5)"
-						alt="{{pcs.pc.abilities[5].dice.name}}"
-						class="dice-image shadow-heavy" />
+					<div class="dropdown">
+						<a id="cardDropdown" class="dropdown-toggle"
+							ng-click="dropdown; pcsCard1.chooseAbility(5);" aria-expanded="true">
+							<img id="intDie" stop-event
+								ng-src={{pcs.pc.abilities[5].dice.image}}
+								alt="{{pcs.pc.abilities[5].dice.name}}"
+								class="dice-image" />
+						</a>
+						<div class="dice-dropdown dropdown-menu" aria-labelledby="cardDropdown">
+							<img ng-repeat="dice in pcs.pc.dicepool track by $index"
+								ng-src={{dice.image}} alt={{dice.name}}
+								ng-show="dice.order || $index == 0"
+								ng-click="pcsCard1.chooseDie(dice.order)"
+								class="col-xs-4" />
+						</div>
+					</div>
 				</td>
 				<td width="35%">
 					<label for="intDie">
@@ -156,11 +239,22 @@
 
 			<tr height="15%">
 				<td width="15%">
-					<img id="wisDie" stop-event
-						ng-src={{pcs.pc.abilities[6].dice.image}}
-						ng-click="pcsCard1.chooseAbility(6)"
-						alt="{{pcs.pc.abilities[6].dice.name}}"
-						class="dice-image shadow-heavy" />
+					<div class="dropdown">
+						<a id="cardDropdown" class="dropdown-toggle"
+							ng-click="dropdown; pcsCard1.chooseAbility(6);" aria-expanded="true">
+							<img id="wisDie" stop-event
+								ng-src={{pcs.pc.abilities[6].dice.image}}
+								alt="{{pcs.pc.abilities[6].dice.name}}"
+								class="dice-image" />
+						</a>
+						<div class="dice-dropdown dropdown-menu" aria-labelledby="cardDropdown">
+							<img ng-repeat="dice in pcs.pc.dicepool track by $index"
+								ng-src={{dice.image}} alt={{dice.name}}
+								ng-show="dice.order || $index == 0"
+								ng-click="pcsCard1.chooseDie(dice.order)"
+								class="col-xs-4" />
+						</div>
+					</div>
 				</td>
 				<td width="35%">
 					<label for="wisDie">
@@ -168,11 +262,22 @@
 					</label>
 				</td>
 				<td width="15%">
-					<img id="chaDie" stop-event
-						ng-src={{pcs.pc.abilities[7].dice.image}}
-						ng-click="pcsCard1.chooseAbility(7)"
-						alt="{{pcs.pc.abilities[7].dice.name}}"
-						class="dice-image shadow-heavy" />
+					<div class="dropdown">
+						<a id="cardDropdown" class="dropdown-toggle"
+							ng-click="dropdown; pcsCard1.chooseAbility(7);" aria-expanded="true">
+							<img id="chaDie" stop-event
+								ng-src={{pcs.pc.abilities[7].dice.image}}
+								alt="{{pcs.pc.abilities[7].dice.name}}"
+								class="dice-image" />
+						</a>
+						<div class="dice-dropdown dropdown-menu" aria-labelledby="cardDropdown">
+							<img ng-repeat="dice in pcs.pc.dicepool track by $index"
+								ng-src={{dice.image}} alt={{dice.name}}
+								ng-show="dice.order || $index == 0"
+								ng-click="pcsCard1.chooseDie(dice.order)"
+								class="col-xs-4" />
+						</div>
+					</div>
 				</td>
 				<td width="35%">
 					<label for="chaDie">
