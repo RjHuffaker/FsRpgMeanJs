@@ -174,7 +174,7 @@ cardsModule
 				
 				var _panel = $parse(attrs.card) || null;
 				
-				var _hasTouch = ('ontouchstart' in $document.documentElement);
+				var _hasTouch = ('ontouchstart' in document.documentElement);
 				var _pressEvents = 'touchstart mousedown';
 				var _moveEvents = 'touchmove mousemove';
 				var _releaseEvents = 'touchend mouseup';
@@ -202,7 +202,7 @@ cardsModule
 					
 					// prevent native drag
 					if(! _hasTouch){
-						
+						console.log('touchy-touchy');
 						element.on('mousedown', function(){
 							return false;
 						});
@@ -232,6 +232,7 @@ cardsModule
 						cancelPress();
 						_pressTimer = setTimeout(function(){
 							cancelPress();
+							console.log('touchy-longpress');
 							onLongPress(event);
 						}, 100);
 						
