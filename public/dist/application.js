@@ -292,6 +292,8 @@ cardsModule
 				// MOVE
 				// Primary "move" function
 				var onMove = function(event){
+					event.preventDefault();
+					
 					_mouseX = (event.pageX || event.touches[0].pageX);
 					_mouseY = (event.pageY || event.touches[0].pageY);
 					
@@ -321,6 +323,7 @@ cardsModule
 				// Callback function to move a single card or each card in a vertical stack
 				var onMoveCard = function(event, object){
 					event.preventDefault();
+					
 					if(_panel.x_index === object.panel.x_index){
 						if(_panel.y_index === object.panel.y_index){
 							element.css({
@@ -340,6 +343,7 @@ cardsModule
 				// Primary "release" function
 				var onRelease = function(){
 					event.preventDefault();
+					
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
 					if(_moveX <= 15 && _moveX >= -15 && _moveY <= 15 && _moveY >= -15){
@@ -356,6 +360,7 @@ cardsModule
 				// Respond to 'onMouseLeave' event similar to onRelease, but without toggling overlap
 				var onMouseLeave = function(){
 					event.preventDefault();
+					
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
