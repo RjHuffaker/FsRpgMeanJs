@@ -158,7 +158,7 @@ var cardsModule = angular.module('cards');
 
 // Directive for managing card decks.
 cardsModule
-	.directive('cardPanel', ['$parse', '$rootScope', function($parse, $rootScope){
+	.directive('cardPanel', ['$document', '$parse', '$rootScope', function($document, $parse, $rootScope){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -170,11 +170,11 @@ cardsModule
 					_startCol, _mouseCol, _panelCol,
 					_startRow, _mouseRow, _panelRow;
 				
-				var $document = $(document);
-				
 				var _stacked = false;
 				
 				var _panel = $parse(attrs.card) || null;
+				
+				console.log(document.documentElement);
 				
 				var _hasTouch = ('ontouchstart' in document.documentElement);
 				var _pressEvents = 'touchstart mousedown';
