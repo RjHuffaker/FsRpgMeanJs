@@ -69,6 +69,7 @@ cardsModule
 				
 				 // When the element is clicked start the drag behaviour
 				var onPress = function(event){
+					console.log(event);
 					
 					// Disable press events until current press event is resolved
 					$document.off(_pressEvents, onPress);
@@ -76,7 +77,6 @@ cardsModule
 					// Small delay for touch devices to allow for native window scrolling
 					if(_hasTouch){
 						console.log('Yes touchy!');
-						console.log(event);
 						cancelPress();
 						_pressTimer = setTimeout(function(){
 							cancelPress();
@@ -101,7 +101,7 @@ cardsModule
 				// Primary "press" function
 				var onLongPress = function(event){
 					event.preventDefault();
-					console.log(event);
+					
 					_startX = (event.pageX || event.originalEvent.touches[0].pageX);
 					_startY = (event.pageY || event.originalEvent.touches[0].pageY);
 					
