@@ -102,8 +102,8 @@ cardsModule
 				var onLongPress = function(event){
 					event.preventDefault();
 					
-					_startX = (event.pageX || event.originalEvent.touches[0].pageX);
-					_startY = (event.pageY || event.originalEvent.touches[0].pageY);
+					_startX = (event.pageX || event.touches[0].pageX);
+					_startY = (event.pageY || event.touches[0].pageY);
 					
 					_moveX = 0;
 					_moveY = 0;
@@ -139,8 +139,8 @@ cardsModule
 				// MOVE
 				// Primary "move" function
 				var onMove = function(event){
-					_mouseX = (event.pageX || event.originalEvent.touches[0].pageX);
-					_mouseY = (event.pageY || event.originalEvent.touches[0].pageY);
+					_mouseX = (event.pageX || event.touches[0].pageX);
+					_mouseY = (event.pageY || event.touches[0].pageY);
 					
 					_mouseCol = _panel.x_coord;
 					_mouseRow = _panel.y_coord;
