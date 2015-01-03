@@ -20,8 +20,6 @@ cardsModule
 				
 				var _panel = $parse(attrs.card) || null;
 				
-				console.log(document.documentElement);
-				
 				var _hasTouch = ('ontouchstart' in document.documentElement);
 				var _pressEvents = 'touchstart mousedown';
 				var _moveEvents = 'touchmove mousemove';
@@ -103,7 +101,7 @@ cardsModule
 				// Primary "press" function
 				var onLongPress = function(event){
 					event.preventDefault();
-					
+					console.log(event);
 					_startX = (event.pageX || event.originalEvent.touches[0].pageX);
 					_startY = (event.pageY || event.originalEvent.touches[0].pageY);
 					
