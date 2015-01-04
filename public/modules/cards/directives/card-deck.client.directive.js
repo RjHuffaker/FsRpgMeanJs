@@ -4,7 +4,7 @@ var cardsModule = angular.module('cards');
 
 // Directive for managing card decks.
 cardsModule
-	.directive('cardPanel', ['$document', '$parse', '$rootScope', function($document, $parse, $rootScope){
+	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', function($document, $parse, $rootScope, $window){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -20,13 +20,12 @@ cardsModule
 				
 				var _panel = $parse(attrs.card) || null;
 				
-				var _hasTouch = ('ontouchstart' in document.documentElement);
 				var _pressEvents = 'touchstart mousedown';
 				var _moveEvents = 'touchmove mousemove';
 				var _releaseEvents = 'touchend mouseup';
 				
 				var _pressTimer = null;
-
+				
 				var initialize = function(){
 					// prevent native drag
 					element.attr('draggable', 'false');
@@ -46,14 +45,15 @@ cardsModule
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
 					element.on(_pressEvents, onPress);
 					
-					// prevent native drag
-					if(! _hasTouch){
-						console.log('No touchy!');
-						element.on('mousedown', function(){
-							return false;
-						});
-					}
+				//	prevent native drag??
+				//	if(! _hasTouch){
+				//		element.on('mousedown', function(){
+				//			return false;
+				//		});
+				//	}
 				};
+				
+				var _hasTouch = $window.hasOwnProperty('ontouchstart');
 				
 				var onDestroy = function(enable){
 					toggleListeners(false);
@@ -69,12 +69,15 @@ cardsModule
 				
 				 // When the element is clicked start the drag behaviour
 				var onPress = function(event){
-					
+			//		console.log($window);
+			//		console.log(_hasTouch);
+			//		console.log(event.touches);
+			
 					// Disable press events until current press event is resolved
-					$document.off(_pressEvents, onPress);
+			//		$document.off(_pressEvents, onPress);
 					
 					// Small delay for touch devices to allow for native window scrolling
-					if(_hasTouch){
+					if(_hasTouch && event.touches.length > 0){
 						cancelPress();
 						_pressTimer = setTimeout(function(){
 							cancelPress();
@@ -98,10 +101,9 @@ cardsModule
 				// PRESS
 				// Primary "press" function
 				var onLongPress = function(event){
-					event.preventDefault();
 					
-					_startX = (event.pageX || event.touches[0].pageX);
-					_startY = (event.pageY || event.touches[0].pageY);
+					_startX = (event.pageX || event.targetTouches[0].pageX);
+					_startY = (event.pageY || event.targetTouches[0].pageY);
 					
 					_moveX = 0;
 					_moveY = 0;
@@ -139,8 +141,8 @@ cardsModule
 				var onMove = function(event){
 					event.preventDefault();
 					
-					_mouseX = (event.pageX || event.touches[0].pageX);
-					_mouseY = (event.pageY || event.touches[0].pageY);
+					_mouseX = (event.pageX || event.targetTouches[0].pageX);
+					_mouseY = (event.pageY || event.targetTouches[0].pageY);
 					
 					_mouseCol = _panel.x_coord;
 					_mouseRow = _panel.y_coord;
@@ -167,7 +169,6 @@ cardsModule
 				
 				// Callback function to move a single card or each card in a vertical stack
 				var onMoveCard = function(event, object){
-					event.preventDefault();
 					
 					if(_panel.x_index === object.panel.x_index){
 						if(_panel.y_index === object.panel.y_index){
@@ -187,7 +188,6 @@ cardsModule
 				// RELEASE
 				// Primary "release" function
 				var onRelease = function(){
-					event.preventDefault();
 					
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
