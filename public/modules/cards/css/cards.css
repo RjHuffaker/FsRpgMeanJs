@@ -210,27 +210,35 @@ div.dropdown-menu {
 	margin-right: 2%;
 }
 
+[card-pc-1],
+[card-pc-2],
+[card-pc-3] {
+	background-color: tan;
+	border: solid 2px black;
+	border-radius: 10px;
+}
+
 .card-trait {
-	background-image: url('/modules/cards/img/card_033.png');
-	background-repeat: no-repeat;
-	background-size: 100%;
+	background-color: khaki;
+	border: solid 2px black;
+	border-radius: 10px;
 }
 
 .card-feat {
-	background-image: url('/modules/cards/img/card_041.png');
-	background-repeat: no-repeat;
-	background-size: 100%;
+	background-color: olive;
+	border: solid 2px black;
+	border-radius: 10px;
 }
 
 .card-augment {
-	background-image: url('/modules/cards/img/card_059.png');
-	background-repeat: no-repeat;
-	background-size: 100%;
+	background-color: seaGreen;
+	border: solid 2px black;
+	border-radius: 10px;
 }
 
 .card-item {
-	background-image: url('/modules/cards/img/card_016.png');
-	background-repeat: no-repeat;
-	background-size: 100%;
+	background-color: darkKhaki;
+	border: solid 2px black;
+	border-radius: 10px;
 }
 

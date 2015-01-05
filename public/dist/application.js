@@ -1884,18 +1884,18 @@ cardsModule.factory('PcsAugments', ['Pcs', 'PcsCardDeck',
 		
 		// Factor Augment Limit
 		service.factorAugmentLimit = function(){
-			Pcs.pc.cards[1].augmentLimit = Math.round((Pcs.pc.cards[1].level || 0) / 4);
+			Pcs.pc.augmentLimit = Math.round((Pcs.pc.level || 0) / 4);
 			this.validateAugments();
 		};
 		
 		service.validateAugments = function(){
-			for(var ia = 0; ia < Pcs.pc.cards[1].augmentLimit; ia++){
+			for(var ia = 0; ia < Pcs.pc.augmentLimit; ia++){
 				if(!this.augmentAtLevel(ia * 4 + 2)){
 					this.addAugment(ia * 4 + 2);
 				}
 			}
 			for(var ic = 0; ic < Pcs.pc.cards.length; ic++){
-				if(Pcs.pc.cards[ic].level > Pcs.pc.cards[1].level){
+				if(Pcs.pc.cards[ic].level > Pcs.pc.level){
 					PcsCardDeck.removeCard(ic);
 				}
 			}

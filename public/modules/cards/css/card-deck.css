@@ -22,24 +22,6 @@
 	transition: .4s linear all;
 }
 
-[card-pc-1] {
-	background-image: url('/modules/cards/img/card_001.png');
-	background-repeat: no-repeat;
-	background-size: 100%;
-}
-
-[card-pc-2] {
-	background-image: url('/modules/cards/img/card_002.png');
-	background-repeat: no-repeat;
-	background-size: 100%;
-}
-
-[card-pc-3] {
-	background-image: url('/modules/cards/img/card_006.png');
-	background-repeat: no-repeat;
-	background-size: 100%;
-}
-
 [card-slot], [card-panel] {
 	display: inline-block;
 	position: absolute;
