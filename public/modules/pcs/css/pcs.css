@@ -1,3 +1,16 @@
 .dice-image {
 	width: 36px;
+	height: 36px;
+}
+
+.dice-dropdown {
+	width: 125px !important;
+	white-space: normal;
+	font-size: 14px;
+}
+
+.dice-dropdown-image {
+	width: 32px;
+	height: 32px;
+	margin: 4px;
 }

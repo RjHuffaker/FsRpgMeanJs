@@ -28,13 +28,22 @@ cardsModule
 			templateUrl: '../modules/pcs/views/card-pc-3.html'
 		};
 	})
+	.directive('diceDropdown', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/pcs/views/dice-dropdown.html',
+			scope: {
+				ability: '='
+			}
+		};
+	})
 	.directive('stopEvent', function(){
 		return{
 			restrict: 'A',
 			link: function(scope, element, attr){
 				var _pressEvents = 'touchstart mousedown';
-				element.bind(_pressEvents, function(e){
-					e.stopPropagation();
+				element.bind(_pressEvents, function(event){
+					event.stopPropagation();
 				});
 			}
 		};
@@ -43,8 +52,8 @@ cardsModule
 		return{
 			restrict: 'A',
 			link: function(scope, element, attr){
-				element.bind('click', function(e){
-					e.stopPropagation();
+				element.bind('click', function(event){
+					event.stopPropagation();
 				});
 			}
 		};

@@ -20,6 +20,8 @@ cardsModule
 				
 				var _panel = $parse(attrs.card) || null;
 				
+				var _hasTouch = ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch;
+				
 				var _pressEvents = 'touchstart mousedown';
 				var _moveEvents = 'touchmove mousemove';
 				var _releaseEvents = 'touchend mouseup';
@@ -45,15 +47,13 @@ cardsModule
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
 					element.on(_pressEvents, onPress);
 					
-				//	prevent native drag??
-				//	if(! _hasTouch){
+					//	prevent native drag??
+				//	if(_hasTouch){
 				//		element.on('mousedown', function(){
 				//			return false;
 				//		});
 				//	}
 				};
-				
-				var _hasTouch = $window.hasOwnProperty('ontouchstart');
 				
 				var onDestroy = function(enable){
 					toggleListeners(false);
@@ -77,7 +77,7 @@ cardsModule
 			//		$document.off(_pressEvents, onPress);
 					
 					// Small delay for touch devices to allow for native window scrolling
-					if(_hasTouch && event.touches.length > 0){
+					if(_hasTouch){
 						cancelPress();
 						_pressTimer = setTimeout(function(){
 							cancelPress();
@@ -87,6 +87,7 @@ cardsModule
 						$document.on(_moveEvents, cancelPress);
 						$document.on(_releaseEvents, cancelPress);
 					}else if(!_hasTouch){
+						console.log('no touch');
 						onLongPress(event);
 					}
 
@@ -102,8 +103,8 @@ cardsModule
 				// Primary "press" function
 				var onLongPress = function(event){
 					
-					_startX = (event.pageX || event.targetTouches[0].pageX);
-					_startY = (event.pageY || event.targetTouches[0].pageY);
+					_startX = (event.pageX || event.touches[0].pageX);
+					_startY = (event.pageY || event.touches[0].pageY);
 					
 					_moveX = 0;
 					_moveY = 0;
@@ -139,10 +140,9 @@ cardsModule
 				// MOVE
 				// Primary "move" function
 				var onMove = function(event){
-					event.preventDefault();
 					
-					_mouseX = (event.pageX || event.targetTouches[0].pageX);
-					_mouseY = (event.pageY || event.targetTouches[0].pageY);
+					_mouseX = (event.pageX || event.touches[0].pageX);
+					_mouseY = (event.pageY || event.touches[0].pageY);
 					
 					_mouseCol = _panel.x_coord;
 					_mouseRow = _panel.y_coord;
@@ -165,6 +165,9 @@ cardsModule
 						panelY: _panelY,
 						panel: _panel
 					});
+					
+					event.preventDefault();
+					
 				};
 				
 				// Callback function to move a single card or each card in a vertical stack
@@ -188,7 +191,6 @@ cardsModule
 				// RELEASE
 				// Primary "release" function
 				var onRelease = function(){
-					
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
 					if(_moveX <= 15 && _moveX >= -15 && _moveY <= 15 && _moveY >= -15){
@@ -204,8 +206,6 @@ cardsModule
 				
 				// Respond to 'onMouseLeave' event similar to onRelease, but without toggling overlap
 				var onMouseLeave = function(){
-					event.preventDefault();
-					
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {

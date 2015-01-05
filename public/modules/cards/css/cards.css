@@ -39,13 +39,6 @@
 	overflow: hidden;
 }
 
-.dice-dropdown {
-	white-space: normal;
-	padding: 6px;
-	font-size: 12px;
-	list-style-type: none;
-}
-
 .card-menu-list {
 	white-space: normal;
 	padding-left: 6px;
@@ -187,15 +180,21 @@ div.dropdown-menu {
 	background-size: 250px 150px;
 }
 
-.logo-augment {
+.logo-trait {
 	height: 36px;
-	width: 100px;
+	width: 72px;
 	margin-right: 2%;
 }
 
 .logo-feat {
 	height: 36px;
 	width: 58px;
+	margin-right: 2%;
+}
+
+.logo-augment {
+	height: 36px;
+	width: 100px;
 	margin-right: 2%;
 }
 
@@ -235,8 +234,3 @@ div.dropdown-menu {
 	background-size: 100%;
 }
 
-.logo-trait {
-	height: 36px;
-	width: 72px;
-	margin-right: 2%;
-}
