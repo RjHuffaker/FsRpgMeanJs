@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-	db: 'mongodb://<dbuser>:<dbpassword>@ds029811.mongolab.com:29811/heroku_app32937815',
+	db: 'mongodb:/ds029811.mongolab.com:29811/heroku_app32937815',
 	assets: {
 		lib: {
 			css: [
