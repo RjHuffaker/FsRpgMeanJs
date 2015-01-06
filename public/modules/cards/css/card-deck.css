@@ -37,26 +37,10 @@
 
 [card-panel] > div > div {
 	border-radius: 15px;
-	border-top: 1px solid #111;
-	border-left: 1px solid #111;
-	border-right: 2px solid #000;
-	border-bottom: 2px solid #000;
-}
-
-[card-panel] > div > div {
-	-webkit-transition: margin .1s linear;
-	-moz-transition: margin .1s linear;
-	-o-transition: margin .1s linear;
-	-ms-transition: margin .1s linear;
-	transition: margin .1s linear;
-}
-
-[card-panel] > div > div:hover {
-	margin-top: -2px;
-	margin-left: 2px;
-	-webkit-filter: drop-shadow(1px 1px 1px #000);
-	-moz-box-shadow: 1px 1px 1px #00f;
-	filter:         drop-shadow(1px 1px 1px #000);
+	border-top: 1px solid #222;
+	border-left: 1px solid #222;
+	border-right: 2px solid #111;
+	border-bottom: 2px solid #111;
 }
 
 [card-slot].ng-enter {

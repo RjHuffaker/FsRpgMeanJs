@@ -57,7 +57,7 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 			} else {
 				PcsCardDeck.unstackCard(object.slot, object.panel);
 			}
-			$scope.$digest();
+			$scope.$apply();
 		};
 
 		var moveDiagonalUp = function(event, object){

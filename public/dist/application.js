@@ -162,7 +162,7 @@ cardsModule
 				
 				var _panel = $parse(attrs.card) || null;
 				
-				var _hasTouch = ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch;
+				var _hasTouch = ('ontouchstart' in window);
 				
 				var _pressEvents = 'touchstart mousedown';
 				var _moveEvents = 'touchmove mousemove';
@@ -190,7 +190,7 @@ cardsModule
 					element.on(_pressEvents, onPress);
 					
 					// prevent native drag for images
-					 if(! _hasTouch && element[0].nodeName.toLowerCase() == "img"){
+					 if(! _hasTouch && element[0].nodeName.toLowerCase() === 'img'){
 						element.on('mousedown', function(){ return false;});
 					}
 				};
@@ -1751,7 +1751,7 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 			} else {
 				PcsCardDeck.unstackCard(object.slot, object.panel);
 			}
-			$scope.$digest();
+			$scope.$apply();
 		};
 
 		var moveDiagonalUp = function(event, object){
