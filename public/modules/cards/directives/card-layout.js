@@ -42,7 +42,7 @@ cardsModule
 			restrict: 'A',
 			link: function(scope, element, attr){
 				var _pressEvents = 'touchstart mousedown';
-				element.bind(_pressEvents, function(event){
+				element.on(_pressEvents, function(event){
 					event.stopPropagation();
 				});
 			}
@@ -52,7 +52,7 @@ cardsModule
 		return{
 			restrict: 'A',
 			link: function(scope, element, attr){
-				element.bind('click', function(event){
+				element.on('click', function(event){
 					event.stopPropagation();
 				});
 			}
