@@ -165,21 +165,6 @@ div.dropdown-menu {
 	background-origin: none;
 }
 
-.dashboard{
-	-webkit-transition: linear .5s;
-	transition: linear .5s;
-	z-index:10000;
-	position: relative;
-	padding: 13px;
-	top: 350px;
-	height: 150px;
-	width: 250px;
-	overflow: auto;
-	background-image: url('/modules/cards/img/dashboard.png');
-	background-repeat: no-repeat;
-	background-size: 250px 150px;
-}
-
 .logo-trait {
 	height: 36px;
 	width: 72px;
@@ -213,32 +198,22 @@ div.dropdown-menu {
 [card-pc-1],
 [card-pc-2],
 [card-pc-3] {
-	background-color: tan;
-	border: solid 2px black;
-	border-radius: 10px;
+	background-color: Tan;
 }
 
 .card-trait {
-	background-color: khaki;
-	border: solid 2px black;
-	border-radius: 10px;
+	background-color: BurlyWood;
 }
 
 .card-feat {
-	background-color: olive;
-	border: solid 2px black;
-	border-radius: 10px;
+	background-color: DarkKhaki;
 }
 
 .card-augment {
-	background-color: seaGreen;
-	border: solid 2px black;
-	border-radius: 10px;
+	background-color: DarkSeaGreen;
 }
 
 .card-item {
-	background-color: darkKhaki;
-	border: solid 2px black;
-	border-radius: 10px;
+	background-color: Khaki;
 }
 

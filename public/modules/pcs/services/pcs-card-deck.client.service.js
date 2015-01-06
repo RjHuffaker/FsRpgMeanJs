@@ -72,6 +72,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 		
 		// Swap card order along horizontal axis
 		service.switchHorizontal = function(slot, panel){
+			
 			var slot_x_index = slot.x_index;
 			var slot_y_index = slot.y_index;
 			var slot_x_overlap = slot.x_overlap;
@@ -85,7 +86,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 				// PANEL MOVING LEFT
 					this.setMovingLeft(400);
 					for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
-						if(Pcs.pc.cards[ia].x_index === slot_x_index){	
+						if(Pcs.pc.cards[ia].x_index === slot_x_index){
 						// Modify position of each card in "SLOT" column
 							Pcs.pc.cards[ia].x_index += 1;
 							if(slot_x_index > 0){

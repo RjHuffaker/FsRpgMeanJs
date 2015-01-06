@@ -15,11 +15,6 @@
 	margin-top: 100px;
 	margin-left: 25px;
 	height: 100%;
-	-webkit-transition: .4s linear all;
-	-moz-transition: .4s linear all;
-	-o-transition: .4s linear all;
-	-ms-transition: .4s linear all;
-	transition: .4s linear all;
 }
 
 [card-slot], [card-panel] {
@@ -30,6 +25,9 @@
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	user-select: none;
+}
+
+[card-slot]:not(.dragging), [card-panel]:not(.dragging) {
 	-webkit-transition: .4s linear all;
 	-moz-transition: .4s linear all;
 	-o-transition: .4s linear all;
@@ -37,9 +35,28 @@
 	transition: .4s linear all;
 }
 
-[card-slot].dragging, [card-panel].dragging {
-	z-index: 4999;
-	transition-property: none;
+[card-panel] > div > div {
+	border-radius: 15px;
+	border-top: 1px solid #111;
+	border-left: 1px solid #111;
+	border-right: 2px solid #000;
+	border-bottom: 2px solid #000;
+}
+
+[card-panel] > div > div {
+	-webkit-transition: margin .1s linear;
+	-moz-transition: margin .1s linear;
+	-o-transition: margin .1s linear;
+	-ms-transition: margin .1s linear;
+	transition: margin .1s linear;
+}
+
+[card-panel] > div > div:hover {
+	margin-top: -2px;
+	margin-left: 2px;
+	-webkit-filter: drop-shadow(1px 1px 1px #000);
+	-moz-box-shadow: 1px 1px 1px #00f;
+	filter:         drop-shadow(1px 1px 1px #000);
 }
 
 [card-slot].ng-enter {

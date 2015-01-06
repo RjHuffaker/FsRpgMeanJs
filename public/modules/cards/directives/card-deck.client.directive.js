@@ -47,12 +47,10 @@ cardsModule
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
 					element.on(_pressEvents, onPress);
 					
-					//	prevent native drag??
-				//	if(_hasTouch){
-				//		element.on('mousedown', function(){
-				//			return false;
-				//		});
-				//	}
+					// prevent native drag for images
+					 if(! _hasTouch && element[0].nodeName.toLowerCase() == "img"){
+						element.on('mousedown', function(){ return false;});
+					}
 				};
 				
 				var onDestroy = function(enable){
@@ -69,13 +67,7 @@ cardsModule
 				
 				 // When the element is clicked start the drag behaviour
 				var onPress = function(event){
-			//		console.log($window);
-			//		console.log(_hasTouch);
-			//		console.log(event.touches);
 			
-					// Disable press events until current press event is resolved
-			//		$document.off(_pressEvents, onPress);
-					
 					// Small delay for touch devices to allow for native window scrolling
 					if(_hasTouch){
 						cancelPress();
@@ -87,10 +79,8 @@ cardsModule
 						$document.on(_moveEvents, cancelPress);
 						$document.on(_releaseEvents, cancelPress);
 					}else if(!_hasTouch){
-						console.log('no touch');
 						onLongPress(event);
 					}
-
 				};
 				
 				var cancelPress = function(){
@@ -102,6 +92,7 @@ cardsModule
 				// PRESS
 				// Primary "press" function
 				var onLongPress = function(event){
+					event.preventDefault();
 					
 					_startX = (event.pageX || event.touches[0].pageX);
 					_startY = (event.pageY || event.touches[0].pageY);
@@ -140,6 +131,7 @@ cardsModule
 				// MOVE
 				// Primary "move" function
 				var onMove = function(event){
+					event.preventDefault();
 					
 					_mouseX = (event.pageX || event.touches[0].pageX);
 					_mouseY = (event.pageY || event.touches[0].pageY);
@@ -165,8 +157,6 @@ cardsModule
 						panelY: _panelY,
 						panel: _panel
 					});
-					
-					event.preventDefault();
 					
 				};
 				

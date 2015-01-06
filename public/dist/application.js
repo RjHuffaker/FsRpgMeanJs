@@ -189,12 +189,10 @@ cardsModule
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
 					element.on(_pressEvents, onPress);
 					
-					//	prevent native drag??
-				//	if(_hasTouch){
-				//		element.on('mousedown', function(){
-				//			return false;
-				//		});
-				//	}
+					// prevent native drag for images
+					 if(! _hasTouch && element[0].nodeName.toLowerCase() == "img"){
+						element.on('mousedown', function(){ return false;});
+					}
 				};
 				
 				var onDestroy = function(enable){
@@ -211,13 +209,7 @@ cardsModule
 				
 				 // When the element is clicked start the drag behaviour
 				var onPress = function(event){
-			//		console.log($window);
-			//		console.log(_hasTouch);
-			//		console.log(event.touches);
 			
-					// Disable press events until current press event is resolved
-			//		$document.off(_pressEvents, onPress);
-					
 					// Small delay for touch devices to allow for native window scrolling
 					if(_hasTouch){
 						cancelPress();
@@ -229,10 +221,8 @@ cardsModule
 						$document.on(_moveEvents, cancelPress);
 						$document.on(_releaseEvents, cancelPress);
 					}else if(!_hasTouch){
-						console.log('no touch');
 						onLongPress(event);
 					}
-
 				};
 				
 				var cancelPress = function(){
@@ -244,6 +234,7 @@ cardsModule
 				// PRESS
 				// Primary "press" function
 				var onLongPress = function(event){
+					event.preventDefault();
 					
 					_startX = (event.pageX || event.touches[0].pageX);
 					_startY = (event.pageY || event.touches[0].pageY);
@@ -282,6 +273,7 @@ cardsModule
 				// MOVE
 				// Primary "move" function
 				var onMove = function(event){
+					event.preventDefault();
 					
 					_mouseX = (event.pageX || event.touches[0].pageX);
 					_mouseY = (event.pageY || event.touches[0].pageY);
@@ -307,8 +299,6 @@ cardsModule
 						panelY: _panelY,
 						panel: _panel
 					});
-					
-					event.preventDefault();
 					
 				};
 				
@@ -1761,6 +1751,7 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 			} else {
 				PcsCardDeck.unstackCard(object.slot, object.panel);
 			}
+			$scope.$digest();
 		};
 
 		var moveDiagonalUp = function(event, object){
@@ -1769,6 +1760,7 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 			} else {
 				PcsCardDeck.unstackCard(object.slot, object.panel);
 			}
+			$scope.$digest();
 		};
 
 		var moveDiagonalDown = function(event, object){
@@ -1777,16 +1769,19 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 			} else {
 				PcsCardDeck.unstackCard(object.slot, object.panel);
 			}
+			$scope.$digest();
 		};
 		
 		var moveVertical = function(event, object){
 			PcsCardDeck.switchVertical(object.slot, object.panel);
+			$scope.$digest();
 		};
 		
 		var unstackLeft = function(event, object){
 			if(object.panel.y_index > 0){
 				PcsCardDeck.unstackCard({x_index: -1}, object.panel);
 			}
+			$scope.$digest();
 		};
 		
 		var unstackRight = function(event, object){
@@ -1794,6 +1789,7 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 				var unstack_index = Pcs.pc.cards[Pcs.lastCard()].x_index + 1;
 				PcsCardDeck.unstackCard({x_index: unstack_index}, object.panel);
 			}
+			$scope.$digest();
 		};
 		
 		var toggleOverlap = function(event, object){
@@ -2007,6 +2003,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 		
 		// Swap card order along horizontal axis
 		service.switchHorizontal = function(slot, panel){
+			
 			var slot_x_index = slot.x_index;
 			var slot_y_index = slot.y_index;
 			var slot_x_overlap = slot.x_overlap;
@@ -2020,7 +2017,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 				// PANEL MOVING LEFT
 					this.setMovingLeft(400);
 					for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
-						if(Pcs.pc.cards[ia].x_index === slot_x_index){	
+						if(Pcs.pc.cards[ia].x_index === slot_x_index){
 						// Modify position of each card in "SLOT" column
 							Pcs.pc.cards[ia].x_index += 1;
 							if(slot_x_index > 0){
