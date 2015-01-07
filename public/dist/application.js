@@ -1974,7 +1974,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 		var y_tab = 50;
 		var x_cover = 225;
 		var y_cover = 300;
-		
+		var _moveSpeed = 1000;
 		service.cardMoved = false;		// Disables overlap functions if current press has already triggered another function
 		service.isMoving = false;
 		service.movingUp = false;
@@ -2046,7 +2046,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 			if(slot_y_index === 0 && panel_y_index === 0){
 				if(panel_x_index - slot_x_index === 1 && !service.movingRight){
 				// PANEL MOVING LEFT
-					this.setMovingLeft(500);
+					this.setMovingLeft(_moveSpeed);
 					for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
 						if(Pcs.pc.cards[ia].x_index === slot_x_index){
 						// Modify position of each card in "SLOT" column
@@ -2080,7 +2080,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 					}
 				} else if(slot_x_index - panel_x_index === 1 && !service.movingLeft){
 				// PANEL MOVING RIGHT
-					this.setMovingRight(500);
+					this.setMovingRight(_moveSpeed);
 					for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
 						if(Pcs.pc.cards[ib].x_index === slot_x_index){
 						// Modify position of each card in "SLOT" column
@@ -2132,7 +2132,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 			
 			if(panel_y_index - slot_y_index === 1 && !service.movingDown){
 			// PANEL MOVING UP
-				this.setMovingUp(500);
+				this.setMovingUp(_moveSpeed);
 				
 				Pcs.pc.cards[slot_index].y_index = panel_y_index;
 				Pcs.pc.cards[panel_index].y_index = slot_y_index;
@@ -2158,7 +2158,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 				}
 			} else if(slot_y_index - panel_y_index === 1 && !service.movingUp){
 			// PANEL MOVING DOWN
-				this.setMovingDown(500);
+				this.setMovingDown(_moveSpeed);
 				Pcs.pc.cards[slot_index].y_index = panel_y_index;
 				Pcs.pc.cards[panel_index].y_index = slot_y_index;
 				Pcs.pc.cards[panel_index].y_coord = Pcs.pc.cards[panel_index].y_index * y_tab;
@@ -2208,7 +2208,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 			
 			if(panel_x_index - slot_x_index === 1 && !service.movingRight){
 			// CARD STACKING FROM RIGHT
-				this.setMovingRight(400);
+				this.setMovingRight(_moveSpeed);
 				Pcs.pc.cards[slot_index].y_overlap = true;
 				Pcs.pc.cards[Pcs.lowestCard(panel_x_index)].y_overlap = slot_y_overlap;
 				for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
@@ -2228,7 +2228,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 				
 			} else if(slot_x_index - panel_x_index === 1 && !service.movingLeft){
 			// CARD STACKING FROM LEFT
-				this.setMovingLeft(500);
+				this.setMovingLeft(_moveSpeed);
 				Pcs.pc.cards[slot_index].y_overlap = true;
 				Pcs.pc.cards[Pcs.lowestCard(panel_x_index)].y_overlap = slot_y_overlap;
 				for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
@@ -2269,7 +2269,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 			
 			if(panel_x_index - slot_x_index === 1 && !service.movingRight){
 			//Card is stacking under from left
-				this.setMovingLeft(500);
+				this.setMovingLeft(_moveSpeed);
 				Pcs.pc.cards[panel_index].y_overlap = true;
 				for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
 					if(Pcs.pc.cards[ia].x_index === slot_x_index){
@@ -2284,7 +2284,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 				
 			} else if(slot_x_index - panel_x_index === 1 && !service.movingLeft){
 			//Card is stacking under from right
-				this.setMovingRight(400);
+				this.setMovingRight(_moveSpeed);
 				Pcs.pc.cards[panel_index].y_overlap = true;
 				for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
 					if(Pcs.pc.cards[ib].x_index === slot_x_index){
@@ -2315,7 +2315,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 				
 				if(panel_x_index - slot_x_index === 1  && !service.movingLeft){
 				// Card is unstacking to the left
-					this.setMovingRight(500);
+					this.setMovingRight(_moveSpeed);
 					if(panel_y_overlap){
 					// Unstack multiple cards to the left
 						for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
@@ -2354,7 +2354,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 					Pcs.pc.cards[Pcs.lowestCard(panel_x_index + 1)].y_overlap = false;
 				} else if(slot_x_index - panel_x_index === 1 && !service.movingLeft){
 				//Card is unstacking to the right
-					this.setMovingLeft(500);
+					this.setMovingLeft(_moveSpeed);
 					if(panel_y_overlap){
 					// Unstack multiple cards to the right
 						for(var ic = 0; ic < Pcs.pc.cards.length; ic++){
