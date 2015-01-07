@@ -2,8 +2,8 @@
 	<div ng-if="card.locked && card.durability.show">
 		<strong>Durability Modifier: </strong>{{card.durability.modifier}}
 	</div>
-	<div ng-if="!card.locked && card.durability.show" class="dropdown dropup">
-		<a id="cardDropdown" class="dropdown-toggle"
+	<div ng-if="!card.locked && card.durability.show" class="dropdown dropup" dropdown>
+		<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 			ng-click="dropdown" aria-expanded="true">
 			<strong>Durability Modifier: </strong>
 			{{card.durability.modifier}}
@@ -28,8 +28,8 @@
 	<div ng-if="card.locked && card.speed.show">
 		<strong>Speed Modifier: </strong>{{card.speed.modifier}}
 	</div>
-	<div ng-if="!card.locked && card.speed.show" class="dropdown dropup">
-		<a id="cardDropdown" class="dropdown-toggle"
+	<div ng-if="!card.locked && card.speed.show" class="dropdown dropup" dropdown>
+		<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 			ng-click="dropdown" aria-expanded="true">
 			<strong>Speed Modifier: </strong>
 			{{card.speed.modifier}}
@@ -54,8 +54,8 @@
 	<div ng-if="card.locked && card.finesse.show">
 		<strong>Finesse Modifier: </strong>{{card.finesse.modifier}}
 	</div>
-	<div ng-if="!card.locked && card.finesse.show" class="dropdown dropup">
-		<a id="cardDropdown" class="dropdown-toggle"
+	<div ng-if="!card.locked && card.finesse.show" class="dropdown dropup" dropdown>
+		<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 			ng-click="dropdown" aria-expanded="true">
 			<strong>Finesse Modifier: </strong>
 			{{card.finesse.modifier}}

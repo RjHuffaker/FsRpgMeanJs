@@ -68,7 +68,11 @@ ApplicationConfiguration.registerModule('users');
 angular.module('cards').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Cards', 'cards', '/cards');
+		Menus.addMenuItem('topbar', 'Cards', 'cards', 'dropdown', '/cards');
+		Menus.addSubMenuItem('topbar', 'cards', 'List Traits', 'traits');
+		Menus.addSubMenuItem('topbar', 'cards', 'List Feats', 'feats');
+		Menus.addSubMenuItem('topbar', 'cards', 'List Augments', 'augments');
+		Menus.addSubMenuItem('topbar', 'cards', 'List Items', 'items');
 	}
 ]);
 'use strict';
@@ -81,6 +85,22 @@ angular.module('cards').config(['$stateProvider',
 		state('listCards', {
 			url: '/cards',
 			templateUrl: 'modules/cards/views/list-cards.client.view.html'
+		}).
+		state('listTraits', {
+			url: '/traits',
+			templateUrl: 'modules/cards/views/list-traits.client.view.html'
+		}).
+		state('listFeats', {
+			url: '/feats',
+			templateUrl: 'modules/cards/views/list-feats.client.view.html'
+		}).
+		state('listAugments', {
+			url: '/augments',
+			templateUrl: 'modules/cards/views/list-augments.client.view.html'
+		}).
+		state('listItems', {
+			url: '/items',
+			templateUrl: 'modules/cards/views/list-items.client.view.html'
 		});
 	}
 ]);
@@ -146,7 +166,7 @@ var cardsModule = angular.module('cards');
 
 // Directive for managing card decks.
 cardsModule
-	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$timeout', '$window', function($document, $parse, $rootScope, $timeout, $window){
+	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', function($document, $parse, $rootScope, $window){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -1945,8 +1965,8 @@ cardsModule.factory('PcsAugments', ['Pcs', 'PcsCardDeck',
 var cardsModule = angular.module('pcs');
 
 // Factory-service for managing PC card deck.
-cardsModule.factory('PcsCardDeck', ['Pcs', '$timeout',
-	function(Pcs, $timeout){
+cardsModule.factory('PcsCardDeck', ['Pcs',
+	function(Pcs){
 		var service = {};
 		
 		var x_dim = 250;
@@ -1957,7 +1977,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs', '$timeout',
 		var y_cover = 300;
 		
 		service.cardMoved = false;		// Disables overlap functions if current press has already triggered another function
-		
+		service.isMoving = false;
 		service.movingUp = false;
 		service.movingDown = false;
 		service.movingLeft = false;
@@ -1967,7 +1987,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs', '$timeout',
 		service.setMovingUp = function(interval){
 			service.movingUp = true;
 			service.cardMoved = true;
-			$timeout(
+			setTimeout(
 				function () {
 					service.movingUp = false;
 				},
@@ -1977,7 +1997,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs', '$timeout',
 		service.setMovingDown = function(interval){
 			service.movingDown = true;
 			service.cardMoved = true;
-			$timeout(
+			setTimeout(
 				function(){
 					service.movingDown = false;
 				},

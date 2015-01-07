@@ -2,8 +2,8 @@
 var cardsModule = angular.module('pcs');
 
 // Factory-service for managing PC card deck.
-cardsModule.factory('PcsCardDeck', ['Pcs', '$timeout',
-	function(Pcs, $timeout){
+cardsModule.factory('PcsCardDeck', ['Pcs',
+	function(Pcs){
 		var service = {};
 		
 		var x_dim = 250;
@@ -14,7 +14,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs', '$timeout',
 		var y_cover = 300;
 		
 		service.cardMoved = false;		// Disables overlap functions if current press has already triggered another function
-		
+		service.isMoving = false;
 		service.movingUp = false;
 		service.movingDown = false;
 		service.movingLeft = false;
@@ -24,7 +24,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs', '$timeout',
 		service.setMovingUp = function(interval){
 			service.movingUp = true;
 			service.cardMoved = true;
-			$timeout(
+			setTimeout(
 				function () {
 					service.movingUp = false;
 				},
@@ -34,7 +34,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs', '$timeout',
 		service.setMovingDown = function(interval){
 			service.movingDown = true;
 			service.cardMoved = true;
-			$timeout(
+			setTimeout(
 				function(){
 					service.movingDown = false;
 				},

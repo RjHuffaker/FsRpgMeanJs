@@ -17,8 +17,8 @@
 		</div>
 	</div>
 	<div ng-if="!$parent.$parent.card.locked">
-		<div class="dropdown">
-			<a id="actionDropdown" class="dropdown-toggle">
+		<div class="dropdown" dropdown>
+			<a id="actionDropdown" class="dropdown-toggle" dropdown-toggle>
 				<strong>Attack: </strong>
 			</a>
 			<div class="dropdown-menu" aria-labelledby="cardDropdown" stop-click>
@@ -48,8 +48,8 @@
 			</div>
 		</div>
 		
-		<div class="dropdown">
-			<a id="cardDropdown" class="dropdown-toggle"
+		<div class="dropdown" dropdown>
+			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				{{cardAction.attack.dice_a}}
 				<span ng-hide="cardAction.attack.dice_a">1d__</span>
@@ -72,8 +72,8 @@
 			</div>
 		</div>
 		+
-		<div class="dropdown">
-			<a id="cardDropdown" class="dropdown-toggle"
+		<div class="dropdown" dropdown>
+			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				{{cardAction.attack.dice_b}}
 				<span ng-hide="cardAction.attack.dice_b">1d__</span>
@@ -96,8 +96,8 @@
 			</div>
 		</div>
 		vs
-		<div class="dropdown">
-			<a id="cardDropdown" class="dropdown-toggle"
+		<div class="dropdown" dropdown>
+			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				{{cardAction.attack.versus}}
 				<span ng-hide="cardAction.attack.versus">[Defense]</span>

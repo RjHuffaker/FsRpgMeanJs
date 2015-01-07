@@ -36,6 +36,10 @@
 	transition: .5s linear all;
 }
 
+[card-slot].dragging, [card-panel].dragging {
+	transition-property: none;
+}
+
 [card-panel] > div > div {
 	border-radius: 15px;
 	border-top: 1px solid #222;

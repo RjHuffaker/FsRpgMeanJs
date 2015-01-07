@@ -14,9 +14,9 @@
 		<strong ng-if="card.locked && !card.keyword">
 			[Keyword]
 		</strong>
-		<div ng-if="!card.locked" class="dropdown">
-			<a id="cardDropdown" class="dropdown-toggle"
-				ng-click="dropdown" aria-expanded="true">
+		<div ng-if="!card.locked" class="dropdown" dropdown>
+			<a id="cardDropdown" 
+				ng-click="dropdown" aria-expanded="true" class="dropdown-toggle" dropdown-toggle>
 				<strong class="text-capitalize">
 					{{card.keyword}}
 				</strong>
@@ -58,8 +58,8 @@
 			<strong ng-if="card.locked && !card.itemType">
 				[Item Type]
 			</strong>
-			<div ng-if="!card.locked" class="dropdown">
-				<a id="cardDropdown" class="dropdown-toggle"
+			<div ng-if="!card.locked" class="dropdown" dropdown>
+				<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 					ng-click="dropdown" aria-expanded="true">
 					<strong>
 						{{card.itemType}}

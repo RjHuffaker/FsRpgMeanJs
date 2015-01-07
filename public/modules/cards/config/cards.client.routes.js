@@ -8,6 +8,22 @@ angular.module('cards').config(['$stateProvider',
 		state('listCards', {
 			url: '/cards',
 			templateUrl: 'modules/cards/views/list-cards.client.view.html'
+		}).
+		state('listTraits', {
+			url: '/traits',
+			templateUrl: 'modules/cards/views/list-traits.client.view.html'
+		}).
+		state('listFeats', {
+			url: '/feats',
+			templateUrl: 'modules/cards/views/list-feats.client.view.html'
+		}).
+		state('listAugments', {
+			url: '/augments',
+			templateUrl: 'modules/cards/views/list-augments.client.view.html'
+		}).
+		state('listItems', {
+			url: '/items',
+			templateUrl: 'modules/cards/views/list-items.client.view.html'
 		});
 	}
 ]);

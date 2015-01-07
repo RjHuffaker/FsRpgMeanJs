@@ -1,7 +1,6 @@
-<div class="dropdown pull-left">
-	<a id="cardDropdown" class="dropdown-toggle"
-		ng-click="dropdown" aria-expanded="true"
-		ng-switch on="card.cardType">
+<div class="dropdown pull-left" dropdown>
+	<a id="cardDropdown" ng-click="dropdown" aria-expanded="true"
+		ng-switch on="card.cardType" class="dropdown-toggle" dropdown-toggle>
 		<img ng-switch-when="trait" 
 			src="modules/cards/img/logo_trait.png" 
 			alt="Trait" class="logo-trait"/>

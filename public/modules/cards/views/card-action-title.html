@@ -1,6 +1,6 @@
 <div ng-if="!$parent.card.locked"
-	class="dropdown card-icon-left">
-	<a id="actionDropdown" class="dropdown-toggle">
+	class="dropdown card-icon-left" dropdown>
+	<a id="actionDropdown" class="dropdown-toggle" dropdown-toggle>
 		<i class="glyphicon glyphicon-cog"></i>
 	</a>
 	<div class="dropdown-menu dropup" aria-labelledby="cardDropdown" stop-click>
@@ -42,8 +42,9 @@
 			<span ng-if="!cardAction.targetType && !cardAction.targetDetail && cardAction.usage !== 'Defense'">[Target]</span>
 		</span>
 	</div>
-	<div ng-if="!$parent.card.locked && cardAction.usage !== 'Defense'" class="dropdown pull-right" style="width: 64px;">
-		<a id="cardDropdown" class="dropdown-toggle pull-right"
+	<div ng-if="!$parent.card.locked && cardAction.usage !== 'Defense'"
+		class="dropdown pull-right" dropdown style="width: 64px;">
+		<a id="cardDropdown" class="dropdown-toggle pull-right" dropdown-toggle
 			ng-if="cardAction.usage !== 'Defense'"
 			ng-click="dropdown" aria-expanded="true">
 			{{cardAction.targetType}} {{cardAction.targetDetail}}

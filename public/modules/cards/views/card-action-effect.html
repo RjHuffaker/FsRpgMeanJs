@@ -4,8 +4,8 @@
 		<strong>Effect: </strong>{{cardAction.effect.content}}
 	</div>
 	<div ng-if="!$parent.$parent.card.locked">
-		<div class="dropdown">
-			<a id="actionDropdown" class="dropdown-toggle">
+		<div class="dropdown" dropdown>
+			<a id="actionDropdown" class="dropdown-toggle" dropdown-toggle>
 				<strong class="absolute-left">Effect: </strong>
 			</a>
 			<div class="dropdown-menu" aria-labelledby="cardDropdown" stop-click>

@@ -14,8 +14,8 @@
 			</strong>
 		</div>
 		<div ng-if="!$parent.$parent.card.locked"
-			class="dropdown dropup">
-			<a id="cardDropdown" class="dropdown-toggle"
+			class="dropdown dropup" dropdown>
+			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				<strong>{{cardAction.frequency}}</strong>
 				<strong ng-if="!cardAction.frequency">[Frequency]</strong>

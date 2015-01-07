@@ -7,8 +7,8 @@
 		<strong ng-if="card.locked && !card.keyword && !card.prerequisite">
 			[Prerequisites]
 		</strong>
-		<div ng-if="!card.locked" class="dropdown dropup">
-			<a id="cardDropdown" class="dropdown-toggle"
+		<div ng-if="!card.locked" class="dropdown dropup" dropdown>
+			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				<strong>
 					{{card.keyword}} {{card.prerequisite}}
