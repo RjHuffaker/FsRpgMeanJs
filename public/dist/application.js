@@ -254,7 +254,6 @@ cardsModule
 				// PRESS
 				// Primary "press" function
 				var onLongPress = function(event){
-					event.preventDefault();
 					
 					_startX = (event.pageX || event.touches[0].pageX);
 					_startY = (event.pageY || event.touches[0].pageY);
