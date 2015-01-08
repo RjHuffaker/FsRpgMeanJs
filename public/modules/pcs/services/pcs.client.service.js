@@ -132,6 +132,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
+						dragging: false,
+						stacked: false,
 						locked: true
 					},
 					{
@@ -144,6 +146,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
+						dragging: false,
+						stacked: false,
 						locked: true
 					},
 					{
@@ -156,6 +160,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
+						dragging: false,
+						stacked: false,
 						locked: true,
 					},
 					{
@@ -169,6 +175,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
+						dragging: false,
+						stacked: false,
 						locked: true,
 						level: 0
 					}

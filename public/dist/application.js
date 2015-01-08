@@ -203,7 +203,6 @@ cardsModule
 					// add listeners.
 					scope.$watch(attrs.card, onCardChange);
 					scope.$on('$destroy', onDestroy);
-					scope.$on('cardPanel:onPressCard', onPressCard);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
@@ -274,21 +273,6 @@ cardsModule
 					});
 				};
 				
-				// Adds 'dragging' class to card currently pressed and any overlapping cards
-				var onPressCard = function(event, object){
-					if(_panel.x_index === object.panel.x_index){
-						if(_panel.y_index === object.panel.y_index){
-							element.addClass('dragging');
-							element.parent().addClass('dragging');
-							_stacked = false;
-						} else if(object.panel.y_overlap && _panel.y_index >= object.panel.y_index){
-							element.addClass('dragging');
-							element.parent().addClass('dragging');
-							_stacked = true;
-						}
-					}
-				};
-				
 				// MOVE
 				// Primary "move" function
 				var onMove = function(event){
@@ -318,19 +302,17 @@ cardsModule
 						panelY: _panelY,
 						panel: _panel
 					});
-					
 				};
 				
 				// Callback function to move a single card or each card in a vertical stack
 				var onMoveCard = function(event, object){
-					
 					if(_panel.x_index === object.panel.x_index){
 						if(_panel.y_index === object.panel.y_index){
 							element.css({
 								left: object.panelX + 'px',
 								top: object.panelY + 'px'
 							});
-						} else if(_stacked && _panel.y_index > object.panel.y_index){
+						} else if(_panel.stacked && _panel.y_index > object.panel.y_index){
 							element.css({
 								left: object.panelX + 'px',
 								top: object.panelY + 'px'
@@ -423,26 +405,27 @@ cardsModule
 							if(moveY * 2 > moveX){
 								if(object.moveY < 0 && !_slot.x_overlap){
 								// Moving up
-									$rootScope.$broadcast('cardSlot:moveDiagonalUp', {
+									scope.$emit('cardSlot:moveDiagonalUp', {
 										slot: _slot,
 										panel: _panel
 									});
 								} else if(object.moveY > 0 && !_slot.x_overlap){
 								// Moving down
-									$rootScope.$broadcast('cardSlot:moveDiagonalDown', {
+									scope.$emit('cardSlot:moveDiagonalDown', {
 										slot: _slot,
 										panel: _panel
 									});
 								}
 							} else if(moveY < moveX){
-								$rootScope.$broadcast('cardSlot:moveHorizontal', {
+								
+								scope.$emit('cardSlot:moveHorizontal', {
 									slot: _slot,
 									panel: _panel
 								});
 							}
 						} else if(_slot.x_index === _panel.x_index && _slot.y_index !== _panel.y_index){
 							if(moveY > moveX * 2 && !object.panel.y_overlap){
-								$rootScope.$broadcast('cardSlot:moveVertical', {
+								scope.$emit('cardSlot:moveVertical', {
 									slot: _slot,
 									panel: _panel
 								});
@@ -451,7 +434,7 @@ cardsModule
 					} else if(isAbove(object.mouseX, object.mouseY)){
 						if(_slot.y_index === 0){
 							if(_slot.x_index !== _panel.x_index){
-								$rootScope.$broadcast('cardSlot:moveDiagonalUp', {
+								scope.$emit('cardSlot:moveDiagonalUp', {
 									slot: _slot,
 									panel: _panel
 								});
@@ -460,13 +443,14 @@ cardsModule
 					} else if(isBelow(object.mouseX, object.mouseY)){
 						if(_panel.y_index !== 0){
 							if(_slot.x_index !== _panel.x_index){
-								$rootScope.$broadcast('cardSlot:moveDiagonalDown', {
+								scope.$emit('cardSlot:moveDiagonalDown', {
 									slot: _slot,
 									panel: _panel
 								});
 							}
 						}
 					}
+					scope.$digest();
 				};
 				
 				var onReleaseCard = function(event, object){
@@ -563,11 +547,11 @@ cardsModule
 					var rightEdge = leftEdge + _width - 25;
 					
 					if(object.mouseX <= leftEdge){
-						$rootScope.$broadcast('cardDeck:unstackLeft', {
+						scope.$emit('cardDeck:unstackLeft', {
 							panel: object.panel
 						});
 					} else if(object.mouseX >= rightEdge){
-						$rootScope.$broadcast('cardDeck:unstackRight', {
+						scope.$emit('cardDeck:unstackRight', {
 							panel: object.panel
 						});
 					}
@@ -1766,60 +1750,42 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 		
 		var moveHorizontal = function(event, object){
 			if((object.panel.y_overlap && object.panel.y_index === 0) || Pcs.pc.cards[Pcs.lowestCard(object.panel.x_index)].y_index === 0){
-				$scope.$apply(
-					PcsCardDeck.switchHorizontal(object.slot, object.panel)
-				);
+				PcsCardDeck.switchHorizontal(object.slot, object.panel);
 			} else {
-				$scope.$apply(
-					PcsCardDeck.unstackCard(object.slot, object.panel)
-				);
+				PcsCardDeck.unstackCard(object.slot, object.panel);
 			}
 		};
 
 		var moveDiagonalUp = function(event, object){
 			if((object.panel.y_index === 0 && object.panel.y_overlap) || Pcs.pc.cards[Pcs.lowestCard(object.panel.x_index)].y_index === 0){
-				$scope.$apply(
-					PcsCardDeck.stackUnder(object.slot, object.panel)
-				);
+				PcsCardDeck.stackUnder(object.slot, object.panel);
 			} else {
-				$scope.$apply(
-					PcsCardDeck.unstackCard(object.slot, object.panel)
-				);
+				PcsCardDeck.unstackCard(object.slot, object.panel);
 			}
 		};
 
 		var moveDiagonalDown = function(event, object){
 			if((object.panel.y_index === 0 && object.panel.y_overlap) || Pcs.pc.cards[Pcs.lowestCard(object.panel.x_index)].y_index === 0){
-				$scope.$apply(
-					PcsCardDeck.stackOver(object.slot, object.panel)
-				);
+				PcsCardDeck.stackOver(object.slot, object.panel);
 			} else {
-				$scope.$apply(
-					PcsCardDeck.unstackCard(object.slot, object.panel)
-				);
+				PcsCardDeck.unstackCard(object.slot, object.panel);
 			}
 		};
 		
 		var moveVertical = function(event, object){
-			$scope.$apply(
-				PcsCardDeck.switchVertical(object.slot, object.panel)
-			);
+			PcsCardDeck.switchVertical(object.slot, object.panel);
 		};
 		
 		var unstackLeft = function(event, object){
 			if(object.panel.y_index > 0){
-				$scope.$apply(
-					PcsCardDeck.unstackCard({x_index: -1}, object.panel)
-				);
+				PcsCardDeck.unstackCard({x_index: -1}, object.panel);
 			}
 		};
 		
 		var unstackRight = function(event, object){
 			if(object.panel.y_index > 0){
 				var unstack_index = Pcs.pc.cards[Pcs.lastCard()].x_index + 1;
-				$scope.$apply(
-					PcsCardDeck.unstackCard({x_index: unstack_index}, object.panel)
-				);
+				PcsCardDeck.unstackCard({x_index: unstack_index}, object.panel);
 			}
 		};
 		
@@ -1827,8 +1793,13 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 			PcsCardDeck.toggleOverlap(object.panel);
 		};
 		
-		var onReleaseCard = function(){
-			PcsCardDeck.onReleaseCard();
+		var onReleaseCard = function(event, object){
+			PcsCardDeck.onReleaseCard(object.panel);
+		};
+		
+		var onPressCard = function(event, object){
+			PcsCardDeck.onPressCard(object.panel);
+			$scope.$digest();
 		};
 		
 		$scope.$on('cardSlot:moveHorizontal', moveHorizontal);
@@ -1839,6 +1810,8 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 		$scope.$on('cardDeck:unstackLeft', unstackLeft);
 		$scope.$on('cardDeck:unstackRight', unstackRight);
 		$scope.$on('cardPanel:toggleOverlap', toggleOverlap);
+		
+		$scope.$on('cardPanel:onPressCard', onPressCard);
 		$scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 		
 		
@@ -1974,7 +1947,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 		var y_tab = 50;
 		var x_cover = 225;
 		var y_cover = 300;
-		var _moveSpeed = 1000;
+		var _moveSpeed = 500;
 		service.cardMoved = false;		// Disables overlap functions if current press has already triggered another function
 		service.isMoving = false;
 		service.movingUp = false;
@@ -2023,13 +1996,42 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 			interval);
 		};
 		
-		// Reset move booleans
-		service.onReleaseCard = function(){
+		// Set state variables
+		service.onPressCard = function(panel){
+			var panel_x_index = panel.x_index;
+			var panel_y_index = panel.y_index;
+			var panel_y_overlap = panel.y_overlap;
+			
+			for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
+				if(Pcs.pc.cards[ia].x_index === panel_x_index){
+					if(Pcs.pc.cards[ia].y_index === panel.y_index && !panel.y_overlap){
+						Pcs.pc.cards[ia].dragging = true;
+						Pcs.pc.cards[ia].stacked = false;
+					} else if(Pcs.pc.cards[ia].y_index >= panel.y_index && panel.y_overlap){
+						Pcs.pc.cards[ia].dragging = true;
+						Pcs.pc.cards[ia].stacked = true;
+					}
+				}
+			}
+		};
+		
+		// Reset move variables
+		service.onReleaseCard = function(panel){
 			service.cardMoved = false;
 			service.movingUp = false;
 			service.movingDown = false;
 			service.movingLeft = false;
 			service.movingRight = false;
+			
+			var panel_x_index = panel.x_index;
+			var panel_y_index = panel.y_index;
+			var panel_y_overlap = panel.y_overlap;
+			
+			for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
+				if(Pcs.pc.cards[ia].x_index === panel_x_index){
+					Pcs.pc.cards[ia].dragging = false;
+				}
+			}
 		};
 		
 		// Swap card order along horizontal axis
@@ -2409,14 +2411,18 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 			var y_index = card.y_index;
 			var _card = Pcs.cardByIndex(x_index, y_index);
 			if(x_index > 0){
-				if(Pcs.pc.cards[_card].x_overlap){
+				if(Pcs.pc.cards[_card].x_overlap && !this.movingLeft){
+				// Card overlapped
+					this.setMovingRight(_moveSpeed);
 					for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
 						if(x_index <= Pcs.pc.cards[ia].x_index){
 							Pcs.pc.cards[ia].x_coord += x_cover;
 						}
 					}
 					Pcs.pc.cards[_card].x_overlap = false;
-				} else if(!Pcs.pc.cards[_card].x_overlap){
+				} else if(!Pcs.pc.cards[_card].x_overlap && !this.movingRight){
+				// Card not overlapped
+					this.setMovingLeft(_moveSpeed);
 					for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
 						if(x_index <= Pcs.pc.cards[ib].x_index){
 							Pcs.pc.cards[ib].x_coord -= x_cover;
@@ -2436,8 +2442,9 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 			var lowest_y_index = Pcs.pc.cards[lowest_index].y_index;
 			
 			if(card_y_index < lowest_y_index){
-				if(Pcs.pc.cards[card_index].y_overlap){
-				// Card currently overlapped
+				if(Pcs.pc.cards[card_index].y_overlap && !this.movingUp){
+				// Card overlapped
+					this.setMovingDown(_moveSpeed);
 					Pcs.pc.cards[card_index].y_coord = Pcs.pc.cards[card_index].y_index * y_tab;
 					Pcs.pc.cards[card_index].y_overlap = false;
 					for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
@@ -2453,8 +2460,9 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 							}
 						}
 					}
-				} else if(!Pcs.pc.cards[card_index].y_overlap){
+				} else if(!Pcs.pc.cards[card_index].y_overlap && !this.movingDown){
 				// Card not overlapped
+					this.setMovingUp(_moveSpeed);
 					for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
 						if(card_x_index === Pcs.pc.cards[ib].x_index){
 							Pcs.pc.cards[ib].y_coord = Pcs.pc.cards[ib].y_index * y_tab;
@@ -2920,6 +2928,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
+						dragging: false,
+						stacked: false,
 						locked: true
 					},
 					{
@@ -2932,6 +2942,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
+						dragging: false,
+						stacked: false,
 						locked: true
 					},
 					{
@@ -2944,6 +2956,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
+						dragging: false,
+						stacked: false,
 						locked: true,
 					},
 					{
@@ -2957,6 +2971,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
+						dragging: false,
+						stacked: false,
 						locked: true,
 						level: 0
 					}

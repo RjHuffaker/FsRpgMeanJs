@@ -41,7 +41,6 @@ cardsModule
 					// add listeners.
 					scope.$watch(attrs.card, onCardChange);
 					scope.$on('$destroy', onDestroy);
-					scope.$on('cardPanel:onPressCard', onPressCard);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
@@ -112,21 +111,6 @@ cardsModule
 					});
 				};
 				
-				// Adds 'dragging' class to card currently pressed and any overlapping cards
-				var onPressCard = function(event, object){
-					if(_panel.x_index === object.panel.x_index){
-						if(_panel.y_index === object.panel.y_index){
-							element.addClass('dragging');
-							element.parent().addClass('dragging');
-							_stacked = false;
-						} else if(object.panel.y_overlap && _panel.y_index >= object.panel.y_index){
-							element.addClass('dragging');
-							element.parent().addClass('dragging');
-							_stacked = true;
-						}
-					}
-				};
-				
 				// MOVE
 				// Primary "move" function
 				var onMove = function(event){
@@ -156,19 +140,17 @@ cardsModule
 						panelY: _panelY,
 						panel: _panel
 					});
-					
 				};
 				
 				// Callback function to move a single card or each card in a vertical stack
 				var onMoveCard = function(event, object){
-					
 					if(_panel.x_index === object.panel.x_index){
 						if(_panel.y_index === object.panel.y_index){
 							element.css({
 								left: object.panelX + 'px',
 								top: object.panelY + 'px'
 							});
-						} else if(_stacked && _panel.y_index > object.panel.y_index){
+						} else if(_panel.stacked && _panel.y_index > object.panel.y_index){
 							element.css({
 								left: object.panelX + 'px',
 								top: object.panelY + 'px'
@@ -261,26 +243,27 @@ cardsModule
 							if(moveY * 2 > moveX){
 								if(object.moveY < 0 && !_slot.x_overlap){
 								// Moving up
-									$rootScope.$broadcast('cardSlot:moveDiagonalUp', {
+									scope.$emit('cardSlot:moveDiagonalUp', {
 										slot: _slot,
 										panel: _panel
 									});
 								} else if(object.moveY > 0 && !_slot.x_overlap){
 								// Moving down
-									$rootScope.$broadcast('cardSlot:moveDiagonalDown', {
+									scope.$emit('cardSlot:moveDiagonalDown', {
 										slot: _slot,
 										panel: _panel
 									});
 								}
 							} else if(moveY < moveX){
-								$rootScope.$broadcast('cardSlot:moveHorizontal', {
+								
+								scope.$emit('cardSlot:moveHorizontal', {
 									slot: _slot,
 									panel: _panel
 								});
 							}
 						} else if(_slot.x_index === _panel.x_index && _slot.y_index !== _panel.y_index){
 							if(moveY > moveX * 2 && !object.panel.y_overlap){
-								$rootScope.$broadcast('cardSlot:moveVertical', {
+								scope.$emit('cardSlot:moveVertical', {
 									slot: _slot,
 									panel: _panel
 								});
@@ -289,7 +272,7 @@ cardsModule
 					} else if(isAbove(object.mouseX, object.mouseY)){
 						if(_slot.y_index === 0){
 							if(_slot.x_index !== _panel.x_index){
-								$rootScope.$broadcast('cardSlot:moveDiagonalUp', {
+								scope.$emit('cardSlot:moveDiagonalUp', {
 									slot: _slot,
 									panel: _panel
 								});
@@ -298,13 +281,14 @@ cardsModule
 					} else if(isBelow(object.mouseX, object.mouseY)){
 						if(_panel.y_index !== 0){
 							if(_slot.x_index !== _panel.x_index){
-								$rootScope.$broadcast('cardSlot:moveDiagonalDown', {
+								scope.$emit('cardSlot:moveDiagonalDown', {
 									slot: _slot,
 									panel: _panel
 								});
 							}
 						}
 					}
+					scope.$digest();
 				};
 				
 				var onReleaseCard = function(event, object){
@@ -401,11 +385,11 @@ cardsModule
 					var rightEdge = leftEdge + _width - 25;
 					
 					if(object.mouseX <= leftEdge){
-						$rootScope.$broadcast('cardDeck:unstackLeft', {
+						scope.$emit('cardDeck:unstackLeft', {
 							panel: object.panel
 						});
 					} else if(object.mouseX >= rightEdge){
-						$rootScope.$broadcast('cardDeck:unstackRight', {
+						scope.$emit('cardDeck:unstackRight', {
 							panel: object.panel
 						});
 					}

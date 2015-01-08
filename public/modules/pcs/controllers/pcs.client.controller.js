@@ -53,60 +53,42 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 		
 		var moveHorizontal = function(event, object){
 			if((object.panel.y_overlap && object.panel.y_index === 0) || Pcs.pc.cards[Pcs.lowestCard(object.panel.x_index)].y_index === 0){
-				$scope.$apply(
-					PcsCardDeck.switchHorizontal(object.slot, object.panel)
-				);
+				PcsCardDeck.switchHorizontal(object.slot, object.panel);
 			} else {
-				$scope.$apply(
-					PcsCardDeck.unstackCard(object.slot, object.panel)
-				);
+				PcsCardDeck.unstackCard(object.slot, object.panel);
 			}
 		};
 
 		var moveDiagonalUp = function(event, object){
 			if((object.panel.y_index === 0 && object.panel.y_overlap) || Pcs.pc.cards[Pcs.lowestCard(object.panel.x_index)].y_index === 0){
-				$scope.$apply(
-					PcsCardDeck.stackUnder(object.slot, object.panel)
-				);
+				PcsCardDeck.stackUnder(object.slot, object.panel);
 			} else {
-				$scope.$apply(
-					PcsCardDeck.unstackCard(object.slot, object.panel)
-				);
+				PcsCardDeck.unstackCard(object.slot, object.panel);
 			}
 		};
 
 		var moveDiagonalDown = function(event, object){
 			if((object.panel.y_index === 0 && object.panel.y_overlap) || Pcs.pc.cards[Pcs.lowestCard(object.panel.x_index)].y_index === 0){
-				$scope.$apply(
-					PcsCardDeck.stackOver(object.slot, object.panel)
-				);
+				PcsCardDeck.stackOver(object.slot, object.panel);
 			} else {
-				$scope.$apply(
-					PcsCardDeck.unstackCard(object.slot, object.panel)
-				);
+				PcsCardDeck.unstackCard(object.slot, object.panel);
 			}
 		};
 		
 		var moveVertical = function(event, object){
-			$scope.$apply(
-				PcsCardDeck.switchVertical(object.slot, object.panel)
-			);
+			PcsCardDeck.switchVertical(object.slot, object.panel);
 		};
 		
 		var unstackLeft = function(event, object){
 			if(object.panel.y_index > 0){
-				$scope.$apply(
-					PcsCardDeck.unstackCard({x_index: -1}, object.panel)
-				);
+				PcsCardDeck.unstackCard({x_index: -1}, object.panel);
 			}
 		};
 		
 		var unstackRight = function(event, object){
 			if(object.panel.y_index > 0){
 				var unstack_index = Pcs.pc.cards[Pcs.lastCard()].x_index + 1;
-				$scope.$apply(
-					PcsCardDeck.unstackCard({x_index: unstack_index}, object.panel)
-				);
+				PcsCardDeck.unstackCard({x_index: unstack_index}, object.panel);
 			}
 		};
 		
@@ -114,8 +96,13 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 			PcsCardDeck.toggleOverlap(object.panel);
 		};
 		
-		var onReleaseCard = function(){
-			PcsCardDeck.onReleaseCard();
+		var onReleaseCard = function(event, object){
+			PcsCardDeck.onReleaseCard(object.panel);
+		};
+		
+		var onPressCard = function(event, object){
+			PcsCardDeck.onPressCard(object.panel);
+			$scope.$digest();
 		};
 		
 		$scope.$on('cardSlot:moveHorizontal', moveHorizontal);
@@ -126,6 +113,8 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 		$scope.$on('cardDeck:unstackLeft', unstackLeft);
 		$scope.$on('cardDeck:unstackRight', unstackRight);
 		$scope.$on('cardPanel:toggleOverlap', toggleOverlap);
+		
+		$scope.$on('cardPanel:onPressCard', onPressCard);
 		$scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 		
 		

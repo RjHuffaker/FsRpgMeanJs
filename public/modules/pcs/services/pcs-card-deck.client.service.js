@@ -12,7 +12,7 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 		var y_tab = 50;
 		var x_cover = 225;
 		var y_cover = 300;
-		var _moveSpeed = 1000;
+		var _moveSpeed = 500;
 		service.cardMoved = false;		// Disables overlap functions if current press has already triggered another function
 		service.isMoving = false;
 		service.movingUp = false;
@@ -61,13 +61,42 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 			interval);
 		};
 		
-		// Reset move booleans
-		service.onReleaseCard = function(){
+		// Set state variables
+		service.onPressCard = function(panel){
+			var panel_x_index = panel.x_index;
+			var panel_y_index = panel.y_index;
+			var panel_y_overlap = panel.y_overlap;
+			
+			for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
+				if(Pcs.pc.cards[ia].x_index === panel_x_index){
+					if(Pcs.pc.cards[ia].y_index === panel.y_index && !panel.y_overlap){
+						Pcs.pc.cards[ia].dragging = true;
+						Pcs.pc.cards[ia].stacked = false;
+					} else if(Pcs.pc.cards[ia].y_index >= panel.y_index && panel.y_overlap){
+						Pcs.pc.cards[ia].dragging = true;
+						Pcs.pc.cards[ia].stacked = true;
+					}
+				}
+			}
+		};
+		
+		// Reset move variables
+		service.onReleaseCard = function(panel){
 			service.cardMoved = false;
 			service.movingUp = false;
 			service.movingDown = false;
 			service.movingLeft = false;
 			service.movingRight = false;
+			
+			var panel_x_index = panel.x_index;
+			var panel_y_index = panel.y_index;
+			var panel_y_overlap = panel.y_overlap;
+			
+			for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
+				if(Pcs.pc.cards[ia].x_index === panel_x_index){
+					Pcs.pc.cards[ia].dragging = false;
+				}
+			}
 		};
 		
 		// Swap card order along horizontal axis
@@ -447,14 +476,18 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 			var y_index = card.y_index;
 			var _card = Pcs.cardByIndex(x_index, y_index);
 			if(x_index > 0){
-				if(Pcs.pc.cards[_card].x_overlap){
+				if(Pcs.pc.cards[_card].x_overlap && !this.movingLeft){
+				// Card overlapped
+					this.setMovingRight(_moveSpeed);
 					for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
 						if(x_index <= Pcs.pc.cards[ia].x_index){
 							Pcs.pc.cards[ia].x_coord += x_cover;
 						}
 					}
 					Pcs.pc.cards[_card].x_overlap = false;
-				} else if(!Pcs.pc.cards[_card].x_overlap){
+				} else if(!Pcs.pc.cards[_card].x_overlap && !this.movingRight){
+				// Card not overlapped
+					this.setMovingLeft(_moveSpeed);
 					for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
 						if(x_index <= Pcs.pc.cards[ib].x_index){
 							Pcs.pc.cards[ib].x_coord -= x_cover;
@@ -474,8 +507,9 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 			var lowest_y_index = Pcs.pc.cards[lowest_index].y_index;
 			
 			if(card_y_index < lowest_y_index){
-				if(Pcs.pc.cards[card_index].y_overlap){
-				// Card currently overlapped
+				if(Pcs.pc.cards[card_index].y_overlap && !this.movingUp){
+				// Card overlapped
+					this.setMovingDown(_moveSpeed);
 					Pcs.pc.cards[card_index].y_coord = Pcs.pc.cards[card_index].y_index * y_tab;
 					Pcs.pc.cards[card_index].y_overlap = false;
 					for(var ia = 0; ia < Pcs.pc.cards.length; ia++){
@@ -491,8 +525,9 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 							}
 						}
 					}
-				} else if(!Pcs.pc.cards[card_index].y_overlap){
+				} else if(!Pcs.pc.cards[card_index].y_overlap && !this.movingDown){
 				// Card not overlapped
+					this.setMovingUp(_moveSpeed);
 					for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
 						if(card_x_index === Pcs.pc.cards[ib].x_index){
 							Pcs.pc.cards[ib].y_coord = Pcs.pc.cards[ib].y_index * y_tab;

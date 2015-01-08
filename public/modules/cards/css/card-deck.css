@@ -28,16 +28,13 @@
 	user-select: none;
 }
 
-[card-slot]:not(.dragging), [card-panel]:not(.dragging) {
-	-webkit-transition: 1s linear all;
-	-moz-transition: 1s linear all;
-	-o-transition: 1s linear all;
-	-ms-transition: 1s linear all;
-	transition: 1s linear all;
-}
-
-[card-slot].dragging, [card-panel].dragging {
-	transition-property: none;
+[card-panel]:not(.dragging),
+[card-slot]:not(.dragging) {
+	-webkit-transition: .5s ease-in all;
+	-moz-transition: .5s ease-in all;
+	-o-transition: .5s ease-in all;
+	-ms-transition: .5s ease-in all;
+	transition: .5s ease-in all;
 }
 
 [card-panel] > div > div {
