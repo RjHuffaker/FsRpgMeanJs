@@ -43,9 +43,9 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 		
 		service.deckWidth = function(){
 			if(this.pc.cards){
-				return this.pc.cards[this.lastCard()].x_coord + 275;
+				return this.pc.cards[this.lastCard()].x_coord + 10;
 			} else {
-				return 1000;
+				return 40;
 			}
 		};
 		
@@ -128,8 +128,6 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						y_index: 0,
 						x_coord: 0,
 						y_coord: 0,
-						x_dim: 250,
-						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
 						dragging: false,
@@ -140,10 +138,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						cardType: 'pc2',
 						x_index: 1,
 						y_index: 0,
-						x_coord: 250,
+						x_coord: 10,
 						y_coord: 0,
-						x_dim: 250,
-						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
 						dragging: false,
@@ -154,10 +150,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						cardType: 'pc3',
 						x_index: 2,
 						y_index: 0,
-						x_coord: 500,
+						x_coord: 20,
 						y_coord: 0,
-						x_dim: 250,
-						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
 						dragging: false,
@@ -169,10 +163,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						cardType: 'trait',
 						x_index: 3,
 						y_index: 0,
-						x_coord: 750,
+						x_coord: 30,
 						y_coord: 0,
-						x_dim: 250,
-						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
 						dragging: false,

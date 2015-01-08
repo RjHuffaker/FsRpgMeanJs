@@ -6,12 +6,12 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 	function(Pcs){
 		var service = {};
 		
-		var x_dim = 250;
-		var y_dim = 350;
-		var x_tab = 25;
-		var y_tab = 50;
-		var x_cover = 225;
-		var y_cover = 300;
+		var x_dim = 10;
+		var y_dim = 14;
+		var x_tab = 2;
+		var y_tab = 2;
+		var x_cover = x_dim - x_tab;
+		var y_cover = y_dim - y_tab;
 		var _moveSpeed = 500;
 		service.cardMoved = false;		// Disables overlap functions if current press has already triggered another function
 		service.isMoving = false;

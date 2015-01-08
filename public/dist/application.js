@@ -201,8 +201,8 @@ cardsModule
 					if (!enable)return;
 					
 					// add listeners.
-					scope.$watch(attrs.card, onCardChange);
 					scope.$on('$destroy', onDestroy);
+					scope.$watch(attrs.card, onCardChange);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
@@ -226,7 +226,7 @@ cardsModule
 					cursor: 'move'
 				});
 				
-				 // When the element is clicked start the drag behaviour
+				// When the element is clicked start the drag behaviour
 				var onPress = function(event){
 			
 					// Small delay for touch devices to allow for native window scrolling
@@ -366,7 +366,6 @@ cardsModule
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
-			
 				var _offset,
 				leftEdge, rightEdge,
 				topEdge, bottomEdge;
@@ -378,19 +377,34 @@ cardsModule
 				var x_index = -1, y_index = -1;
 				
 				var initialize = function () {
-					toggleListeners();
+					toggleListeners(true);
 					_offset = element.offset();
 				};
 				
-				var toggleListeners = function () {
+				var toggleListeners = function (enable) {
+					
+					// remove listeners
+					if (!enable)return;
+					
+					// add listeners
+					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.card, onCardChange);
+					scope.$on('cardDeck:onHeightChange', onHeightChange);
 					scope.$on('cardPanel:onPressCard', onPressCard);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 				};
 				
+				var onDestroy = function(enable){
+					toggleListeners(false);
+				};
+				
 				var onCardChange = function(newVal, oldVal){
 					_slot = newVal;
+				};
+				
+				var onHeightChange = function(event, object){
+					
 				};
 				
 				var onPressCard = function(event, object){
@@ -516,20 +530,43 @@ cardsModule
 			}
 		};
 	}])
-	.directive('cardDeck', ['$document', '$parse', '$rootScope', function($document, $parse, $rootScope){
+	.directive('cardDeck', ['$document', '$parse', '$rootScope', '$window', function($document, $parse, $rootScope, $window){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
 				
 				var pressed = false;
 				
+				var _window = angular.element($window);
+				
+				var windowHeight = $window.innerHeight;
+				
 				var initialize = function() {
+					toggleListeners(true);
+				};
+				
+				var toggleListeners = function (enable) {
+					// remove listeners
+					if (!enable)return;
+					scope.$on('$destroy', onDestroy);
+					_window.on('resize', onHeightChange);
 					element.on('mouseleave', onMouseLeave);
 					scope.$on('cardPanel:onPressCard', onPress);
 					scope.$on('cardPanel:onPressStack', onPress);
 					scope.$on('cardPanel:onReleaseCard', onRelease);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
 					scope.$on('cardPanel:onMoveStack', onMoveCard);
+				};
+				
+				var onDestroy = function(enable){
+					toggleListeners(false);
+				};
+				
+				var onHeightChange = function(newVal, oldVal){
+					windowHeight = $window.innerHeight;
+					$rootScope.$broadcast('cardDeck:onHeightChange', {
+						newHeight: windowHeight
+					});
 				};
 				
 				var onPress = function(){
@@ -565,6 +602,7 @@ cardsModule
 				};
 				
 				initialize();
+				onHeightChange();
 			}
 		};
 	}]);
@@ -1723,6 +1761,11 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 		
 		$scope.pcsItems = PcsItems;
 		
+		$scope.windowHeight = 0;
+		
+		$scope.windowScale = 0;
+		
+		
 		$scope.newPc = function(){
 			Pcs.addPc();
 			Pcs.pcNew = true;
@@ -1802,6 +1845,11 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 			$scope.$digest();
 		};
 		
+		var onHeightChange = function(event, object){
+			$scope.windowHeight = object.newHeight;
+			$scope.windowScale = 25;
+		};
+		
 		$scope.$on('cardSlot:moveHorizontal', moveHorizontal);
 		$scope.$on('cardSlot:moveDiagonalUp', moveDiagonalUp);
 		$scope.$on('cardSlot:moveDiagonalDown', moveDiagonalDown);
@@ -1809,8 +1857,9 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 		
 		$scope.$on('cardDeck:unstackLeft', unstackLeft);
 		$scope.$on('cardDeck:unstackRight', unstackRight);
-		$scope.$on('cardPanel:toggleOverlap', toggleOverlap);
+		$scope.$on('cardDeck:onHeightChange', onHeightChange);
 		
+		$scope.$on('cardPanel:toggleOverlap', toggleOverlap);
 		$scope.$on('cardPanel:onPressCard', onPressCard);
 		$scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 		
@@ -1941,12 +1990,12 @@ cardsModule.factory('PcsCardDeck', ['Pcs',
 	function(Pcs){
 		var service = {};
 		
-		var x_dim = 250;
-		var y_dim = 350;
-		var x_tab = 25;
-		var y_tab = 50;
-		var x_cover = 225;
-		var y_cover = 300;
+		var x_dim = 10;
+		var y_dim = 14;
+		var x_tab = 2;
+		var y_tab = 2;
+		var x_cover = x_dim - x_tab;
+		var y_cover = y_dim - y_tab;
 		var _moveSpeed = 500;
 		service.cardMoved = false;		// Disables overlap functions if current press has already triggered another function
 		service.isMoving = false;
@@ -2839,9 +2888,9 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 		
 		service.deckWidth = function(){
 			if(this.pc.cards){
-				return this.pc.cards[this.lastCard()].x_coord + 275;
+				return this.pc.cards[this.lastCard()].x_coord + 10;
 			} else {
-				return 1000;
+				return 40;
 			}
 		};
 		
@@ -2924,8 +2973,6 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						y_index: 0,
 						x_coord: 0,
 						y_coord: 0,
-						x_dim: 250,
-						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
 						dragging: false,
@@ -2936,10 +2983,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						cardType: 'pc2',
 						x_index: 1,
 						y_index: 0,
-						x_coord: 250,
+						x_coord: 10,
 						y_coord: 0,
-						x_dim: 250,
-						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
 						dragging: false,
@@ -2950,10 +2995,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						cardType: 'pc3',
 						x_index: 2,
 						y_index: 0,
-						x_coord: 500,
+						x_coord: 20,
 						y_coord: 0,
-						x_dim: 250,
-						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
 						dragging: false,
@@ -2965,10 +3008,8 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						cardType: 'trait',
 						x_index: 3,
 						y_index: 0,
-						x_coord: 750,
+						x_coord: 30,
 						y_coord: 0,
-						x_dim: 250,
-						y_dim: 350,
 						x_overlap: false,
 						y_overlap: false,
 						dragging: false,
