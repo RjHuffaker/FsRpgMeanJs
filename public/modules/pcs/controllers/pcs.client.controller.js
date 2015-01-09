@@ -30,7 +30,6 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 		
 		$scope.windowScale = 0;
 		
-		
 		$scope.newPc = function(){
 			Pcs.addPc();
 			Pcs.pcNew = true;
@@ -112,7 +111,7 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 		
 		var onHeightChange = function(event, object){
 			$scope.windowHeight = object.newHeight;
-			$scope.windowScale = 25;
+			$scope.windowScale = object.newScale;
 		};
 		
 		$scope.$on('cardSlot:moveHorizontal', moveHorizontal);
@@ -122,7 +121,7 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 		
 		$scope.$on('cardDeck:unstackLeft', unstackLeft);
 		$scope.$on('cardDeck:unstackRight', unstackRight);
-		$scope.$on('cardDeck:onHeightChange', onHeightChange);
+		$scope.$on('screenSize:onHeightChange', onHeightChange);
 		
 		$scope.$on('cardPanel:toggleOverlap', toggleOverlap);
 		$scope.$on('cardPanel:onPressCard', onPressCard);

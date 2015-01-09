@@ -1,8 +1,8 @@
 .deck-panel {
 	border: solid 1px #555;
 	overflow-x: auto;
-	overflow-y: hidden;
-	position: absolute;
+	overflow-y: auto;
+	position: fixed;
 	left: 0;
 	height: 100%;
 	width: 100%;
@@ -11,19 +11,17 @@
 [card-deck] {
 	white-space: nowrap;
 	list-style: none;
-	position: relative;
+	position: fixed;
 	height: 100%;
 	width: 100%;
 }
 
 [card-slot], [card-panel] {
-	display: inline-block;
 	position: absolute;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	user-select: none;
 }
-
 
 [card-panel]:not(.dragging),
 [card-slot]:not(.dragging) {

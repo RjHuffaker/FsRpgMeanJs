@@ -1,9 +1,8 @@
-<section data-ng-controller="PcsCtrl" data-ng-init="pcs.readPc()">
-	<div class="container-fluid deck-panel"
-		ng-style="">
+<section data-ng-controller="PcsCtrl" data-ng-init="pcs.readPc()" screen-size>
+	<div class="container-fluid deck-panel">
 		<div card-deck ng-mouseleave=""
 			ng-style="{'height': windowHeight+'px',
-				'width': (Pcs.deckWidth() * windowScale) +'px',
+				'width': (Pcs.deckWidth() * windowScale + windowScale) +'px',
 				'margin-top': (windowScale * 2)+'px',
 				'margin-left': windowScale+'px'}">
 			<ul>
