@@ -1,16 +1,5 @@
-.dice-image {
-	width: 36px;
-	height: 36px;
-}
-
 .dice-dropdown {
-	width: 150px !important;
 	white-space: normal;
 	font-size: 14px;
-}
-
-.dice-dropdown-image {
-	width: 36px;
-	height: 36px;
-	margin: 2px 6px;
+	z-index: 5001 !important;
 }

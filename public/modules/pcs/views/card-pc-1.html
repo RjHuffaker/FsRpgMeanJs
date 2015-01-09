@@ -16,9 +16,9 @@
 			</label></li>
 		</ul>
 	</div>
-	<table width="100%" height="20%">
+	<table width="100%" height="16%">
 		<tbody>
-			<tr height="55%">
+			<tr height="55%" class="text-11">
 				<td>
 					<label for="name"><strong>Name: </strong></label>
 				</td>
@@ -30,29 +30,27 @@
 
 			<tr height="45%">
 				<td width="25%">
-					<label for="race"><strong>Race:  </strong></label>
+					<label for="race" class="text-11"><strong>Race:  </strong></label>
 				</td>
 				<td width="30%">
-					<div id="race">
+					<div id="race" class="text-11">
 						{{pcs.pc.race}}
 					</div>
 				</td>
 				<td width="15%">
-					<label for="sex"><strong>Sex: </strong></label>
+					<label for="sex" class="text-11"><strong>Sex: </strong></label>
 				</td>
 				<td width="30%">
-					<select id="sex" class="fill-width"
-						ng-model="pcs.pc.sex"
-						ng-options="sex for sex in dataSRVC.sexArray"
-						stop-event>
-					</select>
+					<div id="race" class="text-11">
+						{{pcs.pc.sex}}
+					</div>
 				</td>
 			</tr>
 		</tbody>
 	</table>
 	
-	<table width="100%" height="80%">
-		<tbody>
+	<table width="100%" height="84%">
+		<tbody class="text-11">
 			<tr height="15%">
 				<td width="20%">
 					<div dice-dropdown ability="pcs.pc.abilities[0]" ></div>
@@ -70,8 +68,8 @@
 
 			<tr height="10%">
 				<td colspan="2" class="text-right">
-					<div class="text-10px"><strong>Block Defense:</strong></div>
-					<div class="text-9px">Item + (STR or PHY)</div>
+					<div class="text-8"><strong>Block Defense:</strong></div>
+					<div class="text-8">Item + (STR or PHY)</div>
 				</td>
 				<td colspan="2" class="text-center">
 					<small>
@@ -98,8 +96,8 @@
 
 			<tr height="10%">
 				<td colspan="2" class="text-right">
-					<div class="text-10px"><strong>Dodge Defense:</strong></div>
-					<div class="text-9px">2d(FLE or DEX)</div>
+					<div class="text-8"><strong>Dodge Defense:</strong></div>
+					<div class="text-8">2d(FLE or DEX)</div>
 				</td>
 				<td colspan="2" class="text-center">
 					<small>
@@ -125,8 +123,8 @@
 
 			<tr height="10%">
 				<td colspan="2" class="text-right">
-					<div class="text-10px"><strong>Alertness Defense:</strong></div>
-					<div class="text-9px">2d(ACU or INT)</div>
+					<div class="text-8"><strong>Alertness Defense:</strong></div>
+					<div class="text-8">2d(ACU or INT)</div>
 				</td>
 				<td colspan="2" class="text-center">
 					<small>
@@ -152,8 +150,8 @@
 
 			<tr height="10%">
 				<td colspan="2" class="text-right">
-					<div class="text-10px"><strong>Tenacity Defense:</strong></div>
-					<div class="text-9px">2d(WIS or CHA)</div>
+					<div class="text-8"><strong>Tenacity Defense:</strong></div>
+					<div class="text-8">2d(WIS or CHA)</div>
 				</td>
 				<td colspan="2" class="text-center">
 					<small>

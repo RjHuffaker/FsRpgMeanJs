@@ -1,12 +1,12 @@
 .panel-content {
 	height: 100%;
 	width: 100%;
-	padding: 13px;
+	padding: .5em;
 }
 
 .content-table {
 	display: table;
-	padding: 13px;
+	padding: .5em;
 }
 
 .content-row {

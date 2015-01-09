@@ -1,16 +1,23 @@
-<div class="dropdown dropup" dropdown>
+<div class="dropdown"
+	ng-class="{'dropup': ability.order > 3}"
+	
+	dropdown>
 	<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 		ng-click="dropdown; $parent.pcsCard1.chooseAbility(ability.order);" aria-expanded="true">
 		<img stop-event
 			ng-src={{ability.dice.image}}
+			ng-style="{'height':$parent.windowScale * 1.5+'px'}"
 			alt="{{ability.dice.name}}"
 			class="dice-image" />
 	</a>
-	<div class="dice-dropdown dropdown-menu" aria-labelledby="cardDropdown">
+	<div class="dropdown-menu dice-dropdown" aria-labelledby="cardDropdown"
+		ng-style="{'width':$parent.windowScale * 6+'px'}">
 		<img ng-repeat="dice in $parent.pcs.pc.dicepool track by $index"
 			ng-src={{dice.image}} alt={{dice.name}}
 			ng-show="dice.order || $index == 0"
 			ng-click="$parent.$parent.pcsCard1.chooseDie(dice.order)"
+			ng-style="{'height':$parent.$parent.windowScale * 1.5+'px',
+				'margin': $parent.$parent.windowScale * 0.2+'px'}"
 			class="dice-dropdown-image" />
 	</div>
 </div>

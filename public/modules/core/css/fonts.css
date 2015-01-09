@@ -1,0 +1,55 @@
+.text-12{
+	font-size: 1.2em;
+}
+
+.text-11{
+	font-size: 1.1em;
+}
+
+.text-10{
+	font-size: 1.0em;
+}
+
+.text-9{
+	font-size: 0.9em;
+}
+
+.text-8{
+	font-size: 0.8em;
+}
+
+@media (min-height: 501px){
+	.panel-content{
+		font-size: 13px
+	}
+}
+
+@media (min-height: 461px) and (max-height: 500px){
+	.panel-content{
+		font-size: 12px
+	}
+}
+
+@media (min-height: 421px) and (max-height: 460px){
+	.panel-content{
+		font-size: 11px
+	}
+}
+
+@media (min-height: 381px) and (max-height: 420px){
+	.panel-content{
+		font-size: 10px
+	}
+}
+
+@media (min-height: 341px) and (max-height: 380px){
+	.panel-content{
+		font-size: 9px
+	}
+}
+
+@media (max-height: 340px){
+	.panel-content{
+		font-size: 8px
+	}
+}

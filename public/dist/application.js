@@ -588,7 +588,6 @@ cardsModule
 					_panelY = _moveY - _panelRow;
 					
 					element.css({
-						position: 'relative',
 						left: _panelX + 'px',
 						top: _panelY + 'px'
 					});
