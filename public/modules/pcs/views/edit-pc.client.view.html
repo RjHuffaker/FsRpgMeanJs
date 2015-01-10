@@ -1,10 +1,9 @@
 <section data-ng-controller="PcsCtrl" data-ng-init="pcs.readPc()" screen-size>
-	<div class="container-fluid deck-panel">
+	<div class="container-fluid deck-panel"
+		ng-style="{'height': windowHeight-50+'px'}">
 		<div card-deck ng-mouseleave=""
-			ng-style="{'height': windowHeight+'px',
-				'width': (Pcs.deckWidth() * windowScale + windowScale) +'px',
-				'margin-top': (windowScale * 2)+'px',
-				'margin-left': windowScale+'px'}">
+			ng-style="{'height': windowHeight-50+'px',
+				'margin': windowScale+'px'}">
 			<ul>
 				<li card-slot card="card" ng-repeat="card in pcs.pc.cards"
 					ng-class="{'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap, 'dragging': card.dragging}"
@@ -19,7 +18,7 @@
 					<strong ng-show="card.dragging" style="color: green; position: absolute; top: -15px;">T {{$parent.windowScale}}</strong>
 					<strong ng-hide="card.dragging" style="color: red; position: absolute; top: -15px;">F {{$parent.windowScale}}</strong>
 				</li>
-			</ol>
+			</ul>
 		</div>
 	</div>
 </section>
