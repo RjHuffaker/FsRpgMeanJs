@@ -28,7 +28,7 @@ coreModule
 					
 					setTimeout( function(){
 						onHeightChange();
-					}, 50);
+					}, 500);
 				};
 				
 				var onDestroy = function(enable){

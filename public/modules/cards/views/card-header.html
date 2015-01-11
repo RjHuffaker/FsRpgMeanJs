@@ -1,7 +1,7 @@
-<h5 style="margin-top: 0">
+<h5 class="text-12" style="margin-top: 0">
 	<input ng-if="!card.locked" type="text" 
-		style="font-weight: bold; margin-top: -1px; width: 152px"
-		class="card-input name-trait text-bold"
+		style="font-weight: bold; margin-top: -1px;"
+		class="card-input text-bold"
 		ng-model="card.name" stop-event>
 	<strong ng-if="card.locked">
 		{{card.name}}
@@ -47,7 +47,7 @@
 		</strong>
 	</div>
 	
-	<div ng-if="card.cardType === 'item'" class="title-block">
+	<div ng-if="card.cardType === 'item'" class="title-block text-11">
 		<div class="title-block" ng-if="card.itemSlot === 'One-handed'
 				|| card.itemSlot === 'Two-handed'
 				|| card.itemSlot === 'One-handed or Paired'

@@ -1,6 +1,6 @@
 'use strict';
 
-var cardsModule = angular.module('cards');
+var cardsModule = angular.module('core');
 
 // Directive for managing card decks.
 cardsModule
@@ -23,10 +23,8 @@ cardsModule
 					scope.$on('$destroy', onDestroy);
 					element.on('mouseleave', onMouseLeave);
 					scope.$on('cardPanel:onPressCard', onPress);
-					scope.$on('cardPanel:onPressStack', onPress);
 					scope.$on('cardPanel:onReleaseCard', onRelease);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
-					scope.$on('cardPanel:onMoveStack', onMoveCard);
 				};
 				
 				var onDestroy = function(enable){

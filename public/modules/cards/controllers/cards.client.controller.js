@@ -10,6 +10,10 @@ angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 
 		
 		$scope.cardsDeck = CardsDeck;
 		
+		$scope.windowHeight = 0;
+		
+		$scope.windowScale = 0;
+		
 		var moveHorizontal = function(event, object){
 			console.log('moveHorizontal');
 		};
@@ -42,6 +46,12 @@ angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 
 			console.log('onReleaseCard');
 		};
 		
+		var onHeightChange = function(event, object){
+			$scope.windowHeight = object.newHeight;
+			$scope.windowScale = object.newScale;
+			$scope.$digest();
+		};
+		
 		$scope.$on('cardSlot:moveHorizontal', moveHorizontal);
 		$scope.$on('cardSlot:moveDiagonalUp', moveDiagonalUp);
 		$scope.$on('cardSlot:moveDiagonalDown', moveDiagonalDown);
@@ -49,6 +59,8 @@ angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 
 		
 		$scope.$on('cardDeck:unstackLeft', unstackLeft);
 		$scope.$on('cardDeck:unstackRight', unstackRight);
+		$scope.$on('screenSize:onHeightChange', onHeightChange);
+		
 		$scope.$on('cardPanel:toggleOverlap', toggleOverlap);
 		$scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 		

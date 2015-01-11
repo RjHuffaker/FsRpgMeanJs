@@ -116,6 +116,10 @@ angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 
 		
 		$scope.cardsDeck = CardsDeck;
 		
+		$scope.windowHeight = 0;
+		
+		$scope.windowScale = 0;
+		
 		var moveHorizontal = function(event, object){
 			console.log('moveHorizontal');
 		};
@@ -148,6 +152,12 @@ angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 
 			console.log('onReleaseCard');
 		};
 		
+		var onHeightChange = function(event, object){
+			$scope.windowHeight = object.newHeight;
+			$scope.windowScale = object.newScale;
+			$scope.$digest();
+		};
+		
 		$scope.$on('cardSlot:moveHorizontal', moveHorizontal);
 		$scope.$on('cardSlot:moveDiagonalUp', moveDiagonalUp);
 		$scope.$on('cardSlot:moveDiagonalDown', moveDiagonalDown);
@@ -155,82 +165,13 @@ angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 
 		
 		$scope.$on('cardDeck:unstackLeft', unstackLeft);
 		$scope.$on('cardDeck:unstackRight', unstackRight);
+		$scope.$on('screenSize:onHeightChange', onHeightChange);
+		
 		$scope.$on('cardPanel:toggleOverlap', toggleOverlap);
 		$scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 		
 	}
 ]);
-'use strict';
-
-var cardsModule = angular.module('cards');
-
-// Directive for managing card decks.
-cardsModule
-	.directive('cardDeck', ['$document', '$parse', '$rootScope', function($document, $parse, $rootScope){
-		return {
-			restrict: 'A',
-			link: function(scope, element, attrs) {
-				
-				var pressed = false;
-				
-				var initialize = function() {
-					toggleListeners(true);
-				};
-				
-				var toggleListeners = function (enable) {
-					// remove listeners
-					if (!enable)return;
-					
-					// add listeners
-					scope.$on('$destroy', onDestroy);
-					element.on('mouseleave', onMouseLeave);
-					scope.$on('cardPanel:onPressCard', onPress);
-					scope.$on('cardPanel:onPressStack', onPress);
-					scope.$on('cardPanel:onReleaseCard', onRelease);
-					scope.$on('cardPanel:onMoveCard', onMoveCard);
-					scope.$on('cardPanel:onMoveStack', onMoveCard);
-				};
-				
-				var onDestroy = function(enable){
-					toggleListeners(false);
-				};
-				
-				var onPress = function(){
-					pressed = true;
-				};
-				
-				var onRelease = function(){
-					pressed = false;
-				};
-				
-				var onMoveCard = function(event, object){
-					var _offset = element.offset();
-					var _width = element[0].offsetWidth;
-					var leftEdge = _offset.left;
-					var rightEdge = leftEdge + _width - 25;
-					
-					if(object.mouseX <= leftEdge){
-						scope.$emit('cardDeck:unstackLeft', {
-							panel: object.panel
-						});
-					} else if(object.mouseX >= rightEdge){
-						scope.$emit('cardDeck:unstackRight', {
-							panel: object.panel
-						});
-					}
-					
-				};
-				
-				var onMouseLeave = function(event){
-					if(pressed){
-						$rootScope.$broadcast('cardDeck:onMouseLeave');
-					}
-				};
-				
-				initialize();
-			}
-		};
-	}]);
 'use strict';
 
 var cardsModule = angular.module('cards');
@@ -449,8 +390,490 @@ cardsModule
 		};
 	});
 'use strict';
+var cardsModule = angular.module('cards');
+
+// Factory-service for managing PC card deck.
+cardsModule.factory('CardsDeck', ['Cards',
+	function(Cards){
+		var service = {};
+		
+		function cardByIndex(index){
+			for(var i = 0; i < Cards.cardList.length; i++){
+				var card = Cards.cardList[i];
+				if(card.index === index){
+					return i;
+				}
+			}
+		}
+		
+		service.shiftLeft = function(index){
+			if(index > 0){
+				var _old = cardByIndex(index);
+				var _new = cardByIndex(index-1);
+				
+				if(Cards.cardList[_old].overlap){
+					Cards.cardList[_new].column += 25;
+				} else {
+					Cards.cardList[_new].column += 250;
+				}
+				
+				if(Cards.cardList[_new].overlap){
+					Cards.cardList[_old].column -= 25;
+				} else {
+					Cards.cardList[_old].column -= 250;
+				}
+				Cards.cardList[_old].index = index-1;
+				Cards.cardList[_new].index = index;
+				
+			}
+			if(Cards.cardList[cardByIndex(0)].overlap){
+				service.toggleOverlap(0);
+			}
+		};
+		
+		service.shiftRight = function(index){
+			if(index < Cards.cardList.length - 1){
+				var _old = cardByIndex(index);
+				var _new = cardByIndex(index+1);
+				
+				if(Cards.cardList[_old].overlap){
+					Cards.cardList[_new].column -= 25;
+				} else {
+					Cards.cardList[_new].column -= 250;
+				}
+				
+				if(Cards.cardList[_new].overlap){
+					Cards.cardList[_old].column += 25;
+				} else {
+					Cards.cardList[_old].column += 250;
+				}
+				Cards.cardList[_old].index = index+1;
+				Cards.cardList[_new].index = index;
+			}
+			if(Cards.cardList[cardByIndex(0)].overlap){
+				service.toggleOverlap(0);
+			}
+		};
+		
+		service.toggleOverlap = function(index){
+			var _card = cardByIndex(index);
+			if(Cards.cardList[_card].overlap){
+				for(var index1 = 0; index1 < Cards.cardList.length; index1++){
+					if(Cards.cardList[index1].index > index-1){
+						Cards.cardList[index1].column += 225;
+					}
+				}
+				Cards.cardList[_card].overlap = false;
+			} else {
+				for(var index2 = 0; index2 < Cards.cardList.length; index2++){
+					if(Cards.cardList[index2].index > index-1){
+						Cards.cardList[index2].column -= 225;
+					}
+				}
+				Cards.cardList[_card].overlap = true;
+			}
+		};
+		
+		return service;
+	}]);
+'use strict';
 
 var cardsModule = angular.module('cards');
+
+// Factory-service for Browsing, Reading, Editting, Adding, and Deleting Cards.
+cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$resource', 
+	function($stateParams, $location, Authentication, $resource){
+		
+		var Traits = $resource(
+			'traits/:traitId',
+			{ traitId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Feats = $resource(
+			'feats/:featId',
+			{ featId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Augments = $resource(
+			'augments/:augmentId',
+			{ augmentId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Items = $resource(
+			'items/:itemId',
+			{ itemId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var service = {};
+		
+		service.card = {};
+		
+		service.cardList = [];
+		
+		service.cardType = 0;
+		
+		service.cardNew = false;
+		
+		service.cardSaved = false;
+		
+		service.lockCard = function(card){
+			card.locked = true;
+			card.x_index = card.cardNumber - 1;
+			card.y_index = 0;
+			card.x_coord = card.x_index * 10;
+			card.y_coord = 0;
+			card.dragging = false;
+			card.stacked = false;
+		};
+		
+		service.unlockCard = function(card){
+			card.locked = false;
+			card.x_index = card.cardNumber - 1;
+			card.y_index = 0;
+			card.x_coord = card.x_index * 10;
+			card.y_coord = 0;
+			card.dragging = false;
+			card.stacked = false;
+		};
+		
+		service.setCardList = function(){
+			for(var i = 0; i < service.cardList.length; i++){
+				service.lockCard(service.cardList[i]);
+			}
+		};
+		
+		service.changeDurability = function(card, add){
+			if(add && card.durability.modifier < 4){
+				card.durability.modifier += 1;
+			} else if(!add && card.durability.modifier > 0){
+				card.durability.modifier -= 1;
+			}
+		};
+		
+		service.changeSpeed = function(card, add){
+			if(add && card.speed.modifier < 1){
+				card.speed.modifier += 1;
+			} else if(!add && card.speed.modifier > -1){
+				card.speed.modifier -= 1;
+			}
+		};
+		
+		service.changeFinesse = function(card, add){
+			if(add && card.finesse.modifier < 0){
+				card.finesse.modifier += 1;
+			} else if(!add && card.finesse.modifier > -2){
+				card.finesse.modifier -= 1;
+			}
+		};
+		
+		service.changeWeight = function(card, add){
+			if(add && card.weight < 9){
+				card.weight += 1;
+			} else if(!add && card.weight > 0){
+				card.weight -= 1;
+			}
+		};
+		
+		service.changeCost = function(card, add){
+			if(add && card.cost < 18){
+				card.cost += 1;
+			} else if(!add && card.cost > 0){
+				card.cost -= 1;
+			}
+		};
+		
+		// BROWSE cards
+		service.browseCards = function(cardType){
+			service.cardType = cardType;
+			switch(service.cardType){
+				case 1:
+					service.cardList = Traits.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+				case 2:
+					service.cardList = Feats.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+				case 3:
+					service.cardList = Augments.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+				case 4:
+					service.cardList = Items.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+			}
+		};
+		
+		// READ single Card
+		service.readCard = function(card){
+			var cardId = card._id;
+			switch(service.cardType){
+				case 1:
+					card = Traits.get({
+						traitId: cardId
+					});
+					break;
+				case 2:
+					card = Feats.get({
+						featId: cardId
+					});
+					break;
+				case 3:
+					card = Augments.get({
+						augmentId: cardId
+					});
+					break;
+				case 4:
+					card = Items.get({
+						itemId: cardId
+					});
+					break;
+			}
+			service.unlockCard(card);
+		};
+		
+		// EDIT existing Card
+		service.editCard = function(card) {
+			card.$update(function(response) {
+				service.unlockCard(card);
+			}, function(errorResponse) {
+				console.log(errorResponse);
+			});
+		};
+		
+		// ADD a new Card
+		service.addCard = function(index){
+			switch(service.cardType){
+				case 1:
+					this.card = new Traits ({
+						cardNumber: index
+					});
+					this.card.$save(function(response) {
+						for(var i in service.cardList){
+							if(service.cardList[i].cardNumber >= index){
+								service.cardList[i].cardNumber += 1;
+								service.cardList[i].x_index += 1;
+								service.cardList[i].x_coord += 10;
+							}
+						}
+						service.cardList.push(service.card);
+						service.unlockCard(service.card);
+					}, function(errorResponse) {
+						console.log(errorResponse);
+					});
+					break;
+				case 2:
+					this.card = new Feats ({
+						cardNumber: index
+					});
+					this.card.$save(function(response) {
+						for(var i in service.cardList){
+							if(service.cardList[i].cardNumber >= index){
+								service.cardList[i].cardNumber += 1;
+								service.cardList[i].x_index += 1;
+								service.cardList[i].x_coord += 10;
+							}
+						}
+						service.cardList.push(service.card);
+						service.unlockCard(service.card);
+					}, function(errorResponse) {
+						console.log(errorResponse);
+					});
+					break;
+				case 3:
+					this.card = new Augments ({
+						cardNumber: index
+					});
+					this.card.$save(function(response) {
+						for(var i in service.cardList){
+							if(service.cardList[i].cardNumber >= index){
+								service.cardList[i].cardNumber += 1;
+								service.cardList[i].x_index += 1;
+								service.cardList[i].x_coord += 10;
+							}
+						}
+						service.cardList.push(service.card);
+						service.unlockCard(service.card);
+					}, function(errorResponse) {
+						console.log(errorResponse);
+					});
+					break;
+				case 4:
+					this.card = new Items ({
+						cardNumber: index
+					});
+					this.card.$save(function(response){
+						for(var i in service.cardList){
+							if(service.cardList[i].cardNumber >= index){
+								service.cardList[i].cardNumber += 1;
+								service.cardList[i].x_index += 1;
+								service.cardList[i].x_coord += 10;
+							}
+						}
+						service.cardList.push(service.card);
+						service.unlockCard(service.card);
+					}, function(errorResponse){
+						console.log(errorResponse);
+					});
+					break;
+			}
+		};
+		
+		// DELETE existing Card
+		service.deleteCard = function(card){
+			if(card){
+				card.$remove();
+				for(var i in service.cardList){
+					if(this.cardList[i] === card ) {
+						this.cardList.splice(i, 1);
+					}
+					if (this.cardList[i] && this.cardList[i].cardNumber > card.cardNumber){
+						console.log(this.cardList[i].cardNumber +' / '+ card.cardNumber);
+						this.cardList[i].cardNumber -= 1;
+						this.cardList[i].x_index -= 1;
+						this.cardList[i].x_coord -= 10;
+					}
+				}
+			}
+		};
+		
+		return service;
+	}]);
+'use strict';
+
+// Setting up route
+angular.module('core').config(['$stateProvider', '$urlRouterProvider',
+	function($stateProvider, $urlRouterProvider) {
+		// Redirect to home view when route not found
+		$urlRouterProvider.otherwise('/');
+
+		// Home state routing
+		$stateProvider.
+		state('home', {
+			url: '/',
+			templateUrl: 'modules/core/views/home.client.view.html'
+		});
+	}
+]);
+'use strict';
+
+angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Menus',
+	function($scope, Authentication, Menus) {
+		$scope.authentication = Authentication;
+		$scope.isCollapsed = false;
+		$scope.menu = Menus.getMenu('topbar');
+
+		$scope.toggleCollapsibleMenu = function() {
+			$scope.isCollapsed = !$scope.isCollapsed;
+		};
+
+		// Collapsing the menu after navigation
+		$scope.$on('$stateChangeSuccess', function() {
+			$scope.isCollapsed = false;
+		});
+	}
+]);
+'use strict';
+
+var coreModule = angular.module('core');
+
+// Core Controller
+coreModule.controller('HomeController', ['$scope', 'Authentication',
+	function($scope, Authentication) {
+		// This provides Authentication context.
+		$scope.authentication = Authentication;
+		
+	}
+]);
+'use strict';
+
+var cardsModule = angular.module('core');
+
+// Directive for managing card decks.
+cardsModule
+	.directive('cardDeck', ['$document', '$parse', '$rootScope', function($document, $parse, $rootScope){
+		return {
+			restrict: 'A',
+			link: function(scope, element, attrs) {
+				
+				var pressed = false;
+				
+				var initialize = function() {
+					toggleListeners(true);
+				};
+				
+				var toggleListeners = function (enable) {
+					// remove listeners
+					if (!enable)return;
+					
+					// add listeners
+					scope.$on('$destroy', onDestroy);
+					element.on('mouseleave', onMouseLeave);
+					scope.$on('cardPanel:onPressCard', onPress);
+					scope.$on('cardPanel:onReleaseCard', onRelease);
+					scope.$on('cardPanel:onMoveCard', onMoveCard);
+				};
+				
+				var onDestroy = function(enable){
+					toggleListeners(false);
+				};
+				
+				var onPress = function(){
+					pressed = true;
+				};
+				
+				var onRelease = function(){
+					pressed = false;
+				};
+				
+				var onMoveCard = function(event, object){
+					var _offset = element.offset();
+					var _width = element[0].offsetWidth;
+					var leftEdge = _offset.left;
+					var rightEdge = leftEdge + _width - 25;
+					
+					if(object.mouseX <= leftEdge){
+						scope.$emit('cardDeck:unstackLeft', {
+							panel: object.panel
+						});
+					} else if(object.mouseX >= rightEdge){
+						scope.$emit('cardDeck:unstackRight', {
+							panel: object.panel
+						});
+					}
+					
+				};
+				
+				var onMouseLeave = function(event){
+					if(pressed){
+						$rootScope.$broadcast('cardDeck:onMouseLeave');
+					}
+				};
+				
+				initialize();
+			}
+		};
+	}]);
+'use strict';
+
+var cardsModule = angular.module('core');
 
 // Directive for managing card decks.
 cardsModule
@@ -659,7 +1082,7 @@ cardsModule
 	}]);
 'use strict';
 
-var cardsModule = angular.module('cards');
+var cardsModule = angular.module('core');
 
 // Directive for managing card decks.
 cardsModule
@@ -836,415 +1259,6 @@ cardsModule
 		};
 	}]);
 'use strict';
-var cardsModule = angular.module('cards');
-
-// Factory-service for managing PC card deck.
-cardsModule.factory('CardsDeck', ['Cards',
-	function(Cards){
-		var service = {};
-		
-		function cardByIndex(index){
-			for(var i = 0; i < Cards.cardList.length; i++){
-				var card = Cards.cardList[i];
-				if(card.index === index){
-					return i;
-				}
-			}
-		}
-		
-		service.shiftLeft = function(index){
-			if(index > 0){
-				var _old = cardByIndex(index);
-				var _new = cardByIndex(index-1);
-				
-				if(Cards.cardList[_old].overlap){
-					Cards.cardList[_new].column += 25;
-				} else {
-					Cards.cardList[_new].column += 250;
-				}
-				
-				if(Cards.cardList[_new].overlap){
-					Cards.cardList[_old].column -= 25;
-				} else {
-					Cards.cardList[_old].column -= 250;
-				}
-				Cards.cardList[_old].index = index-1;
-				Cards.cardList[_new].index = index;
-				
-			}
-			if(Cards.cardList[cardByIndex(0)].overlap){
-				service.toggleOverlap(0);
-			}
-		};
-		
-		service.shiftRight = function(index){
-			if(index < Cards.cardList.length - 1){
-				var _old = cardByIndex(index);
-				var _new = cardByIndex(index+1);
-				
-				if(Cards.cardList[_old].overlap){
-					Cards.cardList[_new].column -= 25;
-				} else {
-					Cards.cardList[_new].column -= 250;
-				}
-				
-				if(Cards.cardList[_new].overlap){
-					Cards.cardList[_old].column += 25;
-				} else {
-					Cards.cardList[_old].column += 250;
-				}
-				Cards.cardList[_old].index = index+1;
-				Cards.cardList[_new].index = index;
-			}
-			if(Cards.cardList[cardByIndex(0)].overlap){
-				service.toggleOverlap(0);
-			}
-		};
-		
-		service.toggleOverlap = function(index){
-			var _card = cardByIndex(index);
-			if(Cards.cardList[_card].overlap){
-				for(var index1 = 0; index1 < Cards.cardList.length; index1++){
-					if(Cards.cardList[index1].index > index-1){
-						Cards.cardList[index1].column += 225;
-					}
-				}
-				Cards.cardList[_card].overlap = false;
-			} else {
-				for(var index2 = 0; index2 < Cards.cardList.length; index2++){
-					if(Cards.cardList[index2].index > index-1){
-						Cards.cardList[index2].column -= 225;
-					}
-				}
-				Cards.cardList[_card].overlap = true;
-			}
-		};
-		
-		return service;
-	}]);
-'use strict';
-
-var cardsModule = angular.module('cards');
-
-// Factory-service for Browsing, Reading, Editting, Adding, and Deleting Cards.
-cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$resource', 
-	function($stateParams, $location, Authentication, $resource){
-		
-		var Traits = $resource(
-			'traits/:traitId',
-			{ traitId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
-		
-		var Feats = $resource(
-			'feats/:featId',
-			{ featId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
-		
-		var Augments = $resource(
-			'augments/:augmentId',
-			{ augmentId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
-		
-		var Items = $resource(
-			'items/:itemId',
-			{ itemId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
-		
-		var service = {};
-		
-		service.card = {};
-		
-		service.cardList = [];
-		
-		service.cardType = 0;
-		
-		service.cardNew = false;
-		
-		service.cardSaved = false;
-		
-		service.lockCard = function(card){
-			card.locked = true;
-			card.x_index = card.cardNumber - 1;
-			card.y_index = 0;
-			card.x_coord = card.x_index * 250;
-			card.y_coord = 0;
-		};
-		
-		service.unlockCard = function(card){
-			card.locked = false;
-			card.x_index = card.cardNumber - 1;
-			card.y_index = 0;
-			card.x_coord = card.x_index * 250;
-			card.y_coord = 0;
-		};
-		
-		service.setCardList = function(){
-			for(var i = 0; i < service.cardList.length; i++){
-				service.lockCard(service.cardList[i]);
-			}
-		};
-		
-		service.changeDurability = function(card, add){
-			if(add && card.durability.modifier < 4){
-				card.durability.modifier += 1;
-			} else if(!add && card.durability.modifier > 0){
-				card.durability.modifier -= 1;
-			}
-		};
-		
-		service.changeSpeed = function(card, add){
-			if(add && card.speed.modifier < 1){
-				card.speed.modifier += 1;
-			} else if(!add && card.speed.modifier > -1){
-				card.speed.modifier -= 1;
-			}
-		};
-		
-		service.changeFinesse = function(card, add){
-			if(add && card.finesse.modifier < 0){
-				card.finesse.modifier += 1;
-			} else if(!add && card.finesse.modifier > -2){
-				card.finesse.modifier -= 1;
-			}
-		};
-		
-		service.changeWeight = function(card, add){
-			if(add && card.weight < 9){
-				card.weight += 1;
-			} else if(!add && card.weight > 0){
-				card.weight -= 1;
-			}
-		};
-		
-		service.changeCost = function(card, add){
-			if(add && card.cost < 18){
-				card.cost += 1;
-			} else if(!add && card.cost > 0){
-				card.cost -= 1;
-			}
-		};
-		
-		// BROWSE cards
-		service.browseCards = function(cardType){
-			service.cardType = cardType;
-			switch(service.cardType){
-				case 1:
-					service.cardList = Traits.query(
-						function(response){
-							service.setCardList();
-						}
-					);
-					break;
-				case 2:
-					service.cardList = Feats.query(
-						function(response){
-							service.setCardList();
-						}
-					);
-					break;
-				case 3:
-					service.cardList = Augments.query(
-						function(response){
-							service.setCardList();
-						}
-					);
-					break;
-				case 4:
-					service.cardList = Items.query(
-						function(response){
-							service.setCardList();
-						}
-					);
-					break;
-			}
-		};
-		
-		// READ single Card
-		service.readCard = function(card){
-			var cardId = card._id;
-			switch(service.cardType){
-				case 1:
-					card = Traits.get({
-						traitId: cardId
-					});
-					break;
-				case 2:
-					card = Feats.get({
-						featId: cardId
-					});
-					break;
-				case 3:
-					card = Augments.get({
-						augmentId: cardId
-					});
-					break;
-				case 4:
-					card = Items.get({
-						itemId: cardId
-					});
-					break;
-			}
-			service.unlockCard(card);
-		};
-		
-		// EDIT existing Card
-		service.editCard = function(card) {
-			card.$update(function(response) {
-				service.unlockCard(card);
-			}, function(errorResponse) {
-				console.log(errorResponse);
-			});
-		};
-		
-		// ADD a new Card
-		service.addCard = function(index){
-			switch(service.cardType){
-				case 1:
-					this.card = new Traits ({
-						cardNumber: index
-					});
-					this.card.$save(function(response) {
-						for(var i in service.cardList){
-							if(service.cardList[i].cardNumber >= index){
-								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_index += 1;
-								service.cardList[i].x_coord += 250;
-							}
-						}
-						service.cardList.push(service.card);
-						service.unlockCard(service.card);
-					}, function(errorResponse) {
-						console.log(errorResponse);
-					});
-					break;
-				case 2:
-					this.card = new Feats ({
-						cardNumber: index
-					});
-					this.card.$save(function(response) {
-						for(var i in service.cardList){
-							if(service.cardList[i].cardNumber >= index){
-								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_index += 1;
-								service.cardList[i].x_coord += 250;
-							}
-						}
-						service.cardList.push(service.card);
-						service.unlockCard(service.card);
-					}, function(errorResponse) {
-						console.log(errorResponse);
-					});
-					break;
-				case 3:
-					this.card = new Augments ({
-						cardNumber: index
-					});
-					this.card.$save(function(response) {
-						for(var i in service.cardList){
-							if(service.cardList[i].cardNumber >= index){
-								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_index += 1;
-								service.cardList[i].x_coord += 250;
-							}
-						}
-						service.cardList.push(service.card);
-						service.unlockCard(service.card);
-					}, function(errorResponse) {
-						console.log(errorResponse);
-					});
-					break;
-				case 4:
-					this.card = new Items ({
-						cardNumber: index
-					});
-					this.card.$save(function(response){
-						for(var i in service.cardList){
-							if(service.cardList[i].cardNumber >= index){
-								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_index += 1;
-								service.cardList[i].x_coord += 250;
-							}
-						}
-						service.cardList.push(service.card);
-						service.unlockCard(service.card);
-					}, function(errorResponse){
-						console.log(errorResponse);
-					});
-					break;
-			}
-		};
-		
-		// DELETE existing Card
-		service.deleteCard = function(card){
-			if(card){
-				card.$remove();
-				for(var i in service.cardList){
-					if(this.cardList[i] === card ) {
-						this.cardList.splice(i, 1);
-					}
-					if (this.cardList[i] && this.cardList[i].cardNumber > card.cardNumber){
-						console.log(this.cardList[i].cardNumber +' / '+ card.cardNumber);
-						this.cardList[i].cardNumber -= 1;
-						this.cardList[i].x_index -= 1;
-						this.cardList[i].x_coord -= 250;
-					}
-				}
-			}
-		};
-		
-		return service;
-	}]);
-'use strict';
-
-// Setting up route
-angular.module('core').config(['$stateProvider', '$urlRouterProvider',
-	function($stateProvider, $urlRouterProvider) {
-		// Redirect to home view when route not found
-		$urlRouterProvider.otherwise('/');
-
-		// Home state routing
-		$stateProvider.
-		state('home', {
-			url: '/',
-			templateUrl: 'modules/core/views/home.client.view.html'
-		});
-	}
-]);
-'use strict';
-
-angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Menus',
-	function($scope, Authentication, Menus) {
-		$scope.authentication = Authentication;
-		$scope.isCollapsed = false;
-		$scope.menu = Menus.getMenu('topbar');
-
-		$scope.toggleCollapsibleMenu = function() {
-			$scope.isCollapsed = !$scope.isCollapsed;
-		};
-
-		// Collapsing the menu after navigation
-		$scope.$on('$stateChangeSuccess', function() {
-			$scope.isCollapsed = false;
-		});
-	}
-]);
-'use strict';
-
-var coreModule = angular.module('core');
-
-// Core Controller
-coreModule.controller('HomeController', ['$scope', 'Authentication',
-	function($scope, Authentication) {
-		// This provides Authentication context.
-		$scope.authentication = Authentication;
-		
-	}
-]);
-'use strict';
 
 angular.module('core')
 	.directive('modalDialogWindow', function() {
@@ -1297,7 +1311,7 @@ coreModule
 					
 					setTimeout( function(){
 						onHeightChange();
-					}, 50);
+					}, 500);
 				};
 				
 				var onDestroy = function(enable){
@@ -1936,6 +1950,11 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 			$scope.windowScale = object.newScale;
 		};
 		
+		$scope.$on('screenSize:onHeightChange', onHeightChange);
+		$scope.$on('cardPanel:toggleOverlap', toggleOverlap);
+		$scope.$on('cardPanel:onPressCard', onPressCard);
+		$scope.$on('cardPanel:onReleaseCard', onReleaseCard);
+		
 		$scope.$on('cardSlot:moveHorizontal', moveHorizontal);
 		$scope.$on('cardSlot:moveDiagonalUp', moveDiagonalUp);
 		$scope.$on('cardSlot:moveDiagonalDown', moveDiagonalDown);
@@ -1943,12 +1962,6 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Pcs
 		
 		$scope.$on('cardDeck:unstackLeft', unstackLeft);
 		$scope.$on('cardDeck:unstackRight', unstackRight);
-		$scope.$on('screenSize:onHeightChange', onHeightChange);
-		
-		$scope.$on('cardPanel:toggleOverlap', toggleOverlap);
-		$scope.$on('cardPanel:onPressCard', onPressCard);
-		$scope.$on('cardPanel:onReleaseCard', onReleaseCard);
-		
 		
 		$scope.$on('pcsCard1:updateStrPhy', function(event, object){
 			PcsCard1.factorBlock(object._str, object._phy);

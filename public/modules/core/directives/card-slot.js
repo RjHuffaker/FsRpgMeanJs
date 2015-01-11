@@ -1,6 +1,6 @@
 'use strict';
 
-var cardsModule = angular.module('cards');
+var cardsModule = angular.module('core');
 
 // Directive for managing card decks.
 cardsModule

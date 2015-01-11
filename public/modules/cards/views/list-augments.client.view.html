@@ -1,23 +1,28 @@
 <section data-ng-controller="CardsCtrl"
-	data-ng-init="cards.browseCards(3)">
-	<div class="container-fluid deck-panel">
-		<div card-deck ng-mouseleave="">
+	data-ng-init="cards.browseCards(3)" screen-size>
+	<div class="container-fluid deck-panel"
+		ng-style="{'height': (windowHeight - 50)+'px'}">
+		<div card-deck ng-mouseleave=""
+			ng-style="{'height': (windowHeight - 50)+'px',
+				'margin': (windowScale * 2)+'px'}">
+			<ul>
+				<li card-slot card="card" ng-repeat="card in cards.cardList"
+					ng-class="{'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap, 'dragging': card.dragging}"
+					ng-style="{'z-index': 4998 - card.x_coord + card.y_index - card.x_overlap - card.y_overlap,
+						'height': ($parent.windowScale * 14)+'px', 'width': ($parent.windowScale * 10)+'px',
+						'left': (card.x_coord * $parent.windowScale)+'px', 'top': (card.y_coord * $parent.windowScale)+'px'}">
+					<div card-panel card-layout card="card"
+						ng-class="{'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap}"
+						ng-style="{'height': ($parent.windowScale * 14)+'px', 'width': ($parent.windowScale * 10)+'px'}"
+						ng-mousemove="" ng-click="">
+					</div>
+				</li>
+			</ul>
 			<div style="position: absolute; top: -45px;">
 				<input type="submit" value="Add Card"
 					ng-click="cards.addCard(1)"
 					class="btn btn-warning">
 			</div>
-			<ul>
-				<li card-slot card="card"
-					ng-repeat="card in cards.cardList"
-					style="z-index: {{9998 - card.x_coord/25 + card.y_index}};
-						left: {{card.x_coord}}px; top: {{card.y_coord}}px;">
-					<div card-panel card-layout card="card"
-						ng-class="{'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap}"
-						ng-mousemove="" ng-click="">
-					</div>
-				</li>
-			</ul>
 		</div>
 	</div>
 </section>

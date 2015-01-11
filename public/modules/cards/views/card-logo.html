@@ -1,20 +1,10 @@
 <div class="dropdown pull-left" dropdown>
 	<a id="cardDropdown" ng-click="dropdown" aria-expanded="true"
-		ng-switch on="card.cardType" class="dropdown-toggle" dropdown-toggle>
-		<img ng-switch-when="trait" 
-			src="modules/cards/img/logo_trait.png" 
-			alt="Trait" class="logo-trait"/>
-		<img ng-switch-when="feat" 
-			src="modules/cards/img/logo_feat.png" 
-			alt="Feat" class="logo-feat"/>
-		<img ng-switch-when="augment" 
-			src="modules/cards/img/logo_augment.png" 
-			alt="Augment" class="logo-augment"/>
-		<img ng-switch-when="item" 
-			src="modules/cards/img/logo_item.png" 
-			alt="Item" class="logo-item"/>
+		class="dropdown-toggle" dropdown-toggle>
+		<strong class="text-argos text-24">{{card.cardType}}&nbsp;</strong>
 	</a>
-	<div class="dropdown-menu" aria-labelledby="cardDropdown">
+	<div class="dropdown-menu" aria-labelledby="cardDropdown"
+		ng-style="{'width': ($parent.$parent.windowScale * 10)+'px'}">
 		<ul class="col-xs-6 card-menu-list">
 			<li role="presentation" class="dropdown-header" stop-click>File Options</li>
 			<li ng-click="cards.addCard(card.cardNumber)"><label>

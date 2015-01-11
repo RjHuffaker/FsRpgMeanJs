@@ -46,16 +46,20 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 			card.locked = true;
 			card.x_index = card.cardNumber - 1;
 			card.y_index = 0;
-			card.x_coord = card.x_index * 250;
+			card.x_coord = card.x_index * 10;
 			card.y_coord = 0;
+			card.dragging = false;
+			card.stacked = false;
 		};
 		
 		service.unlockCard = function(card){
 			card.locked = false;
 			card.x_index = card.cardNumber - 1;
 			card.y_index = 0;
-			card.x_coord = card.x_index * 250;
+			card.x_coord = card.x_index * 10;
 			card.y_coord = 0;
+			card.dragging = false;
+			card.stacked = false;
 		};
 		
 		service.setCardList = function(){
@@ -188,7 +192,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
 								service.cardList[i].x_index += 1;
-								service.cardList[i].x_coord += 250;
+								service.cardList[i].x_coord += 10;
 							}
 						}
 						service.cardList.push(service.card);
@@ -206,7 +210,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
 								service.cardList[i].x_index += 1;
-								service.cardList[i].x_coord += 250;
+								service.cardList[i].x_coord += 10;
 							}
 						}
 						service.cardList.push(service.card);
@@ -224,7 +228,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
 								service.cardList[i].x_index += 1;
-								service.cardList[i].x_coord += 250;
+								service.cardList[i].x_coord += 10;
 							}
 						}
 						service.cardList.push(service.card);
@@ -242,7 +246,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
 								service.cardList[i].x_index += 1;
-								service.cardList[i].x_coord += 250;
+								service.cardList[i].x_coord += 10;
 							}
 						}
 						service.cardList.push(service.card);
@@ -266,7 +270,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						console.log(this.cardList[i].cardNumber +' / '+ card.cardNumber);
 						this.cardList[i].cardNumber -= 1;
 						this.cardList[i].x_index -= 1;
-						this.cardList[i].x_coord -= 250;
+						this.cardList[i].x_coord -= 10;
 					}
 				}
 			}
