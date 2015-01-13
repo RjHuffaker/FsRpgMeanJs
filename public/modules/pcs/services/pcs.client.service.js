@@ -16,19 +16,6 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 		
 		service.pc = {};
 		
-		service.cardByIndex = function(x_index, y_index){
-			var card = {};
-			for(var i = 0; i < this.pc.cards.length; i++){
-				if(this.pc.cards[i].x_index === x_index && this.pc.cards[i].y_index === y_index){
-					return i;
-				}
-			}
-		};
-		
-		service.firstCard = function(){
-			return this.cardByIndex(0, 0);
-		};
-		
 		service.lastCard = function(){
 			var _last = 0;
 			var _card = {};
@@ -47,20 +34,6 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 			} else {
 				return 40;
 			}
-		};
-		
-		service.lowestCard = function(x_index) {
-			var _lowest = 0;
-			var _card = {};
-			for(var i = 0; i < this.pc.cards.length; i++) {
-				if(this.pc.cards[i].x_index === x_index){
-					if(this.pc.cards[i].y_index > (_card.y_index || -1)){
-						_lowest = i;
-						_card = this.pc.cards[i];
-					}
-				}
-			}
-			return _lowest;
 		};
 		
 		service.pcList = [];
@@ -124,8 +97,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 				cards: [
 					{
 						cardType: 'pc1',
-						x_index: 0,
-						y_index: 0,
+						deckType: 'pc',
 						x_coord: 0,
 						y_coord: 0,
 						x_overlap: false,
@@ -136,8 +108,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 					},
 					{
 						cardType: 'pc2',
-						x_index: 1,
-						y_index: 0,
+						deckType: 'pc',
 						x_coord: 10,
 						y_coord: 0,
 						x_overlap: false,
@@ -148,8 +119,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 					},
 					{
 						cardType: 'pc3',
-						x_index: 2,
-						y_index: 0,
+						deckType: 'pc',
 						x_coord: 20,
 						y_coord: 0,
 						x_overlap: false,
@@ -161,8 +131,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 					{
 						name: 'Level 0 Trait',
 						cardType: 'trait',
-						x_index: 3,
-						y_index: 0,
+						deckType: 'pc',
 						x_coord: 30,
 						y_coord: 0,
 						x_overlap: false,

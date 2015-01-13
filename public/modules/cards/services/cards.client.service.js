@@ -43,20 +43,18 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 		service.cardSaved = false;
 		
 		service.lockCard = function(card){
+			card.deckType = 'card';
 			card.locked = true;
-			card.x_index = card.cardNumber - 1;
-			card.y_index = 0;
-			card.x_coord = card.x_index * 10;
+			card.x_coord = (card.cardNumber - 1) * 10;
 			card.y_coord = 0;
 			card.dragging = false;
 			card.stacked = false;
 		};
 		
 		service.unlockCard = function(card){
+			card.deckType = 'card';
 			card.locked = false;
-			card.x_index = card.cardNumber - 1;
-			card.y_index = 0;
-			card.x_coord = card.x_index * 10;
+			card.x_coord = (card.cardNumber - 1) * 10;
 			card.y_coord = 0;
 			card.dragging = false;
 			card.stacked = false;
@@ -185,14 +183,17 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 			switch(service.cardType){
 				case 1:
 					this.card = new Traits ({
-						cardNumber: index
+						deckType: 'card',
+						cardNumber: index,
+						dragging: false,
+						stacked: false
 					});
 					this.card.$save(function(response) {
 						for(var i in service.cardList){
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_index += 1;
 								service.cardList[i].x_coord += 10;
+								service.cardList[i].$update();
 							}
 						}
 						service.cardList.push(service.card);
@@ -203,14 +204,17 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 					break;
 				case 2:
 					this.card = new Feats ({
-						cardNumber: index
+						deckType: 'card',
+						cardNumber: index,
+						dragging: false,
+						stacked: false
 					});
 					this.card.$save(function(response) {
 						for(var i in service.cardList){
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_index += 1;
 								service.cardList[i].x_coord += 10;
+								service.cardList[i].$update();
 							}
 						}
 						service.cardList.push(service.card);
@@ -221,14 +225,17 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 					break;
 				case 3:
 					this.card = new Augments ({
-						cardNumber: index
+						deckType: 'card',
+						cardNumber: index,
+						dragging: false,
+						stacked: false
 					});
 					this.card.$save(function(response) {
 						for(var i in service.cardList){
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_index += 1;
 								service.cardList[i].x_coord += 10;
+								service.cardList[i].$update();
 							}
 						}
 						service.cardList.push(service.card);
@@ -239,14 +246,17 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 					break;
 				case 4:
 					this.card = new Items ({
-						cardNumber: index
+						deckType: 'card',
+						cardNumber: index,
+						dragging: false,
+						stacked: false
 					});
 					this.card.$save(function(response){
 						for(var i in service.cardList){
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_index += 1;
 								service.cardList[i].x_coord += 10;
+								service.cardList[i].$update();
 							}
 						}
 						service.cardList.push(service.card);

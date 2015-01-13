@@ -1,49 +1,31 @@
 'use strict';
 
+var cardsModule = angular.module('cards');
+
 // Cards controller
-angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Cards', 'CardsDeck',
-	function($scope, $location, $log, DataSRVC, Cards, CardsDeck) {
+cardsModule.controller('CardsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'CardDeck', 'Cards',
+	function($scope, $location, $log, DataSRVC, CardDeck, Cards) {
 		
 		$scope.dataSRVC = DataSRVC;
 		
 		$scope.cards = Cards;
 		
-		$scope.cardsDeck = CardsDeck;
-		
 		$scope.windowHeight = 0;
 		
 		$scope.windowScale = 0;
 		
-		var moveHorizontal = function(event, object){
-			console.log('moveHorizontal');
-		};
-
-		var moveDiagonalUp = function(event, object){
-			console.log('moveDiagonalUp');
-		};
-
-		var moveDiagonalDown = function(event, object){
-			console.log('moveDiagonalDown');
+		var initialize = function(){
+			toggleListeners(true);
 		};
 		
-		var moveVertical = function(event, object){
-			console.log('moveVertical');
+		var toggleListeners = function(enable){
+			if(!enable) return;
+			$scope.$on('$destroy', onDestroy);
+			$scope.$on('screenSize:onHeightChange', onHeightChange);
 		};
 		
-		var unstackLeft = function(event, object){
-			console.log('unstackLeft');
-		};
-		
-		var unstackRight = function(event, object){
-			console.log('unstackRight');
-		};
-		
-		var toggleOverlap = function(event, object){
-			console.log('toggleOverlap');
-		};
-		
-		var onReleaseCard = function(){
-			console.log('onReleaseCard');
+		var onDestroy = function(){
+			toggleListeners(false);
 		};
 		
 		var onHeightChange = function(event, object){
@@ -52,17 +34,6 @@ angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 
 			$scope.$digest();
 		};
 		
-		$scope.$on('cardSlot:moveHorizontal', moveHorizontal);
-		$scope.$on('cardSlot:moveDiagonalUp', moveDiagonalUp);
-		$scope.$on('cardSlot:moveDiagonalDown', moveDiagonalDown);
-		$scope.$on('cardSlot:moveVertical', moveVertical);
-		
-		$scope.$on('cardDeck:unstackLeft', unstackLeft);
-		$scope.$on('cardDeck:unstackRight', unstackRight);
-		$scope.$on('screenSize:onHeightChange', onHeightChange);
-		
-		$scope.$on('cardPanel:toggleOverlap', toggleOverlap);
-		$scope.$on('cardPanel:onReleaseCard', onReleaseCard);
-		
+		initialize();
 	}
 ]);

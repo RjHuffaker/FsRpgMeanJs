@@ -1,5 +1,31 @@
-<section data-ng-controller="HomeController">
-
-
-
+<section data-ng-controller="HomeController"
+	data-ng-init="pcs.readPc()" screen-size>
+	<div class="container-fluid deck-panel"
+		ng-style="{'height': (windowHeight - 50)+'px'}">
+		<div card-deck ng-mouseleave=""
+			ng-style="{'height': (windowHeight - 50)+'px',
+				'margin': (windowScale * 2)+'px'}">
+			<ul>
+				<li card-slot card="card" ng-repeat="card in homeDemo.cards"
+					ng-class="{'dragging': card.dragging, 'stacked': card.stacked,
+						'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap}"
+					ng-style="{'z-index': 4998 - card.x_coord + card.y_coord/2,
+						'width': ($parent.windowScale * 10)+'px', 'left': (card.x_coord * $parent.windowScale)+'px',
+						'height': ($parent.windowScale * 14)+'px', 'top': (card.y_coord * $parent.windowScale)+'px'}">
+					<div card-panel card-layout card="card"
+						ng-class="{'dragging': card.dragging, 'stacked': card.stacked,
+							'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap}"
+						ng-style="{'height': ($parent.windowScale * 14)+'px', 'width': ($parent.windowScale * 10)+'px'}"
+						ng-mousemove="true" ng-click="true">
+					</div>
+					<strong style="position: absolute; color: blue"
+						ng-style="{'top': (card.y_coord * $parent.windowScale)+'px'}">
+						{{$parent.windowScale}}
+						<span ng-show="card.dragging">Dragging</span>
+						<span ng-show="card.stacked">Stacked</span>
+					</strong>
+				</li>
+			</ul>
+		</div>
+	</div>
 </section>

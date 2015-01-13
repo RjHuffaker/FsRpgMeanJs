@@ -2,8 +2,8 @@
 var cardsModule = angular.module('pcs');
 
 // Factory-service for managing PC card deck.
-cardsModule.factory('PcsFeats', ['Pcs', 'PcsCardDeck', 
-	function(Pcs, PcsCardDeck){
+cardsModule.factory('PcsFeats', ['Pcs', 'CardDeck', 
+	function(Pcs, CardDeck){
 		var service = {};
 		
 		// Factor Feat Limit
@@ -21,7 +21,7 @@ cardsModule.factory('PcsFeats', ['Pcs', 'PcsCardDeck',
 			}
 			for(var ic = 0; ic < Pcs.pc.cards.length; ic++){
 				if(Pcs.pc.cards[ic].level > Pcs.pc.level){
-					PcsCardDeck.removeCard(ic);
+					CardDeck.removeCard(ic);
 				}
 			}
 		};
@@ -42,12 +42,12 @@ cardsModule.factory('PcsFeats', ['Pcs', 'PcsCardDeck',
 			var newFeat = {
 				name: 'Level '+level+' Feat',
 				cardType: 'feat',
-				x_index: Pcs.pc.cards[Pcs.lastCard()].x_index + 1,
-				y_index: 0,
-				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 250,
+				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 10,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
+				dragging: false,
+				stacked: false,
 				locked: true,
 				level: level
 			};

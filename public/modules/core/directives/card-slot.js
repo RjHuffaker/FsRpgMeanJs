@@ -16,7 +16,7 @@ cardsModule
 				
 				var _panel = {};
 				
-				var x_index = -1, y_index = -1;
+				var x_coord = -1, y_coord = -1;
 				
 				var initialize = function () {
 					toggleListeners(true);
@@ -61,7 +61,7 @@ cardsModule
 					if(isTouching(object.mouseX, object.mouseY)){
 						var moveX = Math.abs(object.moveX);
 						var moveY = Math.abs(object.moveY);
-						if(_slot.x_index !== _panel.x_index){
+						if(_slot.x_coord !== _panel.x_coord){
 							if(moveY * 2 > moveX){
 								if(object.moveY < 0 && !_slot.x_overlap){
 								// Moving up
@@ -83,7 +83,7 @@ cardsModule
 									panel: _panel
 								});
 							}
-						} else if(_slot.x_index === _panel.x_index && _slot.y_index !== _panel.y_index){
+						} else if(_slot.x_coord === _panel.x_coord && _slot.y_coord !== _panel.y_coord){
 							if(moveY > moveX * 2 && !object.panel.y_overlap){
 								scope.$emit('cardSlot:moveVertical', {
 									slot: _slot,
@@ -92,8 +92,8 @@ cardsModule
 							}
 						}
 					} else if(isAbove(object.mouseX, object.mouseY)){
-						if(_slot.y_index === 0){
-							if(_slot.x_index !== _panel.x_index){
+						if(_slot.y_coord === 0){
+							if(_slot.x_coord !== _panel.x_coord){
 								scope.$emit('cardSlot:moveDiagonalUp', {
 									slot: _slot,
 									panel: _panel
@@ -101,8 +101,8 @@ cardsModule
 							}
 						}
 					} else if(isBelow(object.mouseX, object.mouseY)){
-						if(_panel.y_index !== 0){
-							if(_slot.x_index !== _panel.x_index){
+						if(_panel.y_coord !== 0){
+							if(_slot.x_coord !== _panel.x_coord){
 								scope.$emit('cardSlot:moveDiagonalDown', {
 									slot: _slot,
 									panel: _panel
