@@ -174,7 +174,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					}
 				}
 			}
-	//		$rootScope.$digest();
+			$rootScope.$digest();
 		};
 		
 		// Reset move variables
@@ -189,7 +189,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			for(var ia = 0; ia < _deck.length; ia++){
 				_deck[ia].dragging = false;
 			}
-	//		$rootScope.$digest();
+			$rootScope.$digest();
 		};
 		
 		var moveHorizontal = function(event, object){
