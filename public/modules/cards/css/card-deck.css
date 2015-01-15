@@ -7,29 +7,32 @@
 	width: 100%;
 }
 
-[card-deck],
-[card-deck] > ul{
+[card-deck] {
 	white-space: nowrap;
-	list-style: none;
-	position: absolute;
-	height: 100%;
-	width: 100%;
+	border: solid 1px white;
 }
 
-[card-slot], [card-panel] {
+[card-deck] > ul{
+	list-style: none;
+}
+
+[card-deck],
+[card-slot],
+[card-panel] {
 	position: absolute;
 	-webkit-user-select: none;
 	-moz-user-select: none;
+	-ms-user-select: none;
 	user-select: none;
 }
 
 [card-panel]:not(.dragging),
 [card-slot]:not(.dragging) {
-	-webkit-transition: .5s ease-in all;
-	-moz-transition: .5s ease-in all;
-	-o-transition: .5s ease-in all;
-	-ms-transition: .5s ease-in all;
-	transition: .5s ease-in all;
+	-webkit-transition: .5s ease-in-out all;
+	-moz-transition: .5s ease-in-out all;
+	-o-transition: .5s ease-in-out all;
+	-ms-transition: .5s ease-in-out all;
+	transition: .5s ease-in-out all;
 }
 
 [card-panel] > div > div {
@@ -38,6 +41,11 @@
 	border-left: 1px solid #222;
 	border-right: 2px solid #111;
 	border-bottom: 2px solid #111;
+}
+
+[card-panel]:not(.dragging) {
+	top: 0 !important;
+	left: 0 !important;
 }
 
 [card-slot].ng-enter {

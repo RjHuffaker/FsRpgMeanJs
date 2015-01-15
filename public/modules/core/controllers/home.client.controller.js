@@ -8,6 +8,8 @@ coreModule.controller('HomeController', ['$scope', 'Authentication', 'CardDeck',
 		// This provides Authentication context.
 		$scope.authentication = Authentication;
 		
+		$scope.cardDeck = CardDeck;
+		
 		$scope.homeDemo = HomeDemo;
 		
 		$scope.windowHeight = 0;

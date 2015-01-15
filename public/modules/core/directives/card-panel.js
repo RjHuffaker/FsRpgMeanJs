@@ -48,7 +48,6 @@ cardsModule
 					scope.$watch(attrs.card, onCardChange);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
-					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
 					element.on(_pressEvents, onPress);
 					
@@ -97,6 +96,11 @@ cardsModule
 				// PRESS
 				// Primary "press" function
 				var onLongPress = function(event){
+					
+					element.css({
+						left: '0px',
+						top: '0px'
+					});
 					
 					_startX = (event.pageX || event.touches[0].pageX);
 					_startY = (event.pageY || event.touches[0].pageY);
@@ -155,13 +159,14 @@ cardsModule
 				
 				// Callback function to move a single card or each card in a vertical stack
 				var onMoveCard = function(event, object){
-					if(_panel.stacked && _panel.x_index === object.panel.x_index){
-						if(_panel.y_index > object.panel.y_index){
-							element.css({
-								left: object.panelX + 'px',
-								top: object.panelY + 'px'
-							});
-						}
+					var panel = object.panel;
+					var panel_x = panel.x_coord;
+					var panel_y = panel.y_coord;
+					if(_panel.x_coord === panel_x && _panel.y_coord > panel_y){
+						element.css({
+							left: object.panelX + 'px',
+							top: object.panelY + 'px'
+						});
 					}
 				};
 				
@@ -174,11 +179,11 @@ cardsModule
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
 							panel: _panel
 						});
+					} else {
+						$rootScope.$broadcast('cardPanel:onReleaseCard', {
+							panel: _panel
+						});
 					}
-					$rootScope.$broadcast('cardPanel:onReleaseCard', {
-						panel: _panel
-					});
-					_stacked = false;
 				};
 				
 				// Respond to 'onMouseLeave' event similar to onRelease, but without toggling overlap
@@ -188,18 +193,6 @@ cardsModule
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
 						panel: _panel
 					});
-				};
-				
-				// Return cards to their normal state
-				var onReleaseCard = function(){
-					element.removeClass('dragging');
-					element.parent().removeClass('dragging');
-					element.css({
-						position: 'absolute',
-						left: '0px',
-						top: '0px'
-					});
-					_stacked = false;
 				};
 				
 				initialize();
