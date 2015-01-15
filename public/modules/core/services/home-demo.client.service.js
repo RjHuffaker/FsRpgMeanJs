@@ -55,6 +55,34 @@ coreModule.factory('HomeDemo', ['$rootScope',
 			dragging: false,
 			stacked: false,
 			locked: true
+		},
+		{
+			name: 'Another Item Card',
+			cardType: 'item',
+			deckType: 'home',
+			x_coord: 40,
+			y_coord: 0,
+			x_overlap: false,
+			y_overlap: false,
+			dragging: false,
+			stacked: false,
+			locked: true
+		},
+		{
+			name: 'Yet An Item Card',
+			cardType: 'item',
+			deckType: 'home',
+			x_coord: 50,
+			y_coord: 0,
+			x_overlap: false,
+			y_overlap: false,
+			dragging: false,
+			stacked: false,
+			locked: true,
+			description: {
+				show: true,
+				content: 'This is the best one by far!!'
+			}
 		}
 	];
 	

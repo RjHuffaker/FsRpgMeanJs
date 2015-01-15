@@ -1462,8 +1462,8 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			$rootScope.$on('cardPanel:onPressCard', onPressCard);
 			$rootScope.$on('cardPanel:onReleaseCard', onReleaseCard);
 			$rootScope.$on('cardPanel:toggleOverlap', toggleOverlap);
-			$rootScope.$on('cardSlot:moveHorizontal', moveHorizontal);
 			
+			$rootScope.$on('cardSlot:moveHorizontal', moveHorizontal);
 			$rootScope.$on('cardSlot:moveDiagonalUp', moveDiagonalUp);
 			$rootScope.$on('cardSlot:moveDiagonalDown', moveDiagonalDown);
 			$rootScope.$on('cardSlot:moveVertical', moveVertical);
@@ -1857,14 +1857,14 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			var _deck = getCardList(_deckType);
 			
 			if(_deck[getLowestIndex(_deckType, panel.x_coord)].y_coord > 0){
-				
 				var panel_x = panel.x_coord;
 				var panel_y = panel.y_coord;
 				var panel_index = getCardIndex(_deckType, panel_x, panel_y);
 				var panel_x_overlap = panel.x_overlap;
 				var panel_y_overlap = panel.y_overlap;
-				
 				var slot_x = slot.x_coord;
+				
+				var new_slot_index, new_panel_index;
 				
 				if(panel_x - slot_x > 0  && !movingLeft){
 				// Card is unstacking to the left
@@ -1900,7 +1900,18 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						_deck[panel_index].y_coord = 0;
 						_deck[panel_index].stacked = false;
 					}
-					_deck[getLowestIndex(_deckType, panel_x - 1)].y_overlap = false;
+					new_slot_index = getLowestIndex(_deckType, panel_x);
+					new_panel_index = getLowestIndex(_deckType, panel_x + 10);
+					
+					_deck[new_slot_index].y_overlap = false;
+					if(_deck[new_slot_index].y_coord === 0){
+						_deck[new_slot_index].stacked = false;
+					}
+					
+					_deck[new_panel_index].y_overlap = false;
+					if(_deck[new_panel_index].y_coord === 0){
+						_deck[new_panel_index].stacked = false;
+					}
 				} else if(panel_x - slot_x < 0 && !movingRight){
 				//Card is unstacking to the right
 					setMovingLeft(_moveSpeed);
@@ -1930,9 +1941,22 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						_deck[panel_index].x_coord += x_dim;
 						_deck[panel_index].y_coord = 0;
 					}
-					_deck[getLowestIndex(_deckType, panel_x + 1)].y_overlap = false;
+					
+					new_slot_index = getLowestIndex(_deckType, panel_x);
+					new_panel_index = getLowestIndex(_deckType, slot_x);
+					
+					_deck[new_slot_index].y_overlap = false;
+					if(_deck[new_slot_index].y_coord === 0){
+						_deck[new_slot_index].stacked = false;
+					}
+					
+					_deck[new_panel_index].y_overlap = false;
+					if(_deck[new_panel_index].y_coord === 0){
+						_deck[new_panel_index].stacked = false;
+					}
 				}
 			}
+			$rootScope.$digest();
 		};
 		
 		// Function for x_overlap and y_overlap
@@ -2278,6 +2302,34 @@ coreModule.factory('HomeDemo', ['$rootScope',
 			dragging: false,
 			stacked: false,
 			locked: true
+		},
+		{
+			name: 'Another Item Card',
+			cardType: 'item',
+			deckType: 'home',
+			x_coord: 40,
+			y_coord: 0,
+			x_overlap: false,
+			y_overlap: false,
+			dragging: false,
+			stacked: false,
+			locked: true
+		},
+		{
+			name: 'Yet An Item Card',
+			cardType: 'item',
+			deckType: 'home',
+			x_coord: 50,
+			y_coord: 0,
+			x_overlap: false,
+			y_overlap: false,
+			dragging: false,
+			stacked: false,
+			locked: true,
+			description: {
+				show: true,
+				content: 'This is the best one by far!!'
+			}
 		}
 	];
 	
