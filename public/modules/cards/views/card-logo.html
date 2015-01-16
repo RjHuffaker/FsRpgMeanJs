@@ -1,11 +1,11 @@
 <div class="dropdown pull-left" dropdown>
 	<a id="cardDropdown" ng-click="dropdown" aria-expanded="true"
 		class="dropdown-toggle" dropdown-toggle>
-		<span class="text-argos text-20"
-			ng-class="{'text-16': card.cardType === 'augment',
+		<span class="text-argos text-22"
+			ng-class="{'text-18': card.cardType === 'augment',
 				'text-narrow': card.cardType === 'augment'}">
-			
-			{{card.cardType}}&nbsp;</span>
+			{{card.cardType}}&nbsp;
+		</span>
 	</a>
 	<div class="dropdown-menu" aria-labelledby="cardDropdown"
 		ng-style="{'width': ($parent.$parent.windowScale * 10)+'px'}">

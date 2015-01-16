@@ -1,26 +1,29 @@
-<h5 style="margin-top: 0">
-	<input ng-if="!card.locked" type="text" 
-		style="font-weight: bold; margin-top: -1px;"
-		class="card-input text-bold text-12"
-		ng-model="card.name" stop-event>
-	<strong class="text-12" ng-if="card.locked">
-		{{card.name}}
-	</strong>
+<h5 class="card-header">
+	<div class="text-12" 
+		ng-class="{'text-11': card.cardType === 'augment'}">
+		<input ng-if="!card.locked" type="text" 
+			style="font-weight: bold; margin-top: -1px;"
+			class="card-input text-bold"
+			ng-model="card.name" stop-event>
+		<strong ng-if="card.locked">
+			{{card.name}}
+		</strong>
+	</div>
 	<hr class="black-line">
-	<div ng-if="card.cardType !== 'item'" class="title-block text-11">
-		<span ng-if="card.locked">
+	<div ng-if="card.cardType !== 'item'" class="title-block">
+		<span class="text-11" ng-if="card.locked">
 			{{card.keyword}}
 		</span>
-		<span ng-if="card.locked && !card.keyword">
+		<span class="text-11" ng-if="card.locked && !card.keyword">
 			[Keyword]
 		</span>
 		<div ng-if="!card.locked" class="dropdown" dropdown>
 			<a id="cardDropdown" 
 				ng-click="dropdown" aria-expanded="true" class="dropdown-toggle" dropdown-toggle>
-				<span class="text-capitalize">
+				<span class="text-11 text-capitalize">
 					{{card.keyword}}
 				</span>
-				<span ng-if="!card.keyword">
+				<span class="text-11" ng-if="!card.keyword">
 					[Keyword]
 				</span>
 			</a>

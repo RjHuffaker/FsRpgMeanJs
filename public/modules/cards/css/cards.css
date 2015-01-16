@@ -41,6 +41,12 @@
 	overflow: hidden;
 }
 
+.card-header {
+	font: inherit;
+	padding: 0;
+	margin: 0;
+}
+
 .card-menu-list {
 	white-space: normal;
 	padding-left: 6px;
@@ -121,7 +127,6 @@ a.dropdown-toggle:hover {
 }
 
 .text-descriptive {
-	width: 224px;
 	resize: none;
 	white-space: normal;
 	font-style: italic !important;
@@ -166,12 +171,6 @@ div.dropdown-menu {
 	border: none;
 	background: transparent;
 	background-origin: none;
-}
-
-.logo-trait {
-	height: 36px;
-	width: 72px;
-	margin-right: 2%;
 }
 
 [card-pc-1],
