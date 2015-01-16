@@ -1,28 +1,28 @@
-<h5 class="text-12" style="margin-top: 0">
+<h5 class="" style="margin-top: 0">
 	<input ng-if="!card.locked" type="text" 
 		style="font-weight: bold; margin-top: -1px;"
-		class="card-input text-bold"
+		class="card-input text-bold text-12"
 		ng-model="card.name" stop-event>
-	<strong ng-if="card.locked">
+	<strong class="text-12" ng-if="card.locked">
 		{{card.name}}
 	</strong>
 	<hr class="black-line">
-	<div ng-if="card.cardType !== 'item'" class="title-block">
-		<strong ng-if="card.locked">
+	<div ng-if="card.cardType !== 'item'" class="title-block text-11">
+		<span ng-if="card.locked">
 			{{card.keyword}}
-		</strong>
-		<strong ng-if="card.locked && !card.keyword">
+		</span>
+		<span ng-if="card.locked && !card.keyword">
 			[Keyword]
-		</strong>
+		</span>
 		<div ng-if="!card.locked" class="dropdown" dropdown>
 			<a id="cardDropdown" 
 				ng-click="dropdown" aria-expanded="true" class="dropdown-toggle" dropdown-toggle>
-				<strong class="text-capitalize">
+				<span class="text-capitalize">
 					{{card.keyword}}
-				</strong>
-				<strong ng-if="!card.keyword">
+				</span>
+				<span ng-if="!card.keyword">
 					[Keyword]
-				</strong>
+				</span>
 			</a>
 			<ul class="card-menu-list dropdown-menu" aria-labelledby="cardDropdown">
 				<li role="presentation" class="dropdown-header">Archetype</li>
@@ -42,9 +42,9 @@
 				</label></li>
 			</ul>
 		</div>
-		<strong class="text-capitalize">
+		<span class="text-capitalize">
 			{{card.cardType}}
-		</strong>
+		</span>
 	</div>
 	
 	<div ng-if="card.cardType === 'item'" class="title-block text-11">
@@ -52,21 +52,21 @@
 				|| card.itemSlot === 'Two-handed'
 				|| card.itemSlot === 'One-handed or Paired'
 				|| card.itemSlot === 'One-handed or Two-handed'">
-			<strong ng-if="card.locked">
+			<span ng-if="card.locked">
 				{{card.itemType}}
-			</strong>
-			<strong ng-if="card.locked && !card.itemType">
+			</span>
+			<span ng-if="card.locked && !card.itemType">
 				[Item Type]
-			</strong>
+			</span>
 			<div ng-if="!card.locked" class="dropdown" dropdown>
 				<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 					ng-click="dropdown" aria-expanded="true">
-					<strong>
+					<span>
 						{{card.itemType}}
-					</strong>
-					<strong ng-if="!card.itemType">
+					</span>
+					<span ng-if="!card.itemType">
 						[Item Type]
-					</strong>
+					</span>
 				</a>
 				<div class="dropdown-menu" aria-labelledby="cardDropdown">
 					<ul class='card-menu-list'>
@@ -83,12 +83,12 @@
 				&& card.itemSlot !== 'Two-handed'
 				&& card.itemSlot !== 'One-handed or Paired'
 				&& card.itemSlot !== 'One-handed or Two-handed'">
-			<strong>
+			<span>
 				{{card.itemSlot}}
-			</strong>
-			<strong ng-if="!card.itemSlot">
+			</span>
+			<span ng-if="!card.itemSlot">
 				[Item Type]
-			</strong>
+			</span>
 		</div>
 	</div>
 </h5>

@@ -42,7 +42,11 @@ coreModule.factory('HomeDemo', ['$rootScope',
 			y_overlap: false,
 			dragging: false,
 			stacked: false,
-			locked: true
+			locked: true,
+			description: {
+				show: true,
+				content: 'Truly amazing...'
+			}
 		},
 		{
 			name: 'An Item Card',
@@ -57,8 +61,8 @@ coreModule.factory('HomeDemo', ['$rootScope',
 			locked: true
 		},
 		{
-			name: 'Another Item Card',
-			cardType: 'item',
+			name: 'Another Feat Card',
+			cardType: 'feat',
 			deckType: 'home',
 			x_coord: 40,
 			y_coord: 0,
@@ -69,7 +73,7 @@ coreModule.factory('HomeDemo', ['$rootScope',
 			locked: true
 		},
 		{
-			name: 'Yet An Item Card',
+			name: 'Another Item Card',
 			cardType: 'item',
 			deckType: 'home',
 			x_coord: 50,
@@ -83,6 +87,18 @@ coreModule.factory('HomeDemo', ['$rootScope',
 				show: true,
 				content: 'This is the best one by far!!'
 			}
+		},
+		{
+			name: 'Yet Another Feat Card',
+			cardType: 'feat',
+			deckType: 'home',
+			x_coord: 60,
+			y_coord: 0,
+			x_overlap: false,
+			y_overlap: false,
+			dragging: false,
+			stacked: false,
+			locked: true
 		}
 	];
 	

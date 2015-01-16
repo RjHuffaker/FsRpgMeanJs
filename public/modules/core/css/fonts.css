@@ -5,6 +5,16 @@
 
 .text-argos {
 	font-family: 'Argos';
+	font-weight: bold;
+}
+
+.text-narrow {
+	display:inline-block;
+    transform:scale(1,1.5); /* W3C */
+    -webkit-transform:scale(1,1.5); /* Safari and Chrome */
+    -moz-transform:scale(1,1.5)); /* Firefox */
+    -ms-transform:scale(1,1.5); /* IE 9 */
+    -o-transform:scale(1,1.5); /* Opera */
 }
 
 .text-24{

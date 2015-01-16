@@ -4,13 +4,14 @@
 		ng-style="{'height': (windowHeight - 50)+'px'}">
 		<div card-deck ng-mouseleave=""
 			ng-style="{'height': (windowHeight - 50)+'px',
-				'width': (windowScale * cardDeck.getDeckWidth('home'))+'px',
-				'margin': (windowScale * 2)+'px'}">
+				'margin-left': (windowScale * 2)+'px',
+				'width': (windowScale * cardDeck.getDeckWidth('home'))+'px'}">
 			<ul>
 				<li card-slot card="card" ng-repeat="card in homeDemo.cards"
 					ng-class="{'dragging': card.dragging, 'stacked': card.stacked,
 						'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap}"
 					ng-style="{'z-index': 4998 - card.x_coord + card.y_coord/2,
+						'margin-top': ($parent.windowScale * 2)+'px',
 						'height': ($parent.windowScale * 14)+'px',
 						'width': ($parent.windowScale * 10)+'px',
 						'top': (card.y_coord * $parent.windowScale)+'px',
@@ -21,11 +22,12 @@
 						ng-style="{'height': ($parent.windowScale * 14)+'px', 'width': ($parent.windowScale * 10)+'px'}"
 						ng-mousemove="true" ng-click="true">
 					</div>
-					<strong style="position: absolute; top: 0; color: blue;">
+					<strong style="position: absolute; top: -20px; color: blue;">
 						{{$parent.windowScale}}
-						<span ng-show="card.dragging">Dragging</span>
-						<span ng-show="card.stacked">Stacked</span>
-						<span ng-show="card.overlapped">Overlapped</span>
+						<span ng-show="card.dragging">Dr</span>
+						<span ng-show="card.stacked">St</span>
+						<span ng-show="card.x_overlap">Ox</span>
+						<span ng-show="card.y_overlap">Oy</span>
 					</strong>
 				</li>
 			</ul>

@@ -14,10 +14,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var y_cover = 12;
 		var _moveSpeed = 500;
 		var cardMoved = false;
-		var movingUp = false;
-		var movingDown = false;
-		var movingLeft = false;
-		var movingRight = false;
+		var cardMoving = false;
+		var moveTimer;
+		
 		var deckList = [];
 		
 		var getCardList = function(deckType){
@@ -115,44 +114,13 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		};
 		
 		// Set move booleans
-		var setMovingUp = function(interval){
-			movingUp = true;
+		var setCardMoving = function(interval){
+			clearTimeout(moveTimer);
+			cardMoving = true;
 			cardMoved = true;
-			setTimeout(
-				function () {
-					movingUp = false;
-				},
-			interval);
-		};
-		
-		var setMovingDown = function(interval){
-			movingDown = true;
-			cardMoved = true;
-			setTimeout(
-				function(){
-					movingDown = false;
-				},
-			interval);
-		};
-		
-		var setMovingLeft = function(interval){
-			movingLeft = true;
-			cardMoved = true;
-			setTimeout(
-				function(){
-					movingLeft = false;
-				},
-			interval);
-		};
-		
-		var setMovingRight = function(interval){
-			movingRight = true;
-			cardMoved = true;
-			setTimeout(
-				function(){
-					movingRight = false;
-				},
-			interval);
+			moveTimer = setTimeout(function() {
+				cardMoving = false;
+			}, interval);
 		};
 		
 		// Set state variables
@@ -180,10 +148,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		// Reset move variables
 		var onReleaseCard = function(event, object){
 			cardMoved = false;
-			movingUp = false;
-			movingDown = false;
-			movingLeft = false;
-			movingRight = false;
+			cardMoving = false;
 			
 			var _deck = getCardList(object.panel.deckType);
 			for(var ia = 0; ia < _deck.length; ia++){
@@ -193,16 +158,16 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		};
 		
 		var moveHorizontal = function(event, object){
-			console.log('move horizontal');
+			console.log('moveHorizontal');
 			var _slot = object.slot;
 			var _panel = object.panel;
 			var _deckType = _panel.deckType;
 			var _deck = getCardList(_deckType);
 			var _lowest_index = getLowestIndex(_deckType, _panel.x_coord);
-			if((_panel.y_coord === 0 && _panel.y_overlap) || _deck[_lowest_index].y_coord === 0){
-				switchHorizontal(_slot, _panel);
-			} else {
+			if(_panel.y_coord > 0){
 				unstackCard(_slot, _panel);
+			} else if (_panel.y_coord === 0 && _slot.y_coord === 0){
+				switchHorizontal(_slot, _panel);
 			}
 		};
 
@@ -258,85 +223,75 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		
 		// Swap card order along horizontal axis
 		var switchHorizontal = function(slot, panel){
-			console.log('switch horizontal');
 			var _deckType = panel.deckType;
 			var _deck = getCardList(_deckType);
 			
 			var slot_x = slot.x_coord;
 			var slot_y = slot.y_coord;
+			var slot_index = getCardIndex(_deckType, slot_x, slot_y);
 			var slot_x_overlap = slot.x_overlap;
+			var slot_position = slot_x;
 			
 			var panel_x = panel.x_coord;
 			var panel_y = panel.y_coord;
+			var panel_index = getCardIndex(_deckType, panel_x, panel_y);
 			var panel_x_overlap = panel.x_overlap;
+			var panel_width = x_dim;
 			
 			if(slot_y === 0 && panel_y === 0){
-				if(panel_x - slot_x > 0 && !movingRight){
+				if(panel_x - slot_x > 0 && !cardMoving){
 				// PANEL MOVING LEFT
-					setMovingLeft(_moveSpeed);
-					for(var ia = 0; ia < _deck.length; ia++){
-						if(_deck[ia].x_coord === slot_x){
-						// Modify position of each card in "SLOT" column
-							if(slot_x > 0){
-								if(panel_x_overlap){
-									_deck[ia].x_coord += x_tab;
-								} else {
-									_deck[ia].x_coord += x_dim;
-								}
-							} else {
-								_deck[ia].x_coord = x_dim;
-								_deck[ia].x_overlap = false;
-							}
-						} else if(_deck[ia].x_coord === panel_x){
-						// Modify position of each card in "PANEL" column
-							if(slot_x > 0){
-								if(slot_x_overlap){
-									_deck[ia].x_coord -= x_tab;
-								} else {
-									_deck[ia].x_coord -= x_dim;
-								}
-							} else {
-								_deck[ia].x_coord = 0;
-								_deck[ia].x_overlap = false;
-							}
-						} else if(slot_x === 0 && panel_x_overlap){
-							_deck[ia].x_coord += x_cover;
+					setCardMoving(_moveSpeed);
+					
+					if(slot_x === 0 && panel_x_overlap){
+						slot_position = 0;
+						panel_width -= 8;
+						_deck[slot_index].x_overlap = true;
+						_deck[panel_index].x_overlap = false;
+					} else {
+						if(panel_x_overlap){
+							panel_width -= 8;
+							slot_position -= 8;
+						}
+						if(slot_x_overlap){
+							slot_position += 8;
 						}
 					}
-				} else if(panel_x - slot_x < 0 && !movingLeft){
+					for(var ia = 0; ia < _deck.length; ia++){
+						if(_deck[ia].x_coord >= slot_x && _deck[ia].x_coord < panel_x){
+						// Modify position of each card in "SLOT" column and to the left of "PANEL" column
+							_deck[ia].x_coord += panel_width;
+						} else if(_deck[ia].x_coord === panel_x){
+						// Modify position of each card in "PANEL" column
+							_deck[ia].x_coord = slot_position;
+						}
+					}
+				} else if(panel_x - slot_x < 0 && !cardMoving){
 				// PANEL MOVING RIGHT
-					setMovingRight(_moveSpeed);
+					setCardMoving(_moveSpeed);
+					if(panel_x === 0 && slot_x_overlap){
+						var first_index = getFirstIndex(_deckType);
+						_deck[first_index].x_coord = 0;
+						_deck[first_index].x_overlap = false;
+						_deck[panel_index].x_overlap = true;
+					} else {
+						if(panel_x_overlap){
+							panel_width -= 8;
+						}
+					}
+					
 					for(var ib = 0; ib < _deck.length; ib++){
-						if(_deck[ib].x_coord === slot_x){
+						if(_deck[ib].x_coord <= slot_x && _deck[ib].x_coord > panel_x){
 						// Modify position of each card in "SLOT" column
-							if(panel_x > 0){
-								if(panel_x_overlap){
-									_deck[ib].x_coord -= x_tab;
-								} else {
-									_deck[ib].x_coord -= x_dim;
-								}
-							} else {
-								_deck[ib].x_coord = 0;
-								_deck[ib].x_overlap = false;
-							}
+							_deck[ib].x_coord -= panel_width;
 						} else if(_deck[ib].x_coord === panel_x){
 						// Modify position of each card in "PANEL" column
-							if(panel_x > 0){
-								if(slot_x_overlap){
-									_deck[ib].x_coord += x_tab;
-								} else {
-									_deck[ib].x_coord += x_dim;
-								}
-							} else {
-								_deck[ib].x_coord = x_dim;
-								_deck[ib].x_overlap = false;
-							}
-						} else if(panel_x === 0 && slot_x_overlap){
-							_deck[ib].x_coord += x_cover;
+							_deck[ib].x_coord = slot_position;
 						}
 					}
 				}
 			}
+			$rootScope.$digest();
 		};
 		
 		// Swap card order along vertical axis
@@ -355,17 +310,17 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			var panel_y_overlap = panel.y_overlap;
 			
 			var lowest_index = getLowestIndex(_deckType, slot_x);
-			var lowest_y = _deck(lowest_index).y_coord;
+			var lowest_y = _deck[lowest_index].y_coord;
 			
-			if(panel_y - slot_y > 0 && !movingDown){
+			if(panel_y - slot_y > 0 && !cardMoving){
 			// PANEL MOVING UP
-				setMovingUp(_moveSpeed);
+				setCardMoving(_moveSpeed);
 				
 				_deck[slot_index].y_coord = panel_y;
 				_deck[panel_index].y_coord = slot_y;
-			} else if(panel_y - slot_y < 0 && !movingUp){
+			} else if(panel_y - slot_y < 0 && !cardMoving){
 			// PANEL MOVING DOWN
-				setMovingDown(_moveSpeed);
+				setCardMoving(_moveSpeed);
 				
 				_deck[slot_index].y_coord = panel_y;
 				_deck[panel_index].y_coord = slot_y;
@@ -377,6 +332,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					}
 				}
 			}
+			$rootScope.$digest();
 		};
 		
 		var stackOver = function(slot, panel){
@@ -398,9 +354,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			var panel_lowest_coord = _deck[getLowestIndex(_deckType, panel_x)].y_coord;
 			
 			if(!slot_x_overlap && !panel_x_overlap){
-				if(panel_x - slot_x > 0 && !movingLeft){
+				if(panel_x - slot_x > 0 && !cardMoving){
 				// CARD STACKING FROM RIGHT
-					setMovingRight(_moveSpeed);
+					setCardMoving(_moveSpeed);
 					_deck[slot_index].y_overlap = true;
 					_deck[slot_index].stacked = true;
 					_deck[panel_index].stacked = true;
@@ -417,9 +373,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 					
-				} else if(panel_x - slot_x < 0 && !movingRight){
+				} else if(panel_x - slot_x < 0 && !cardMoving){
 				// CARD STACKING FROM LEFT
-					setMovingLeft(_moveSpeed);
+					setCardMoving(_moveSpeed);
 					_deck[slot_index].y_overlap = true;
 					_deck[slot_index].stacked = true;
 					_deck[panel_index].stacked = true;
@@ -437,6 +393,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					}
 				}
 			}
+			$rootScope.$digest();
 		};
 		
 		
@@ -457,9 +414,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			var slot_index = getCardIndex(_deckType, slot_x, slot_y);
 			var slot_lowest_coord = _deck[getLowestIndex(_deckType, slot_x)].y_coord;
 			
-			if(panel_x - slot_x > 0 && !movingRight){
+			if(panel_x - slot_x > 0 && !cardMoving){
 			//Card is stacking under from left
-				setMovingLeft(_moveSpeed);
+				setCardMoving(_moveSpeed);
 				_deck[panel_index].y_overlap = true;
 				_deck[slot_index].stacked = true;
 				_deck[panel_index].stacked = true;
@@ -472,9 +429,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					}
 				}
 				
-			} else if(panel_x - slot_x < 0 && !movingLeft){
+			} else if(panel_x - slot_x < 0 && !cardMoving){
 			//Card is stacking under from right
-				setMovingRight(_moveSpeed);
+				setCardMoving(_moveSpeed);
 				_deck[panel_index].y_overlap = true;
 				_deck[slot_index].stacked = true;
 				_deck[panel_index].stacked = true;
@@ -487,6 +444,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					}
 				}
 			}
+			$rootScope.$digest();
 		};
 		
 		// Withdraw card from stack and reposition deck to make room
@@ -504,9 +462,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				
 				var new_slot_index, new_panel_index;
 				
-				if(panel_x - slot_x > 0  && !movingLeft){
+				if(panel_x - slot_x > 0  && !cardMoving){
 				// Card is unstacking to the left
-					setMovingRight(_moveSpeed);
+					setCardMoving(_moveSpeed);
 					if(panel_y_overlap){
 					// Unstack multiple cards to the left
 						for(var ia = 0; ia < _deck.length; ia++){
@@ -550,9 +508,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					if(_deck[new_panel_index].y_coord === 0){
 						_deck[new_panel_index].stacked = false;
 					}
-				} else if(panel_x - slot_x < 0 && !movingRight){
+				} else if(panel_x - slot_x < 0 && !cardMoving){
 				//Card is unstacking to the right
-					setMovingLeft(_moveSpeed);
+					setCardMoving(_moveSpeed);
 					if(panel_y_overlap){
 					// Unstack multiple cards to the right
 						for(var ic = 0; ic < _deck.length; ic++){
@@ -615,9 +573,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			if(!cardMoved){
 				if(panel_x > 0 && lowest_y === 0){
 				// x_overlap
-					if(panel_x_overlap && !movingLeft){
+					if(panel_x_overlap && !cardMoving){
 					// Card overlapped
-						setMovingRight(_moveSpeed);
+						setCardMoving(_moveSpeed);
 						_deck[panel_index].x_overlap = false;
 						for(var ia = 0; ia < _deck.length; ia++){
 							_deck[ia].dragging = false;
@@ -625,9 +583,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 								_deck[ia].x_coord += x_cover;
 							}
 						}
-					} else if(!panel_x_overlap && !movingRight){
+					} else if(!panel_x_overlap && !cardMoving){
 					// Card not overlapped
-						setMovingLeft(_moveSpeed);
+						setCardMoving(_moveSpeed);
 						_deck[panel_index].x_overlap = true;
 						for(var ib = 0; ib < _deck.length; ib++){
 							_deck[ib].dragging = false;
@@ -638,9 +596,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					}
 				} else if(panel_y !== lowest_y){
 				// y_overlap
-					if(panel_y_overlap && !movingUp){
+					if(panel_y_overlap && !cardMoving){
 					// Card overlapped
-						setMovingDown(_moveSpeed);
+						setCardMoving(_moveSpeed);
 						_deck[panel_index].y_overlap = false;
 						for(var ic = 0; ic < _deck.length; ic++){
 							_deck[ic].dragging = false;
@@ -650,10 +608,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 								}
 							}
 						}
-					} else if(!panel_y_overlap && !movingDown){
+					} else if(!panel_y_overlap && !cardMoving){
 					// Card not overlapped
-						console.log('not over');
-						setMovingUp(_moveSpeed);
+						setCardMoving(_moveSpeed);
 						_deck[panel_index].y_overlap = true;
 						for(var id = 0; id < _deck.length; id++){
 							_deck[id].dragging = false;
@@ -666,8 +623,8 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					}
 				}
 				cardMoved = false;
-				$rootScope.$digest();
 			}
+			$rootScope.$digest();
 		};
 		
 		var removeCard = function(panel){

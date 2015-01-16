@@ -1,7 +1,11 @@
 <div class="dropdown pull-left" dropdown>
 	<a id="cardDropdown" ng-click="dropdown" aria-expanded="true"
 		class="dropdown-toggle" dropdown-toggle>
-		<strong class="text-argos text-24">{{card.cardType}}&nbsp;</strong>
+		<span class="text-argos text-20"
+			ng-class="{'text-16': card.cardType === 'augment',
+				'text-narrow': card.cardType === 'augment'}">
+			
+			{{card.cardType}}&nbsp;</span>
 	</a>
 	<div class="dropdown-menu" aria-labelledby="cardDropdown"
 		ng-style="{'width': ($parent.$parent.windowScale * 10)+'px'}">

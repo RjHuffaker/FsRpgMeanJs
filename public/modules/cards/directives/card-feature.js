@@ -129,11 +129,11 @@ cardsModule
 					setTimeout(
 						function(){
 							var fontSize = parseInt(element.css('font-size'));
-							console.log('Measure: '+element[0].offsetHeight+' / ' + fontSize);
+		//					console.log('Measure: '+element[0].offsetHeight+' / ' + fontSize);
 							while( element[0].offsetHeight > element.parent()[0].offsetHeight && fontSize >= 8 ){
 								fontSize--;
 								element.css('font-size', fontSize + 'px' );
-								console.log('Reducing: '+element[0].offsetHeight+' / ' + parseInt(element.css('font-size')));
+		//						console.log('Reducing: '+element[0].offsetHeight+' / ' + parseInt(element.css('font-size')));
 							}
 						},
 					25);

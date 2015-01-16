@@ -10,17 +10,20 @@ cardsModule
 			link: function(scope, element, attrs) {
 				var _offset, leftEdge, rightEdge,
 				topEdge, bottomEdge, windowScale,
-				x_dim, y_dim, x_tab, y_tab;
+				x_dim, y_dim, x_tab, y_tab,
+				x_cover, y_cover;
 				
 				var _slot = $parse(attrs.card) || null;
 				
 				var _panel = {};
 				
-				var x_coord = -1, y_coord = -1;
-				
 				var initialize = function () {
 					toggleListeners(true);
 					_offset = element.offset();
+				};
+				
+				Array.min = function( array ){
+					return Math.min.apply( Math, array );
 				};
 				
 				var toggleListeners = function (enable) {
@@ -51,6 +54,8 @@ cardsModule
 					y_dim = windowScale * 14;
 					x_tab = windowScale * 2;
 					y_tab = windowScale * 2;
+					x_cover = windowScale * 8;
+					y_cover = windowScale * 12;
 				};
 				
 				var onPressCard = function(event, object){
@@ -58,52 +63,62 @@ cardsModule
 				};
 				
 				var onMoveCard = function(event, object){
-					if(isTouching(object.mouseX, object.mouseY)){
-						var moveX = Math.abs(object.moveX);
-						var moveY = Math.abs(object.moveY);
-						if(_slot.x_coord !== _panel.x_coord){
-							if(moveY * 2 > moveX){
-								if(object.moveY < 0 && !_slot.x_overlap){
-								// Moving up
-									scope.$emit('cardSlot:moveDiagonalUp', {
-										slot: _slot,
-										panel: _panel
-									});
-								} else if(object.moveY > 0 && !_slot.x_overlap){
-								// Moving down
-									scope.$emit('cardSlot:moveDiagonalDown', {
-										slot: _slot,
-										panel: _panel
-									});
-								}
-							} else if(moveY < moveX){
-								
+					var moveX = Math.abs(object.moveX);
+					var moveY = Math.abs(object.moveY);
+					var changeX = Math.abs(_panel.x_coord - _slot.x_coord);
+					
+					if(_slot.x_coord !== _panel.x_coord || _slot.y_coord !== _panel.y_coord){
+						if(crossingEdge(object.mouseX, object.mouseY) === '_top'){
+							console.log('crossing top');
+							if(changeX !== 0 && changeX <= 10){
+								scope.$emit('cardSlot:moveDiagonalUp', {
+									slot: _slot,
+									panel: _panel
+								});
+							} else if(changeX === 0 && !_panel.y_overlap){
+								scope.$emit('cardSlot:moveVertical', {
+									slot: _slot,
+									panel: _panel
+								});
+							} else {
 								scope.$emit('cardSlot:moveHorizontal', {
 									slot: _slot,
 									panel: _panel
 								});
 							}
-						} else if(_slot.x_coord === _panel.x_coord && _slot.y_coord !== _panel.y_coord){
-							if(moveY > moveX * 2 && !object.panel.y_overlap){
+						} else if(crossingEdge(object.mouseX, object.mouseY) === '_bottom'){
+							console.log('crossing bottom');
+							if(changeX !== 0 && changeX <= 10){
+								scope.$emit('cardSlot:moveDiagonalDown', {
+									slot: _slot,
+									panel: _panel
+								});
+							} else if(changeX === 0 && !_panel.y_overlap){
 								scope.$emit('cardSlot:moveVertical', {
 									slot: _slot,
 									panel: _panel
 								});
-							}
-						}
-					} else if(isAbove(object.mouseX, object.mouseY)){
-						if(_slot.y_coord === 0){
-							if(_slot.x_coord !== _panel.x_coord){
-								scope.$emit('cardSlot:moveDiagonalUp', {
+							} else {
+								scope.$emit('cardSlot:moveHorizontal', {
 									slot: _slot,
 									panel: _panel
 								});
 							}
-						}
-					} else if(isBelow(object.mouseX, object.mouseY)){
-						if(_panel.y_coord !== 0){
-							if(_slot.x_coord !== _panel.x_coord){
-								scope.$emit('cardSlot:moveDiagonalDown', {
+						} else if(crossingEdge(object.mouseX, object.mouseY) === '_left' || crossingEdge(object.mouseX, object.mouseY) === '_right'){
+							if(moveY * 2 > moveX){
+								if(object.moveY < 0){
+									scope.$emit('cardSlot:moveDiagonalUp', {
+										slot: _slot,
+										panel: _panel
+									});
+								} else if(object.moveY > 0){
+									scope.$emit('cardSlot:moveDiagonalDown', {
+										slot: _slot,
+										panel: _panel
+									});
+								}
+							} else {
+								scope.$emit('cardSlot:moveHorizontal', {
 									slot: _slot,
 									panel: _panel
 								});
@@ -117,58 +132,29 @@ cardsModule
 					_panel = {};
 				};
 				
-				var isAbove = function(mouseX, mouseY){
+				var crossingEdge = function(mouseX, mouseY){
 					_offset = element.offset();
-					leftEdge = _offset.left;
-					rightEdge = leftEdge + x_dim;
-					topEdge = _offset.top;
-					
-					return mouseX >= leftEdge && mouseX <= rightEdge && mouseY <= topEdge;
-				};
-				
-				var isBelow = function(mouseX, mouseY){
-					_offset = element.offset();
-					leftEdge = _offset.left;
-					rightEdge = _offset.left + x_dim;
-					bottomEdge = _offset.top + y_dim;
-					
-					return mouseX >= leftEdge && mouseX <= rightEdge && mouseY >= bottomEdge;
-				};
-				
-				var isLeft = function(mouseX, mouseY){
-					_offset = element.offset();
-					leftEdge = _offset.left;
-					topEdge = _offset.top;
-					bottomEdge = _offset.top + y_dim;
-					
-					return mouseX <= leftEdge && mouseY >= topEdge && mouseY <= bottomEdge;
-				};
-				
-				var isRight = function(mouseX, mouseY){
-					_offset = element.offset();
+					leftEdge = _slot.x_overlap ? _offset.left + x_cover : _offset.left;
 					rightEdge = _offset.left + x_dim;
 					topEdge = _offset.top;
-					bottomEdge = _offset.top + y_dim;
+					bottomEdge = _slot.y_overlap ? _offset.top + y_tab : _offset.top + y_dim;
 					
-					return mouseX >= rightEdge && mouseY >= topEdge && mouseY <= bottomEdge;
-				};
-				
-				var isTouching = function(mouseX, mouseY){
-					_offset = element.offset();
-					leftEdge = _offset.left;
-					rightEdge = _offset.left + x_dim;
-					topEdge = _offset.top;
-					bottomEdge = _offset.top + y_dim;
-					
-					if(_slot.x_overlap){
-						leftEdge = _offset.left + x_dim;
+					if(mouseX >= leftEdge && mouseX <= rightEdge && mouseY >= topEdge && mouseY <= bottomEdge){
+						var _left = mouseX - leftEdge;
+						var _right = rightEdge - mouseX;
+						var _top = mouseY - topEdge;
+						var _bottom = bottomEdge - mouseY;
+						
+						var edges = [_left, _right, _top, _bottom],
+						closestEdge = Math.min.apply(Math.min, edges),
+						edgeNames = ['_left', '_right', '_top', '_bottom'],
+						edgeName = edgeNames[edges.indexOf(closestEdge)];
+						
+						return edgeName;
+						
+					} else {
+						return false;
 					}
-					
-					if(_slot.y_overlap){
-						bottomEdge = _offset.top + 50;
-					}
-					
-					return mouseX >= leftEdge && mouseX <= rightEdge && mouseY >= topEdge && mouseY <= bottomEdge;
 				};
 				
 				initialize();

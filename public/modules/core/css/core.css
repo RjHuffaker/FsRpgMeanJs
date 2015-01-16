@@ -1,8 +1,7 @@
 body {
 	height: 100%;
 	width: 100%;
-	background-image: url('/modules/cards/img/darkwood4.png');
-	background-size: 100%;
+	background-color: grey;
 }
 
 .content {
