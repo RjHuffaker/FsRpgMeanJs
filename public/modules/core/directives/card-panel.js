@@ -19,7 +19,8 @@ cardsModule
 					_panelX, _panelY,
 					_startCol, _mouseCol, _panelCol,
 					_startRow, _mouseRow, _panelRow,
-					windowScale;
+					_baseTop, _baseLeft,
+					_offset, _top, _left, windowScale;
 				
 				var _stacked = false;
 				
@@ -36,6 +37,7 @@ cardsModule
 				var initialize = function(){
 					// prevent native drag
 					element.attr('draggable', 'false');
+					_offset = element.offset();
 					toggleListeners(true);
 				};
 				
@@ -47,7 +49,9 @@ cardsModule
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.card, onCardChange);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
+					scope.$on('cardPanel:onPressCard', onPressCard);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
+					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
 					element.on(_pressEvents, onPress);
 					
@@ -97,11 +101,6 @@ cardsModule
 				// Primary "press" function
 				var onLongPress = function(event){
 					
-					element.css({
-						left: '0px',
-						top: '0px'
-					});
-					
 					_startX = (event.pageX || event.touches[0].pageX);
 					_startY = (event.pageY || event.touches[0].pageY);
 					
@@ -119,6 +118,15 @@ cardsModule
 						startY: _startY,
 						panel: _panel
 					});
+				};
+				
+				var onPressCard = function(event, object){
+					_offset = element.offset();
+					_left =  _offset.left;
+					_top = _offset.top;
+					_baseLeft = _left - (_panel.x_coord * windowScale);
+					_baseTop = _top - (_panel.y_coord * windowScale);
+					
 				};
 				
 				// MOVE
@@ -142,8 +150,9 @@ cardsModule
 					_panelY = _moveY - _panelRow;
 					
 					element.css({
-						left: _panelX + 'px',
-						top: _panelY + 'px'
+						position: 'fixed',
+						left: (_left + _moveX) + 'px',
+						top: (_top + _moveY) + 'px'
 					});
 					
 					$rootScope.$broadcast('cardPanel:onMoveCard', {
@@ -162,10 +171,11 @@ cardsModule
 					var panel = object.panel;
 					var panel_x = panel.x_coord;
 					var panel_y = panel.y_coord;
-					if(_panel.x_coord === panel_x && _panel.y_coord > panel_y){
+					if(_panel.x_coord === panel_x && _panel.y_coord > panel_y && panel.y_overlap){
 						element.css({
-							left: object.panelX + 'px',
-							top: object.panelY + 'px'
+							position: 'fixed',
+							left: (_left + object.moveX) + 'px',
+							top: (_top + object.moveY) + 'px'
 						});
 					}
 				};
@@ -173,8 +183,16 @@ cardsModule
 				// RELEASE
 				// Primary "release" function
 				var onRelease = function(){
+					
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
+					
+				//	element.css({
+				//		position: 'fixed',
+				//		left: (_panel.x_coord * windowScale + _left) + 'px',
+				//		top: (_panel.y_coord * windowScale  + _top) + 'px'
+				//	});
+					
 					if(_moveX <= 15 && _moveX >= -15 && _moveY <= 15 && _moveY >= -15){
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
 							panel: _panel
@@ -184,6 +202,32 @@ cardsModule
 							panel: _panel
 						});
 					}
+				};
+				
+				var onReleaseCard = function(event, object){
+					var panel = object.panel;
+					var panel_x = panel.x_coord;
+					var panel_y = panel.y_coord;
+					if(_panel.x_coord === panel_x){
+						console.log(object);
+						
+						
+						setTimeout(function(){
+							element.css({
+								position: 'fixed',
+								left: (_panel.x_coord * windowScale + _baseLeft) + 'px',
+								top: (_panel.y_coord * windowScale  + _baseTop) + 'px'
+							});
+						}, 0);
+						setTimeout(function(){
+							element.css({
+								position: ''
+								
+							});
+						}, 500);
+					}
+					
+					
 				};
 				
 				// Respond to 'onMouseLeave' event similar to onRelease, but without toggling overlap

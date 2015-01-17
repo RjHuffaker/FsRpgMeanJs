@@ -1,37 +1,37 @@
 .shadow-light {
-	-webkit-filter: drop-shadow(1px 2px 3px #000);
-	-moz-box-shadow: 10px 40px 20px #00f;
-	filter:         drop-shadow(1px 1px 1px #000);
+	-webkit-box-shadow:	1px 1px 2px #555;
+	-moz-box-shadow:	1px 1px 2px #555;
+	box-shadow:			1px 1px 2px #555;
 }
 
 .shadow-light:hover {
-	-webkit-filter: drop-shadow(2px 3px 4px #000);
-	-moz-box-shadow: 10px 40px 20px #00f;
-	filter:         drop-shadow(2px 2px 2px #000);
+	-webkit-box-shadow:	1px 1px 2px #555;
+	-moz-box-shadow:	1px 1px 2px #555;
+	box-shadow:			1px 1px 2px #555;
 }
 
 .shadow-heavy {
-	-webkit-filter: drop-shadow(2px 3px 4px #000);
-	-moz-box-shadow: 10px 40px 20px #00f;
-	filter:         drop-shadow(2px 2px 2px #000);
+	-webkit-box-shadow:	1px 1px 2px #555;
+	-moz-box-shadow:	1px 1px 2px #555;
+	box-shadow:			1px 1px 2px #555;
 }
 
 .shadow-heavy:hover {
-	-webkit-filter: drop-shadow(4px 5px 6px #000);
-	-moz-box-shadow: 10px 40px 20px #00f;
-	filter:         drop-shadow(3px 3px 3px #000);
+	-webkit-box-shadow:	1px 1px 2px #555;
+	-moz-box-shadow:	1px 1px 2px #555;
+	box-shadow:			1px 1px 2px #555;
 	cursor: pointer;
 }
 
 .glow-lesser {
-	-webkit-filter: drop-shadow(2px 3px 4px white);
-	-moz-box-shadow: 2px 3px 4px #00f;
-	filter:         drop-shadow(2px 3px 4px white);
+	-webkit-box-shadow:	1px 1px 2px #555;
+	-moz-box-shadow:	1px 1px 2px #555;
+	box-shadow:			1px 1px 2px #555;
 }
 
 .glow-lesser:hover {
-	-webkit-filter: drop-shadow(4px 6px 8px white);
-	-moz-box-shadow: 4px 6px 8px #00f;
-	filter:         drop-shadow(4px 6px 8px white);
+	-webkit-box-shadow:	1px 1px 2px #555;
+	-moz-box-shadow:	1px 1px 2px #555;
+	box-shadow:			1px 1px 2px #555;
 	cursor: pointer;
 }

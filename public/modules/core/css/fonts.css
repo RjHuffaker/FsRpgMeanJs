@@ -1,6 +1,14 @@
 @font-face {
     font-family: 'Argos';
-    src: url('/modules/core/fonts/Argos-Regular.ttf');
+    src: url('/modules/core/fonts/argos-regular-webfont.eot');
+    src: url('/modules/core/fonts/argos-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/modules/core/fonts/argos-regular-webfont.woff2') format('woff2'),
+         url('/modules/core/fonts/argos-regular-webfont.woff') format('woff'),
+         url('/modules/core/fonts/argos-regular-webfont.ttf') format('truetype'),
+         url('/modules/core/fonts/argos-regular-webfont.svg#argosregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
 }
 
 .text-argos {
@@ -10,11 +18,11 @@
 
 .text-narrow {
 	display:inline-block;
-    transform:scale(1,1.5); /* W3C */
-    -webkit-transform:scale(1,1.5); /* Safari and Chrome */
-    -moz-transform:scale(1,1.5)); /* Firefox */
-    -ms-transform:scale(1,1.5); /* IE 9 */
-    -o-transform:scale(1,1.5); /* Opera */
+	-webkit-transform:scale(1,1.5); /* Safari and Chrome */
+	-moz-transform:scale(1,1.5); /* Firefox */
+	-ms-transform:scale(1,1.5); /* IE 9 */
+	-o-transform:scale(1,1.5); /* Opera */
+	transform:scale(1,1.5); /* W3C */
 }
 
 .text-24{

@@ -164,7 +164,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			var _deckType = _panel.deckType;
 			var _deck = getCardList(_deckType);
 			var _lowest_index = getLowestIndex(_deckType, _panel.x_coord);
-			if(_panel.y_coord > 0){
+			if(_panel.y_coord > 0 || (_panel.y_coord === 0 && _panel.stacked && !_panel.y_overlap)){
 				unstackCard(_slot, _panel);
 			} else if (_panel.y_coord === 0 && _slot.y_coord === 0){
 				switchHorizontal(_slot, _panel);
@@ -206,7 +206,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				var _panel = object.panel;
 				var _deckType = _panel.deckType;
 				var _deck = getCardList(_deckType);
-				var unstack_coord = _deck[getLastIndex(_deckType)].x_coord - x_dim;
+				var unstack_coord = _deck[getFirstIndex(_deckType)].x_coord - x_dim;
 				unstackCard({x_coord: unstack_coord}, _panel);
 			}
 		};
@@ -317,22 +317,29 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				setCardMoving(_moveSpeed);
 				
 				_deck[slot_index].y_coord = panel_y;
+				_deck[slot_index].y_overlap = panel_y_overlap;
+				$rootScope.$digest();
 				_deck[panel_index].y_coord = slot_y;
+				_deck[panel_index].y_overlap = slot_y_overlap;
+				
 			} else if(panel_y - slot_y < 0 && !cardMoving){
 			// PANEL MOVING DOWN
 				setCardMoving(_moveSpeed);
 				
 				_deck[slot_index].y_coord = panel_y;
+				_deck[slot_index].y_overlap = panel_y_overlap;
+				$rootScope.$digest();
 				_deck[panel_index].y_coord = slot_y;
+				_deck[panel_index].y_overlap = slot_y_overlap;
 			}
-			for(var ia = 0; ia < _deck.length; ia++){
-				if(_deck[ia].x_coord === slot_x && _deck[ia].y_coord !== lowest_y){
-					if(_deck[ia].y_coord !== slot_y && !_deck[ia].y_overlap){
-						toggleOverlap();
-					}
-				}
-			}
-			$rootScope.$digest();
+		//	for(var ia = 0; ia < _deck.length; ia++){
+		//		if(_deck[ia].x_coord === slot_x && _deck[ia].y_coord !== lowest_y){
+		//			if(_deck[ia].y_coord !== slot_y && !_deck[ia].y_overlap){
+		//				toggleOverlap();
+		//			}
+		//		}
+		//	}
+			
 		};
 		
 		var stackOver = function(slot, panel){
@@ -602,10 +609,8 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						_deck[panel_index].y_overlap = false;
 						for(var ic = 0; ic < _deck.length; ic++){
 							_deck[ic].dragging = false;
-							if(panel_x === _deck[ic].x_coord){
-								if(panel_y < _deck[ic].y_coord){
-									_deck[ic].y_coord += y_cover;
-								}
+							if(panel_x === _deck[ic].x_coord && panel_y < _deck[ic].y_coord){
+								_deck[ic].y_coord += y_cover;
 							}
 						}
 					} else if(!panel_y_overlap && !cardMoving){
@@ -614,17 +619,15 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						_deck[panel_index].y_overlap = true;
 						for(var id = 0; id < _deck.length; id++){
 							_deck[id].dragging = false;
-							if(panel_x === _deck[id].x_coord){
-								if(panel_y < _deck[id].y_coord){
-									_deck[id].y_coord -= y_cover;
-								}
+							if(panel_x === _deck[id].x_coord && panel_y < _deck[id].y_coord){
+								_deck[id].y_coord -= y_cover;
 							}
 						}
 					}
 				}
 				cardMoved = false;
+				$rootScope.$digest();
 			}
-			$rootScope.$digest();
 		};
 		
 		var removeCard = function(panel){

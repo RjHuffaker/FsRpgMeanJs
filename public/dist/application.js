@@ -903,7 +903,8 @@ cardsModule
 					_panelX, _panelY,
 					_startCol, _mouseCol, _panelCol,
 					_startRow, _mouseRow, _panelRow,
-					windowScale;
+					_baseTop, _baseLeft,
+					_offset, _top, _left, windowScale;
 				
 				var _stacked = false;
 				
@@ -920,6 +921,7 @@ cardsModule
 				var initialize = function(){
 					// prevent native drag
 					element.attr('draggable', 'false');
+					_offset = element.offset();
 					toggleListeners(true);
 				};
 				
@@ -931,7 +933,9 @@ cardsModule
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.card, onCardChange);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
+					scope.$on('cardPanel:onPressCard', onPressCard);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
+					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
 					element.on(_pressEvents, onPress);
 					
@@ -981,11 +985,6 @@ cardsModule
 				// Primary "press" function
 				var onLongPress = function(event){
 					
-					element.css({
-						left: '0px',
-						top: '0px'
-					});
-					
 					_startX = (event.pageX || event.touches[0].pageX);
 					_startY = (event.pageY || event.touches[0].pageY);
 					
@@ -1003,6 +1002,15 @@ cardsModule
 						startY: _startY,
 						panel: _panel
 					});
+				};
+				
+				var onPressCard = function(event, object){
+					_offset = element.offset();
+					_left =  _offset.left;
+					_top = _offset.top;
+					_baseLeft = _left - (_panel.x_coord * windowScale);
+					_baseTop = _top - (_panel.y_coord * windowScale);
+					
 				};
 				
 				// MOVE
@@ -1026,8 +1034,9 @@ cardsModule
 					_panelY = _moveY - _panelRow;
 					
 					element.css({
-						left: _panelX + 'px',
-						top: _panelY + 'px'
+						position: 'fixed',
+						left: (_left + _moveX) + 'px',
+						top: (_top + _moveY) + 'px'
 					});
 					
 					$rootScope.$broadcast('cardPanel:onMoveCard', {
@@ -1046,10 +1055,11 @@ cardsModule
 					var panel = object.panel;
 					var panel_x = panel.x_coord;
 					var panel_y = panel.y_coord;
-					if(_panel.x_coord === panel_x && _panel.y_coord > panel_y){
+					if(_panel.x_coord === panel_x && _panel.y_coord > panel_y && panel.y_overlap){
 						element.css({
-							left: object.panelX + 'px',
-							top: object.panelY + 'px'
+							position: 'fixed',
+							left: (_left + object.moveX) + 'px',
+							top: (_top + object.moveY) + 'px'
 						});
 					}
 				};
@@ -1057,8 +1067,16 @@ cardsModule
 				// RELEASE
 				// Primary "release" function
 				var onRelease = function(){
+					
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
+					
+				//	element.css({
+				//		position: 'fixed',
+				//		left: (_panel.x_coord * windowScale + _left) + 'px',
+				//		top: (_panel.y_coord * windowScale  + _top) + 'px'
+				//	});
+					
 					if(_moveX <= 15 && _moveX >= -15 && _moveY <= 15 && _moveY >= -15){
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
 							panel: _panel
@@ -1068,6 +1086,32 @@ cardsModule
 							panel: _panel
 						});
 					}
+				};
+				
+				var onReleaseCard = function(event, object){
+					var panel = object.panel;
+					var panel_x = panel.x_coord;
+					var panel_y = panel.y_coord;
+					if(_panel.x_coord === panel_x){
+						console.log(object);
+						
+						
+						setTimeout(function(){
+							element.css({
+								position: 'fixed',
+								left: (_panel.x_coord * windowScale + _baseLeft) + 'px',
+								top: (_panel.y_coord * windowScale  + _baseTop) + 'px'
+							});
+						}, 0);
+						setTimeout(function(){
+							element.css({
+								position: ''
+								
+							});
+						}, 500);
+					}
+					
+					
 				};
 				
 				// Respond to 'onMouseLeave' event similar to onRelease, but without toggling overlap
@@ -1512,7 +1556,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			var _deckType = _panel.deckType;
 			var _deck = getCardList(_deckType);
 			var _lowest_index = getLowestIndex(_deckType, _panel.x_coord);
-			if(_panel.y_coord > 0){
+			if(_panel.y_coord > 0 || (_panel.y_coord === 0 && _panel.stacked && !_panel.y_overlap)){
 				unstackCard(_slot, _panel);
 			} else if (_panel.y_coord === 0 && _slot.y_coord === 0){
 				switchHorizontal(_slot, _panel);
@@ -1554,7 +1598,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				var _panel = object.panel;
 				var _deckType = _panel.deckType;
 				var _deck = getCardList(_deckType);
-				var unstack_coord = _deck[getLastIndex(_deckType)].x_coord - x_dim;
+				var unstack_coord = _deck[getFirstIndex(_deckType)].x_coord - x_dim;
 				unstackCard({x_coord: unstack_coord}, _panel);
 			}
 		};
@@ -1665,22 +1709,29 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				setCardMoving(_moveSpeed);
 				
 				_deck[slot_index].y_coord = panel_y;
+				_deck[slot_index].y_overlap = panel_y_overlap;
+				$rootScope.$digest();
 				_deck[panel_index].y_coord = slot_y;
+				_deck[panel_index].y_overlap = slot_y_overlap;
+				
 			} else if(panel_y - slot_y < 0 && !cardMoving){
 			// PANEL MOVING DOWN
 				setCardMoving(_moveSpeed);
 				
 				_deck[slot_index].y_coord = panel_y;
+				_deck[slot_index].y_overlap = panel_y_overlap;
+				$rootScope.$digest();
 				_deck[panel_index].y_coord = slot_y;
+				_deck[panel_index].y_overlap = slot_y_overlap;
 			}
-			for(var ia = 0; ia < _deck.length; ia++){
-				if(_deck[ia].x_coord === slot_x && _deck[ia].y_coord !== lowest_y){
-					if(_deck[ia].y_coord !== slot_y && !_deck[ia].y_overlap){
-						toggleOverlap();
-					}
-				}
-			}
-			$rootScope.$digest();
+		//	for(var ia = 0; ia < _deck.length; ia++){
+		//		if(_deck[ia].x_coord === slot_x && _deck[ia].y_coord !== lowest_y){
+		//			if(_deck[ia].y_coord !== slot_y && !_deck[ia].y_overlap){
+		//				toggleOverlap();
+		//			}
+		//		}
+		//	}
+			
 		};
 		
 		var stackOver = function(slot, panel){
@@ -1950,10 +2001,8 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						_deck[panel_index].y_overlap = false;
 						for(var ic = 0; ic < _deck.length; ic++){
 							_deck[ic].dragging = false;
-							if(panel_x === _deck[ic].x_coord){
-								if(panel_y < _deck[ic].y_coord){
-									_deck[ic].y_coord += y_cover;
-								}
+							if(panel_x === _deck[ic].x_coord && panel_y < _deck[ic].y_coord){
+								_deck[ic].y_coord += y_cover;
 							}
 						}
 					} else if(!panel_y_overlap && !cardMoving){
@@ -1962,17 +2011,15 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						_deck[panel_index].y_overlap = true;
 						for(var id = 0; id < _deck.length; id++){
 							_deck[id].dragging = false;
-							if(panel_x === _deck[id].x_coord){
-								if(panel_y < _deck[id].y_coord){
-									_deck[id].y_coord -= y_cover;
-								}
+							if(panel_x === _deck[id].x_coord && panel_y < _deck[id].y_coord){
+								_deck[id].y_coord -= y_cover;
 							}
 						}
 					}
 				}
 				cardMoved = false;
+				$rootScope.$digest();
 			}
-			$rootScope.$digest();
 		};
 		
 		var removeCard = function(panel){

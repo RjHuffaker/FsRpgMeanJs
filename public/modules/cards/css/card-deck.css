@@ -16,6 +16,10 @@
 	list-style: none;
 }
 
+[card-panel] {
+	padding: 1px;
+}
+
 [card-deck],
 [card-slot],
 [card-panel] {
@@ -26,8 +30,9 @@
 	user-select: none;
 }
 
-[card-panel]:not(.dragging),
-[card-slot]:not(.dragging) {
+[card-panel],
+[card-slot] {
+	transition-delay: -0.1s;
 	-webkit-transition: .5s ease-in-out all;
 	-moz-transition: .5s ease-in-out all;
 	-o-transition: .5s ease-in-out all;
@@ -35,7 +40,15 @@
 	transition: .5s ease-in-out all;
 }
 
+[card-panel].dragging,
+[card-slot].dragging {
+	transition-property: none !important;
+}
+
+
 [card-panel] > div > div {
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
 	border-radius: 10px;
 	border-top: 1px solid #222;
 	border-left: 1px solid #222;
@@ -43,10 +56,7 @@
 	border-bottom: 2px solid #111;
 }
 
-[card-panel]:not(.dragging) {
-	top: 0 !important;
-	left: 0 !important;
-}
+
 
 [card-slot].ng-enter {
 	margin-top: -400px;
@@ -60,4 +70,3 @@
 [card-slot].ng-enter.ng-enter-active {
 	margin-top: 0;
 }
-
