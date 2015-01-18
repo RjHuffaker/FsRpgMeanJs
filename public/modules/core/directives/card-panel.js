@@ -13,18 +13,24 @@ cardsModule
 					cursor: 'move'
 				});
 				
+				Array.min = function( array ){
+					return Math.min.apply( Math, array );
+				};
+				
 				var _startX, _startY, 
 					_mouseX, _mouseY,
 					_moveX, _moveY,
-					_panelX, _panelY,
-					_startCol, _mouseCol, _panelCol,
-					_startRow, _mouseRow, _panelRow,
-					_baseTop, _baseLeft,
-					_offset, _top, _left, windowScale;
+					_cardX, _cardY,
+					_slotX, _slotY,
+					_startCol, _mouseCol, _cardCol,
+					_startRow, _mouseRow, _cardRow,
+					windowScale,
+					_x_dim, _y_dim, _x_tab, _y_tab,
+					_x_cover, _y_cover;
 				
 				var _stacked = false;
 				
-				var _panel = $parse(attrs.card) || null;
+				var _card = $parse(attrs.card) || null;
 				
 				var _hasTouch = ('ontouchstart' in window);
 				
@@ -37,8 +43,8 @@ cardsModule
 				var initialize = function(){
 					// prevent native drag
 					element.attr('draggable', 'false');
-					_offset = element.offset();
 					toggleListeners(true);
+					setPosition();
 				};
 				
 				var toggleListeners = function(enable){
@@ -66,11 +72,17 @@ cardsModule
 				};
 				
 				var onCardChange = function(newVal, oldVal){
-					_panel = newVal;
+					_card = newVal;
 				};
 				
 				var onHeightChange = function(event, object){
 					windowScale = object.newScale;
+					_x_dim = windowScale * 10;
+					_y_dim = windowScale * 14;
+					_x_tab = windowScale * 2;
+					_y_tab = windowScale * 2;
+					_x_cover = windowScale * 8;
+					_y_cover = windowScale * 12;
 				};
 				
 				// When the element is clicked start the drag behaviour
@@ -107,26 +119,39 @@ cardsModule
 					_moveX = 0;
 					_moveY = 0;
 					
-					_startCol = _panel.x_coord * windowScale;
-					_startRow = _panel.y_coord * windowScale;
-					
 					$document.on(_moveEvents, onMove);
 					$document.on(_releaseEvents, onRelease);
+					
+					element.removeClass('card-moving');
 					
 					$rootScope.$broadcast('cardPanel:onPressCard', {
 						startX: _startX,
 						startY: _startY,
-						panel: _panel
+						panel: _card
 					});
 				};
 				
 				var onPressCard = function(event, object){
-					_offset = element.offset();
-					_left =  _offset.left;
-					_top = _offset.top;
-					_baseLeft = _left - (_panel.x_coord * windowScale);
-					_baseTop = _top - (_panel.y_coord * windowScale);
 					
+					_startCol = _card.x_coord * windowScale;
+					_startRow = _card.y_coord * windowScale;
+					
+					var panel = object.panel;
+					var panel_x = panel.x_coord;
+					var panel_y = panel.y_coord;
+					var panel_y_overlap = panel.y_overlap;
+					
+					var slot = _card;
+					var slot_x = slot.x_coord;
+					var slot_y = slot.y_coord;
+					
+					if(slot_y !== panel_y || slot_x !== panel_x){
+						if(slot_x !== panel_x){ 
+							element.addClass('card-moving');
+						} else if(slot_x !== panel_x && slot_y > panel_y && panel_y_overlap){
+							element.addClass('card-moving');
+						}
+					}
 				};
 				
 				// MOVE
@@ -137,22 +162,18 @@ cardsModule
 					_mouseX = (event.pageX || event.touches[0].pageX);
 					_mouseY = (event.pageY || event.touches[0].pageY);
 					
-					_mouseCol = _panel.x_coord * windowScale;
-					_mouseRow = _panel.y_coord * windowScale;
-					
-					_panelCol = _mouseCol - _startCol;
-					_panelRow = _mouseRow - _startRow;
+					_mouseCol = _card.x_coord * windowScale;
+					_mouseRow = _card.y_coord * windowScale;
 					
 					_moveX = _mouseX - _startX;
 					_moveY = _mouseY - _startY;
 					
-					_panelX = _moveX - _panelCol;
-					_panelY = _moveY - _panelRow;
+					_cardX = _moveX + _startCol - (_startCol - _mouseCol);
+					_cardY = _moveY + _startRow - (_startRow - _mouseRow);
 					
 					element.css({
-						position: 'fixed',
-						left: (_left + _moveX) + 'px',
-						top: (_top + _moveY) + 'px'
+						left: _moveX + _startCol + 'px',
+						top: _moveY + _startRow + 'px'
 					});
 					
 					$rootScope.$broadcast('cardPanel:onMoveCard', {
@@ -160,74 +181,140 @@ cardsModule
 						mouseY: _mouseY,
 						moveX: _moveX,
 						moveY: _moveY,
-						panelX: _panelX,
-						panelY: _panelY,
-						panel: _panel
+						panelX: _cardX,
+						panelY: _cardY,
+						panel: _card
 					});
+					$rootScope.$digest();
 				};
 				
 				// Callback function to move a single card or each card in a vertical stack
 				var onMoveCard = function(event, object){
+					if(element.hasClass('card-moving')){
+						setPosition();
+					}
+					
+					var mouseX = object.mouseX;
+					var mouseY = object.mouseY;
+					
+					var moveX = object.moveX;
+					var moveY = object.moveY;
+					
+					var vectorX = Math.abs(object.moveX);
+					var vectorY = Math.abs(object.moveY);
+					
 					var panel = object.panel;
 					var panel_x = panel.x_coord;
 					var panel_y = panel.y_coord;
-					if(_panel.x_coord === panel_x && _panel.y_coord > panel_y && panel.y_overlap){
+					var panel_x_overlap = panel.x_overlap;
+					var panel_y_overlap = panel.y_overlap;
+					
+					var slot = _card;
+					var slot_x = slot.x_coord;
+					var slot_y = slot.y_coord;
+					var slot_x_overlap = slot.x_overlap;
+					var slot_y_overlap = slot.y_overlap;
+					
+					var changeX = Math.abs(panel_x - slot_x);
+					
+					if(slot_x === panel_x && slot_y > panel_y && panel_y_overlap){
 						element.css({
-							position: 'fixed',
-							left: (_left + object.moveX) + 'px',
-							top: (_top + object.moveY) + 'px'
+							left: (_startCol + moveX) + 'px',
+							top: (_startRow + moveY) + 'px'
 						});
+					} else if(panel_x !== slot_x || panel_y !== slot_x){
+						if(crossingEdge(mouseX, mouseY) === 'top'){
+							if(changeX !== 0 && changeX <= 10){
+								scope.$emit('cardSlot:moveDiagonalUp', {
+									slot: slot,
+									panel: panel
+								});
+							} else if(changeX === 0 && !panel_y_overlap){
+								scope.$emit('cardSlot:moveVertical', {
+									slot: slot,
+									panel: panel
+								});
+							} else {
+								scope.$emit('cardSlot:moveHorizontal', {
+									slot: slot,
+									panel: panel
+								});
+							}
+						} else if(crossingEdge(mouseX, mouseY) === 'bottom'){
+							if(changeX !== 0 && changeX <= 10){
+								scope.$emit('cardSlot:moveDiagonalDown', {
+									slot: slot,
+									panel: panel
+								});
+							} else if(changeX === 0 && !panel_y_overlap){
+								scope.$emit('cardSlot:moveVertical', {
+									slot: slot,
+									panel: panel
+								});
+							} else {
+								scope.$emit('cardSlot:moveHorizontal', {
+									slot: slot,
+									panel: panel
+								});
+							}
+						} else if(crossingEdge(mouseX, mouseY) === 'left' || crossingEdge(mouseX, mouseY) === 'right'){
+							if(vectorY * 2 > vectorX){
+								if(moveY < 0){
+									scope.$emit('cardSlot:moveDiagonalUp', {
+										slot: slot,
+										panel: panel
+									});
+								} else if(moveY > 0){
+									scope.$emit('cardSlot:moveDiagonalDown', {
+										slot: slot,
+										panel: panel
+									});
+								}
+							} else {
+								scope.$emit('cardSlot:moveHorizontal', {
+									slot: slot,
+									panel: panel
+								});
+							}
+						}
 					}
 				};
 				
 				// RELEASE
 				// Primary "release" function
 				var onRelease = function(){
-					
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
-					
-				//	element.css({
-				//		position: 'fixed',
-				//		left: (_panel.x_coord * windowScale + _left) + 'px',
-				//		top: (_panel.y_coord * windowScale  + _top) + 'px'
-				//	});
-					
+					$rootScope.$broadcast('cardPanel:onReleaseCard', {
+						panel: _card
+					});
 					if(_moveX <= 15 && _moveX >= -15 && _moveY <= 15 && _moveY >= -15){
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
-							panel: _panel
-						});
-					} else {
-						$rootScope.$broadcast('cardPanel:onReleaseCard', {
-							panel: _panel
+							panel: _card
 						});
 					}
 				};
 				
+				// General response to "release" event
 				var onReleaseCard = function(event, object){
-					var panel = object.panel;
-					var panel_x = panel.x_coord;
-					var panel_y = panel.y_coord;
-					if(_panel.x_coord === panel_x){
-						console.log(object);
-						
-						
-						setTimeout(function(){
-							element.css({
-								position: 'fixed',
-								left: (_panel.x_coord * windowScale + _baseLeft) + 'px',
-								top: (_panel.y_coord * windowScale  + _baseTop) + 'px'
-							});
-						}, 0);
-						setTimeout(function(){
-							element.css({
-								position: ''
-								
-							});
-						}, 500);
-					}
+					element.addClass('card-moving');
+					setTimeout(function(){
+						element.css({
+							left: (_card.x_coord * windowScale) + 'px',
+							top: (_card.y_coord * windowScale) + 'px'
+						});
+					}, 0);
 					
-					
+					setTimeout(function(){
+						element.removeClass('card-moving');
+					}, 500);
+				};
+				
+				var setPosition = function(){
+					element.css({
+						left: (_card.x_coord * windowScale) + 'px',
+						top: (_card.y_coord * windowScale) + 'px'
+					});
 				};
 				
 				// Respond to 'onMouseLeave' event similar to onRelease, but without toggling overlap
@@ -235,8 +322,33 @@ cardsModule
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
-						panel: _panel
+						panel: _card
 					});
+				};
+				
+				var crossingEdge = function(mouseX, mouseY){
+					
+					var cardOffset = element.offset();
+					var panelX = cardOffset.left;
+					var panelY = cardOffset.top;
+					var leftEdge = _card.x_overlap ? panelX + _x_cover : panelX;
+					var rightEdge = panelX + _x_dim;
+					var topEdge = panelY;
+					var bottomEdge = _card.y_overlap ? panelY + _y_tab : panelY + _y_dim;
+					
+					if(mouseX >= leftEdge && mouseX <= rightEdge && mouseY >= topEdge && mouseY <= bottomEdge){
+						var left = mouseX - leftEdge;
+						var right = rightEdge - mouseX;
+						var top = mouseY - topEdge;
+						var bottom = bottomEdge - mouseY;
+						
+						var edges = [left, right, top, bottom],
+						closestEdge = Math.min.apply(Math.min, edges),
+						edgeNames = ['left', 'right', 'top', 'bottom'],
+						edgeName = edgeNames[edges.indexOf(closestEdge)];
+						
+						return edgeName;
+					}
 				};
 				
 				initialize();

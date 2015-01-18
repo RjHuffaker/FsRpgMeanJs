@@ -11,7 +11,7 @@ cardsModule
 				
 				var pressed = false;
 				
-				var initialize = function() {
+				var initialize = function(){
 					toggleListeners(true);
 				};
 				
@@ -40,16 +40,16 @@ cardsModule
 				};
 				
 				var onMoveCard = function(event, object){
-					var _offset = element.offset();
-					var _width = element[0].offsetWidth;
-					var leftEdge = _offset.left;
-					var rightEdge = leftEdge + _width - 25;
+					var deckOffset = element.offset();
+					var deckWidth = element[0].offsetWidth;
+					var deckLeftEdge = deckOffset.left;
+					var deckRightEdge = deckLeftEdge + deckWidth - 25;
 					
-					if(object.mouseX <= leftEdge){
+					if(object.mouseX <= deckLeftEdge){
 						scope.$emit('cardDeck:unstackLeft', {
 							panel: object.panel
 						});
-					} else if(object.mouseX >= rightEdge){
+					} else if(object.mouseX >= deckRightEdge){
 						scope.$emit('cardDeck:unstackRight', {
 							panel: object.panel
 						});
