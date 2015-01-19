@@ -1,4 +1,4 @@
-<div class="dropdown" dropdown stop-event on-toggle="$parent.toggleOverlay()"
+<div class="dropdown" dropdown stop-event on-toggle="$parent.toggleOverlay(open)"
 	ng-class="{'dropup': ability.order > 3}">
 	<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle stop-event
 		ng-click="dropdown; $parent.pcsCard1.chooseAbility(ability.order);" aria-expanded="true">
@@ -13,7 +13,7 @@
 		<img ng-repeat="dice in $parent.pcs.pc.dicepool track by $index"
 			ng-src={{dice.image}} alt={{dice.name}}
 			ng-show="dice.order || $index == 0"
-			ng-click="$parent.$parent.pcsCard1.chooseDie(dice.order); $parent.toggleOverlay()"
+			ng-click="$parent.$parent.pcsCard1.chooseDie(dice.order); $parent.$parent.toggleOverlay(open);"
 			ng-style="{'height':$parent.$parent.windowScale * 1.5+'px',
 				'margin': $parent.$parent.windowScale * 0.2+'px'}"
 			class="dice-dropdown-image" />

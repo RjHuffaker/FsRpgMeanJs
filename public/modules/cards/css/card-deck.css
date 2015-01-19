@@ -6,6 +6,18 @@
 	width: 100%;
 }
 
+.card-overlay {
+	z-index: 4999;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100% !important;
+	width: 100% !important;
+	opacity: 0.2;
+	background-color: black;
+	border-radius: 10px;
+}
+
 [card-deck],
 [card-panel] {
 	position: absolute;
@@ -25,6 +37,10 @@
 
 [card-panel] {
 	padding: 1px;
+	cursor: move;
+	cursor: -webkit-grab;
+	cursor: -moz-grab;
+	cursor: grab;
 }
 
 [card-panel].card-moving {
@@ -35,16 +51,11 @@
 	transition: .5s ease-in-out all !important;
 }
 
-.card-overlay {
-	z-index: 4999;
-	position: absolute;
-	top: 0;
-	left: 0;
-	height: 100% !important;
-	width: 100% !important;
-	opacity: 0.2;
-	background-color: black;
-	border-radius: 10px;
+[card-panel].dragging {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor: -moz-grabbing;
+	cursor: grabbing;
 }
 
 [card-panel] > div > div{

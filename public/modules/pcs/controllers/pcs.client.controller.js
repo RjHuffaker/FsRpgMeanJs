@@ -34,20 +34,16 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 			dropdownOpen: false
 		};
 		
-		$scope.toggleOverlay = function(){
-			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
+		$scope.toggleOverlay = function(open){
+			$scope.status.dropdownOpen = open;
 		};
 		
-		$scope.hideOverlay = function(){
-			$scope.status.dropdownOpen = false;
-		};
-		
-		$scope.toggleDropdown = function($event) {
-			$event.preventDefault();
-			$event.stopPropagation();
-			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
-			$log.log('toggleDropdown');
-		};
+	//	$scope.toggleDropdown = function($event) {
+	//		$event.preventDefault();
+	//		$event.stopPropagation();
+	//		$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
+	//		$log.log('toggleDropdown');
+	//	};
 		
 		$scope.newPc = function(){
 			Pcs.addPc();

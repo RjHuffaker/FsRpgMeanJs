@@ -893,10 +893,6 @@ cardsModule
 			restrict: 'A',
 			link: function(scope, element, attrs) {
 				
-				element.css({
-					cursor: 'move'
-				});
-				
 				Array.min = function( array ){
 					return Math.min.apply( Math, array );
 				};
@@ -963,8 +959,8 @@ cardsModule
 				};
 				
 				var onHeightChange = function(event, object){
-					windowScale = object.newScale? object.newScale : 25;
-					console.log('windowScale = '+windowScale);
+					windowScale = object.newScale ? object.newScale : 25;
+					console.log(windowScale);
 					_x_dim = windowScale * 10;
 					_y_dim = windowScale * 14;
 					_x_tab = windowScale * 2;
@@ -2802,20 +2798,16 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 			dropdownOpen: false
 		};
 		
-		$scope.toggleOverlay = function(){
-			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
+		$scope.toggleOverlay = function(open){
+			$scope.status.dropdownOpen = open;
 		};
 		
-		$scope.hideOverlay = function(){
-			$scope.status.dropdownOpen = false;
-		};
-		
-		$scope.toggleDropdown = function($event) {
-			$event.preventDefault();
-			$event.stopPropagation();
-			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
-			$log.log('toggleDropdown');
-		};
+	//	$scope.toggleDropdown = function($event) {
+	//		$event.preventDefault();
+	//		$event.stopPropagation();
+	//		$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
+	//		$log.log('toggleDropdown');
+	//	};
 		
 		$scope.newPc = function(){
 			Pcs.addPc();
