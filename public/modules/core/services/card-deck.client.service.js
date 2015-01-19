@@ -135,7 +135,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			
 			_deck[panel_index].dragging = true;
 			
-			$rootScope.$digest();
+	//		$rootScope.$digest();
 		};
 		
 		// Reset move variables
@@ -150,9 +150,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			
 			setTimeout(function() {
 				_deck[panel_index].dragging = false;
-			}, 10);
+			}, 0);
 			
-			$rootScope.$digest();
+	//		$rootScope.$digest();
 		};
 		
 		var moveHorizontal = function(event, object){
@@ -187,7 +187,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			var _deckType = _slot.deckType;
 			var _deck = getCardList(_deckType);
 			var _lowest_index = getLowestIndex(_deckType, _panel.x_coord);
-			if((_panel.y_coord === 0 && _panel.y_overlap) || _deck[_lowest_index].y_coord === 0){
+			if(_panel.y_coord === 0 && _panel.y_overlap || _deck[_lowest_index].y_coord === 0){
 				stackOver(_slot, _panel);
 			} else {
 				unstackCard(_slot, _panel);
@@ -269,10 +269,11 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						setCardMoving(_moveSpeed);
 						if(panel_x === 0 && slot_x_overlap){
 							var first_index = getFirstIndex(_deckType);
-							_deck[first_index].x_coord = 0;
+					//		_deck[first_index].x_coord = 0;
 							_deck[first_index].x_overlap = false;
 							_deck[panel_index].x_overlap = true;
-						} else {
+							panel_width -= 8;
+						} else if(panel_x > 0){
 							if(panel_x_overlap){
 								panel_width -= 8;
 							}
@@ -289,7 +290,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-				$rootScope.$digest();
+	//			$rootScope.$digest();
 			}
 		};
 		
@@ -336,7 +337,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		};
 		
 		var stackOver = function(slot, panel){
-			if(!cardMoving){
+			if(!cardMoving && !slot.x_overlap && !panel.x_overlap){
 				var _deckType = slot.deckType;
 				var _deck = getCardList(_deckType);
 				
@@ -394,14 +395,14 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-				$rootScope.$digest();
+	//			$rootScope.$digest();
 			}
 		};
 		
 		
 		// Stack one card behind another and reposition deck to fill the gap
 		var stackUnder = function(slot, panel){
-			if(!cardMoving){
+			if(!cardMoving && !slot.x_overlap && !panel.x_overlap){
 				var _deckType = slot.deckType;
 				var _deck = getCardList(_deckType);
 				
@@ -447,7 +448,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-				$rootScope.$digest();
+	//			$rootScope.$digest();
 			}
 		};
 		
@@ -557,7 +558,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-				$rootScope.$digest();
+	//			$rootScope.$digest();
 			}
 		};
 		
@@ -618,7 +619,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-				$rootScope.$digest();
+	//			$rootScope.$digest();
 				cardMoved = false;
 			}
 		};

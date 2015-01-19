@@ -24,7 +24,8 @@ cardsModule
 					_slotX, _slotY,
 					_startCol, _mouseCol, _cardCol,
 					_startRow, _mouseRow, _cardRow,
-					windowScale,
+					_moveTimer,
+					windowScale = 25,
 					_x_dim, _y_dim, _x_tab, _y_tab,
 					_x_cover, _y_cover;
 				
@@ -59,6 +60,8 @@ cardsModule
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
+					scope.$watch('card.x_coord', resetPosition);
+					scope.$watch('card.y_coord', resetPosition);
 					element.on(_pressEvents, onPress);
 					
 					// prevent native drag for images
@@ -83,6 +86,32 @@ cardsModule
 					_y_tab = windowScale * 2;
 					_x_cover = windowScale * 8;
 					_y_cover = windowScale * 12;
+					
+					element.css({
+						'z-index': 4998 - _card.x_coord + _card.y_coord/2,
+						'margin-top': (windowScale * 2)+'px',
+						'height': _y_dim+'px',
+						'width': _x_dim+'px'
+					});
+					
+				};
+				
+				var setPosition = function(){
+					element.css({
+						'top': (_card.y_coord * 25) + 'px',
+						'left': (_card.x_coord * 25) + 'px'
+					});
+				};
+				
+				var resetPosition = function(newVal, oldVal){
+				//	if(newVal !== oldVal){
+						if(element.hasClass('card-moving')){
+							element.css({
+								'top': (_card.y_coord * windowScale) + 'px',
+								'left': (_card.x_coord * windowScale) + 'px'
+							});
+						}
+				//	}
 				};
 				
 				// When the element is clicked start the drag behaviour
@@ -185,14 +214,10 @@ cardsModule
 						panelY: _cardY,
 						panel: _card
 					});
-					$rootScope.$digest();
 				};
 				
 				// Callback function to move a single card or each card in a vertical stack
 				var onMoveCard = function(event, object){
-					if(element.hasClass('card-moving')){
-						setPosition();
-					}
 					
 					var mouseX = object.mouseX;
 					var mouseY = object.mouseY;
@@ -288,7 +313,7 @@ cardsModule
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
 						panel: _card
 					});
-					if(_moveX <= 15 && _moveX >= -15 && _moveY <= 15 && _moveY >= -15){
+					if(_moveX <= windowScale && _moveX >= -windowScale && _moveY <= windowScale && _moveY >= -windowScale){
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
 							panel: _card
 						});
@@ -305,16 +330,11 @@ cardsModule
 						});
 					}, 0);
 					
-					setTimeout(function(){
+					clearTimeout(_moveTimer);
+					
+					_moveTimer = setTimeout(function(){
 						element.removeClass('card-moving');
-					}, 500);
-				};
-				
-				var setPosition = function(){
-					element.css({
-						left: (_card.x_coord * windowScale) + 'px',
-						top: (_card.y_coord * windowScale) + 'px'
-					});
+					}, 600);
 				};
 				
 				// Respond to 'onMouseLeave' event similar to onRelease, but without toggling overlap

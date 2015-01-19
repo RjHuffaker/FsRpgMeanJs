@@ -1,5 +1,4 @@
-<section data-ng-controller="HomeController"
-	data-ng-init="pcs.readPc()" screen-size>
+<section data-ng-controller="HomeController" screen-size>
 	<div class="container-fluid deck-panel"
 		ng-style="{'height': (windowHeight - 50)+'px'}">
 		<div card-deck ng-mouseleave=""
@@ -8,20 +7,11 @@
 				'width': (windowScale * cardDeck.getDeckWidth('home'))+'px'}">
 			<ul>
 				<li card-panel card-layout card="card" ng-repeat="card in homeDemo.cards"
-					ng-class="{'stacked': card.stacked,
+					ng-class="{'stacked': card.stacked, 'dragging': card.dragging,
 						'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap}"
 					ng-style="{'z-index': 4998 - card.x_coord + card.y_coord/2,
-						'margin-top': ($parent.windowScale * 2)+'px',
-						'height': ($parent.windowScale * 14)+'px',
-						'width': ($parent.windowScale * 10)+'px'}"
-						ng-mousemove="true" ng-click="true">
-					<strong style="position: absolute; top: -20px; color: blue;">
-						{{$parent.windowScale}}
-						<span ng-show="card.dragging">Dr</span>
-						<span ng-show="card.stacked">St</span>
-						<span ng-show="card.x_overlap">Ox</span>
-						<span ng-show="card.y_overlap">Oy</span>
-					</strong>
+						'margin-top': ($parent.windowScale * 2)+'px'}"
+					ng-mousemove="true" ng-click="true">
 				</li>
 			</ul>
 		</div>
