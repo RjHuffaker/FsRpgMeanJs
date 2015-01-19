@@ -135,7 +135,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			
 			_deck[panel_index].dragging = true;
 			
-	//		$rootScope.$digest();
+			$rootScope.$digest();
 		};
 		
 		// Reset move variables
@@ -152,7 +152,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				_deck[panel_index].dragging = false;
 			}, 0);
 			
-	//		$rootScope.$digest();
+			$rootScope.$digest();
 		};
 		
 		var moveHorizontal = function(event, object){
