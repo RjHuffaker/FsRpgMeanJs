@@ -88,17 +88,15 @@ cardsModule
 					_y_cover = windowScale * 12;
 					
 					element.css({
-						'z-index': 4998 - _card.x_coord + _card.y_coord/2,
-						'margin-top': (windowScale * 2)+'px',
 						'height': _y_dim+'px',
-						'width': _x_dim+'px'
+						'width': _x_dim+'px',
+						'top': (_card.y_coord * windowScale) + 'px',
+						'left': (_card.x_coord * windowScale) + 'px'
 					});
 					
 				};
 				
 				var setPosition = function(){
-					console.log('setPosition', _card.y_coord);
-					console.log('setPosition', _card.x_coord);
 					element.css({
 						'top': (_card.y_coord * 25) + 'px',
 						'left': (_card.x_coord * 25) + 'px'
