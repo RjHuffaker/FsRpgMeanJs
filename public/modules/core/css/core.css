@@ -41,6 +41,11 @@ body {
 	position: fixed;
 }
 
+.dropdown-menu{
+	z-index: 7000 !important;
+	position: absolute;
+}
+
 .black-line {
 	margin: 2px 0;
 	border: solid 1px black;

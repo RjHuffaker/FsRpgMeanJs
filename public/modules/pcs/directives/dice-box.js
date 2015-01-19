@@ -1,6 +1,9 @@
 'use strict';
 
-angular.module('core')
+var pcsModule = angular.module('pcs');
+
+// Directive for managing card decks.
+pcsModule
 	.directive('diceBox', function() {
 		return {
 			restrict: 'A',

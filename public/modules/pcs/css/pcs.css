@@ -1,5 +1,9 @@
 .dice-dropdown {
 	white-space: normal;
 	font-size: 14px;
-	z-index: 5001 !important;
+	cursor: default;
+}
+
+.dice-dropdown-image {
+	cursor: pointer;
 }

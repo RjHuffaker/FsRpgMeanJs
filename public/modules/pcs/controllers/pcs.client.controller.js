@@ -28,6 +28,21 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		
 		$scope.windowScale = 0;
 		
+		$scope.status = {
+			dropdownOpen: false
+		};
+		
+		$scope.toggleOverlay = function(){
+			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
+		};
+		
+		$scope.toggleDropdown = function($event) {
+			$event.preventDefault();
+			$event.stopPropagation();
+			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
+			$log.log('toggleDropdown');
+		};
+		
 		$scope.newPc = function(){
 			Pcs.addPc();
 			Pcs.pcNew = true;

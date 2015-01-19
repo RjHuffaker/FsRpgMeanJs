@@ -1,5 +1,7 @@
+<div class="card-overlay" ng-if="$parent.status.dropdownOpen" stop-event></div>
 <div class="content-panel">
-	<div class="dropdown card-icon-top-left" dropdown>
+	<div class="dropdown card-icon-top-left" dropdown stop-event
+		on-toggle="toggleOverlay()" >
 		<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 			ng-click="dropdown" aria-expanded="true">
 			<i class="card-icon glyphicon glyphicon-cog"></i>

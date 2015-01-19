@@ -38,6 +38,18 @@
 	transition: .5s ease-in-out all !important;
 }
 
+.card-overlay {
+	z-index: 4999;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100% !important;
+	width: 100% !important;
+	opacity: 0.2;
+	background-color: black;
+	border-radius: 10px;
+}
+
 [card-panel] > div > div{
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;

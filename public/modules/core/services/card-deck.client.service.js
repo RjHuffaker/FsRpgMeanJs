@@ -290,7 +290,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-	//			$rootScope.$digest();
+				$rootScope.$digest();
 			}
 		};
 		
@@ -333,6 +333,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					_deck[panel_index].y_coord = slot_y;
 					_deck[panel_index].y_overlap = slot_y_overlap;
 				}
+				$rootScope.$digest();
 			}
 		};
 		
@@ -395,7 +396,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-	//			$rootScope.$digest();
+				$rootScope.$digest();
 			}
 		};
 		
@@ -448,7 +449,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-	//			$rootScope.$digest();
+				$rootScope.$digest();
 			}
 		};
 		
@@ -558,7 +559,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-	//			$rootScope.$digest();
+				$rootScope.$digest();
 			}
 		};
 		
@@ -619,7 +620,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-	//			$rootScope.$digest();
+				$rootScope.$digest();
 				cardMoved = false;
 			}
 		};

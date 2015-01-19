@@ -1814,7 +1814,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-	//			$rootScope.$digest();
+				$rootScope.$digest();
 			}
 		};
 		
@@ -1857,6 +1857,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					_deck[panel_index].y_coord = slot_y;
 					_deck[panel_index].y_overlap = slot_y_overlap;
 				}
+				$rootScope.$digest();
 			}
 		};
 		
@@ -1919,7 +1920,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-	//			$rootScope.$digest();
+				$rootScope.$digest();
 			}
 		};
 		
@@ -1972,7 +1973,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-	//			$rootScope.$digest();
+				$rootScope.$digest();
 			}
 		};
 		
@@ -2082,7 +2083,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-	//			$rootScope.$digest();
+				$rootScope.$digest();
 			}
 		};
 		
@@ -2143,7 +2144,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					}
 				}
-	//			$rootScope.$digest();
+				$rootScope.$digest();
 				cardMoved = false;
 			}
 		};
@@ -2793,6 +2794,21 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		
 		$scope.windowScale = 0;
 		
+		$scope.status = {
+			dropdownOpen: false
+		};
+		
+		$scope.toggleOverlay = function(){
+			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
+		};
+		
+		$scope.toggleDropdown = function($event) {
+			$event.preventDefault();
+			$event.stopPropagation();
+			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
+			$log.log('toggleDropdown');
+		};
+		
 		$scope.newPc = function(){
 			Pcs.addPc();
 			Pcs.pcNew = true;
@@ -2898,7 +2914,10 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 
 'use strict';
 
-angular.module('core')
+var pcsModule = angular.module('pcs');
+
+// Directive for managing card decks.
+pcsModule
 	.directive('diceBox', function() {
 		return {
 			restrict: 'A',
