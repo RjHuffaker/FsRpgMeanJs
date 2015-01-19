@@ -929,7 +929,6 @@ cardsModule
 					// prevent native drag
 					element.attr('draggable', 'false');
 					toggleListeners(true);
-					setPosition();
 				};
 				
 				var toggleListeners = function(enable){
@@ -960,6 +959,7 @@ cardsModule
 				
 				var onCardChange = function(newVal, oldVal){
 					_card = newVal;
+					setPosition();
 				};
 				
 				var onHeightChange = function(event, object){
@@ -981,6 +981,8 @@ cardsModule
 				};
 				
 				var setPosition = function(){
+					console.log('setPosition', _card.y_coord);
+					console.log('setPosition', _card.x_coord);
 					element.css({
 						'top': (_card.y_coord * 25) + 'px',
 						'left': (_card.x_coord * 25) + 'px'
@@ -2774,6 +2776,8 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		
 		$scope.dataSRVC = DataSRVC;
 		
+		$scope.cardDeck = CardDeck;
+		
 		$scope.pcs = Pcs;
 		
 		$scope.pcsCard1 = PcsCard1;
@@ -2790,9 +2794,9 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		
 		$scope.pcsItems = PcsItems;
 		
-		$scope.windowHeight = 0;
+		$scope.windowHeight = 500;
 		
-		$scope.windowScale = 0;
+		$scope.windowScale = 50;
 		
 		$scope.status = {
 			dropdownOpen: false
@@ -2800,6 +2804,10 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		
 		$scope.toggleOverlay = function(){
 			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
+		};
+		
+		$scope.hideOverlay = function(){
+			$scope.status.dropdownOpen = false;
 		};
 		
 		$scope.toggleDropdown = function($event) {

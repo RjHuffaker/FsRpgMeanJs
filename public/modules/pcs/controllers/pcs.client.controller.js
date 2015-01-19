@@ -8,6 +8,8 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		
 		$scope.dataSRVC = DataSRVC;
 		
+		$scope.cardDeck = CardDeck;
+		
 		$scope.pcs = Pcs;
 		
 		$scope.pcsCard1 = PcsCard1;
@@ -24,9 +26,9 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		
 		$scope.pcsItems = PcsItems;
 		
-		$scope.windowHeight = 0;
+		$scope.windowHeight = 500;
 		
-		$scope.windowScale = 0;
+		$scope.windowScale = 50;
 		
 		$scope.status = {
 			dropdownOpen: false
@@ -34,6 +36,10 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		
 		$scope.toggleOverlay = function(){
 			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
+		};
+		
+		$scope.hideOverlay = function(){
+			$scope.status.dropdownOpen = false;
 		};
 		
 		$scope.toggleDropdown = function($event) {

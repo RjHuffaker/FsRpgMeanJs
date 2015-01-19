@@ -1,24 +1,9 @@
 .deck-panel {
-	border: solid 1px #555;
 	overflow-x: auto;
 	overflow-y: auto;
 	position: fixed;
 	left: 0;
 	width: 100%;
-}
-
-[card-deck] {
-	white-space: nowrap;
-	background-color: solid 1px white;
-	
-}
-
-[card-deck] > ul{
-	list-style: none;
-}
-
-[card-panel] {
-	padding: 1px;
 }
 
 [card-deck],
@@ -28,6 +13,18 @@
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+
+[card-deck] {
+	white-space: nowrap;
+}
+
+[card-deck] > ul{
+	list-style: none;
+}
+
+[card-panel] {
+	padding: 1px;
 }
 
 [card-panel].card-moving {

@@ -45,7 +45,6 @@ cardsModule
 					// prevent native drag
 					element.attr('draggable', 'false');
 					toggleListeners(true);
-					setPosition();
 				};
 				
 				var toggleListeners = function(enable){
@@ -76,6 +75,7 @@ cardsModule
 				
 				var onCardChange = function(newVal, oldVal){
 					_card = newVal;
+					setPosition();
 				};
 				
 				var onHeightChange = function(event, object){
@@ -97,6 +97,8 @@ cardsModule
 				};
 				
 				var setPosition = function(){
+					console.log('setPosition', _card.y_coord);
+					console.log('setPosition', _card.x_coord);
 					element.css({
 						'top': (_card.y_coord * 25) + 'px',
 						'left': (_card.x_coord * 25) + 'px'
