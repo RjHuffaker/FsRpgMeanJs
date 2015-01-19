@@ -75,11 +75,12 @@ cardsModule
 				
 				var onCardChange = function(newVal, oldVal){
 					_card = newVal;
-					setPosition();
+					setDefaultPosition();
 				};
 				
 				var onHeightChange = function(event, object){
-					windowScale = object.newScale;
+					windowScale = object.newScale? object.newScale : 25;
+					console.log('windowScale = '+windowScale);
 					_x_dim = windowScale * 10;
 					_y_dim = windowScale * 14;
 					_x_tab = windowScale * 2;
@@ -93,11 +94,12 @@ cardsModule
 						'top': (_card.y_coord * windowScale) + 'px',
 						'left': (_card.x_coord * windowScale) + 'px'
 					});
-					
 				};
 				
-				var setPosition = function(){
+				var setDefaultPosition = function(){
 					element.css({
+						'height': '350px',
+						'width': '250px',
 						'top': (_card.y_coord * 25) + 'px',
 						'left': (_card.x_coord * 25) + 'px'
 					});

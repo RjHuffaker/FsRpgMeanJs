@@ -10,7 +10,7 @@ coreModule
 			link: function(scope, element, attrs) {
 				var _window = angular.element($window);
 				
-				var windowHeight = $window.innerHeight;
+				var windowHeight = 500;
 				
 				var windowScale = 25;
 				
@@ -28,14 +28,14 @@ coreModule
 					
 					setTimeout( function(){
 						onHeightChange();
-					}, 500);
+					}, 0);
 				};
 				
 				var onDestroy = function(enable){
 					toggleListeners(false);
 				};
 				
-				var onHeightChange = function(newVal, oldVal){
+				var onHeightChange = function(){
 					windowHeight = $window.innerHeight;
 					if(windowHeight > 500){
 						windowScale = 25;
@@ -57,7 +57,7 @@ coreModule
 						windowScale = 17;
 					} else if(windowHeight > 320){
 						windowScale = 16;
-					} else {
+					} else if(windowHeight < 319){
 						windowScale = 15;
 					}
 					

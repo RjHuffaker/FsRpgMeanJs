@@ -959,11 +959,12 @@ cardsModule
 				
 				var onCardChange = function(newVal, oldVal){
 					_card = newVal;
-					setPosition();
+					setDefaultPosition();
 				};
 				
 				var onHeightChange = function(event, object){
-					windowScale = object.newScale;
+					windowScale = object.newScale? object.newScale : 25;
+					console.log('windowScale = '+windowScale);
 					_x_dim = windowScale * 10;
 					_y_dim = windowScale * 14;
 					_x_tab = windowScale * 2;
@@ -977,11 +978,12 @@ cardsModule
 						'top': (_card.y_coord * windowScale) + 'px',
 						'left': (_card.x_coord * windowScale) + 'px'
 					});
-					
 				};
 				
-				var setPosition = function(){
+				var setDefaultPosition = function(){
 					element.css({
+						'height': '350px',
+						'width': '250px',
 						'top': (_card.y_coord * 25) + 'px',
 						'left': (_card.x_coord * 25) + 'px'
 					});
@@ -1459,7 +1461,7 @@ coreModule
 			link: function(scope, element, attrs) {
 				var _window = angular.element($window);
 				
-				var windowHeight = $window.innerHeight;
+				var windowHeight = 500;
 				
 				var windowScale = 25;
 				
@@ -1477,14 +1479,14 @@ coreModule
 					
 					setTimeout( function(){
 						onHeightChange();
-					}, 500);
+					}, 0);
 				};
 				
 				var onDestroy = function(enable){
 					toggleListeners(false);
 				};
 				
-				var onHeightChange = function(newVal, oldVal){
+				var onHeightChange = function(){
 					windowHeight = $window.innerHeight;
 					if(windowHeight > 500){
 						windowScale = 25;
@@ -1506,7 +1508,7 @@ coreModule
 						windowScale = 17;
 					} else if(windowHeight > 320){
 						windowScale = 16;
-					} else {
+					} else if(windowHeight < 319){
 						windowScale = 15;
 					}
 					
