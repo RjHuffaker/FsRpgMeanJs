@@ -1483,28 +1483,33 @@ coreModule
 				};
 				
 				var onHeightChange = function(){
+					measureScreen();
+				};
+				
+				var measureScreen = function(){
 					windowHeight = $window.innerHeight;
+					console.log(windowHeight);
 					if(windowHeight > 500){
 						windowScale = 25;
-					} else if(windowHeight > 480){
+					} else if(windowHeight >= 480){
 						windowScale = 24;
-					} else if(windowHeight > 460){
+					} else if(windowHeight >= 460){
 						windowScale = 23;
-					} else if(windowHeight > 440){
+					} else if(windowHeight >= 440){
 						windowScale = 22;
-					} else if(windowHeight > 420){
+					} else if(windowHeight >= 420){
 						windowScale = 21;
-					} else if(windowHeight > 400){
+					} else if(windowHeight >= 400){
 						windowScale = 20;
-					} else if(windowHeight > 380){
+					} else if(windowHeight >= 380){
 						windowScale = 19;
-					} else if(windowHeight > 360){
+					} else if(windowHeight >= 360){
 						windowScale = 18;
-					} else if(windowHeight > 340){
+					} else if(windowHeight >= 340){
 						windowScale = 17;
-					} else if(windowHeight > 320){
+					} else if(windowHeight >= 320){
 						windowScale = 16;
-					} else if(windowHeight < 319){
+					} else {
 						windowScale = 15;
 					}
 					
@@ -1512,8 +1517,6 @@ coreModule
 						newHeight: windowHeight,
 						newScale: windowScale
 					});
-					
-					scope.$digest();
 				};
 				
 				initialize();
@@ -2798,8 +2801,8 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 			dropdownOpen: false
 		};
 		
-		$scope.toggleOverlay = function(open){
-			$scope.status.dropdownOpen = open;
+		$scope.toggleOverlay = function(){
+			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
 		};
 		
 	//	$scope.toggleDropdown = function($event) {

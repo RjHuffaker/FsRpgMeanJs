@@ -34,8 +34,8 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 			dropdownOpen: false
 		};
 		
-		$scope.toggleOverlay = function(open){
-			$scope.status.dropdownOpen = open;
+		$scope.toggleOverlay = function(){
+			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
 		};
 		
 	//	$scope.toggleDropdown = function($event) {
