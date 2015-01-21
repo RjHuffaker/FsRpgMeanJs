@@ -11,6 +11,8 @@ cardsModule
 				
 				var pressed = false;
 				
+				var _windowHeight = 320, _windowScale = 15;
+				
 				var initialize = function(){
 					toggleListeners(true);
 				};
@@ -22,6 +24,7 @@ cardsModule
 					// add listeners
 					scope.$on('$destroy', onDestroy);
 					element.on('mouseleave', onMouseLeave);
+					$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 					scope.$on('cardPanel:onPressCard', onPress);
 					scope.$on('cardPanel:onReleaseCard', onRelease);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
@@ -29,6 +32,14 @@ cardsModule
 				
 				var onDestroy = function(enable){
 					toggleListeners(false);
+				};
+				
+				var onHeightChange = function(event, object){
+					_windowHeight = object.newHeight;
+					_windowScale = object.newScale;
+					element.css({
+						'height': _windowHeight+'px'
+					});
 				};
 				
 				var onPress = function(){
@@ -43,7 +54,7 @@ cardsModule
 					var deckOffset = element.offset();
 					var deckWidth = element[0].offsetWidth;
 					var deckLeftEdge = deckOffset.left;
-					var deckRightEdge = deckLeftEdge + deckWidth - 25;
+					var deckRightEdge = deckLeftEdge + deckWidth - _windowScale;
 					
 					if(object.mouseX <= deckLeftEdge){
 						scope.$emit('cardDeck:unstackLeft', {

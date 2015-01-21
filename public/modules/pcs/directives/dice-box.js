@@ -10,7 +10,7 @@ pcsModule
 			templateUrl: '../modules/pcs/views/dice-box.html',
 			link: function(scope, element, attrs) {
 				
-				var _topEdge, _leftEdge, _windowScale = 25, _height = 125, _width = 125;
+				var _topEdge, _leftEdge, _windowScale = 15, _height = 75, _width = 75;
 				
 				var initialize = function(){
 					// prevent native drag
@@ -31,9 +31,9 @@ pcsModule
 				};
 				
 				var onHeightChange = function(event, object){
-					_windowScale = object.newScale ? object.newScale : 25;
-					_height = _windowScale * 5;
-					_width = _windowScale * 5;
+					_windowScale = object.newScale ? object.newScale : 15;
+					_height = _windowScale * 5.4;
+					_width = _windowScale * 5.4;
 					element.css({
 						'height': _height+'px',
 						'width': _width+'px'
@@ -66,9 +66,9 @@ pcsModule
 				
 				var _ability = $parse(attrs.ability) || null;
 				
-				var _windowScale = 25;
+				var _windowScale = 15;
 				
-				var _width = 35;
+				var _width = 21;
 				
 				var _pressEvents = 'touchstart mousedown';
 				
@@ -83,7 +83,7 @@ pcsModule
 					
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.ability, onAbilityChange);
-					scope.$on('screenSize:onHeightChange', onHeightChange);
+					$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 					element.on(_pressEvents, onPress);
 				};
 				
@@ -93,8 +93,6 @@ pcsModule
 				
 				var onAbilityChange = function(newVal, oldVal){
 					_ability = newVal;
-					scope.diceImage = _ability.dice.image;
-			//		attrs.$set('src', scope.diceImage);
 					element.css({
 						'width': _width+'px',
 					});
@@ -102,7 +100,7 @@ pcsModule
 				
 				
 				var onHeightChange = function(event, object){
-					_windowScale = object.newScale ? object.newScale : 25;
+					_windowScale = object.newScale ? object.newScale : 15;
 					_width = _windowScale * 1.4;
 					element.css({
 						'width': _width+'px',
@@ -111,7 +109,7 @@ pcsModule
 				
 				var onPress = function(){
 					var offset = element.offset();
-					var topEdge = _ability.order < 4 ? offset.top + _width : offset.top - _windowScale * 5;
+					var topEdge = _ability.order < 4 ? offset.top + _width : offset.top - _windowScale * 5.4;
 					var leftEdge = offset.left;
 					
 					$rootScope.$broadcast('ability:onPress', {
@@ -121,7 +119,6 @@ pcsModule
 					});
 					
 				};
-				
 				
 				initialize();
 			}

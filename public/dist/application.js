@@ -826,6 +826,8 @@ cardsModule
 				
 				var pressed = false;
 				
+				var _windowHeight = 320, _windowScale = 15;
+				
 				var initialize = function(){
 					toggleListeners(true);
 				};
@@ -837,6 +839,7 @@ cardsModule
 					// add listeners
 					scope.$on('$destroy', onDestroy);
 					element.on('mouseleave', onMouseLeave);
+					$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 					scope.$on('cardPanel:onPressCard', onPress);
 					scope.$on('cardPanel:onReleaseCard', onRelease);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
@@ -844,6 +847,14 @@ cardsModule
 				
 				var onDestroy = function(enable){
 					toggleListeners(false);
+				};
+				
+				var onHeightChange = function(event, object){
+					_windowHeight = object.newHeight;
+					_windowScale = object.newScale;
+					element.css({
+						'height': _windowHeight+'px'
+					});
 				};
 				
 				var onPress = function(){
@@ -858,7 +869,7 @@ cardsModule
 					var deckOffset = element.offset();
 					var deckWidth = element[0].offsetWidth;
 					var deckLeftEdge = deckOffset.left;
-					var deckRightEdge = deckLeftEdge + deckWidth - 25;
+					var deckRightEdge = deckLeftEdge + deckWidth - _windowScale;
 					
 					if(object.mouseX <= deckLeftEdge){
 						scope.$emit('cardDeck:unstackLeft', {
@@ -904,10 +915,10 @@ cardsModule
 					_slotX, _slotY,
 					_startCol, _mouseCol, _cardCol,
 					_startRow, _mouseRow, _cardRow,
-					_moveTimer,
-					windowScale = 25,
-					_x_dim, _y_dim, _x_tab, _y_tab,
-					_x_cover, _y_cover;
+					_moveTimer, _windowScale = 15,
+					_x_dim = 150, _y_dim = 210,
+					_x_tab = 30, _y_tab = 30,
+					_x_cover = 120, _y_cover = 180;
 				
 				var _stacked = false;
 				
@@ -934,7 +945,7 @@ cardsModule
 					// add listeners.
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.card, onCardChange);
-					scope.$on('screenSize:onHeightChange', onHeightChange);
+					$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 					scope.$on('cardPanel:onPressCard', onPressCard);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
@@ -955,45 +966,37 @@ cardsModule
 				
 				var onCardChange = function(newVal, oldVal){
 					_card = newVal;
-					setDefaultPosition();
+					setPosition();
 				};
 				
 				var onHeightChange = function(event, object){
-					windowScale = object.newScale ? object.newScale : 25;
-					_x_dim = windowScale * 10;
-					_y_dim = windowScale * 14;
-					_x_tab = windowScale * 2;
-					_y_tab = windowScale * 2;
-					_x_cover = windowScale * 8;
-					_y_cover = windowScale * 12;
+					_windowScale = object.newScale ? object.newScale : 15;
+					_x_dim = _windowScale * 10;
+					_y_dim = _windowScale * 14;
+					_x_tab = _windowScale * 2;
+					_y_tab = _windowScale * 2;
+					_x_cover = _windowScale * 8;
+					_y_cover = _windowScale * 12;
 					
-					element.css({
-						'height': _y_dim+'px',
-						'width': _x_dim+'px',
-						'top': (_card.y_coord * windowScale) + 'px',
-						'left': (_card.x_coord * windowScale) + 'px'
-					});
-				};
-				
-				var setDefaultPosition = function(){
-					element.css({
-						'height': '350px',
-						'width': '250px',
-						'top': (_card.y_coord * 25) + 'px',
-						'left': (_card.x_coord * 25) + 'px'
-					});
+					setPosition();
 				};
 				
 				var resetPosition = function(newVal, oldVal){
-				//	if(newVal !== oldVal){
-						if(element.hasClass('card-moving')){
-							element.css({
-								'top': (_card.y_coord * windowScale) + 'px',
-								'left': (_card.x_coord * windowScale) + 'px'
-							});
-						}
-				//	}
+					if(element.hasClass('card-moving')){
+						setPosition();
+					}
 				};
+				
+				var setPosition = function(){
+					element.css({
+						'height': _y_dim+'px',
+						'width': _x_dim+'px',
+						'top': (_card.y_coord * _windowScale) + 'px',
+						'left': (_card.x_coord * _windowScale) + 'px'
+					});
+				};
+				
+				
 				
 				// When the element is clicked start the drag behaviour
 				var onPress = function(event){
@@ -1043,8 +1046,8 @@ cardsModule
 				
 				var onPressCard = function(event, object){
 					
-					_startCol = _card.x_coord * windowScale;
-					_startRow = _card.y_coord * windowScale;
+					_startCol = _card.x_coord * _windowScale;
+					_startRow = _card.y_coord * _windowScale;
 					
 					var panel = object.panel;
 					var panel_x = panel.x_coord;
@@ -1072,8 +1075,8 @@ cardsModule
 					_mouseX = (event.pageX || event.touches[0].pageX);
 					_mouseY = (event.pageY || event.touches[0].pageY);
 					
-					_mouseCol = _card.x_coord * windowScale;
-					_mouseRow = _card.y_coord * windowScale;
+					_mouseCol = _card.x_coord * _windowScale;
+					_mouseRow = _card.y_coord * _windowScale;
 					
 					_moveX = _mouseX - _startX;
 					_moveY = _mouseY - _startY;
@@ -1194,7 +1197,7 @@ cardsModule
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
 						panel: _card
 					});
-					if(_moveX <= windowScale && _moveX >= -windowScale && _moveY <= windowScale && _moveY >= -windowScale){
+					if(_moveX <= _windowScale && _moveX >= -_windowScale && _moveY <= _windowScale && _moveY >= -_windowScale){
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
 							panel: _card
 						});
@@ -1206,8 +1209,8 @@ cardsModule
 					element.addClass('card-moving');
 					setTimeout(function(){
 						element.css({
-							left: (_card.x_coord * windowScale) + 'px',
-							top: (_card.y_coord * windowScale) + 'px'
+							left: (_card.x_coord * _windowScale) + 'px',
+							top: (_card.y_coord * _windowScale) + 'px'
 						});
 					}, 0);
 					
@@ -1456,12 +1459,13 @@ coreModule
 			link: function(scope, element, attrs) {
 				var _window = angular.element($window);
 				
-				var windowHeight = 500;
+				var _windowHeight = 320;
 				
-				var windowScale = 25;
+				var _windowScale = 15;
 				
 				var initialize = function() {
 					toggleListeners(true);
+					measureScreen();
 				};
 				
 				var toggleListeners = function (enable) {
@@ -1486,35 +1490,35 @@ coreModule
 				};
 				
 				var measureScreen = function(){
-					windowHeight = $window.innerHeight;
-					console.log(windowHeight);
-					if(windowHeight > 500){
-						windowScale = 25;
-					} else if(windowHeight >= 480){
-						windowScale = 24;
-					} else if(windowHeight >= 460){
-						windowScale = 23;
-					} else if(windowHeight >= 440){
-						windowScale = 22;
-					} else if(windowHeight >= 420){
-						windowScale = 21;
-					} else if(windowHeight >= 400){
-						windowScale = 20;
-					} else if(windowHeight >= 380){
-						windowScale = 19;
-					} else if(windowHeight >= 360){
-						windowScale = 18;
-					} else if(windowHeight >= 340){
-						windowScale = 17;
-					} else if(windowHeight >= 320){
-						windowScale = 16;
+					_windowHeight = $window.innerHeight;
+					console.log(_windowHeight);
+					if(_windowHeight > 500){
+						_windowScale = 25;
+					} else if(_windowHeight >= 480){
+						_windowScale = 24;
+					} else if(_windowHeight >= 460){
+						_windowScale = 23;
+					} else if(_windowHeight >= 440){
+						_windowScale = 22;
+					} else if(_windowHeight >= 420){
+						_windowScale = 21;
+					} else if(_windowHeight >= 400){
+						_windowScale = 20;
+					} else if(_windowHeight >= 380){
+						_windowScale = 19;
+					} else if(_windowHeight >= 360){
+						_windowScale = 18;
+					} else if(_windowHeight >= 340){
+						_windowScale = 17;
+					} else if(_windowHeight >= 320){
+						_windowScale = 16;
 					} else {
-						windowScale = 15;
+						_windowScale = 15;
 					}
 					
 					$rootScope.$broadcast('screenSize:onHeightChange', {
-						newHeight: windowHeight,
-						newScale: windowScale
+						newHeight: _windowHeight,
+						newScale: _windowScale
 					});
 				};
 				
@@ -2794,7 +2798,7 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		
 		$scope.windowHeight = 500;
 		
-		$scope.windowScale = 50;
+		$scope.windowScale = 25;
 		
 		$scope.status = {
 			dropdownOpen: false
@@ -2803,13 +2807,6 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		$scope.toggleOverlay = function(){
 			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
 		};
-		
-	//	$scope.toggleDropdown = function($event) {
-	//		$event.preventDefault();
-	//		$event.stopPropagation();
-	//		$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
-	//		$log.log('toggleDropdown');
-	//	};
 		
 		$scope.newPc = function(){
 			Pcs.addPc();
@@ -2926,7 +2923,7 @@ pcsModule
 			templateUrl: '../modules/pcs/views/dice-box.html',
 			link: function(scope, element, attrs) {
 				
-				var _topEdge, _leftEdge, _windowScale = 25, _height = 125, _width = 125;
+				var _topEdge, _leftEdge, _windowScale = 15, _height = 75, _width = 75;
 				
 				var initialize = function(){
 					// prevent native drag
@@ -2947,9 +2944,9 @@ pcsModule
 				};
 				
 				var onHeightChange = function(event, object){
-					_windowScale = object.newScale ? object.newScale : 25;
-					_height = _windowScale * 5;
-					_width = _windowScale * 5;
+					_windowScale = object.newScale ? object.newScale : 15;
+					_height = _windowScale * 5.4;
+					_width = _windowScale * 5.4;
 					element.css({
 						'height': _height+'px',
 						'width': _width+'px'
@@ -2982,9 +2979,9 @@ pcsModule
 				
 				var _ability = $parse(attrs.ability) || null;
 				
-				var _windowScale = 25;
+				var _windowScale = 15;
 				
-				var _width = 35;
+				var _width = 21;
 				
 				var _pressEvents = 'touchstart mousedown';
 				
@@ -2999,7 +2996,7 @@ pcsModule
 					
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.ability, onAbilityChange);
-					scope.$on('screenSize:onHeightChange', onHeightChange);
+					$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 					element.on(_pressEvents, onPress);
 				};
 				
@@ -3009,8 +3006,6 @@ pcsModule
 				
 				var onAbilityChange = function(newVal, oldVal){
 					_ability = newVal;
-					scope.diceImage = _ability.dice.image;
-			//		attrs.$set('src', scope.diceImage);
 					element.css({
 						'width': _width+'px',
 					});
@@ -3018,7 +3013,7 @@ pcsModule
 				
 				
 				var onHeightChange = function(event, object){
-					_windowScale = object.newScale ? object.newScale : 25;
+					_windowScale = object.newScale ? object.newScale : 15;
 					_width = _windowScale * 1.4;
 					element.css({
 						'width': _width+'px',
@@ -3027,7 +3022,7 @@ pcsModule
 				
 				var onPress = function(){
 					var offset = element.offset();
-					var topEdge = _ability.order < 4 ? offset.top + _width : offset.top - _windowScale * 5;
+					var topEdge = _ability.order < 4 ? offset.top + _width : offset.top - _windowScale * 5.4;
 					var leftEdge = offset.left;
 					
 					$rootScope.$broadcast('ability:onPress', {
@@ -3037,7 +3032,6 @@ pcsModule
 					});
 					
 				};
-				
 				
 				initialize();
 			}

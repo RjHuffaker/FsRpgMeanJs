@@ -20,10 +20,10 @@ cardsModule
 					_slotX, _slotY,
 					_startCol, _mouseCol, _cardCol,
 					_startRow, _mouseRow, _cardRow,
-					_moveTimer,
-					windowScale = 25,
-					_x_dim, _y_dim, _x_tab, _y_tab,
-					_x_cover, _y_cover;
+					_moveTimer, _windowScale = 15,
+					_x_dim = 150, _y_dim = 210,
+					_x_tab = 30, _y_tab = 30,
+					_x_cover = 120, _y_cover = 180;
 				
 				var _stacked = false;
 				
@@ -50,7 +50,7 @@ cardsModule
 					// add listeners.
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.card, onCardChange);
-					scope.$on('screenSize:onHeightChange', onHeightChange);
+					$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 					scope.$on('cardPanel:onPressCard', onPressCard);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
@@ -71,45 +71,37 @@ cardsModule
 				
 				var onCardChange = function(newVal, oldVal){
 					_card = newVal;
-					setDefaultPosition();
+					setPosition();
 				};
 				
 				var onHeightChange = function(event, object){
-					windowScale = object.newScale ? object.newScale : 25;
-					_x_dim = windowScale * 10;
-					_y_dim = windowScale * 14;
-					_x_tab = windowScale * 2;
-					_y_tab = windowScale * 2;
-					_x_cover = windowScale * 8;
-					_y_cover = windowScale * 12;
+					_windowScale = object.newScale ? object.newScale : 15;
+					_x_dim = _windowScale * 10;
+					_y_dim = _windowScale * 14;
+					_x_tab = _windowScale * 2;
+					_y_tab = _windowScale * 2;
+					_x_cover = _windowScale * 8;
+					_y_cover = _windowScale * 12;
 					
-					element.css({
-						'height': _y_dim+'px',
-						'width': _x_dim+'px',
-						'top': (_card.y_coord * windowScale) + 'px',
-						'left': (_card.x_coord * windowScale) + 'px'
-					});
-				};
-				
-				var setDefaultPosition = function(){
-					element.css({
-						'height': '350px',
-						'width': '250px',
-						'top': (_card.y_coord * 25) + 'px',
-						'left': (_card.x_coord * 25) + 'px'
-					});
+					setPosition();
 				};
 				
 				var resetPosition = function(newVal, oldVal){
-				//	if(newVal !== oldVal){
-						if(element.hasClass('card-moving')){
-							element.css({
-								'top': (_card.y_coord * windowScale) + 'px',
-								'left': (_card.x_coord * windowScale) + 'px'
-							});
-						}
-				//	}
+					if(element.hasClass('card-moving')){
+						setPosition();
+					}
 				};
+				
+				var setPosition = function(){
+					element.css({
+						'height': _y_dim+'px',
+						'width': _x_dim+'px',
+						'top': (_card.y_coord * _windowScale) + 'px',
+						'left': (_card.x_coord * _windowScale) + 'px'
+					});
+				};
+				
+				
 				
 				// When the element is clicked start the drag behaviour
 				var onPress = function(event){
@@ -159,8 +151,8 @@ cardsModule
 				
 				var onPressCard = function(event, object){
 					
-					_startCol = _card.x_coord * windowScale;
-					_startRow = _card.y_coord * windowScale;
+					_startCol = _card.x_coord * _windowScale;
+					_startRow = _card.y_coord * _windowScale;
 					
 					var panel = object.panel;
 					var panel_x = panel.x_coord;
@@ -188,8 +180,8 @@ cardsModule
 					_mouseX = (event.pageX || event.touches[0].pageX);
 					_mouseY = (event.pageY || event.touches[0].pageY);
 					
-					_mouseCol = _card.x_coord * windowScale;
-					_mouseRow = _card.y_coord * windowScale;
+					_mouseCol = _card.x_coord * _windowScale;
+					_mouseRow = _card.y_coord * _windowScale;
 					
 					_moveX = _mouseX - _startX;
 					_moveY = _mouseY - _startY;
@@ -310,7 +302,7 @@ cardsModule
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
 						panel: _card
 					});
-					if(_moveX <= windowScale && _moveX >= -windowScale && _moveY <= windowScale && _moveY >= -windowScale){
+					if(_moveX <= _windowScale && _moveX >= -_windowScale && _moveY <= _windowScale && _moveY >= -_windowScale){
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
 							panel: _card
 						});
@@ -322,8 +314,8 @@ cardsModule
 					element.addClass('card-moving');
 					setTimeout(function(){
 						element.css({
-							left: (_card.x_coord * windowScale) + 'px',
-							top: (_card.y_coord * windowScale) + 'px'
+							left: (_card.x_coord * _windowScale) + 'px',
+							top: (_card.y_coord * _windowScale) + 'px'
 						});
 					}, 0);
 					

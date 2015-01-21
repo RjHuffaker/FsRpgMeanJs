@@ -28,7 +28,7 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		
 		$scope.windowHeight = 500;
 		
-		$scope.windowScale = 50;
+		$scope.windowScale = 25;
 		
 		$scope.status = {
 			dropdownOpen: false
@@ -37,13 +37,6 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		$scope.toggleOverlay = function(){
 			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
 		};
-		
-	//	$scope.toggleDropdown = function($event) {
-	//		$event.preventDefault();
-	//		$event.stopPropagation();
-	//		$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
-	//		$log.log('toggleDropdown');
-	//	};
 		
 		$scope.newPc = function(){
 			Pcs.addPc();

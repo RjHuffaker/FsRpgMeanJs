@@ -10,12 +10,13 @@ coreModule
 			link: function(scope, element, attrs) {
 				var _window = angular.element($window);
 				
-				var windowHeight = 500;
+				var _windowHeight = 320;
 				
-				var windowScale = 25;
+				var _windowScale = 15;
 				
 				var initialize = function() {
 					toggleListeners(true);
+					measureScreen();
 				};
 				
 				var toggleListeners = function (enable) {
@@ -40,35 +41,35 @@ coreModule
 				};
 				
 				var measureScreen = function(){
-					windowHeight = $window.innerHeight;
-					console.log(windowHeight);
-					if(windowHeight > 500){
-						windowScale = 25;
-					} else if(windowHeight >= 480){
-						windowScale = 24;
-					} else if(windowHeight >= 460){
-						windowScale = 23;
-					} else if(windowHeight >= 440){
-						windowScale = 22;
-					} else if(windowHeight >= 420){
-						windowScale = 21;
-					} else if(windowHeight >= 400){
-						windowScale = 20;
-					} else if(windowHeight >= 380){
-						windowScale = 19;
-					} else if(windowHeight >= 360){
-						windowScale = 18;
-					} else if(windowHeight >= 340){
-						windowScale = 17;
-					} else if(windowHeight >= 320){
-						windowScale = 16;
+					_windowHeight = $window.innerHeight;
+					console.log(_windowHeight);
+					if(_windowHeight > 500){
+						_windowScale = 25;
+					} else if(_windowHeight >= 480){
+						_windowScale = 24;
+					} else if(_windowHeight >= 460){
+						_windowScale = 23;
+					} else if(_windowHeight >= 440){
+						_windowScale = 22;
+					} else if(_windowHeight >= 420){
+						_windowScale = 21;
+					} else if(_windowHeight >= 400){
+						_windowScale = 20;
+					} else if(_windowHeight >= 380){
+						_windowScale = 19;
+					} else if(_windowHeight >= 360){
+						_windowScale = 18;
+					} else if(_windowHeight >= 340){
+						_windowScale = 17;
+					} else if(_windowHeight >= 320){
+						_windowScale = 16;
 					} else {
-						windowScale = 15;
+						_windowScale = 15;
 					}
 					
 					$rootScope.$broadcast('screenSize:onHeightChange', {
-						newHeight: windowHeight,
-						newScale: windowScale
+						newHeight: _windowHeight,
+						newScale: _windowScale
 					});
 				};
 				
