@@ -7,15 +7,31 @@ pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
 	function($rootScope, Pcs){
 		var service = {};
 		
+		service.diceBoxShown = false;
+		
 		service.chosenDie = {};
 		service.previousDie = {};
 		service.chosenAbility = {};
 		
-		service.chooseAbility = function(ability){
-			this.chosenAbility = Pcs.pc.abilities[ability];
+		service.hideDiceModal = function(){
+			console.log('hide me');
+			service.diceBoxShown = !service.diceBoxShown;
 		};
 		
+		service.chooseAbility = function(ability){
+			service.chosenAbility = Pcs.pc.abilities[ability];
+		};
+		
+		$rootScope.$on('ability:onPress', function(event, object){
+			service.chosenAbility = Pcs.pc.abilities[object.ability.order];
+			service.diceBoxShown = true;
+			console.log(object);
+		});
+		
+		
 		service.chooseDie = function(dice){
+			service.diceBoxShown = false;
+			
 			this.chosenDie = Pcs.pc.dicepool[dice];
 			
 			this.previousDie = this.chosenAbility.dice;

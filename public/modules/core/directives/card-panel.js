@@ -76,7 +76,6 @@ cardsModule
 				
 				var onHeightChange = function(event, object){
 					windowScale = object.newScale ? object.newScale : 25;
-					console.log(windowScale);
 					_x_dim = windowScale * 10;
 					_y_dim = windowScale * 14;
 					_x_tab = windowScale * 2;

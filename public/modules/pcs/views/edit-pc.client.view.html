@@ -2,6 +2,7 @@
 	data-ng-init="pcs.readPc()" screen-size>
 	<div class="container-fluid deck-panel"
 		ng-style="{'height': (windowHeight - 50)+'px'}">
+		<div class="fill-parent modal-overlay" ng-click="pcsCard1.diceBoxShown = !pcsCard1.diceBoxShown" ng-show="pcsCard1.diceBoxShown"></div>
 		<div card-deck ng-mouseleave=""
 			ng-style="{'height': (windowHeight - 50)+'px', 'margin-left': (windowScale * 2)+'px',
 				'width': (windowScale * cardDeck.getDeckWidth('home'))+'px'}">
@@ -16,5 +17,5 @@
 			</ul>
 		</div>
 	</div>
-	<div dice-box></div>
+	<div dice-box ng-show="pcsCard1.diceBoxShown"></div>
 </section>

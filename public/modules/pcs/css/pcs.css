@@ -7,3 +7,26 @@
 .dice-dropdown-image {
 	cursor: pointer;
 }
+
+[dice-box] {
+	z-index: 6000;
+	position: absolute;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	border-top: 1px solid #222;
+	border-left: 1px solid #222;
+	border-right: 2px solid #111;
+	border-bottom: 2px solid #111;
+	background-color: lightGrey;
+}
+
+.modal-overlay {
+	z-index: 5000;
+	position: fixed;
+	top: 0;
+	left: 0;
+	opacity: 0.2;
+	background-color: black;
+	
+}

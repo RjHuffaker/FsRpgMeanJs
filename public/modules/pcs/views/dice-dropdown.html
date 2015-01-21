@@ -5,7 +5,7 @@
 		ng-click="dropdown; $parent.pcsCard1.chooseAbility(ability.order);" aria-expanded="true">
 		<img stop-event
 			ng-src={{ability.dice.image}}
-			ng-style="{'height':$parent.windowScale * 1.5+'px'}"
+			ng-style="{'height':$parent.windowScale * 1.4+'px'}"
 			alt="{{ability.dice.name}}"
 			class="dice-image" />
 	</a>
@@ -15,7 +15,7 @@
 			ng-src={{dice.image}} alt={{dice.name}}
 			ng-show="dice.order || $index == 0"
 			ng-click="$parent.$parent.pcsCard1.chooseDie(dice.order);"
-			ng-style="{'height':$parent.$parent.windowScale * 1.5+'px',
+			ng-style="{'height':$parent.$parent.windowScale * 1.4+'px',
 				'margin': $parent.$parent.windowScale * 0.2+'px'}"
 			class="dice-dropdown-image" />
 	</div>

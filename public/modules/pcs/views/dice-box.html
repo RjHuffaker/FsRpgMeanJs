@@ -1,11 +1,9 @@
-<div class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">{{ title }}</h4>
-			</div>
-			
-		</div>
-	</div>
+<div >
+	<img ng-repeat="dice in pcs.pc.dicepool track by $index"
+		ng-src={{dice.image}} alt={{dice.name}}
+		ng-show="dice.order || $index == 0"
+		ng-click="pcsCard1.chooseDie(dice.order);"
+		ng-style="{'height': windowScale * 1.4+'px',
+			'margin': windowScale * 0.1+'px'}"
+		class="dice-dropdown-image" />
 </div>
