@@ -3,8 +3,14 @@
 var pcsModule = angular.module('pcs');
 
 // Pcs Controller
-pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'CardDeck', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
-	function($scope, $location, $log, DataSRVC, CardDeck, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems){
+pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', '$rootScope', '$window', 'DataSRVC', 'CardDeck', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
+	function($scope, $location, $log, $rootScope, $window, DataSRVC, CardDeck, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems){
+		
+		var _window = angular.element($window);
+		
+		$scope.windowHeight = 0;
+		
+		$scope.windowScale = 0;
 		
 		$scope.dataSRVC = DataSRVC;
 		
@@ -25,10 +31,6 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		$scope.pcsAugments = PcsAugments;
 		
 		$scope.pcsItems = PcsItems;
-		
-		$scope.windowHeight = 500;
-		
-		$scope.windowScale = 25;
 		
 		$scope.status = {
 			dropdownOpen: false
@@ -87,6 +89,7 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		var onHeightChange = function(event, object){
 			$scope.windowHeight = object.newHeight;
 			$scope.windowScale = object.newScale;
+			$scope.$digest();
 		};
 		
 		var updateStrPhy = function(event, object){

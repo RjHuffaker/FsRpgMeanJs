@@ -8,15 +8,20 @@ coreModule
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
+				
 				var _window = angular.element($window);
 				
-				var _windowHeight = 320;
+				var _windowHeight;
 				
-				var _windowScale = 15;
+				var _windowWidth;
+				
+				var _windowScale;
 				
 				var initialize = function() {
 					toggleListeners(true);
-					measureScreen();
+					setTimeout(function(){
+						onHeightChange();
+					}, 0);
 				};
 				
 				var toggleListeners = function (enable) {
@@ -26,10 +31,6 @@ coreModule
 					// add listeners
 					scope.$on('$destroy', onDestroy);
 					_window.on('resize', onHeightChange);
-					
-					setTimeout( function(){
-						onHeightChange();
-					}, 0);
 				};
 				
 				var onDestroy = function(enable){
@@ -37,43 +38,32 @@ coreModule
 				};
 				
 				var onHeightChange = function(){
-					measureScreen();
-				};
-				
-				var measureScreen = function(){
-					_windowHeight = $window.innerHeight;
-					console.log(_windowHeight);
+					
+					_windowHeight = _window.height();
+					
 					if(_windowHeight > 500){
 						_windowScale = 25;
-					} else if(_windowHeight >= 480){
-						_windowScale = 24;
-					} else if(_windowHeight >= 460){
-						_windowScale = 23;
-					} else if(_windowHeight >= 440){
-						_windowScale = 22;
-					} else if(_windowHeight >= 420){
-						_windowScale = 21;
-					} else if(_windowHeight >= 400){
-						_windowScale = 20;
-					} else if(_windowHeight >= 380){
-						_windowScale = 19;
-					} else if(_windowHeight >= 360){
-						_windowScale = 18;
-					} else if(_windowHeight >= 340){
-						_windowScale = 17;
-					} else if(_windowHeight >= 320){
-						_windowScale = 16;
-					} else {
+					} else if(_windowHeight < 320){
 						_windowScale = 15;
+					} else {
+						_windowScale = _windowHeight / 20;
 					}
+					
+					console.log(_windowHeight+','+_windowScale);
 					
 					$rootScope.$broadcast('screenSize:onHeightChange', {
 						newHeight: _windowHeight,
 						newScale: _windowScale
 					});
+					
+					
 				};
 				
-				initialize();
+				angular.element(document).ready(function () {
+					initialize();
+				});
+				
+		//		initialize();
 			}
 		};
 	}]);

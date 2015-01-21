@@ -82,10 +82,6 @@ angular.module('cards').config(['$stateProvider',
 	function($stateProvider) {
 		// Cards state routing
 		$stateProvider.
-		state('listCards', {
-			url: '/cards',
-			templateUrl: 'modules/cards/views/list-cards.client.view.html'
-		}).
 		state('listTraits', {
 			url: '/traits',
 			templateUrl: 'modules/cards/views/list-traits.client.view.html'
@@ -819,14 +815,16 @@ var cardsModule = angular.module('core');
 
 // Directive for managing card decks.
 cardsModule
-	.directive('cardDeck', ['$document', '$parse', '$rootScope', function($document, $parse, $rootScope){
+	.directive('cardDeck', ['$document', '$parse', '$rootScope', '$window', function($document, $parse, $rootScope, $window){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
 				
 				var pressed = false;
 				
-				var _windowHeight = 320, _windowScale = 15;
+				var _window = angular.element($window);
+				
+				var _windowHeight, _windowScale;
 				
 				var initialize = function(){
 					toggleListeners(true);
@@ -839,7 +837,7 @@ cardsModule
 					// add listeners
 					scope.$on('$destroy', onDestroy);
 					element.on('mouseleave', onMouseLeave);
-					$rootScope.$on('screenSize:onHeightChange', onHeightChange);
+					scope.$on('screenSize:onHeightChange', onHeightChange);
 					scope.$on('cardPanel:onPressCard', onPress);
 					scope.$on('cardPanel:onReleaseCard', onRelease);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
@@ -852,6 +850,7 @@ cardsModule
 				var onHeightChange = function(event, object){
 					_windowHeight = object.newHeight;
 					_windowScale = object.newScale;
+					
 					element.css({
 						'height': _windowHeight+'px'
 					});
@@ -915,10 +914,9 @@ cardsModule
 					_slotX, _slotY,
 					_startCol, _mouseCol, _cardCol,
 					_startRow, _mouseRow, _cardRow,
-					_moveTimer, _windowScale = 15,
-					_x_dim = 150, _y_dim = 210,
-					_x_tab = 30, _y_tab = 30,
-					_x_cover = 120, _y_cover = 180;
+					_moveTimer, _windowScale,
+					_x_dim, _y_dim, _x_tab, _y_tab,
+					_x_cover, _y_cover;
 				
 				var _stacked = false;
 				
@@ -945,7 +943,7 @@ cardsModule
 					// add listeners.
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.card, onCardChange);
-					$rootScope.$on('screenSize:onHeightChange', onHeightChange);
+					scope.$on('screenSize:onHeightChange', onHeightChange);
 					scope.$on('cardPanel:onPressCard', onPressCard);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
@@ -970,7 +968,7 @@ cardsModule
 				};
 				
 				var onHeightChange = function(event, object){
-					_windowScale = object.newScale ? object.newScale : 15;
+					_windowScale = object.newScale;
 					_x_dim = _windowScale * 10;
 					_y_dim = _windowScale * 14;
 					_x_tab = _windowScale * 2;
@@ -995,8 +993,6 @@ cardsModule
 						'left': (_card.x_coord * _windowScale) + 'px'
 					});
 				};
-				
-				
 				
 				// When the element is clicked start the drag behaviour
 				var onPress = function(event){
@@ -1457,15 +1453,20 @@ coreModule
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
+				
 				var _window = angular.element($window);
 				
-				var _windowHeight = 320;
+				var _windowHeight;
 				
-				var _windowScale = 15;
+				var _windowWidth;
+				
+				var _windowScale;
 				
 				var initialize = function() {
 					toggleListeners(true);
-					measureScreen();
+					setTimeout(function(){
+						onHeightChange();
+					}, 0);
 				};
 				
 				var toggleListeners = function (enable) {
@@ -1475,10 +1476,6 @@ coreModule
 					// add listeners
 					scope.$on('$destroy', onDestroy);
 					_window.on('resize', onHeightChange);
-					
-					setTimeout( function(){
-						onHeightChange();
-					}, 0);
 				};
 				
 				var onDestroy = function(enable){
@@ -1486,43 +1483,32 @@ coreModule
 				};
 				
 				var onHeightChange = function(){
-					measureScreen();
-				};
-				
-				var measureScreen = function(){
-					_windowHeight = $window.innerHeight;
-					console.log(_windowHeight);
+					
+					_windowHeight = _window.height();
+					
 					if(_windowHeight > 500){
 						_windowScale = 25;
-					} else if(_windowHeight >= 480){
-						_windowScale = 24;
-					} else if(_windowHeight >= 460){
-						_windowScale = 23;
-					} else if(_windowHeight >= 440){
-						_windowScale = 22;
-					} else if(_windowHeight >= 420){
-						_windowScale = 21;
-					} else if(_windowHeight >= 400){
-						_windowScale = 20;
-					} else if(_windowHeight >= 380){
-						_windowScale = 19;
-					} else if(_windowHeight >= 360){
-						_windowScale = 18;
-					} else if(_windowHeight >= 340){
-						_windowScale = 17;
-					} else if(_windowHeight >= 320){
-						_windowScale = 16;
-					} else {
+					} else if(_windowHeight < 320){
 						_windowScale = 15;
+					} else {
+						_windowScale = _windowHeight / 20;
 					}
+					
+					console.log(_windowHeight+','+_windowScale);
 					
 					$rootScope.$broadcast('screenSize:onHeightChange', {
 						newHeight: _windowHeight,
 						newScale: _windowScale
 					});
+					
+					
 				};
 				
-				initialize();
+				angular.element(document).ready(function () {
+					initialize();
+				});
+				
+		//		initialize();
 			}
 		};
 	}]);
@@ -2773,8 +2759,14 @@ angular.module('pcs').config(['$stateProvider',
 var pcsModule = angular.module('pcs');
 
 // Pcs Controller
-pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'CardDeck', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
-	function($scope, $location, $log, DataSRVC, CardDeck, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems){
+pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', '$rootScope', '$window', 'DataSRVC', 'CardDeck', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
+	function($scope, $location, $log, $rootScope, $window, DataSRVC, CardDeck, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems){
+		
+		var _window = angular.element($window);
+		
+		$scope.windowHeight = 0;
+		
+		$scope.windowScale = 0;
 		
 		$scope.dataSRVC = DataSRVC;
 		
@@ -2795,10 +2787,6 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		$scope.pcsAugments = PcsAugments;
 		
 		$scope.pcsItems = PcsItems;
-		
-		$scope.windowHeight = 500;
-		
-		$scope.windowScale = 25;
 		
 		$scope.status = {
 			dropdownOpen: false
@@ -2857,6 +2845,7 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'Car
 		var onHeightChange = function(event, object){
 			$scope.windowHeight = object.newHeight;
 			$scope.windowScale = object.newScale;
+			$scope.$digest();
 		};
 		
 		var updateStrPhy = function(event, object){
@@ -2923,7 +2912,7 @@ pcsModule
 			templateUrl: '../modules/pcs/views/dice-box.html',
 			link: function(scope, element, attrs) {
 				
-				var _topEdge, _leftEdge, _windowScale = 15, _height = 75, _width = 75;
+				var _topEdge, _leftEdge, _windowScale, _height, _width;
 				
 				var initialize = function(){
 					// prevent native drag
@@ -2944,7 +2933,7 @@ pcsModule
 				};
 				
 				var onHeightChange = function(event, object){
-					_windowScale = object.newScale ? object.newScale : 15;
+					_windowScale = object.newScale;
 					_height = _windowScale * 5.4;
 					_width = _windowScale * 5.4;
 					element.css({
@@ -2979,9 +2968,7 @@ pcsModule
 				
 				var _ability = $parse(attrs.ability) || null;
 				
-				var _windowScale = 15;
-				
-				var _width = 21;
+				var _windowScale, _width;
 				
 				var _pressEvents = 'touchstart mousedown';
 				
@@ -2996,7 +2983,7 @@ pcsModule
 					
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.ability, onAbilityChange);
-					$rootScope.$on('screenSize:onHeightChange', onHeightChange);
+					scope.$on('screenSize:onHeightChange', onHeightChange);
 					element.on(_pressEvents, onPress);
 				};
 				
@@ -3013,7 +3000,7 @@ pcsModule
 				
 				
 				var onHeightChange = function(event, object){
-					_windowScale = object.newScale ? object.newScale : 15;
+					_windowScale = object.newScale;
 					_width = _windowScale * 1.4;
 					element.css({
 						'width': _width+'px',

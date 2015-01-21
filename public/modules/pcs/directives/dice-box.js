@@ -10,7 +10,7 @@ pcsModule
 			templateUrl: '../modules/pcs/views/dice-box.html',
 			link: function(scope, element, attrs) {
 				
-				var _topEdge, _leftEdge, _windowScale = 15, _height = 75, _width = 75;
+				var _topEdge, _leftEdge, _windowScale, _height, _width;
 				
 				var initialize = function(){
 					// prevent native drag
@@ -31,7 +31,7 @@ pcsModule
 				};
 				
 				var onHeightChange = function(event, object){
-					_windowScale = object.newScale ? object.newScale : 15;
+					_windowScale = object.newScale;
 					_height = _windowScale * 5.4;
 					_width = _windowScale * 5.4;
 					element.css({
@@ -66,9 +66,7 @@ pcsModule
 				
 				var _ability = $parse(attrs.ability) || null;
 				
-				var _windowScale = 15;
-				
-				var _width = 21;
+				var _windowScale, _width;
 				
 				var _pressEvents = 'touchstart mousedown';
 				
@@ -83,7 +81,7 @@ pcsModule
 					
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.ability, onAbilityChange);
-					$rootScope.$on('screenSize:onHeightChange', onHeightChange);
+					scope.$on('screenSize:onHeightChange', onHeightChange);
 					element.on(_pressEvents, onPress);
 				};
 				
@@ -100,7 +98,7 @@ pcsModule
 				
 				
 				var onHeightChange = function(event, object){
-					_windowScale = object.newScale ? object.newScale : 15;
+					_windowScale = object.newScale;
 					_width = _windowScale * 1.4;
 					element.css({
 						'width': _width+'px',

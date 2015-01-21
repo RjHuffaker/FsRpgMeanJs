@@ -20,10 +20,9 @@ cardsModule
 					_slotX, _slotY,
 					_startCol, _mouseCol, _cardCol,
 					_startRow, _mouseRow, _cardRow,
-					_moveTimer, _windowScale = 15,
-					_x_dim = 150, _y_dim = 210,
-					_x_tab = 30, _y_tab = 30,
-					_x_cover = 120, _y_cover = 180;
+					_moveTimer, _windowScale,
+					_x_dim, _y_dim, _x_tab, _y_tab,
+					_x_cover, _y_cover;
 				
 				var _stacked = false;
 				
@@ -50,7 +49,7 @@ cardsModule
 					// add listeners.
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.card, onCardChange);
-					$rootScope.$on('screenSize:onHeightChange', onHeightChange);
+					scope.$on('screenSize:onHeightChange', onHeightChange);
 					scope.$on('cardPanel:onPressCard', onPressCard);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
@@ -75,7 +74,7 @@ cardsModule
 				};
 				
 				var onHeightChange = function(event, object){
-					_windowScale = object.newScale ? object.newScale : 15;
+					_windowScale = object.newScale;
 					_x_dim = _windowScale * 10;
 					_y_dim = _windowScale * 14;
 					_x_tab = _windowScale * 2;
@@ -100,8 +99,6 @@ cardsModule
 						'left': (_card.x_coord * _windowScale) + 'px'
 					});
 				};
-				
-				
 				
 				// When the element is clicked start the drag behaviour
 				var onPress = function(event){
