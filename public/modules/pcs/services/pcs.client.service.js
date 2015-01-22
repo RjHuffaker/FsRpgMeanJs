@@ -20,7 +20,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 			var _last = 0;
 			var _card = {};
 			for(var i = 0; i < this.pc.cards.length; i++){
-				if(this.pc.cards[i].x_index > (_card.x_index || 0)){
+				if(this.pc.cards[i].x_coord > (_card.x_coord || 0)){
 					_last = i;
 					_card = this.pc.cards[i];
 				}

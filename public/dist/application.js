@@ -815,16 +815,12 @@ var cardsModule = angular.module('core');
 
 // Directive for managing card decks.
 cardsModule
-	.directive('cardDeck', ['$document', '$parse', '$rootScope', '$window', function($document, $parse, $rootScope, $window){
+	.directive('cardDeck', ['$rootScope', 'CardDeck', function($rootScope, CardDeck){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
 				
 				var pressed = false;
-				
-				var _window = angular.element($window);
-				
-				var _windowHeight, _windowScale;
 				
 				var initialize = function(){
 					toggleListeners(true);
@@ -848,11 +844,8 @@ cardsModule
 				};
 				
 				var onHeightChange = function(event, object){
-					_windowHeight = object.newHeight;
-					_windowScale = object.newScale;
-					
 					element.css({
-						'height': _windowHeight+'px'
+						'height': CardDeck.windowHeight+'px'
 					});
 				};
 				
@@ -868,7 +861,7 @@ cardsModule
 					var deckOffset = element.offset();
 					var deckWidth = element[0].offsetWidth;
 					var deckLeftEdge = deckOffset.left;
-					var deckRightEdge = deckLeftEdge + deckWidth - _windowScale;
+					var deckRightEdge = deckLeftEdge + deckWidth - CardDeck.windowScale;
 					
 					if(object.mouseX <= deckLeftEdge){
 						scope.$emit('cardDeck:unstackLeft', {
@@ -898,7 +891,7 @@ var cardsModule = angular.module('core');
 
 // Directive for managing card decks.
 cardsModule
-	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', function($document, $parse, $rootScope, $window){
+	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'CardDeck', function($document, $parse, $rootScope, $window, CardDeck){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -914,7 +907,7 @@ cardsModule
 					_slotX, _slotY,
 					_startCol, _mouseCol, _cardCol,
 					_startRow, _mouseRow, _cardRow,
-					_moveTimer, _windowScale,
+					_moveTimer,
 					_x_dim, _y_dim, _x_tab, _y_tab,
 					_x_cover, _y_cover;
 				
@@ -934,6 +927,7 @@ cardsModule
 					// prevent native drag
 					element.attr('draggable', 'false');
 					toggleListeners(true);
+					setPosition();
 				};
 				
 				var toggleListeners = function(enable){
@@ -968,13 +962,12 @@ cardsModule
 				};
 				
 				var onHeightChange = function(event, object){
-					_windowScale = object.newScale;
-					_x_dim = _windowScale * 10;
-					_y_dim = _windowScale * 14;
-					_x_tab = _windowScale * 2;
-					_y_tab = _windowScale * 2;
-					_x_cover = _windowScale * 8;
-					_y_cover = _windowScale * 12;
+					_x_dim = CardDeck.windowScale * 10;
+					_y_dim = CardDeck.windowScale * 14;
+					_x_tab = CardDeck.windowScale * 2;
+					_y_tab = CardDeck.windowScale * 2;
+					_x_cover = CardDeck.windowScale * 8;
+					_y_cover = CardDeck.windowScale * 12;
 					
 					setPosition();
 				};
@@ -989,8 +982,8 @@ cardsModule
 					element.css({
 						'height': _y_dim+'px',
 						'width': _x_dim+'px',
-						'top': (_card.y_coord * _windowScale) + 'px',
-						'left': (_card.x_coord * _windowScale) + 'px'
+						'top': (_card.y_coord * CardDeck.windowScale) + 'px',
+						'left': (_card.x_coord * CardDeck.windowScale) + 'px'
 					});
 				};
 				
@@ -1042,8 +1035,8 @@ cardsModule
 				
 				var onPressCard = function(event, object){
 					
-					_startCol = _card.x_coord * _windowScale;
-					_startRow = _card.y_coord * _windowScale;
+					_startCol = _card.x_coord * CardDeck.windowScale;
+					_startRow = _card.y_coord * CardDeck.windowScale;
 					
 					var panel = object.panel;
 					var panel_x = panel.x_coord;
@@ -1055,9 +1048,11 @@ cardsModule
 					var slot_y = slot.y_coord;
 					
 					if(slot_y !== panel_y || slot_x !== panel_x){
-						if(slot_x !== panel_x){ 
+						if(slot_x !== panel_x){
 							element.addClass('card-moving');
 						} else if(slot_x !== panel_x && slot_y > panel_y && panel_y_overlap){
+							element.addClass('card-moving');
+						} else if(slot_x === panel_x && !panel_y_overlap){
 							element.addClass('card-moving');
 						}
 					}
@@ -1071,8 +1066,8 @@ cardsModule
 					_mouseX = (event.pageX || event.touches[0].pageX);
 					_mouseY = (event.pageY || event.touches[0].pageY);
 					
-					_mouseCol = _card.x_coord * _windowScale;
-					_mouseRow = _card.y_coord * _windowScale;
+					_mouseCol = _card.x_coord * CardDeck.windowScale;
+					_mouseRow = _card.y_coord * CardDeck.windowScale;
 					
 					_moveX = _mouseX - _startX;
 					_moveY = _mouseY - _startY;
@@ -1193,7 +1188,7 @@ cardsModule
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
 						panel: _card
 					});
-					if(_moveX <= _windowScale && _moveX >= -_windowScale && _moveY <= _windowScale && _moveY >= -_windowScale){
+					if(_moveX <= CardDeck.windowScale && _moveX >= -CardDeck.windowScale && _moveY <= CardDeck.windowScale && _moveY >= -CardDeck.windowScale){
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
 							panel: _card
 						});
@@ -1205,8 +1200,8 @@ cardsModule
 					element.addClass('card-moving');
 					setTimeout(function(){
 						element.css({
-							left: (_card.x_coord * _windowScale) + 'px',
-							top: (_card.y_coord * _windowScale) + 'px'
+							left: (_card.x_coord * CardDeck.windowScale) + 'px',
+							top: (_card.y_coord * CardDeck.windowScale) + 'px'
 						});
 					}, 0);
 					
@@ -1248,170 +1243,6 @@ cardsModule
 						edgeName = edgeNames[edges.indexOf(closestEdge)];
 						
 						return edgeName;
-					}
-				};
-				
-				initialize();
-				
-			}
-		};
-	}]);
-'use strict';
-
-var cardsModule = angular.module('core');
-
-// Directive for managing card decks.
-cardsModule
-	.directive('cardSlot', ['$document', '$parse', '$rootScope', function($document, $parse, $rootScope){
-		return {
-			restrict: 'A',
-			link: function(scope, element, attrs) {
-				var _offset, leftEdge, rightEdge,
-				topEdge, bottomEdge, windowScale,
-				x_dim, y_dim, x_tab, y_tab,
-				x_cover, y_cover;
-				
-				var _slot = $parse(attrs.card) || null;
-				
-				var _panel = {};
-				
-				var initialize = function () {
-					toggleListeners(true);
-					_offset = element.offset();
-				};
-				
-				Array.min = function( array ){
-					return Math.min.apply( Math, array );
-				};
-				
-				var toggleListeners = function (enable) {
-					
-					// remove listeners
-					if (!enable)return;
-					
-					// add listeners
-					scope.$on('$destroy', onDestroy);
-					scope.$watch(attrs.card, onCardChange);
-					scope.$on('screenSize:onHeightChange', onHeightChange);
-					scope.$on('cardPanel:onPressCard', onPressCard);
-					scope.$on('cardPanel:onMoveCard', onMoveCard);
-					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
-				};
-				
-				var onDestroy = function(enable){
-					toggleListeners(false);
-				};
-				
-				var onCardChange = function(newVal, oldVal){
-					_slot = newVal;
-				};
-				
-				var onHeightChange = function(event, object){
-					windowScale = object.newScale;
-					x_dim = windowScale * 10;
-					y_dim = windowScale * 14;
-					x_tab = windowScale * 2;
-					y_tab = windowScale * 2;
-					x_cover = windowScale * 8;
-					y_cover = windowScale * 12;
-				};
-				
-				var onPressCard = function(event, object){
-					_panel = object.panel;
-				};
-				
-				var onMoveCard = function(event, object){
-					var moveX = Math.abs(object.moveX);
-					var moveY = Math.abs(object.moveY);
-					var changeX = Math.abs(_panel.x_coord - _slot.x_coord);
-					
-					if(_slot.x_coord !== _panel.x_coord || _slot.y_coord !== _panel.y_coord){
-						if(crossingEdge(object.mouseX, object.mouseY) === '_top'){
-							console.log('crossing top');
-							if(changeX !== 0 && changeX <= 10){
-								scope.$emit('cardSlot:moveDiagonalUp', {
-									slot: _slot,
-									panel: _panel
-								});
-							} else if(changeX === 0 && !_panel.y_overlap){
-								scope.$emit('cardSlot:moveVertical', {
-									slot: _slot,
-									panel: _panel
-								});
-							} else {
-								scope.$emit('cardSlot:moveHorizontal', {
-									slot: _slot,
-									panel: _panel
-								});
-							}
-						} else if(crossingEdge(object.mouseX, object.mouseY) === '_bottom'){
-							console.log('crossing bottom');
-							if(changeX !== 0 && changeX <= 10){
-								scope.$emit('cardSlot:moveDiagonalDown', {
-									slot: _slot,
-									panel: _panel
-								});
-							} else if(changeX === 0 && !_panel.y_overlap){
-								scope.$emit('cardSlot:moveVertical', {
-									slot: _slot,
-									panel: _panel
-								});
-							} else {
-								scope.$emit('cardSlot:moveHorizontal', {
-									slot: _slot,
-									panel: _panel
-								});
-							}
-						} else if(crossingEdge(object.mouseX, object.mouseY) === '_left' || crossingEdge(object.mouseX, object.mouseY) === '_right'){
-							if(moveY * 2 > moveX){
-								if(object.moveY < 0){
-									scope.$emit('cardSlot:moveDiagonalUp', {
-										slot: _slot,
-										panel: _panel
-									});
-								} else if(object.moveY > 0){
-									scope.$emit('cardSlot:moveDiagonalDown', {
-										slot: _slot,
-										panel: _panel
-									});
-								}
-							} else {
-								scope.$emit('cardSlot:moveHorizontal', {
-									slot: _slot,
-									panel: _panel
-								});
-							}
-						}
-					}
-					scope.$digest();
-				};
-				
-				var onReleaseCard = function(event, object){
-					_panel = {};
-				};
-				
-				var crossingEdge = function(mouseX, mouseY){
-					_offset = element.offset();
-					leftEdge = _slot.x_overlap ? _offset.left + x_cover : _offset.left;
-					rightEdge = _offset.left + x_dim;
-					topEdge = _offset.top;
-					bottomEdge = _slot.y_overlap ? _offset.top + y_tab : _offset.top + y_dim;
-					
-					if(mouseX >= leftEdge && mouseX <= rightEdge && mouseY >= topEdge && mouseY <= bottomEdge){
-						var _left = mouseX - leftEdge;
-						var _right = rightEdge - mouseX;
-						var _top = mouseY - topEdge;
-						var _bottom = bottomEdge - mouseY;
-						
-						var edges = [_left, _right, _top, _bottom],
-						closestEdge = Math.min.apply(Math.min, edges),
-						edgeNames = ['_left', '_right', '_top', '_bottom'],
-						edgeName = edgeNames[edges.indexOf(closestEdge)];
-						
-						return edgeName;
-						
-					} else {
-						return false;
 					}
 				};
 				
@@ -1520,6 +1351,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 	function(Cards, HomeDemo, Pcs, $rootScope){
 		var service = {};
 		
+		service.windowHeight = 0;
+		service.windowScale = 0;
+		
 		var x_dim = 10;
 		var y_dim = 14;
 		var x_tab = 2;
@@ -1610,6 +1444,8 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var toggleListeners = function(enable){
 			if(!enable) return;
 			$rootScope.$on('$destroy', onDestroy);
+			$rootScope.$on('screenSize:onHeightChange', onHeightChange);
+			
 			$rootScope.$on('cardPanel:onPressCard', onPressCard);
 			$rootScope.$on('cardPanel:onReleaseCard', onReleaseCard);
 			$rootScope.$on('cardPanel:toggleOverlap', toggleOverlap);
@@ -1625,6 +1461,11 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		
 		var onDestroy = function(){
 			toggleListeners(false);
+		};
+		
+		var onHeightChange = function(event, object){
+			service.windowHeight = object.newHeight;
+			service.windowScale = object.newScale;
 		};
 		
 		// Set move booleans
@@ -1662,9 +1503,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			cardMoved = false;
 			cardMoving = false;
 			
-			setTimeout(function() {
-				_deck[panel_index].dragging = false;
-			}, 0);
+			_deck[panel_index].dragging = false;
 			
 			$rootScope.$digest();
 		};
@@ -2829,10 +2668,7 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', '$rootScope', '$
 			if(!enable) return;
 			$scope.$on('$destroy', onDestroy);
 			$scope.$on('screenSize:onHeightChange', onHeightChange);
-			$scope.$on('pcsCard1:updateStrPhy', updateStrPhy);
-			$scope.$on('pcsCard1:updateFleDex', updateFleDex);
-			$scope.$on('pcsCard1:updateAcuInt', updateAcuInt);
-			$scope.$on('pcsCard1:updateWisCha', updateWisCha);
+			$scope.$on('pcsCard1:updateAbility', updateAbility);
 			$scope.$watch('pcsCard2.EXP', watchEXP);
 			$scope.$watch('pcs.pc.experience', watchExperience);
 			$scope.$watch('pcs.pc.level', watchLevel);
@@ -2848,23 +2684,27 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', '$rootScope', '$
 			$scope.$digest();
 		};
 		
-		var updateStrPhy = function(event, object){
-			PcsCard1.factorBlock(object._str, object._phy);
-			PcsCard2.factorHealth();
-			PcsCard2.factorStamina();
-			PcsCard2.factorCarryingCapacity();
-		};
-		
-		var updateFleDex = function(event, object){
-			PcsCard1.factorDodge(object._fle, object._dex);
-		};
-		
-		var updateAcuInt = function(event, object){
-			PcsCard1.factorAlertness(object._acu, object._int);
-		};
-		
-		var updateWisCha = function(event, object){
-			PcsCard1.factorTenacity(object._wis, object._cha);
+		var updateAbility = function(event, object){
+			var abilityPair = object.abilityPair;
+			var ability1 = object.ability1;
+			var ability2 = object.ability2;
+			switch(abilityPair){
+				case 1:
+					PcsCard1.factorBlock(ability1, ability2);
+					PcsCard2.factorHealth();
+					PcsCard2.factorStamina();
+					PcsCard2.factorCarryingCapacity();
+					break;
+				case 2:
+					PcsCard1.factorDodge(ability1, ability2);
+					break;
+				case 3:
+					PcsCard1.factorAlertness(ability1, ability2);
+					break;
+				case 4:
+					PcsCard1.factorTenacity(ability1, ability2);
+					break;
+			}
 		};
 		
 		//Watch for change in EXP input
@@ -2906,13 +2746,13 @@ var pcsModule = angular.module('pcs');
 
 // Directive for managing ability dice
 pcsModule
-	.directive('diceBox', function() {
+	.directive('diceBox', ['CardDeck', function(CardDeck) {
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/pcs/views/dice-box.html',
 			link: function(scope, element, attrs) {
 				
-				var _topEdge, _leftEdge, _windowScale, _height, _width;
+				var _topEdge, _leftEdge, _height, _width;
 				
 				var initialize = function(){
 					// prevent native drag
@@ -2924,26 +2764,17 @@ pcsModule
 					if (!enable)return;
 					
 					scope.$on('$destroy', onDestroy);
-					scope.$on('screenSize:onHeightChange', onHeightChange);
-					scope.$on('ability:onPress', chooseAbility);
+					scope.$on('ability:onPress', setPosition);
+					scope.$on('ability:setPosition', setPosition);
 				};
 				
 				var onDestroy = function(enable){
 					toggleListeners(false);
 				};
 				
-				var onHeightChange = function(event, object){
-					_windowScale = object.newScale;
-					_height = _windowScale * 5.4;
-					_width = _windowScale * 5.4;
-					element.css({
-						'height': _height+'px',
-						'width': _width+'px'
-					});
-				};
-				
-				var chooseAbility = function(event, object){
-					console.log('choose ability:');
+				var setPosition = function(event, object){
+					_height = CardDeck.windowScale * 5.4;
+					_width = CardDeck.windowScale * 5.4;
 					_topEdge = object.topEdge;
 					_leftEdge = object.leftEdge;
 					element.css({
@@ -2958,17 +2789,15 @@ pcsModule
 				
 			}
 		};
-	})
-	.directive('ability', ['$parse', '$rootScope', function($parse, $rootScope){
+	}])
+	.directive('ability', ['$parse', '$rootScope', 'CardDeck', 'PcsCard1', function($parse, $rootScope, CardDeck, PcsCard1){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
 				
-				scope.diceImage = null;
-				
 				var _ability = $parse(attrs.ability) || null;
 				
-				var _windowScale, _width;
+				var _width;
 				
 				var _pressEvents = 'touchstart mousedown';
 				
@@ -2976,6 +2805,7 @@ pcsModule
 					// prevent native drag
 					element.attr('draggable', 'false');
 					toggleListeners(true);
+					onHeightChange();
 				};
 				
 				var toggleListeners = function(enable){
@@ -2998,25 +2828,34 @@ pcsModule
 					});
 				};
 				
+				var getPosition = function(){
+					var offset = element.offset();
+					var topEdge = _ability.order < 4 ? offset.top + _width : offset.top - CardDeck.windowScale * 5.4;
+					var leftEdge = offset.left;
+					return {
+						ability: _ability,
+						topEdge: topEdge,
+						leftEdge: leftEdge
+					};
+				};
+				
 				
 				var onHeightChange = function(event, object){
-					_windowScale = object.newScale;
-					_width = _windowScale * 1.4;
+					_width = CardDeck.windowScale * 1.4;
 					element.css({
 						'width': _width+'px',
 					});
+					if(_ability.order === PcsCard1.chosenAbility.order){
+						$rootScope.$broadcast('ability:setPosition', getPosition());
+					}
 				};
 				
 				var onPress = function(){
 					var offset = element.offset();
-					var topEdge = _ability.order < 4 ? offset.top + _width : offset.top - _windowScale * 5.4;
+					var topEdge = _ability.order < 4 ? offset.top + _width : offset.top - CardDeck.windowScale * 5.4;
 					var leftEdge = offset.left;
 					
-					$rootScope.$broadcast('ability:onPress', {
-						ability: _ability,
-						topEdge: topEdge,
-						leftEdge: leftEdge
-					});
+					$rootScope.$broadcast('ability:onPress', getPosition());
 					
 				};
 				
@@ -3115,6 +2954,10 @@ pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
 		service.chooseDie = function(dice){
 			service.diceBoxShown = false;
 			
+			var _abilityPair;
+			var _ability1;
+			var _ability2;
+			
 			this.chosenDie = Pcs.pc.dicepool[dice];
 			
 			this.previousDie = this.chosenAbility.dice;
@@ -3130,33 +2973,36 @@ pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
 			switch(this.chosenAbility.order){
 				case 0:
 				case 1:
-					$rootScope.$broadcast('pcsCard1:updateStrPhy', {
-						_str: Pcs.pc.abilities[0],
-						_phy: Pcs.pc.abilities[1]
-					});
+					_abilityPair = 1;
+					_ability1 = Pcs.pc.abilities[0];
+					_ability2 =  Pcs.pc.abilities[1];
 					break;
 				case 2:
 				case 3:
-					$rootScope.$broadcast('pcsCard1:updateFleDex', {
-						_fle: Pcs.pc.abilities[2],
-						_dex: Pcs.pc.abilities[3]
-					});
+					_abilityPair = 2;
+					_ability1 = Pcs.pc.abilities[2];
+					_ability2 =  Pcs.pc.abilities[3];
 					break;
 				case 4:
 				case 5:
-					$rootScope.$broadcast('pcsCard1:updateAcuInt', {
-						_acu: Pcs.pc.abilities[4],
-						_int: Pcs.pc.abilities[5]
-					});
+					_abilityPair = 3;
+					_ability1 = Pcs.pc.abilities[4];
+					_ability2 =  Pcs.pc.abilities[5];
 					break;
 				case 6:
 				case 7:
-					$rootScope.$broadcast('pcsCard1:updateWisCha', {
-						_wis: Pcs.pc.abilities[6],
-						_cha: Pcs.pc.abilities[7]
-					});
+					_abilityPair = 4;
+					_ability1 = Pcs.pc.abilities[6];
+					_ability2 =  Pcs.pc.abilities[7];
 					break;
 			}
+			
+			$rootScope.$broadcast('pcsCard1:updateAbility', {
+				abilityPair: _abilityPair,
+				ability1: _ability1,
+				ability2: _ability2
+			});
+			
 		};
 		
 		service.factorBlock = function(_str, _phy){
@@ -3407,7 +3253,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 			var _last = 0;
 			var _card = {};
 			for(var i = 0; i < this.pc.cards.length; i++){
-				if(this.pc.cards[i].x_index > (_card.x_index || 0)){
+				if(this.pc.cards[i].x_coord > (_card.x_coord || 0)){
 					_last = i;
 					_card = this.pc.cards[i];
 				}

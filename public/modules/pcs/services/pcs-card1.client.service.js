@@ -32,6 +32,10 @@ pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
 		service.chooseDie = function(dice){
 			service.diceBoxShown = false;
 			
+			var _abilityPair;
+			var _ability1;
+			var _ability2;
+			
 			this.chosenDie = Pcs.pc.dicepool[dice];
 			
 			this.previousDie = this.chosenAbility.dice;
@@ -47,33 +51,36 @@ pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
 			switch(this.chosenAbility.order){
 				case 0:
 				case 1:
-					$rootScope.$broadcast('pcsCard1:updateStrPhy', {
-						_str: Pcs.pc.abilities[0],
-						_phy: Pcs.pc.abilities[1]
-					});
+					_abilityPair = 1;
+					_ability1 = Pcs.pc.abilities[0];
+					_ability2 =  Pcs.pc.abilities[1];
 					break;
 				case 2:
 				case 3:
-					$rootScope.$broadcast('pcsCard1:updateFleDex', {
-						_fle: Pcs.pc.abilities[2],
-						_dex: Pcs.pc.abilities[3]
-					});
+					_abilityPair = 2;
+					_ability1 = Pcs.pc.abilities[2];
+					_ability2 =  Pcs.pc.abilities[3];
 					break;
 				case 4:
 				case 5:
-					$rootScope.$broadcast('pcsCard1:updateAcuInt', {
-						_acu: Pcs.pc.abilities[4],
-						_int: Pcs.pc.abilities[5]
-					});
+					_abilityPair = 3;
+					_ability1 = Pcs.pc.abilities[4];
+					_ability2 =  Pcs.pc.abilities[5];
 					break;
 				case 6:
 				case 7:
-					$rootScope.$broadcast('pcsCard1:updateWisCha', {
-						_wis: Pcs.pc.abilities[6],
-						_cha: Pcs.pc.abilities[7]
-					});
+					_abilityPair = 4;
+					_ability1 = Pcs.pc.abilities[6];
+					_ability2 =  Pcs.pc.abilities[7];
 					break;
 			}
+			
+			$rootScope.$broadcast('pcsCard1:updateAbility', {
+				abilityPair: _abilityPair,
+				ability1: _ability1,
+				ability2: _ability2
+			});
+			
 		};
 		
 		service.factorBlock = function(_str, _phy){

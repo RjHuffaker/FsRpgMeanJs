@@ -4,7 +4,7 @@ var cardsModule = angular.module('core');
 
 // Directive for managing card decks.
 cardsModule
-	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', function($document, $parse, $rootScope, $window){
+	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'CardDeck', function($document, $parse, $rootScope, $window, CardDeck){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -20,7 +20,7 @@ cardsModule
 					_slotX, _slotY,
 					_startCol, _mouseCol, _cardCol,
 					_startRow, _mouseRow, _cardRow,
-					_moveTimer, _windowScale,
+					_moveTimer,
 					_x_dim, _y_dim, _x_tab, _y_tab,
 					_x_cover, _y_cover;
 				
@@ -40,6 +40,7 @@ cardsModule
 					// prevent native drag
 					element.attr('draggable', 'false');
 					toggleListeners(true);
+					setPosition();
 				};
 				
 				var toggleListeners = function(enable){
@@ -74,13 +75,12 @@ cardsModule
 				};
 				
 				var onHeightChange = function(event, object){
-					_windowScale = object.newScale;
-					_x_dim = _windowScale * 10;
-					_y_dim = _windowScale * 14;
-					_x_tab = _windowScale * 2;
-					_y_tab = _windowScale * 2;
-					_x_cover = _windowScale * 8;
-					_y_cover = _windowScale * 12;
+					_x_dim = CardDeck.windowScale * 10;
+					_y_dim = CardDeck.windowScale * 14;
+					_x_tab = CardDeck.windowScale * 2;
+					_y_tab = CardDeck.windowScale * 2;
+					_x_cover = CardDeck.windowScale * 8;
+					_y_cover = CardDeck.windowScale * 12;
 					
 					setPosition();
 				};
@@ -95,8 +95,8 @@ cardsModule
 					element.css({
 						'height': _y_dim+'px',
 						'width': _x_dim+'px',
-						'top': (_card.y_coord * _windowScale) + 'px',
-						'left': (_card.x_coord * _windowScale) + 'px'
+						'top': (_card.y_coord * CardDeck.windowScale) + 'px',
+						'left': (_card.x_coord * CardDeck.windowScale) + 'px'
 					});
 				};
 				
@@ -148,8 +148,8 @@ cardsModule
 				
 				var onPressCard = function(event, object){
 					
-					_startCol = _card.x_coord * _windowScale;
-					_startRow = _card.y_coord * _windowScale;
+					_startCol = _card.x_coord * CardDeck.windowScale;
+					_startRow = _card.y_coord * CardDeck.windowScale;
 					
 					var panel = object.panel;
 					var panel_x = panel.x_coord;
@@ -161,9 +161,11 @@ cardsModule
 					var slot_y = slot.y_coord;
 					
 					if(slot_y !== panel_y || slot_x !== panel_x){
-						if(slot_x !== panel_x){ 
+						if(slot_x !== panel_x){
 							element.addClass('card-moving');
 						} else if(slot_x !== panel_x && slot_y > panel_y && panel_y_overlap){
+							element.addClass('card-moving');
+						} else if(slot_x === panel_x && !panel_y_overlap){
 							element.addClass('card-moving');
 						}
 					}
@@ -177,8 +179,8 @@ cardsModule
 					_mouseX = (event.pageX || event.touches[0].pageX);
 					_mouseY = (event.pageY || event.touches[0].pageY);
 					
-					_mouseCol = _card.x_coord * _windowScale;
-					_mouseRow = _card.y_coord * _windowScale;
+					_mouseCol = _card.x_coord * CardDeck.windowScale;
+					_mouseRow = _card.y_coord * CardDeck.windowScale;
 					
 					_moveX = _mouseX - _startX;
 					_moveY = _mouseY - _startY;
@@ -299,7 +301,7 @@ cardsModule
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
 						panel: _card
 					});
-					if(_moveX <= _windowScale && _moveX >= -_windowScale && _moveY <= _windowScale && _moveY >= -_windowScale){
+					if(_moveX <= CardDeck.windowScale && _moveX >= -CardDeck.windowScale && _moveY <= CardDeck.windowScale && _moveY >= -CardDeck.windowScale){
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
 							panel: _card
 						});
@@ -311,8 +313,8 @@ cardsModule
 					element.addClass('card-moving');
 					setTimeout(function(){
 						element.css({
-							left: (_card.x_coord * _windowScale) + 'px',
-							top: (_card.y_coord * _windowScale) + 'px'
+							left: (_card.x_coord * CardDeck.windowScale) + 'px',
+							top: (_card.y_coord * CardDeck.windowScale) + 'px'
 						});
 					}, 0);
 					

@@ -6,6 +6,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 	function(Cards, HomeDemo, Pcs, $rootScope){
 		var service = {};
 		
+		service.windowHeight = 0;
+		service.windowScale = 0;
+		
 		var x_dim = 10;
 		var y_dim = 14;
 		var x_tab = 2;
@@ -96,6 +99,8 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var toggleListeners = function(enable){
 			if(!enable) return;
 			$rootScope.$on('$destroy', onDestroy);
+			$rootScope.$on('screenSize:onHeightChange', onHeightChange);
+			
 			$rootScope.$on('cardPanel:onPressCard', onPressCard);
 			$rootScope.$on('cardPanel:onReleaseCard', onReleaseCard);
 			$rootScope.$on('cardPanel:toggleOverlap', toggleOverlap);
@@ -111,6 +116,11 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		
 		var onDestroy = function(){
 			toggleListeners(false);
+		};
+		
+		var onHeightChange = function(event, object){
+			service.windowHeight = object.newHeight;
+			service.windowScale = object.newScale;
 		};
 		
 		// Set move booleans
@@ -148,9 +158,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			cardMoved = false;
 			cardMoving = false;
 			
-			setTimeout(function() {
-				_deck[panel_index].dragging = false;
-			}, 0);
+			_deck[panel_index].dragging = false;
 			
 			$rootScope.$digest();
 		};

@@ -73,10 +73,7 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', '$rootScope', '$
 			if(!enable) return;
 			$scope.$on('$destroy', onDestroy);
 			$scope.$on('screenSize:onHeightChange', onHeightChange);
-			$scope.$on('pcsCard1:updateStrPhy', updateStrPhy);
-			$scope.$on('pcsCard1:updateFleDex', updateFleDex);
-			$scope.$on('pcsCard1:updateAcuInt', updateAcuInt);
-			$scope.$on('pcsCard1:updateWisCha', updateWisCha);
+			$scope.$on('pcsCard1:updateAbility', updateAbility);
 			$scope.$watch('pcsCard2.EXP', watchEXP);
 			$scope.$watch('pcs.pc.experience', watchExperience);
 			$scope.$watch('pcs.pc.level', watchLevel);
@@ -92,23 +89,27 @@ pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', '$rootScope', '$
 			$scope.$digest();
 		};
 		
-		var updateStrPhy = function(event, object){
-			PcsCard1.factorBlock(object._str, object._phy);
-			PcsCard2.factorHealth();
-			PcsCard2.factorStamina();
-			PcsCard2.factorCarryingCapacity();
-		};
-		
-		var updateFleDex = function(event, object){
-			PcsCard1.factorDodge(object._fle, object._dex);
-		};
-		
-		var updateAcuInt = function(event, object){
-			PcsCard1.factorAlertness(object._acu, object._int);
-		};
-		
-		var updateWisCha = function(event, object){
-			PcsCard1.factorTenacity(object._wis, object._cha);
+		var updateAbility = function(event, object){
+			var abilityPair = object.abilityPair;
+			var ability1 = object.ability1;
+			var ability2 = object.ability2;
+			switch(abilityPair){
+				case 1:
+					PcsCard1.factorBlock(ability1, ability2);
+					PcsCard2.factorHealth();
+					PcsCard2.factorStamina();
+					PcsCard2.factorCarryingCapacity();
+					break;
+				case 2:
+					PcsCard1.factorDodge(ability1, ability2);
+					break;
+				case 3:
+					PcsCard1.factorAlertness(ability1, ability2);
+					break;
+				case 4:
+					PcsCard1.factorTenacity(ability1, ability2);
+					break;
+			}
 		};
 		
 		//Watch for change in EXP input
