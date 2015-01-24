@@ -194,8 +194,6 @@ cardsModule
 					_mouseCol = convertEm(_card.x_coord);
 					_mouseRow = convertEm(_card.y_coord);
 					
-					console.log(_mouseCol+','+_mouseRow);
-					
 					_moveX = _mouseX - _startX;
 					_moveY = _mouseY - _startY;
 					

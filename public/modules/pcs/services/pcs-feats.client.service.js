@@ -21,7 +21,7 @@ cardsModule.factory('PcsFeats', ['Pcs', 'CardDeck',
 			}
 			for(var ic = 0; ic < Pcs.pc.cards.length; ic++){
 				if(Pcs.pc.cards[ic].level > Pcs.pc.level){
-					CardDeck.removeCard(ic);
+					CardDeck.removeCard( Pcs.pc.cards[ic] );
 				}
 			}
 		};

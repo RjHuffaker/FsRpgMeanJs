@@ -625,14 +625,14 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		};
 		
 		var removeCard = function(panel){
-			// NOT FUNCTIONAL
+			// FUNCTIONAL ?
 			var _deckType = panel.deckType;
 			var _deck = getCardList(_deckType);
-			var panel_x = _deck[panel].x_coord;
-			var panel_y = _deck[panel].y_coord;
+			var panel_x = panel.x_coord;
+			var panel_y = panel.y_coord;
 			var panel_index = getCardIndex(_deckType, panel_x, panel_y);
-			var panel_width = _deck[panel].x_overlap ? x_tab : x_dim;
-			var panel_height = _deck[panel].y_overlap ? y_tab : y_dim;
+			var panel_width = panel.x_overlap ? x_tab : x_dim;
+			var panel_height = panel.y_overlap ? y_tab : y_dim;
 			var lowest_y_coord = _deck[getLowestIndex(_deckType, panel_x)].y_coord;
 			
 			_deck.splice(panel_index, 1);
