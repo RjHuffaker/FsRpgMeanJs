@@ -31,10 +31,10 @@
 	<strong ng-if="$parent.card.locked" class="pull-left">
 		{{cardAction.name}}
 	</strong>
-	<input ng-if="!$parent.card.locked" stop-event
-		type="text" class="card-input pull-left"
-		style="display: inline-block; width: 10em; font-weight: bold;"
-		ng-model="cardAction.name">
+	<span><input ng-if="!$parent.card.locked" stop-event
+		type="text" class="card-input title-block-input pull-left"
+		style="font-weight: bold;"
+		ng-model="cardAction.name"></span>
 		
 	<div ng-if="$parent.card.locked && cardAction.usage !== 'Defense'" class="pull-right">
 		<span class="pull-right">

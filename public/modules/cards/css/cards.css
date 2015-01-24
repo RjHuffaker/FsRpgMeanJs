@@ -176,6 +176,11 @@ div.dropdown-menu {
 	background-origin: none;
 }
 
+.title-block-input {
+	overflow: hidden;
+	width: 100%;
+}
+
 [card-pc-1],
 [card-pc-2],
 [card-pc-3] {
