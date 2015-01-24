@@ -114,8 +114,6 @@ cardsModule.controller('CardsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 
 		
 		$scope.windowHeight = 0;
 		
-		$scope.windowScale = 0;
-		
 		var initialize = function(){
 			toggleListeners(true);
 		};
@@ -132,7 +130,6 @@ cardsModule.controller('CardsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 
 		
 		var onHeightChange = function(event, object){
 			$scope.windowHeight = object.newHeight;
-			$scope.windowScale = object.newScale;
 			$scope.$digest();
 		};
 		
@@ -490,7 +487,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 		service.lockCard = function(card){
 			card.deckType = 'card';
 			card.locked = true;
-			card.x_coord = (card.cardNumber - 1) * 10;
+			card.x_coord = (card.cardNumber - 1) * 15;
 			card.y_coord = 0;
 			card.dragging = false;
 			card.stacked = false;
@@ -499,7 +496,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 		service.unlockCard = function(card){
 			card.deckType = 'card';
 			card.locked = false;
-			card.x_coord = (card.cardNumber - 1) * 10;
+			card.x_coord = (card.cardNumber - 1) * 15;
 			card.y_coord = 0;
 			card.dragging = false;
 			card.stacked = false;
@@ -637,7 +634,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						for(var i in service.cardList){
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_coord += 10;
+								service.cardList[i].x_coord += 15;
 								service.cardList[i].$update();
 							}
 						}
@@ -658,7 +655,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						for(var i in service.cardList){
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_coord += 10;
+								service.cardList[i].x_coord += 15;
 								service.cardList[i].$update();
 							}
 						}
@@ -679,7 +676,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						for(var i in service.cardList){
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_coord += 10;
+								service.cardList[i].x_coord += 15;
 								service.cardList[i].$update();
 							}
 						}
@@ -700,7 +697,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						for(var i in service.cardList){
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_coord += 10;
+								service.cardList[i].x_coord += 15;
 								service.cardList[i].$update();
 							}
 						}
@@ -725,7 +722,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						console.log(this.cardList[i].cardNumber +' / '+ card.cardNumber);
 						this.cardList[i].cardNumber -= 1;
 						this.cardList[i].x_index -= 1;
-						this.cardList[i].x_coord -= 10;
+						this.cardList[i].x_coord -= 15;
 					}
 				}
 			}
@@ -815,7 +812,7 @@ var cardsModule = angular.module('core');
 
 // Directive for managing card decks.
 cardsModule
-	.directive('cardDeck', ['$rootScope', 'CardDeck', function($rootScope, CardDeck){
+	.directive('cardDeck', ['$rootScope', '$window', 'CardDeck', function($rootScope, $window, CardDeck){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -844,9 +841,21 @@ cardsModule
 				};
 				
 				var onHeightChange = function(event, object){
+					var windowHeight = object.newHeight;
 					element.css({
-						'height': CardDeck.windowHeight+'px'
+						'width': windowHeight+'px'
+						
 					});
+				};
+				
+				var getElementFontSize = function(){
+					return parseFloat(
+						$window.getComputedStyle(element[0], null).getPropertyValue('font-size')
+					);
+				};
+				
+				var convertEm = function(value) {
+					return value * getElementFontSize();
 				};
 				
 				var onPress = function(){
@@ -861,7 +870,7 @@ cardsModule
 					var deckOffset = element.offset();
 					var deckWidth = element[0].offsetWidth;
 					var deckLeftEdge = deckOffset.left;
-					var deckRightEdge = deckLeftEdge + deckWidth - CardDeck.windowScale;
+					var deckRightEdge = deckLeftEdge + deckWidth - convertEm(3);
 					
 					if(object.mouseX <= deckLeftEdge){
 						scope.$emit('cardDeck:unstackLeft', {
@@ -908,8 +917,9 @@ cardsModule
 					_startCol, _mouseCol, _cardCol,
 					_startRow, _mouseRow, _cardRow,
 					_moveTimer,
-					_x_dim, _y_dim, _x_tab, _y_tab,
-					_x_cover, _y_cover;
+					_x_dim = 15, _y_dim = 21,
+					_x_tab = 3, _y_tab = 3,
+					_x_cover = 12, _y_cover = 18;
 				
 				var _stacked = false;
 				
@@ -961,13 +971,24 @@ cardsModule
 					setPosition();
 				};
 				
+				var getElementFontSize = function() {
+					return parseFloat(
+						$window.getComputedStyle(element[0], null).getPropertyValue('font-size')
+					);
+				};
+				
+				var convertEm = function(value) {
+					return value * getElementFontSize();
+				};
+				
+				
 				var onHeightChange = function(event, object){
-					_x_dim = CardDeck.windowScale * 10;
-					_y_dim = CardDeck.windowScale * 14;
-					_x_tab = CardDeck.windowScale * 2;
-					_y_tab = CardDeck.windowScale * 2;
-					_x_cover = CardDeck.windowScale * 8;
-					_y_cover = CardDeck.windowScale * 12;
+					_x_dim = convertEm(15);
+					_y_dim = convertEm(21);
+					_x_tab = convertEm(3);
+					_y_tab = convertEm(3);
+					_x_cover = convertEm(12);
+					_y_cover = convertEm(18);
 					
 					setPosition();
 				};
@@ -982,8 +1003,8 @@ cardsModule
 					element.css({
 						'height': _y_dim+'px',
 						'width': _x_dim+'px',
-						'top': (_card.y_coord * CardDeck.windowScale) + 'px',
-						'left': (_card.x_coord * CardDeck.windowScale) + 'px'
+						'top': _card.y_coord + 'em',
+						'left': _card.x_coord + 'em'
 					});
 				};
 				
@@ -1035,8 +1056,8 @@ cardsModule
 				
 				var onPressCard = function(event, object){
 					
-					_startCol = _card.x_coord * CardDeck.windowScale;
-					_startRow = _card.y_coord * CardDeck.windowScale;
+					_startCol = convertEm(_card.x_coord);
+					_startRow = convertEm(_card.y_coord);
 					
 					var panel = object.panel;
 					var panel_x = panel.x_coord;
@@ -1066,8 +1087,10 @@ cardsModule
 					_mouseX = (event.pageX || event.touches[0].pageX);
 					_mouseY = (event.pageY || event.touches[0].pageY);
 					
-					_mouseCol = _card.x_coord * CardDeck.windowScale;
-					_mouseRow = _card.y_coord * CardDeck.windowScale;
+					_mouseCol = convertEm(_card.x_coord);
+					_mouseRow = convertEm(_card.y_coord);
+					
+					console.log(_mouseCol+','+_mouseRow);
 					
 					_moveX = _mouseX - _startX;
 					_moveY = _mouseY - _startY;
@@ -1188,7 +1211,7 @@ cardsModule
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
 						panel: _card
 					});
-					if(_moveX <= CardDeck.windowScale && _moveX >= -CardDeck.windowScale && _moveY <= CardDeck.windowScale && _moveY >= -CardDeck.windowScale){
+					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
 							panel: _card
 						});
@@ -1200,8 +1223,8 @@ cardsModule
 					element.addClass('card-moving');
 					setTimeout(function(){
 						element.css({
-							left: (_card.x_coord * CardDeck.windowScale) + 'px',
-							top: (_card.y_coord * CardDeck.windowScale) + 'px'
+							left: _card.x_coord + 'em',
+							top: _card.y_coord + 'em'
 						});
 					}, 0);
 					
@@ -1289,10 +1312,6 @@ coreModule
 				
 				var _windowHeight;
 				
-				var _windowWidth;
-				
-				var _windowScale;
-				
 				var initialize = function() {
 					toggleListeners(true);
 					setTimeout(function(){
@@ -1314,32 +1333,17 @@ coreModule
 				};
 				
 				var onHeightChange = function(){
-					
 					_windowHeight = _window.height();
-					
-					if(_windowHeight > 500){
-						_windowScale = 25;
-					} else if(_windowHeight < 320){
-						_windowScale = 15;
-					} else {
-						_windowScale = _windowHeight / 20;
-					}
-					
-					console.log(_windowHeight+','+_windowScale);
-					
 					$rootScope.$broadcast('screenSize:onHeightChange', {
-						newHeight: _windowHeight,
-						newScale: _windowScale
+						newHeight: _windowHeight
 					});
-					
-					
 				};
 				
 				angular.element(document).ready(function () {
 					initialize();
 				});
 				
-		//		initialize();
+				initialize();
 			}
 		};
 	}]);
@@ -1351,15 +1355,12 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 	function(Cards, HomeDemo, Pcs, $rootScope){
 		var service = {};
 		
-		service.windowHeight = 0;
-		service.windowScale = 0;
-		
-		var x_dim = 10;
-		var y_dim = 14;
-		var x_tab = 2;
-		var y_tab = 2;
-		var x_cover = 8;
-		var y_cover = 12;
+		var x_dim = 15;
+		var y_dim = 21;
+		var x_tab = 3;
+		var y_tab = 3;
+		var x_cover = 12;
+		var y_cover = 18;
 		var _moveSpeed = 500;
 		var cardMoved = false;
 		var cardMoving = false;
@@ -1444,7 +1445,6 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var toggleListeners = function(enable){
 			if(!enable) return;
 			$rootScope.$on('$destroy', onDestroy);
-			$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 			
 			$rootScope.$on('cardPanel:onPressCard', onPressCard);
 			$rootScope.$on('cardPanel:onReleaseCard', onReleaseCard);
@@ -1461,11 +1461,6 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		
 		var onDestroy = function(){
 			toggleListeners(false);
-		};
-		
-		var onHeightChange = function(event, object){
-			service.windowHeight = object.newHeight;
-			service.windowScale = object.newScale;
 		};
 		
 		// Set move booleans
@@ -2215,7 +2210,7 @@ coreModule.factory('HomeDemo', ['$rootScope',
 			name: 'A Feat Card',
 			cardType: 'feat',
 			deckType: 'home',
-			x_coord: 10,
+			x_coord: 15,
 			y_coord: 0,
 			x_overlap: false,
 			y_overlap: false,
@@ -2227,7 +2222,7 @@ coreModule.factory('HomeDemo', ['$rootScope',
 			name: 'An Augment Card',
 			cardType: 'augment',
 			deckType: 'home',
-			x_coord: 20,
+			x_coord: 30,
 			y_coord: 0,
 			x_overlap: false,
 			y_overlap: false,
@@ -2243,7 +2238,7 @@ coreModule.factory('HomeDemo', ['$rootScope',
 			name: 'An Item Card',
 			cardType: 'item',
 			deckType: 'home',
-			x_coord: 30,
+			x_coord: 45,
 			y_coord: 0,
 			x_overlap: false,
 			y_overlap: false,
@@ -2255,7 +2250,7 @@ coreModule.factory('HomeDemo', ['$rootScope',
 			name: 'Another Feat Card',
 			cardType: 'feat',
 			deckType: 'home',
-			x_coord: 40,
+			x_coord: 60,
 			y_coord: 0,
 			x_overlap: false,
 			y_overlap: false,
@@ -2267,7 +2262,7 @@ coreModule.factory('HomeDemo', ['$rootScope',
 			name: 'Another Item Card',
 			cardType: 'item',
 			deckType: 'home',
-			x_coord: 50,
+			x_coord: 75,
 			y_coord: 0,
 			x_overlap: false,
 			y_overlap: true,
@@ -2283,8 +2278,8 @@ coreModule.factory('HomeDemo', ['$rootScope',
 			name: 'Yet Another Feat Card',
 			cardType: 'feat',
 			deckType: 'home',
-			x_coord: 50,
-			y_coord: 2,
+			x_coord: 75,
+			y_coord: 3,
 			x_overlap: false,
 			y_overlap: false,
 			dragging: false,
@@ -2746,13 +2741,11 @@ var pcsModule = angular.module('pcs');
 
 // Directive for managing ability dice
 pcsModule
-	.directive('diceBox', ['CardDeck', function(CardDeck) {
+	.directive('diceBox', ['$window', 'CardDeck', function($window, CardDeck) {
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/pcs/views/dice-box.html',
 			link: function(scope, element, attrs) {
-				
-				var _topEdge, _leftEdge, _height, _width;
 				
 				var initialize = function(){
 					// prevent native drag
@@ -2772,25 +2765,37 @@ pcsModule
 					toggleListeners(false);
 				};
 				
+				var getElementFontSize = function() {
+					return parseFloat(
+						$window.getComputedStyle(element[0], null).getPropertyValue('font-size')
+					);
+				};
+				
+				var convertEm = function(value) {
+					return value * getElementFontSize();
+				};
+				
 				var setPosition = function(event, object){
-					_height = CardDeck.windowScale * 5.4;
-					_width = CardDeck.windowScale * 5.4;
-					_topEdge = object.topEdge;
-					_leftEdge = object.leftEdge;
+					var _caret = object.caret;
+					var _topEdge = object.topEdge;
+					var _leftEdge = object.leftEdge;
+					element.removeClass('top-caret');
+					element.removeClass('bottom-caret');
+					element.addClass(_caret);
 					element.css({
-						'height': _height+'px',
-						'width': _width+'px',
 						'top': _topEdge+'px',
 						'left': _leftEdge+'px'
 					});
 				};
+				
+				
 				
 				initialize();
 				
 			}
 		};
 	}])
-	.directive('ability', ['$parse', '$rootScope', 'CardDeck', 'PcsCard1', function($parse, $rootScope, CardDeck, PcsCard1){
+	.directive('ability', ['$parse', '$rootScope', '$window', 'CardDeck', 'PcsCard1', function($parse, $rootScope, $window, CardDeck, PcsCard1){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -2821,42 +2826,42 @@ pcsModule
 					toggleListeners(false);
 				};
 				
+				var getElementFontSize = function() {
+					return parseFloat(
+						$window.getComputedStyle(element[0], null).getPropertyValue('font-size')
+					);
+				};
+				
+				var convertEm = function(value) {
+					return value * getElementFontSize();
+				};
+				
 				var onAbilityChange = function(newVal, oldVal){
 					_ability = newVal;
-					element.css({
-						'width': _width+'px',
-					});
 				};
 				
 				var getPosition = function(){
 					var offset = element.offset();
-					var topEdge = _ability.order < 4 ? offset.top + _width : offset.top - CardDeck.windowScale * 5.4;
-					var leftEdge = offset.left;
+					var caret = _ability.order < 4 ? 'top-caret' : 'bottom-caret';
+					var topEdge = _ability.order < 4 ? offset.top + convertEm(3) : offset.top - convertEm(9);
+					var leftEdge = offset.left - convertEm(0.5);
 					return {
-						ability: _ability,
+						caret: caret,
 						topEdge: topEdge,
-						leftEdge: leftEdge
+						leftEdge: leftEdge,
+						ability: _ability
 					};
 				};
 				
 				
 				var onHeightChange = function(event, object){
-					_width = CardDeck.windowScale * 1.4;
-					element.css({
-						'width': _width+'px',
-					});
 					if(_ability.order === PcsCard1.chosenAbility.order){
 						$rootScope.$broadcast('ability:setPosition', getPosition());
 					}
 				};
 				
 				var onPress = function(){
-					var offset = element.offset();
-					var topEdge = _ability.order < 4 ? offset.top + _width : offset.top - CardDeck.windowScale * 5.4;
-					var leftEdge = offset.left;
-					
 					$rootScope.$broadcast('ability:onPress', getPosition());
-					
 				};
 				
 				initialize();
@@ -2906,7 +2911,7 @@ cardsModule.factory('PcsAugments', ['Pcs', 'CardDeck',
 			var newAugment = {
 				name: 'Level '+level+' Augment',
 				cardType: 'augment',
-				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 10,
+				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -3148,7 +3153,7 @@ cardsModule.factory('PcsFeats', ['Pcs', 'CardDeck',
 			var newFeat = {
 				name: 'Level '+level+' Feat',
 				cardType: 'feat',
-				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 10,
+				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -3217,7 +3222,7 @@ cardsModule.factory('PcsTraits', ['Pcs', 'CardDeck',
 			var newTrait = {
 				name: 'Level '+level+' Trait',
 				cardType: 'trait',
-				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 10,
+				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -3263,9 +3268,9 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 		
 		service.deckWidth = function(){
 			if(this.pc.cards){
-				return this.pc.cards[this.lastCard()].x_coord + 10;
+				return this.pc.cards[this.lastCard()].x_coord + 15;
 			} else {
-				return 40;
+				return 30;
 			}
 		};
 		
@@ -3342,7 +3347,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 					{
 						cardType: 'pc2',
 						deckType: 'pc',
-						x_coord: 10,
+						x_coord: 15,
 						y_coord: 0,
 						x_overlap: false,
 						y_overlap: false,
@@ -3353,7 +3358,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 					{
 						cardType: 'pc3',
 						deckType: 'pc',
-						x_coord: 20,
+						x_coord: 30,
 						y_coord: 0,
 						x_overlap: false,
 						y_overlap: false,
@@ -3365,7 +3370,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						name: 'Level 0 Trait',
 						cardType: 'trait',
 						deckType: 'pc',
-						x_coord: 30,
+						x_coord: 45,
 						y_coord: 0,
 						x_overlap: false,
 						y_overlap: false,

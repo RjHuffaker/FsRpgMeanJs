@@ -1,14 +1,14 @@
 <div class="dropdown pull-left" dropdown stop-event>
 	<a id="cardDropdown" ng-click="dropdown" aria-expanded="true"
 		class="dropdown-toggle" dropdown-toggle>
-		<span class="text-argos text-22"
-			ng-class="{'text-18': card.cardType === 'augment',
+		<span class="text-argos text-18"
+			ng-class="{'text-14': card.cardType === 'augment',
 				'text-narrow': card.cardType === 'augment'}">
 			{{card.cardType}}&nbsp;
 		</span>
 	</a>
 	<div class="dropdown-menu" aria-labelledby="cardDropdown"
-		ng-style="{'width': ($parent.$parent.windowScale * 10)+'px'}">
+		ng-style="{'width': '15em'}">
 		<ul class="col-xs-6 card-menu-list">
 			<li role="presentation" class="dropdown-header" stop-click>File Options</li>
 			<li ng-click="cards.addCard(card.cardNumber)"><label>

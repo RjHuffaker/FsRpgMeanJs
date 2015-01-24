@@ -21,8 +21,9 @@ cardsModule
 					_startCol, _mouseCol, _cardCol,
 					_startRow, _mouseRow, _cardRow,
 					_moveTimer,
-					_x_dim, _y_dim, _x_tab, _y_tab,
-					_x_cover, _y_cover;
+					_x_dim = 15, _y_dim = 21,
+					_x_tab = 3, _y_tab = 3,
+					_x_cover = 12, _y_cover = 18;
 				
 				var _stacked = false;
 				
@@ -74,13 +75,24 @@ cardsModule
 					setPosition();
 				};
 				
+				var getElementFontSize = function() {
+					return parseFloat(
+						$window.getComputedStyle(element[0], null).getPropertyValue('font-size')
+					);
+				};
+				
+				var convertEm = function(value) {
+					return value * getElementFontSize();
+				};
+				
+				
 				var onHeightChange = function(event, object){
-					_x_dim = CardDeck.windowScale * 10;
-					_y_dim = CardDeck.windowScale * 14;
-					_x_tab = CardDeck.windowScale * 2;
-					_y_tab = CardDeck.windowScale * 2;
-					_x_cover = CardDeck.windowScale * 8;
-					_y_cover = CardDeck.windowScale * 12;
+					_x_dim = convertEm(15);
+					_y_dim = convertEm(21);
+					_x_tab = convertEm(3);
+					_y_tab = convertEm(3);
+					_x_cover = convertEm(12);
+					_y_cover = convertEm(18);
 					
 					setPosition();
 				};
@@ -95,8 +107,8 @@ cardsModule
 					element.css({
 						'height': _y_dim+'px',
 						'width': _x_dim+'px',
-						'top': (_card.y_coord * CardDeck.windowScale) + 'px',
-						'left': (_card.x_coord * CardDeck.windowScale) + 'px'
+						'top': _card.y_coord + 'em',
+						'left': _card.x_coord + 'em'
 					});
 				};
 				
@@ -148,8 +160,8 @@ cardsModule
 				
 				var onPressCard = function(event, object){
 					
-					_startCol = _card.x_coord * CardDeck.windowScale;
-					_startRow = _card.y_coord * CardDeck.windowScale;
+					_startCol = convertEm(_card.x_coord);
+					_startRow = convertEm(_card.y_coord);
 					
 					var panel = object.panel;
 					var panel_x = panel.x_coord;
@@ -179,8 +191,10 @@ cardsModule
 					_mouseX = (event.pageX || event.touches[0].pageX);
 					_mouseY = (event.pageY || event.touches[0].pageY);
 					
-					_mouseCol = _card.x_coord * CardDeck.windowScale;
-					_mouseRow = _card.y_coord * CardDeck.windowScale;
+					_mouseCol = convertEm(_card.x_coord);
+					_mouseRow = convertEm(_card.y_coord);
+					
+					console.log(_mouseCol+','+_mouseRow);
 					
 					_moveX = _mouseX - _startX;
 					_moveY = _mouseY - _startY;
@@ -301,7 +315,7 @@ cardsModule
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
 						panel: _card
 					});
-					if(_moveX <= CardDeck.windowScale && _moveX >= -CardDeck.windowScale && _moveY <= CardDeck.windowScale && _moveY >= -CardDeck.windowScale){
+					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
 							panel: _card
 						});
@@ -313,8 +327,8 @@ cardsModule
 					element.addClass('card-moving');
 					setTimeout(function(){
 						element.css({
-							left: (_card.x_coord * CardDeck.windowScale) + 'px',
-							top: (_card.y_coord * CardDeck.windowScale) + 'px'
+							left: _card.x_coord + 'em',
+							top: _card.y_coord + 'em'
 						});
 					}, 0);
 					

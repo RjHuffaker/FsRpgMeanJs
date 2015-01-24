@@ -1,6 +1,6 @@
 <h5 class="card-header">
-	<div class="text-12" 
-		ng-class="{'text-11': card.cardType === 'augment'}">
+	<div ng-class="{'text-9': card.cardType !== 'augment',
+			'text-8': card.cardType === 'augment'}">
 		<input ng-if="!card.locked" type="text" 
 			style="font-weight: bold; margin-top: -1px;"
 			class="card-input text-bold"
@@ -10,20 +10,22 @@
 		</strong>
 	</div>
 	<hr class="black-line">
-	<div ng-if="card.cardType !== 'item'" class="title-block">
-		<span class="text-11" ng-if="card.locked">
+	<div ng-if="card.cardType !== 'item'"
+		ng-class="{'text-8': card.cardType !== 'augment',
+			'text-7': card.cardType === 'augment'}">
+		<span ng-if="card.locked">
 			{{card.keyword}}
 		</span>
-		<span class="text-11" ng-if="card.locked && !card.keyword">
+		<span ng-if="card.locked && !card.keyword">
 			[Keyword]
 		</span>
 		<div ng-if="!card.locked" class="dropdown" dropdown>
 			<a id="cardDropdown" 
 				ng-click="dropdown" aria-expanded="true" class="dropdown-toggle" dropdown-toggle>
-				<span class="text-11 text-capitalize">
+				<span class="text-8 text-capitalize">
 					{{card.keyword}}
 				</span>
-				<span class="text-11" ng-if="!card.keyword">
+				<span class="text-8" ng-if="!card.keyword">
 					[Keyword]
 				</span>
 			</a>
@@ -50,7 +52,7 @@
 		</span>
 	</div>
 	
-	<div ng-if="card.cardType === 'item'" class="title-block text-11">
+	<div ng-if="card.cardType === 'item'" class="title-block text-8">
 		<div class="title-block" ng-if="card.itemSlot === 'One-handed'
 				|| card.itemSlot === 'Two-handed'
 				|| card.itemSlot === 'One-handed or Paired'

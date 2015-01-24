@@ -6,15 +6,12 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 	function(Cards, HomeDemo, Pcs, $rootScope){
 		var service = {};
 		
-		service.windowHeight = 0;
-		service.windowScale = 0;
-		
-		var x_dim = 10;
-		var y_dim = 14;
-		var x_tab = 2;
-		var y_tab = 2;
-		var x_cover = 8;
-		var y_cover = 12;
+		var x_dim = 15;
+		var y_dim = 21;
+		var x_tab = 3;
+		var y_tab = 3;
+		var x_cover = 12;
+		var y_cover = 18;
 		var _moveSpeed = 500;
 		var cardMoved = false;
 		var cardMoving = false;
@@ -99,7 +96,6 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var toggleListeners = function(enable){
 			if(!enable) return;
 			$rootScope.$on('$destroy', onDestroy);
-			$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 			
 			$rootScope.$on('cardPanel:onPressCard', onPressCard);
 			$rootScope.$on('cardPanel:onReleaseCard', onReleaseCard);
@@ -116,11 +112,6 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		
 		var onDestroy = function(){
 			toggleListeners(false);
-		};
-		
-		var onHeightChange = function(event, object){
-			service.windowHeight = object.newHeight;
-			service.windowScale = object.newScale;
 		};
 		
 		// Set move booleans

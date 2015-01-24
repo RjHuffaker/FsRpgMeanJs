@@ -30,9 +30,9 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 		
 		service.deckWidth = function(){
 			if(this.pc.cards){
-				return this.pc.cards[this.lastCard()].x_coord + 10;
+				return this.pc.cards[this.lastCard()].x_coord + 15;
 			} else {
-				return 40;
+				return 30;
 			}
 		};
 		
@@ -109,7 +109,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 					{
 						cardType: 'pc2',
 						deckType: 'pc',
-						x_coord: 10,
+						x_coord: 15,
 						y_coord: 0,
 						x_overlap: false,
 						y_overlap: false,
@@ -120,7 +120,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 					{
 						cardType: 'pc3',
 						deckType: 'pc',
-						x_coord: 20,
+						x_coord: 30,
 						y_coord: 0,
 						x_overlap: false,
 						y_overlap: false,
@@ -132,7 +132,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 						name: 'Level 0 Trait',
 						cardType: 'trait',
 						deckType: 'pc',
-						x_coord: 30,
+						x_coord: 45,
 						y_coord: 0,
 						x_overlap: false,
 						y_overlap: false,

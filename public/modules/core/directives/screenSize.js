@@ -13,10 +13,6 @@ coreModule
 				
 				var _windowHeight;
 				
-				var _windowWidth;
-				
-				var _windowScale;
-				
 				var initialize = function() {
 					toggleListeners(true);
 					setTimeout(function(){
@@ -38,32 +34,17 @@ coreModule
 				};
 				
 				var onHeightChange = function(){
-					
 					_windowHeight = _window.height();
-					
-					if(_windowHeight > 500){
-						_windowScale = 25;
-					} else if(_windowHeight < 320){
-						_windowScale = 15;
-					} else {
-						_windowScale = _windowHeight / 20;
-					}
-					
-					console.log(_windowHeight+','+_windowScale);
-					
 					$rootScope.$broadcast('screenSize:onHeightChange', {
-						newHeight: _windowHeight,
-						newScale: _windowScale
+						newHeight: _windowHeight
 					});
-					
-					
 				};
 				
 				angular.element(document).ready(function () {
 					initialize();
 				});
 				
-		//		initialize();
+				initialize();
 			}
 		};
 	}]);

@@ -29,6 +29,7 @@
 
 [card-deck] {
 	white-space: nowrap;
+	margin-left: 3em;
 }
 
 [card-deck] > ul{
@@ -37,6 +38,7 @@
 
 [card-panel] {
 	padding: 1px;
+	margin-top: 3em;
 	cursor: move;
 	cursor: -webkit-grab;
 	cursor: -moz-grab;

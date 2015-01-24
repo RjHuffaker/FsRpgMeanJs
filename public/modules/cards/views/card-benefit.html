@@ -1,4 +1,4 @@
-<div ng-if="card.benefit.show" style="margin: 6px 0 6px 0; white-space: normal;">
+<div ng-if="card.benefit.show" style="margin: .25em 0 .25em 0; white-space: normal;">
 	<div ng-if="card.locked">
 		<strong>Benefit: </strong>{{card.benefit.content}}
 	</div>
@@ -11,16 +11,16 @@
 		</textarea>
 	</div>
 	<br />
-	<div ng-if="card.benefit.criticalSuccess.show" style="margin: 6px 12px 6px 12px; white-space: normal;">
+	<div ng-if="card.benefit.criticalSuccess.show" style="margin: .25em .5em .25em .5em; white-space: normal;">
 		<div ng-if="card.locked">
 			<strong>Critical Success: </strong>{{card.benefit.criticalSuccess.content}}
 		</div>
 		<div ng-if="!card.locked">
-			<label style="position: absolute; left: 25px;" for="criticalSuccess">Critical Success: </label>
+			<label style="position: absolute; left: 1em;" for="criticalSuccess">Critical Success: </label>
 			<textarea elastic-textarea stop-event ng-change="resize()"
 				ng-model="card.benefit.criticalSuccess.content"
 				id="criticalSuccess" class="fill-width card-input" rows="1"
-				style="width: 200; text-indent: 8.35em;" >
+				style="width: 12em; text-indent: 8.35em;" >
 			</textarea>
 			<br />
 		</div>

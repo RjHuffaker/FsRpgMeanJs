@@ -1,17 +1,12 @@
 <section data-ng-controller="CardsCtrl"
-	data-ng-init="cards.browseCards(3)">
-	<div class="container-fluid deck-panel"
-		ng-style="{'height': (windowHeight - 50)+'px'}">
-		<div card-deck ng-mouseleave=""
-			ng-style="{'height': (windowHeight - 50)+'px',
-				'margin-left': (windowScale * 2)+'px',
-				'width': (windowScale * cardDeck.getDeckWidth('home'))+'px'}">
+	data-ng-init="cards.browseCards(3)" screen-size>
+	<div class="container-fluid deck-panel" ng-style="{'height': (windowHeight - 50)+'px'}">
+		<div card-deck ng-mouseleave="true">
 			<ul>
-				<li card-panel card-layout card="card" ng-repeat="card in cards.cardList"
+				<li card-panel card-layout ng-cloak card="card" ng-repeat="card in cards.cardList"
 					ng-class="{'stacked': card.stacked, 'dragging': card.dragging,
 						'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap}"
-					ng-style="{'z-index': 4998 - card.x_coord + card.y_coord/2,
-						'margin-top': ($parent.windowScale * 2)+'px'}"
+					ng-style="{'z-index': 4998 - card.x_coord + card.y_coord}"
 					ng-mousemove="true" ng-click="true">
 				</li>
 			</ul>

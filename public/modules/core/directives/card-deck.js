@@ -4,7 +4,7 @@ var cardsModule = angular.module('core');
 
 // Directive for managing card decks.
 cardsModule
-	.directive('cardDeck', ['$rootScope', 'CardDeck', function($rootScope, CardDeck){
+	.directive('cardDeck', ['$rootScope', '$window', 'CardDeck', function($rootScope, $window, CardDeck){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -33,9 +33,21 @@ cardsModule
 				};
 				
 				var onHeightChange = function(event, object){
+					var windowHeight = object.newHeight;
 					element.css({
-						'height': CardDeck.windowHeight+'px'
+						'width': windowHeight+'px'
+						
 					});
+				};
+				
+				var getElementFontSize = function(){
+					return parseFloat(
+						$window.getComputedStyle(element[0], null).getPropertyValue('font-size')
+					);
+				};
+				
+				var convertEm = function(value) {
+					return value * getElementFontSize();
 				};
 				
 				var onPress = function(){
@@ -50,7 +62,7 @@ cardsModule
 					var deckOffset = element.offset();
 					var deckWidth = element[0].offsetWidth;
 					var deckLeftEdge = deckOffset.left;
-					var deckRightEdge = deckLeftEdge + deckWidth - CardDeck.windowScale;
+					var deckRightEdge = deckLeftEdge + deckWidth - convertEm(3);
 					
 					if(object.mouseX <= deckLeftEdge){
 						scope.$emit('cardDeck:unstackLeft', {

@@ -45,7 +45,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 		service.lockCard = function(card){
 			card.deckType = 'card';
 			card.locked = true;
-			card.x_coord = (card.cardNumber - 1) * 10;
+			card.x_coord = (card.cardNumber - 1) * 15;
 			card.y_coord = 0;
 			card.dragging = false;
 			card.stacked = false;
@@ -54,7 +54,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 		service.unlockCard = function(card){
 			card.deckType = 'card';
 			card.locked = false;
-			card.x_coord = (card.cardNumber - 1) * 10;
+			card.x_coord = (card.cardNumber - 1) * 15;
 			card.y_coord = 0;
 			card.dragging = false;
 			card.stacked = false;
@@ -192,7 +192,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						for(var i in service.cardList){
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_coord += 10;
+								service.cardList[i].x_coord += 15;
 								service.cardList[i].$update();
 							}
 						}
@@ -213,7 +213,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						for(var i in service.cardList){
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_coord += 10;
+								service.cardList[i].x_coord += 15;
 								service.cardList[i].$update();
 							}
 						}
@@ -234,7 +234,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						for(var i in service.cardList){
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_coord += 10;
+								service.cardList[i].x_coord += 15;
 								service.cardList[i].$update();
 							}
 						}
@@ -255,7 +255,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						for(var i in service.cardList){
 							if(service.cardList[i].cardNumber >= index){
 								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_coord += 10;
+								service.cardList[i].x_coord += 15;
 								service.cardList[i].$update();
 							}
 						}
@@ -280,7 +280,7 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						console.log(this.cardList[i].cardNumber +' / '+ card.cardNumber);
 						this.cardList[i].cardNumber -= 1;
 						this.cardList[i].x_index -= 1;
-						this.cardList[i].x_coord -= 10;
+						this.cardList[i].x_coord -= 15;
 					}
 				}
 			}

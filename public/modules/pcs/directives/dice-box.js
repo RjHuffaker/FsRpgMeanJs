@@ -4,13 +4,11 @@ var pcsModule = angular.module('pcs');
 
 // Directive for managing ability dice
 pcsModule
-	.directive('diceBox', ['CardDeck', function(CardDeck) {
+	.directive('diceBox', ['$window', 'CardDeck', function($window, CardDeck) {
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/pcs/views/dice-box.html',
 			link: function(scope, element, attrs) {
-				
-				var _topEdge, _leftEdge, _height, _width;
 				
 				var initialize = function(){
 					// prevent native drag
@@ -30,25 +28,37 @@ pcsModule
 					toggleListeners(false);
 				};
 				
+				var getElementFontSize = function() {
+					return parseFloat(
+						$window.getComputedStyle(element[0], null).getPropertyValue('font-size')
+					);
+				};
+				
+				var convertEm = function(value) {
+					return value * getElementFontSize();
+				};
+				
 				var setPosition = function(event, object){
-					_height = CardDeck.windowScale * 5.4;
-					_width = CardDeck.windowScale * 5.4;
-					_topEdge = object.topEdge;
-					_leftEdge = object.leftEdge;
+					var _caret = object.caret;
+					var _topEdge = object.topEdge;
+					var _leftEdge = object.leftEdge;
+					element.removeClass('top-caret');
+					element.removeClass('bottom-caret');
+					element.addClass(_caret);
 					element.css({
-						'height': _height+'px',
-						'width': _width+'px',
 						'top': _topEdge+'px',
 						'left': _leftEdge+'px'
 					});
 				};
+				
+				
 				
 				initialize();
 				
 			}
 		};
 	}])
-	.directive('ability', ['$parse', '$rootScope', 'CardDeck', 'PcsCard1', function($parse, $rootScope, CardDeck, PcsCard1){
+	.directive('ability', ['$parse', '$rootScope', '$window', 'CardDeck', 'PcsCard1', function($parse, $rootScope, $window, CardDeck, PcsCard1){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -79,42 +89,42 @@ pcsModule
 					toggleListeners(false);
 				};
 				
+				var getElementFontSize = function() {
+					return parseFloat(
+						$window.getComputedStyle(element[0], null).getPropertyValue('font-size')
+					);
+				};
+				
+				var convertEm = function(value) {
+					return value * getElementFontSize();
+				};
+				
 				var onAbilityChange = function(newVal, oldVal){
 					_ability = newVal;
-					element.css({
-						'width': _width+'px',
-					});
 				};
 				
 				var getPosition = function(){
 					var offset = element.offset();
-					var topEdge = _ability.order < 4 ? offset.top + _width : offset.top - CardDeck.windowScale * 5.4;
-					var leftEdge = offset.left;
+					var caret = _ability.order < 4 ? 'top-caret' : 'bottom-caret';
+					var topEdge = _ability.order < 4 ? offset.top + convertEm(3) : offset.top - convertEm(9);
+					var leftEdge = offset.left - convertEm(0.5);
 					return {
-						ability: _ability,
+						caret: caret,
 						topEdge: topEdge,
-						leftEdge: leftEdge
+						leftEdge: leftEdge,
+						ability: _ability
 					};
 				};
 				
 				
 				var onHeightChange = function(event, object){
-					_width = CardDeck.windowScale * 1.4;
-					element.css({
-						'width': _width+'px',
-					});
 					if(_ability.order === PcsCard1.chosenAbility.order){
 						$rootScope.$broadcast('ability:setPosition', getPosition());
 					}
 				};
 				
 				var onPress = function(){
-					var offset = element.offset();
-					var topEdge = _ability.order < 4 ? offset.top + _width : offset.top - CardDeck.windowScale * 5.4;
-					var leftEdge = offset.left;
-					
 					$rootScope.$broadcast('ability:onPress', getPosition());
-					
 				};
 				
 				initialize();

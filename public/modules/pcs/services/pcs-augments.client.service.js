@@ -41,7 +41,7 @@ cardsModule.factory('PcsAugments', ['Pcs', 'CardDeck',
 			var newAugment = {
 				name: 'Level '+level+' Augment',
 				cardType: 'augment',
-				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 10,
+				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,

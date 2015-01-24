@@ -12,8 +12,6 @@ cardsModule.controller('CardsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 
 		
 		$scope.windowHeight = 0;
 		
-		$scope.windowScale = 0;
-		
 		var initialize = function(){
 			toggleListeners(true);
 		};
@@ -30,7 +28,6 @@ cardsModule.controller('CardsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 
 		
 		var onHeightChange = function(event, object){
 			$scope.windowHeight = object.newHeight;
-			$scope.windowScale = object.newScale;
 			$scope.$digest();
 		};
 		

@@ -97,14 +97,14 @@ a.dropdown-toggle:hover {
 	position: absolute;
 	top: -8px;
 	left: -6px;
-	font-size: 1.6em;
+	font-size: 1.2em;
 	cursor: pointer;
 }
 
 .card-icon-left {
 	position: absolute;
 	left: -6px;
-	font-size: 1.6em;
+	font-size: 1.2em;
 	cursor: pointer;
 }
 
@@ -112,7 +112,7 @@ a.dropdown-toggle:hover {
 	position: absolute;
 	top: 342px;
 	left: 238px;
-	font-size: 1.6em;
+	font-size: 1.2em;
 	cursor: pointer;
 }
 
