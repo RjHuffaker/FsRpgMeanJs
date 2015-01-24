@@ -33,24 +33,24 @@
 	</strong>
 	<input ng-if="!$parent.card.locked" stop-event
 		type="text" class="card-input pull-left"
-		style="display: inline-block; width: 160px; font-weight: bold;"
+		style="display: inline-block; width: 10em; font-weight: bold;"
 		ng-model="cardAction.name">
 		
-	<div ng-if="$parent.card.locked && cardAction.usage !== 'Defense'" class="pull-right" style="width: 64px;">
+	<div ng-if="$parent.card.locked && cardAction.usage !== 'Defense'" class="pull-right">
 		<span class="pull-right">
 			{{cardAction.targetType}} {{cardAction.targetDetail}}
 			<span ng-if="!cardAction.targetType && !cardAction.targetDetail && cardAction.usage !== 'Defense'">[Target]</span>
 		</span>
 	</div>
 	<div ng-if="!$parent.card.locked && cardAction.usage !== 'Defense'"
-		class="dropdown pull-right" dropdown style="width: 64px;">
+		class="dropdown pull-right" dropdown>
 		<a id="cardDropdown" class="dropdown-toggle pull-right" dropdown-toggle
 			ng-if="cardAction.usage !== 'Defense'"
 			ng-click="dropdown" aria-expanded="true">
 			{{cardAction.targetType}} {{cardAction.targetDetail}}
 			<span ng-if="!cardAction.targetType && !cardAction.targetDetail && cardAction.usage !== 'Defense'">[Detail]</span>
 		</a>
-		<div class="dropdown-menu" style="width: 242px;" aria-labelledby="cardDropdown" stop-click>
+		<div class="dropdown-menu" style="width: 14em;" aria-labelledby="cardDropdown" stop-click>
 			<ul class="col-xs-6 card-menu-list">
 				<li role="presentation" class="dropdown-header">Target Type</li>
 				<li ng-repeat="targetType in $parent.$parent.dataSRVC.targetTypes"><label>
@@ -88,7 +88,7 @@
 			</ul>
 		</div>
 	</div>
-	<div ng-if="cardAction.usage === 'Defense'" class="title-block pull-right" style="width: 64px;">
+	<div ng-if="cardAction.usage === 'Defense'" class="title-block pull-right" style="width: 4em;">
 		<span ng-if="!cardAction.defense.defenseType">
 			[Type]
 		</span>
