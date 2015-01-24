@@ -31,7 +31,7 @@
 	<strong ng-if="$parent.card.locked" class="pull-left">
 		{{cardAction.name}}
 	</strong>
-	<span><input ng-if="!$parent.card.locked" stop-event
+	<span class="pull-left"><input ng-if="!$parent.card.locked" stop-event
 		type="text" class="card-input title-block-input pull-left"
 		style="font-weight: bold;"
 		ng-model="cardAction.name"></span>
