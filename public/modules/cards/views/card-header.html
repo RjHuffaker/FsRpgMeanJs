@@ -1,10 +1,10 @@
 <h5 class="card-header">
 	<div ng-class="{'text-9': card.cardType !== 'augment',
 			'text-8': card.cardType === 'augment'}">
-		<input ng-if="!card.locked" type="text" 
+		<span><input ng-if="!card.locked" type="text" 
 			style="font-weight: bold; margin-top: -1px;"
 			class="card-input text-bold"
-			ng-model="card.name" stop-event>
+			ng-model="card.name" stop-event><\span>
 		<strong ng-if="card.locked">
 			{{card.name}}
 		</strong>
