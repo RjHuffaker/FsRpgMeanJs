@@ -167,6 +167,7 @@ div.dropdown-menu {
 
 .card-input {
 	font: inherit;
+width: 4em;
 	padding: 0;
 	margin-bottom: -.25em;
 	border: none;
