@@ -34,11 +34,11 @@
 }
 
 [card-panel].card-moving {
-	-webkit-transition: .5s ease-in-out all !important;
-	-moz-transition: .5s ease-in-out all !important;
-	-o-transition: .5s ease-in-out all !important;
-	-ms-transition: .5s ease-in-out all !important;
-	transition: .5s ease-in-out all !important;
+	-webkit-transition: .75s ease-in-out all !important;
+	-moz-transition: .75s ease-in-out all !important;
+	-o-transition: .75s ease-in-out all !important;
+	-ms-transition: .75s ease-in-out all !important;
+	transition: .75s ease-in-out all !important;
 }
 
 [card-panel].dragging {

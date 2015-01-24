@@ -12,7 +12,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var y_tab = 3;
 		var x_cover = 12;
 		var y_cover = 18;
-		var _moveSpeed = 500;
+		var _moveSpeed = 800;
 		var cardMoved = false;
 		var cardMoving = false;
 		var moveTimer;
