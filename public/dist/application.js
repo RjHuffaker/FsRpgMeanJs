@@ -1090,8 +1090,6 @@ cardsModule
 					_mouseCol = convertEm(_card.x_coord);
 					_mouseRow = convertEm(_card.y_coord);
 					
-					console.log(_mouseCol+','+_mouseRow);
-					
 					_moveX = _mouseX - _startX;
 					_moveY = _mouseY - _startY;
 					
@@ -1361,7 +1359,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var y_tab = 3;
 		var x_cover = 12;
 		var y_cover = 18;
-		var _moveSpeed = 500;
+		var _moveSpeed = 800;
 		var cardMoved = false;
 		var cardMoving = false;
 		var moveTimer;
@@ -1372,7 +1370,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			if(deckType === 'pc'){
 				return Pcs.pc.cards;
 			} else if(deckType === 'card'){
-				return Cards.getCardList;
+				return Cards.cardList;
 			} else if(deckType === 'home'){
 				return HomeDemo.cards;
 			}
@@ -1974,14 +1972,14 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		};
 		
 		var removeCard = function(panel){
-			// NOT FUNCTIONAL
+			// FUNCTIONAL ?
 			var _deckType = panel.deckType;
 			var _deck = getCardList(_deckType);
-			var panel_x = _deck[panel].x_coord;
-			var panel_y = _deck[panel].y_coord;
+			var panel_x = panel.x_coord;
+			var panel_y = panel.y_coord;
 			var panel_index = getCardIndex(_deckType, panel_x, panel_y);
-			var panel_width = _deck[panel].x_overlap ? x_tab : x_dim;
-			var panel_height = _deck[panel].y_overlap ? y_tab : y_dim;
+			var panel_width = panel.x_overlap ? x_tab : x_dim;
+			var panel_height = panel.y_overlap ? y_tab : y_dim;
 			var lowest_y_coord = _deck[getLowestIndex(_deckType, panel_x)].y_coord;
 			
 			_deck.splice(panel_index, 1);
@@ -2003,6 +2001,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		
 		return service;
 	}]);
+
 'use strict';
 
 // Factory-service for providing generic game data
@@ -3132,7 +3131,7 @@ cardsModule.factory('PcsFeats', ['Pcs', 'CardDeck',
 			}
 			for(var ic = 0; ic < Pcs.pc.cards.length; ic++){
 				if(Pcs.pc.cards[ic].level > Pcs.pc.level){
-					CardDeck.removeCard(ic);
+					CardDeck.removeCard( Pcs.pc.cards[ic] );
 				}
 			}
 		};
@@ -3167,6 +3166,7 @@ cardsModule.factory('PcsFeats', ['Pcs', 'CardDeck',
 		
 		return service;
 	}]);
+
 'use strict';
 var cardsModule = angular.module('pcs');
 

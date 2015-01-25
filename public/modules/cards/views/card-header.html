@@ -1,4 +1,4 @@
-<div class="card-header fill-parent" style="overflow: hidden">
+<div class="card-header fill-parent">
 	<div ng-class="{'text-9': card.cardType !== 'augment',
 			'text-8': card.cardType === 'augment'}">
 		<input ng-if="!card.locked" type="text" 
@@ -19,17 +19,17 @@
 		<span ng-if="card.locked && !card.keyword">
 			[Keyword]
 		</span>
-		<div ng-if="!card.locked" class="dropdown" dropdown>
-			<a id="cardDropdown" 
-				ng-click="dropdown" aria-expanded="true" class="dropdown-toggle" dropdown-toggle>
-				<span class="text-8 text-capitalize">
+		<div ng-if="!card.locked" class="dropdown" dropdown stop-event>
+			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
+				ng-click="dropdown" aria-expanded="true">
+				<span class="text-capitalize">
 					{{card.keyword}}
 				</span>
-				<span class="text-8" ng-if="!card.keyword">
+				<span ng-if="!card.keyword">
 					[Keyword]
 				</span>
 			</a>
-			<ul class="card-menu-list dropdown-menu" aria-labelledby="cardDropdown">
+			<ul class="card-menu-list dropdown-menu" aria-labelledby="cardDropdown" stop-click>
 				<li role="presentation" class="dropdown-header">Archetype</li>
 				<li role="presentation" ng-repeat="archetype in $parent.dataSRVC.archetypes"><label>
 					<input type="radio" ng-model="card.keyword" value="{{archetype}}">

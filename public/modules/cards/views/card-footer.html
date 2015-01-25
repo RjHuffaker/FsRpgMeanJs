@@ -7,7 +7,7 @@
 		<strong ng-if="card.locked && !card.keyword && !card.prerequisite">
 			[Prerequisites]
 		</strong>
-		<div ng-if="!card.locked" class="dropdown dropup" dropdown>
+		<div ng-if="!card.locked" class="dropdown dropup" dropdown stop-event>
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				<strong>
@@ -17,7 +17,7 @@
 					[Prerequisites]
 				</strong>
 			</a>
-			<ul class='dropdown-menu card-menu-list' aria-labelledby="cardDropdown" stop-click>
+			<ul class='card-menu-list dropdown-menu' aria-labelledby="cardDropdown">
 				<li role="presentation" class="dropdown-header">Prerequisite</li>
 				<li ><label>
 					<input type="radio" ng-model="card.prerequisite" value="">
@@ -37,7 +37,7 @@
 		<strong ng-if="card.locked && !card.itemSlot">
 			[Item Slot]
 		</strong>
-		<div ng-if="!card.locked" class="dropdown dropup" dropdown>
+		<div ng-if="!card.locked" class="dropdown dropup" dropdown stop-event>
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				<strong>
@@ -128,7 +128,7 @@
 			<strong>C:</strong>
 			{{card.cost}}
 		</div>
-		<div ng-if="!card.locked" class="dropdown dropup" dropdown>
+		<div ng-if="!card.locked" class="dropdown dropup" dropdown stop-event>
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				<strong>W:</strong>

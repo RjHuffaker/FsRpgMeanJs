@@ -4,6 +4,7 @@
 	padding: .5em;
 }
 
+
 .content-table {
 	height: 100%;
 	width: 100%;
@@ -51,11 +52,12 @@
 	white-space: normal;
 	padding-left: .25em;
 	list-style-type: none;
+	font-size: .8em;
 }
 
 .card-menu-list > li > label {
 	cursor: pointer;
-	font-size: 1.0em;
+	font-size: .8em;
 }
 
 .card-menu-list > li > label:hover {
@@ -202,4 +204,3 @@ div.dropdown-menu {
 .card-item {
 	background-color: Khaki;
 }
-

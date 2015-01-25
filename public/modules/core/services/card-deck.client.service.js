@@ -23,7 +23,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			if(deckType === 'pc'){
 				return Pcs.pc.cards;
 			} else if(deckType === 'card'){
-				return Cards.getCardList;
+				return Cards.cardList;
 			} else if(deckType === 'home'){
 				return HomeDemo.cards;
 			}

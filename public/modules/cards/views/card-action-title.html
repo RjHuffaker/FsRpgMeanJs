@@ -1,5 +1,5 @@
 <div ng-if="!$parent.card.locked"
-	class="dropdown card-icon-left" dropdown>
+	class="dropdown card-icon-left" dropdown stop-event>
 	<a id="actionDropdown" class="dropdown-toggle" dropdown-toggle>
 		<i class="glyphicon glyphicon-cog"></i>
 	</a>
@@ -31,19 +31,18 @@
 	<strong ng-if="$parent.card.locked" class="pull-left">
 		{{cardAction.name}}
 	</strong>
-	<span class="pull-left"><input ng-if="!$parent.card.locked" stop-event
-		type="text" class="card-input title-block-input pull-left"
-		style="font-weight: bold;"
-		ng-model="cardAction.name"></span>
-		
-	<div ng-if="$parent.card.locked && cardAction.usage !== 'Defense'" class="pull-right">
-		<span class="pull-right">
-			{{cardAction.targetType}} {{cardAction.targetDetail}}
-			<span ng-if="!cardAction.targetType && !cardAction.targetDetail && cardAction.usage !== 'Defense'">[Target]</span>
-		</span>
-	</div>
+	<span class="pull-left">
+		<input ng-if="!$parent.card.locked" stop-event
+			type="text" class="card-input title-block-input pull-left"
+			style="font-weight: bold;"
+			ng-model="cardAction.name">
+	</span>
+	<span ng-if="$parent.card.locked && cardAction.usage !== 'Defense'" class="pull-right">
+		{{cardAction.targetType}} {{cardAction.targetDetail}}
+		<span ng-if="!cardAction.targetType && !cardAction.targetDetail && cardAction.usage !== 'Defense'">[Target]</span>
+	</span>
 	<div ng-if="!$parent.card.locked && cardAction.usage !== 'Defense'"
-		class="dropdown pull-right" dropdown>
+		class="dropdown pull-right" style="width: 1px;" dropdown stop-event>
 		<a id="cardDropdown" class="dropdown-toggle pull-right" dropdown-toggle
 			ng-if="cardAction.usage !== 'Defense'"
 			ng-click="dropdown" aria-expanded="true">
