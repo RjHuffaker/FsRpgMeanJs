@@ -23,6 +23,7 @@ cardsModule
 					scope.$on('$destroy', onDestroy);
 					element.on('mouseleave', onMouseLeave);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
+					scope.$on('CardDeck:setDeckWidth', setDeckWidth);
 					scope.$on('cardPanel:onPressCard', onPress);
 					scope.$on('cardPanel:onReleaseCard', onRelease);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
@@ -35,8 +36,14 @@ cardsModule
 				var onHeightChange = function(event, object){
 					var windowHeight = object.newHeight;
 					element.css({
-						'width': windowHeight+'px'
-						
+						'height': windowHeight+'px'
+					});
+				};
+				
+				var setDeckWidth = function(event, object){
+					var deckWidth = object.deckWidth + 3;
+					element.css({
+						'width': deckWidth+'em'
 					});
 				};
 				
@@ -65,10 +72,12 @@ cardsModule
 					var deckRightEdge = deckLeftEdge + deckWidth - convertEm(3);
 					
 					if(object.mouseX <= deckLeftEdge){
+						console.log('unstackLeft');
 						scope.$emit('cardDeck:unstackLeft', {
 							panel: object.panel
 						});
 					} else if(object.mouseX >= deckRightEdge){
+						console.log('unstackRight');
 						scope.$emit('cardDeck:unstackRight', {
 							panel: object.panel
 						});

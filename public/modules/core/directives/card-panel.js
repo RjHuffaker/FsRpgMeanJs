@@ -21,9 +21,9 @@ cardsModule
 					_startCol, _mouseCol, _cardCol,
 					_startRow, _mouseRow, _cardRow,
 					_moveTimer,
-					_x_dim = 15, _y_dim = 21,
-					_x_tab = 3, _y_tab = 3,
-					_x_cover = 12, _y_cover = 18;
+					_x_dim, _y_dim,
+					_x_tab, _y_tab,
+					_x_cover, _y_cover;
 				
 				var _stacked = false;
 				
@@ -241,61 +241,76 @@ cardsModule
 					var slot_y_overlap = slot.y_overlap;
 					
 					var changeX = Math.abs(panel_x - slot_x);
+					var changeY = Math.abs(panel_y - slot_y);
 					
-					if(slot_x === panel_x && slot_y > panel_y && panel_y_overlap){
-						element.css({
-							left: (_startCol + moveX) + 'px',
-							top: (_startRow + moveY) + 'px'
-						});
-					} else if(panel_x !== slot_x || panel_y !== slot_x){
+					if(changeX === 0 && slot_y > panel_y && panel_y_overlap){
+						if(!element.hasClass('card-moving')){
+							element.css({
+								left: (_startCol + moveX) + 'px',
+								top: (_startRow + moveY) + 'px'
+							});
+						}
+					} else if(changeX > 0 || changeY > 0){
 						if(crossingEdge(mouseX, mouseY) === 'top'){
-							if(changeX !== 0 && changeX <= 10){
+							console.log('1');
+							if(changeX !== 0 && changeX <= _x_dim){
+								console.log('1.1');
 								scope.$emit('cardSlot:moveDiagonalUp', {
 									slot: slot,
 									panel: panel
 								});
 							} else if(changeX === 0 && !panel_y_overlap){
+								console.log('1.2');
 								scope.$emit('cardSlot:moveVertical', {
 									slot: slot,
 									panel: panel
 								});
 							} else {
+								console.log('1.3');
 								scope.$emit('cardSlot:moveHorizontal', {
 									slot: slot,
 									panel: panel
 								});
 							}
 						} else if(crossingEdge(mouseX, mouseY) === 'bottom'){
-							if(changeX !== 0 && changeX <= 10){
+							console.log('2');
+							if(changeX !== 0 && changeX <= _x_dim){
+								console.log('2.1');
 								scope.$emit('cardSlot:moveDiagonalDown', {
 									slot: slot,
 									panel: panel
 								});
 							} else if(changeX === 0 && !panel_y_overlap){
+								console.log('2.2');
 								scope.$emit('cardSlot:moveVertical', {
 									slot: slot,
 									panel: panel
 								});
 							} else {
+								console.log('2.3');
 								scope.$emit('cardSlot:moveHorizontal', {
 									slot: slot,
 									panel: panel
 								});
 							}
 						} else if(crossingEdge(mouseX, mouseY) === 'left' || crossingEdge(mouseX, mouseY) === 'right'){
+							console.log('3');
 							if(vectorY * 2 > vectorX){
 								if(moveY < 0){
+									console.log('3.1');
 									scope.$emit('cardSlot:moveDiagonalUp', {
 										slot: slot,
 										panel: panel
 									});
 								} else if(moveY > 0){
+									console.log('3.2');
 									scope.$emit('cardSlot:moveDiagonalDown', {
 										slot: slot,
 										panel: panel
 									});
 								}
 							} else {
+								console.log('4');
 								scope.$emit('cardSlot:moveHorizontal', {
 									slot: slot,
 									panel: panel
@@ -314,6 +329,7 @@ cardsModule
 						panel: _card
 					});
 					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
+						console.log('toggleoverlap');
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
 							panel: _card
 						});
@@ -349,12 +365,14 @@ cardsModule
 				var crossingEdge = function(mouseX, mouseY){
 					
 					var cardOffset = element.offset();
-					var panelX = cardOffset.left;
-					var panelY = cardOffset.top;
-					var leftEdge = _card.x_overlap ? panelX + _x_cover : panelX;
-					var rightEdge = panelX + _x_dim;
-					var topEdge = panelY;
-					var bottomEdge = _card.y_overlap ? panelY + _y_tab : panelY + _y_dim;
+					var slotX = cardOffset.left;
+					var slotY = cardOffset.top;
+					var leftEdge = _card.x_overlap ? slotX + _x_cover : slotX;
+					var rightEdge = slotX + _x_dim;
+					var topEdge = slotY;
+					var bottomEdge = _card.y_overlap ? slotY + _y_tab : slotY + _y_dim;
+					
+				//	console.log('testing '+_card.name+':  X '+_card.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_card.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
 					
 					if(mouseX >= leftEdge && mouseX <= rightEdge && mouseY >= topEdge && mouseY <= bottomEdge){
 						var left = mouseX - leftEdge;
@@ -366,6 +384,8 @@ cardsModule
 						closestEdge = Math.min.apply(Math.min, edges),
 						edgeNames = ['left', 'right', 'top', 'bottom'],
 						edgeName = edgeNames[edges.indexOf(closestEdge)];
+						
+				//		console.log('crossing '+edgeName+' edge of '+_card.name+':  X '+_card.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_card.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
 						
 						return edgeName;
 					}

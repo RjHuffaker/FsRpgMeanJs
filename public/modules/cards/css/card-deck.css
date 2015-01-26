@@ -15,9 +15,14 @@
 	user-select: none;
 }
 
-[card-deck] {
+div[card-deck] {
 	white-space: nowrap;
 	margin-left: 3em;
+	-webkit-transition: .75s ease-in-out width;
+	-moz-transition: .75s ease-in-out width;
+	-o-transition: .75s ease-in-out width;
+	-ms-transition: .75s ease-in-out width;
+	transition: .75s ease-in-out width;
 }
 
 [card-deck] > ul{
