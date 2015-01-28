@@ -253,7 +253,7 @@ cardsModule
 					} else if(changeX > 0 || changeY > 0){
 						if(crossingEdge(mouseX, mouseY) === 'top'){
 							console.log('1');
-							if(changeX !== 0 && changeX <= _x_dim){
+							if(vectorX > 0 && !slot_x_overlap && !panel_x_overlap){
 								console.log('1.1');
 								scope.$emit('cardSlot:moveDiagonalUp', {
 									slot: slot,
@@ -274,7 +274,7 @@ cardsModule
 							}
 						} else if(crossingEdge(mouseX, mouseY) === 'bottom'){
 							console.log('2');
-							if(changeX !== 0 && changeX <= _x_dim){
+							if(changeX > 0 && changeX <= _x_dim){
 								console.log('2.1');
 								scope.$emit('cardSlot:moveDiagonalDown', {
 									slot: slot,
