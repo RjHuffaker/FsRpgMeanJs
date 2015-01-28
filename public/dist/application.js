@@ -945,7 +945,7 @@ cardsModule
 					element.attr('draggable', 'false');
 					toggleListeners(true);
 					$document.ready(function () {
-						setPosition();
+						onHeightChange();
 					});
 				};
 				
