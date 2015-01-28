@@ -880,12 +880,10 @@ cardsModule
 					var deckRightEdge = deckLeftEdge + deckWidth - convertEm(3);
 					
 					if(object.mouseX <= deckLeftEdge){
-						console.log('unstackLeft');
 						scope.$emit('cardDeck:unstackLeft', {
 							panel: object.panel
 						});
 					} else if(object.mouseX >= deckRightEdge){
-						console.log('unstackRight');
 						scope.$emit('cardDeck:unstackRight', {
 							panel: object.panel
 						});
@@ -946,7 +944,9 @@ cardsModule
 					// prevent native drag
 					element.attr('draggable', 'false');
 					toggleListeners(true);
-					setPosition();
+					$document.ready(function () {
+						setPosition();
+					});
 				};
 				
 				var toggleListeners = function(enable){
@@ -1157,65 +1157,53 @@ cardsModule
 						}
 					} else if(changeX > 0 || changeY > 0){
 						if(crossingEdge(mouseX, mouseY) === 'top'){
-							console.log('1');
 							if(vectorX > 0 && !slot_x_overlap && !panel_x_overlap){
-								console.log('1.1');
 								scope.$emit('cardSlot:moveDiagonalUp', {
 									slot: slot,
 									panel: panel
 								});
 							} else if(changeX === 0 && !panel_y_overlap){
-								console.log('1.2');
 								scope.$emit('cardSlot:moveVertical', {
 									slot: slot,
 									panel: panel
 								});
 							} else {
-								console.log('1.3');
 								scope.$emit('cardSlot:moveHorizontal', {
 									slot: slot,
 									panel: panel
 								});
 							}
 						} else if(crossingEdge(mouseX, mouseY) === 'bottom'){
-							console.log('2');
 							if(changeX > 0 && changeX <= _x_dim){
-								console.log('2.1');
 								scope.$emit('cardSlot:moveDiagonalDown', {
 									slot: slot,
 									panel: panel
 								});
 							} else if(changeX === 0 && !panel_y_overlap){
-								console.log('2.2');
 								scope.$emit('cardSlot:moveVertical', {
 									slot: slot,
 									panel: panel
 								});
 							} else {
-								console.log('2.3');
 								scope.$emit('cardSlot:moveHorizontal', {
 									slot: slot,
 									panel: panel
 								});
 							}
 						} else if(crossingEdge(mouseX, mouseY) === 'left' || crossingEdge(mouseX, mouseY) === 'right'){
-							console.log('3');
 							if(vectorY * 2 > vectorX){
 								if(moveY < 0){
-									console.log('3.1');
 									scope.$emit('cardSlot:moveDiagonalUp', {
 										slot: slot,
 										panel: panel
 									});
 								} else if(moveY > 0){
-									console.log('3.2');
 									scope.$emit('cardSlot:moveDiagonalDown', {
 										slot: slot,
 										panel: panel
 									});
 								}
 							} else {
-								console.log('4');
 								scope.$emit('cardSlot:moveHorizontal', {
 									slot: slot,
 									panel: panel

@@ -72,12 +72,10 @@ cardsModule
 					var deckRightEdge = deckLeftEdge + deckWidth - convertEm(3);
 					
 					if(object.mouseX <= deckLeftEdge){
-						console.log('unstackLeft');
 						scope.$emit('cardDeck:unstackLeft', {
 							panel: object.panel
 						});
 					} else if(object.mouseX >= deckRightEdge){
-						console.log('unstackRight');
 						scope.$emit('cardDeck:unstackRight', {
 							panel: object.panel
 						});
