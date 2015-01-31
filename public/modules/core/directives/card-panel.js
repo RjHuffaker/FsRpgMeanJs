@@ -1,16 +1,17 @@
 'use strict';
 
-var cardsModule = angular.module('core');
+var coreModule = angular.module('core');
 
 // Directive for managing card decks.
-cardsModule
+coreModule
 	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'CardDeck', function($document, $parse, $rootScope, $window, CardDeck){
 		return {
 			restrict: 'A',
-			link: function(scope, element, attrs) {
+			templateUrl: '../modules/core/views/card-panel.html',
+			link: function(scope, element, attrs){
 				
-				Array.min = function( array ){
-					return Math.min.apply( Math, array );
+				Array.min = function(array){
+					return Math.min.apply(Math, array);
 				};
 				
 				var _startX, _startY, 
@@ -24,6 +25,8 @@ cardsModule
 					_x_dim, _y_dim,
 					_x_tab, _y_tab,
 					_x_cover, _y_cover;
+				
+				var _dropdownOpen = false;
 				
 				var _stacked = false;
 				
@@ -58,6 +61,7 @@ cardsModule
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
+					scope.$on('CardsCtrl:onDropdown', onDropdown);
 					scope.$watch('card.x_coord', resetPosition);
 					scope.$watch('card.y_coord', resetPosition);
 					element.on(_pressEvents, onPress);
@@ -75,6 +79,10 @@ cardsModule
 				var onCardChange = function(newVal, oldVal){
 					_card = newVal;
 					setPosition();
+				};
+				
+				var onDropdown = function(event, object){
+					_dropdownOpen = object.isOpen;
 				};
 				
 				var getElementFontSize = function() {
@@ -116,19 +124,22 @@ cardsModule
 				
 				// When the element is clicked start the drag behaviour
 				var onPress = function(event){
-			
-					// Small delay for touch devices to allow for native window scrolling
-					if(_hasTouch){
-						cancelPress();
-						_pressTimer = setTimeout(function(){
+					if(!_dropdownOpen){
+						// Small delay for touch devices to allow for native window scrolling
+						if(_hasTouch){
 							cancelPress();
+							_pressTimer = setTimeout(function(){
+								cancelPress();
+								onLongPress(event);
+							}, 100);
+							
+							$document.on(_moveEvents, cancelPress);
+							$document.on(_releaseEvents, cancelPress);
+						}else if(!_hasTouch){
 							onLongPress(event);
-						}, 100);
-						
-						$document.on(_moveEvents, cancelPress);
-						$document.on(_releaseEvents, cancelPress);
-					}else if(!_hasTouch){
-						onLongPress(event);
+						}
+					} else {
+						$document.triggerHandler('click');
 					}
 				};
 				
@@ -319,7 +330,6 @@ cardsModule
 						panel: _card
 					});
 					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
-						console.log('toggleoverlap');
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
 							panel: _card
 						});

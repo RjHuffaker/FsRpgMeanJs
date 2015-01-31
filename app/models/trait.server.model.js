@@ -24,9 +24,6 @@ var TraitSchema = new Schema({
 		type: Schema.ObjectId,
 		ref: 'User'
 	},
-	deckType: {
-		type: String
-	},
 	cardType: {
 		type: String,
 		default: 'trait'

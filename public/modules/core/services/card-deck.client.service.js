@@ -6,6 +6,8 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 	function(Cards, HomeDemo, Pcs, $rootScope){
 		var service = {};
 		
+		service.windowHeight = 0;
+		
 		var x_dim = 15;
 		var y_dim = 21;
 		var x_tab = 3;
@@ -15,6 +17,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var _moveSpeed = 800;
 		var cardMoved = false;
 		var cardMoving = false;
+		var dropdownOpen;
 		var moveTimer;
 		
 		var deckList = [];
@@ -125,6 +128,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var toggleListeners = function(enable){
 			if(!enable) return;
 			$rootScope.$on('$destroy', onDestroy);
+			$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 			
 			$rootScope.$on('cardPanel:onPressCard', onPressCard);
 			$rootScope.$on('cardPanel:onReleaseCard', onReleaseCard);
@@ -143,14 +147,18 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			toggleListeners(false);
 		};
 		
+		var onHeightChange = function(event, object){
+			service.windowHeight = object.newHeight;
+		};
+		
 		// Set move booleans
-		var setCardMoving = function(interval){
+		var setCardMoving = function(interval, deckType){
 			clearTimeout(moveTimer);
 			cardMoving = true;
 			cardMoved = true;
-			moveTimer = setTimeout(function() {
+			moveTimer = setTimeout(function(){
 				cardMoving = false;
-				setDeckWidth('home');
+				setDeckWidth(deckType);
 			}, interval);
 		};
 		
@@ -277,7 +285,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				if(slot_y === 0 && panel_y === 0){
 					if(panel_x - slot_x > 0){
 					// PANEL MOVING LEFT
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						
 						if(slot_x === 0 && panel_x_overlap){
 							slot_position = 0;
@@ -304,7 +312,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					} else if(panel_x - slot_x < 0){
 					// PANEL MOVING RIGHT
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						if(panel_x === 0 && slot_x_overlap){
 							var first_index = getFirstIndex(_deckType);
 					//		_deck[first_index].x_coord = 0;
@@ -353,7 +361,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				
 				if(panel_y - slot_y > 0){
 				// PANEL MOVING UP
-					setCardMoving(_moveSpeed);
+					setCardMoving(_moveSpeed, _deckType);
 					
 					_deck[slot_index].y_coord = panel_y;
 					_deck[slot_index].y_overlap = panel_y_overlap;
@@ -363,7 +371,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					
 				} else if(panel_y - slot_y < 0){
 				// PANEL MOVING DOWN
-					setCardMoving(_moveSpeed);
+					setCardMoving(_moveSpeed, _deckType);
 					
 					_deck[slot_index].y_coord = panel_y;
 					_deck[slot_index].y_overlap = panel_y_overlap;
@@ -397,7 +405,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				var newColumn = panel_x > slot_x ? slot_x : slot_x - x_dim;
 				
 				if(!slot_x_overlap && !panel_x_overlap){
-					setCardMoving(_moveSpeed);
+					setCardMoving(_moveSpeed, _deckType);
 					for(var ia = 0; ia < _deck.length; ia++){
 						if(!_deck[ia].dragging && _deck[ia].x_coord === newColumn && _deck[ia].y_coord > slot_y){
 							_deck[ia].y_coord += panel_lowest_coord + y_tab;
@@ -438,7 +446,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				var slot_lowest_coord = _deck[getLowestIndex(_deckType, slot_x)].y_coord;
 				var newColumn = panel_x > slot_x ? slot_x : slot_x - x_dim;
 				
-				setCardMoving(_moveSpeed);
+				setCardMoving(_moveSpeed, _deckType);
 				for(var ia = 0; ia < _deck.length; ia++){
 					if(!_deck[ia].dragging && _deck[ia].x_coord === slot_x){
 						_deck[ia].y_coord += panel_lowest_coord + y_tab;
@@ -475,7 +483,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					
 					if(panel_x - slot_x > 0){
 					// Card is unstacking to the left
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						if(panel_y_overlap){
 						// Unstack multiple cards to the left
 							for(var ia = 0; ia < _deck.length; ia++){
@@ -521,7 +529,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					} else if(panel_x - slot_x < 0 && !cardMoving){
 					//Card is unstacking to the right
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						if(panel_y_overlap){
 						// Unstack multiple cards to the right
 							for(var ic = 0; ic < _deck.length; ic++){
@@ -585,7 +593,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				// x_overlap
 					if(panel_x_overlap && !cardMoving){
 					// Card overlapped
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						_deck[panel_index].x_overlap = false;
 						for(var ia = 0; ia < _deck.length; ia++){
 							if(panel_x <= _deck[ia].x_coord){
@@ -594,7 +602,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					} else if(!panel_x_overlap && !cardMoving){
 					// Card not overlapped
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						_deck[panel_index].x_overlap = true;
 						for(var ib = 0; ib < _deck.length; ib++){
 							if(panel_x <= _deck[ib].x_coord){
@@ -606,7 +614,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				// y_overlap
 					if(panel_y_overlap && !cardMoving){
 					// Card overlapped
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						_deck[panel_index].y_overlap = false;
 						for(var ic = 0; ic < _deck.length; ic++){
 							if(panel_x === _deck[ic].x_coord && panel_y < _deck[ic].y_coord){
@@ -615,7 +623,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					} else if(!panel_y_overlap && !cardMoving){
 					// Card not overlapped
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						_deck[panel_index].y_overlap = true;
 						for(var id = 0; id < _deck.length; id++){
 							if(panel_x === _deck[id].x_coord && panel_y < _deck[id].y_coord){

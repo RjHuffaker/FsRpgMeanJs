@@ -43,20 +43,23 @@ angular.element(document).ready(function() {
 });
 'use strict';
 
-// Use applicaion configuration module to register a new module
-ApplicationConfiguration.registerModule('cards');
+// Use application configuration module to register a new module
+ApplicationConfiguration.registerModule('architect');
+
 'use strict';
 
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('core');
 'use strict';
 
-// Use applicaion configuration module to register a new module
-ApplicationConfiguration.registerModule('npcs');
+// Use application configuration module to register a new module
+ApplicationConfiguration.registerModule('narrator');
+
 'use strict';
 
-// Use applicaion configuration module to register a new module
-ApplicationConfiguration.registerModule('pcs');
+// Use application configuration module to register a new module
+ApplicationConfiguration.registerModule('player');
+
 'use strict';
 
 // Use Applicaion configuration module to register a new module
@@ -65,54 +68,64 @@ ApplicationConfiguration.registerModule('users');
 'use strict';
 
 // Configuring the Articles module
-angular.module('cards').run(['Menus',
+angular.module('architect').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Cards', 'cards', 'dropdown', '/cards');
-		Menus.addSubMenuItem('topbar', 'cards', 'List Traits', 'traits');
-		Menus.addSubMenuItem('topbar', 'cards', 'List Feats', 'feats');
-		Menus.addSubMenuItem('topbar', 'cards', 'List Augments', 'augments');
-		Menus.addSubMenuItem('topbar', 'cards', 'List Items', 'items');
+		Menus.addMenuItem('topbar', 'Architect', 'architect', 'dropdown', '/architect(/traits|/feats|/augments|/items)?', true, ['user'], '2');
+		Menus.addSubMenuItem('topbar', 'architect', 'PC Traits', 'architect/traits');
+		Menus.addSubMenuItem('topbar', 'architect', 'PC Feats', 'architect/feats');
+		Menus.addSubMenuItem('topbar', 'architect', 'PC Augments', 'architect/augments');
+		Menus.addSubMenuItem('topbar', 'architect', 'PC Items', 'architect/items');
 	}
 ]);
 'use strict';
 
 //Setting up route
-angular.module('cards').config(['$stateProvider',
+angular.module('architect').config(['$stateProvider',
 	function($stateProvider) {
-		// Cards state routing
+		// Architect state routing
 		$stateProvider.
-		state('listTraits', {
-			url: '/traits',
-			templateUrl: 'modules/cards/views/list-traits.client.view.html'
+		state('editTraits', {
+			url: '/architect/traits',
+			templateUrl: 'modules/architect/views/edit-traits.client.view.html'
 		}).
-		state('listFeats', {
-			url: '/feats',
-			templateUrl: 'modules/cards/views/list-feats.client.view.html'
+		state('editFeats', {
+			url: '/architect/feats',
+			templateUrl: 'modules/architect/views/edit-feats.client.view.html'
 		}).
-		state('listAugments', {
-			url: '/augments',
-			templateUrl: 'modules/cards/views/list-augments.client.view.html'
+		state('editAugments', {
+			url: '/architect/augments',
+			templateUrl: 'modules/architect/views/edit-augments.client.view.html'
 		}).
-		state('listItems', {
-			url: '/items',
-			templateUrl: 'modules/cards/views/list-items.client.view.html'
+		state('editItems', {
+			url: '/architect/items',
+			templateUrl: 'modules/architect/views/edit-items.client.view.html'
 		});
 	}
 ]);
 'use strict';
 
-var cardsModule = angular.module('cards');
-
 // Cards controller
-cardsModule.controller('CardsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 'CardDeck', 'Cards',
-	function($scope, $location, $log, DataSRVC, CardDeck, Cards) {
+angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$log', '$rootScope', 'DataSRVC', 'CardDeck', 'Cards',
+	function($scope, $location, $log, $rootScope, DataSRVC, CardDeck, Cards) {
 		
 		$scope.dataSRVC = DataSRVC;
 		
 		$scope.cards = Cards;
 		
-		$scope.windowHeight = 0;
+		$scope.cardDeck = CardDeck;
+		
+		$scope.status = {
+			isopen: false
+		};
+		
+		$scope.toggled = function(open){
+			$scope.status.isopen = open;
+			console.log($scope.status.isopen);
+			$rootScope.$broadcast('CardsCtrl:onDropdown', {
+				isOpen: $scope.status.isopen
+			});
+		};
 		
 		var initialize = function(){
 			toggleListeners(true);
@@ -121,16 +134,10 @@ cardsModule.controller('CardsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 
 		var toggleListeners = function(enable){
 			if(!enable) return;
 			$scope.$on('$destroy', onDestroy);
-			$scope.$on('screenSize:onHeightChange', onHeightChange);
 		};
 		
 		var onDestroy = function(){
 			toggleListeners(false);
-		};
-		
-		var onHeightChange = function(event, object){
-			$scope.windowHeight = object.newHeight;
-			$scope.$digest();
 		};
 		
 		initialize();
@@ -138,56 +145,110 @@ cardsModule.controller('CardsCtrl', ['$scope', '$location', '$log', 'DataSRVC', 
 ]);
 'use strict';
 
-var cardsModule = angular.module('cards');
+var architectModule = angular.module('architect');
 
 // feature-card directive
-cardsModule
-	.directive('cardFeature', function(){
+architectModule
+	.directive('cardPc1', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-feature.html'
+			templateUrl: '../modules/player/views/card-pc-1.html'
 		};
 	})
-	.directive('cardLogo', function(){
+	.directive('cardPc2', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-logo.html'
+			templateUrl: '../modules/player/views/card-pc-2.html'
 		};
 	})
+	.directive('cardPc3', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/player/views/card-pc-3.html'
+		};
+	})
+	.directive('diceDropdown', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/player/views/dice-dropdown.html',
+			scope: {
+				ability: '='
+			}
+		};
+	})
+	.directive('stopEvent', function(){
+		return{
+			restrict: 'A',
+			link: function(scope, element, attr){
+				var _pressEvents = 'touchstart mousedown';
+				element.on(_pressEvents, function(event){
+					event.stopPropagation();
+				});
+			}
+		};
+	})
+	.directive('stopClick', function(){
+		return{
+			restrict: 'A',
+			link: function(scope, element, attr){
+				element.on('click', function(event){
+					event.stopPropagation();
+				});
+			}
+		};
+	});
+'use strict';
+
+var architectModule = angular.module('architect');
+
+// feature-card directive
+architectModule
+	.directive('pcFeature', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/architect/views/pc-feature.html'
+		};
+	})
+	.directive('cardLogo', ['$rootScope', function($rootScope){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/architect/views/card-logo.html'
+		};
+	}])
 	.directive('cardHeader', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-header.html'
+			templateUrl: '../modules/architect/views/card-header.html'
 		};
 	})
 	.directive('cardDescription', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-description.html'
+			templateUrl: '../modules/architect/views/card-description.html'
 		};
 	})
 	.directive('cardModifiers', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-modifiers.html'
+			templateUrl: '../modules/architect/views/card-modifiers.html'
 		};
 	})
 	.directive('cardBenefit', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-benefit.html'
+			templateUrl: '../modules/architect/views/card-benefit.html'
 		};
 	})
 	.directive('cardFooter', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-footer.html'
+			templateUrl: '../modules/architect/views/card-footer.html'
 		};
 	})
 	.directive('cardAction', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-action.html',
+			templateUrl: '../modules/architect/views/card-action.html',
 			scope: {
 				cardAction: '='
 			}
@@ -196,37 +257,37 @@ cardsModule
 	.directive('cardActionTitle', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-action-title.html'
+			templateUrl: '../modules/architect/views/card-action-title.html'
 		};
 	})
 	.directive('cardActionKeywords', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-action-keywords.html'
+			templateUrl: '../modules/architect/views/card-action-keywords.html'
 		};
 	})
 	.directive('cardActionPrompt', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-action-prompt.html'
+			templateUrl: '../modules/architect/views/card-action-prompt.html'
 		};
 	})
 	.directive('cardActionEffect', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-action-effect.html'
+			templateUrl: '../modules/architect/views/card-action-effect.html'
 		};
 	})
 	.directive('cardActionAttack', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-action-attack.html'
+			templateUrl: '../modules/architect/views/card-action-attack.html'
 		};
 	})
 	.directive('cardActionDefense', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-action-defense.html'
+			templateUrl: '../modules/architect/views/card-action-defense.html'
 		};
 	})
 	.directive('elasticTextarea', ['$timeout', function($timeout){
@@ -295,70 +356,10 @@ cardsModule
 	});
 'use strict';
 
-var cardsModule = angular.module('cards');
-
-// feature-card directive
-cardsModule
-	.directive('cardLayout', function(){
-		return {
-			restrict: 'A',
-			templateUrl: '../modules/cards/views/card-layout.html'
-		};
-	})
-	.directive('cardPc1', function(){
-		return {
-			restrict: 'A',
-			templateUrl: '../modules/pcs/views/card-pc-1.html'
-		};
-	})
-	.directive('cardPc2', function(){
-		return {
-			restrict: 'A',
-			templateUrl: '../modules/pcs/views/card-pc-2.html'
-		};
-	})
-	.directive('cardPc3', function(){
-		return {
-			restrict: 'A',
-			templateUrl: '../modules/pcs/views/card-pc-3.html'
-		};
-	})
-	.directive('diceDropdown', function(){
-		return {
-			restrict: 'A',
-			templateUrl: '../modules/pcs/views/dice-dropdown.html',
-			scope: {
-				ability: '='
-			}
-		};
-	})
-	.directive('stopEvent', function(){
-		return{
-			restrict: 'A',
-			link: function(scope, element, attr){
-				var _pressEvents = 'touchstart mousedown';
-				element.on(_pressEvents, function(event){
-					event.stopPropagation();
-				});
-			}
-		};
-	})
-	.directive('stopClick', function(){
-		return{
-			restrict: 'A',
-			link: function(scope, element, attr){
-				element.on('click', function(event){
-					event.stopPropagation();
-				});
-			}
-		};
-	});
-'use strict';
-var cardsModule = angular.module('cards');
-
 // Factory-service for managing PC card deck.
-cardsModule.factory('CardsDeck', ['Cards',
-	function(Cards){
+angular.module('architect')
+	.factory('CardsDeck', ['Cards', function(Cards){
+	
 		var service = {};
 		
 		function cardByIndex(index){
@@ -442,11 +443,10 @@ cardsModule.factory('CardsDeck', ['Cards',
 	}]);
 'use strict';
 
-var cardsModule = angular.module('cards');
-
 // Factory-service for Browsing, Reading, Editting, Adding, and Deleting Cards.
-cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$resource', 
-	function($stateParams, $location, Authentication, $resource){
+angular.module('architect')
+	.factory('Cards', ['$stateParams', '$location', 'Authentication', '$resource', 
+			function($stateParams, $location, Authentication, $resource){
 		
 		var Traits = $resource(
 			'traits/:traitId',
@@ -469,6 +469,12 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 		var Items = $resource(
 			'items/:itemId',
 			{ itemId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Notes = $resource(
+			'notes/:noteId',
+			{ noteId: '@_id' },
 			{ update: { method: 'PUT' } }
 		);
 		
@@ -580,6 +586,13 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						}
 					);
 					break;
+				case 5:
+					service.cardList = Notes.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
 			}
 		};
 		
@@ -605,6 +618,11 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 				case 4:
 					card = Items.get({
 						itemId: cardId
+					});
+					break;
+				case 4:
+					card = Notes.get({
+						noteId: cardId
 					});
 					break;
 			}
@@ -707,6 +725,27 @@ cardsModule.factory('Cards', ['$stateParams', '$location', 'Authentication', '$r
 						console.log(errorResponse);
 					});
 					break;
+				case 5:
+					this.card = new Notes ({
+						deckType: 'card',
+						cardNumber: index,
+						dragging: false,
+						stacked: false
+					});
+					this.card.$save(function(response){
+						for(var i in service.cardList){
+							if(service.cardList[i].cardNumber >= index){
+								service.cardList[i].cardNumber += 1;
+								service.cardList[i].x_coord += 15;
+								service.cardList[i].$update();
+							}
+						}
+						service.cardList.push(service.card);
+						service.unlockCard(service.card);
+					}, function(errorResponse){
+						console.log(errorResponse);
+					});
+					break;
 			}
 		};
 		
@@ -778,10 +817,6 @@ coreModule.controller('HomeController', ['$scope', 'Authentication', 'CardDeck',
 		
 		$scope.homeDemo = HomeDemo;
 		
-		$scope.windowHeight = 0;
-		
-		$scope.windowScale = 0;
-		
 		var initialize = function(){
 			toggleListeners(true);
 		};
@@ -789,17 +824,10 @@ coreModule.controller('HomeController', ['$scope', 'Authentication', 'CardDeck',
 		var toggleListeners = function(enable){
 			if(!enable) return;
 			$scope.$on('$destroy', onDestroy);
-			$scope.$on('screenSize:onHeightChange', onHeightChange);
 		};
 		
 		var onDestroy = function(){
 			toggleListeners(false);
-		};
-		
-		var onHeightChange = function(event, object){
-			$scope.windowHeight = object.newHeight;
-			$scope.windowScale = object.newScale;
-			$scope.$digest();
 		};
 		
 		initialize();
@@ -903,17 +931,18 @@ cardsModule
 	}]);
 'use strict';
 
-var cardsModule = angular.module('core');
+var coreModule = angular.module('core');
 
 // Directive for managing card decks.
-cardsModule
+coreModule
 	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'CardDeck', function($document, $parse, $rootScope, $window, CardDeck){
 		return {
 			restrict: 'A',
-			link: function(scope, element, attrs) {
+			templateUrl: '../modules/core/views/card-panel.html',
+			link: function(scope, element, attrs){
 				
-				Array.min = function( array ){
-					return Math.min.apply( Math, array );
+				Array.min = function(array){
+					return Math.min.apply(Math, array);
 				};
 				
 				var _startX, _startY, 
@@ -927,6 +956,8 @@ cardsModule
 					_x_dim, _y_dim,
 					_x_tab, _y_tab,
 					_x_cover, _y_cover;
+				
+				var _dropdownOpen = false;
 				
 				var _stacked = false;
 				
@@ -961,6 +992,7 @@ cardsModule
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
+					scope.$on('CardsCtrl:onDropdown', onDropdown);
 					scope.$watch('card.x_coord', resetPosition);
 					scope.$watch('card.y_coord', resetPosition);
 					element.on(_pressEvents, onPress);
@@ -978,6 +1010,10 @@ cardsModule
 				var onCardChange = function(newVal, oldVal){
 					_card = newVal;
 					setPosition();
+				};
+				
+				var onDropdown = function(event, object){
+					_dropdownOpen = object.isOpen;
 				};
 				
 				var getElementFontSize = function() {
@@ -1019,19 +1055,22 @@ cardsModule
 				
 				// When the element is clicked start the drag behaviour
 				var onPress = function(event){
-			
-					// Small delay for touch devices to allow for native window scrolling
-					if(_hasTouch){
-						cancelPress();
-						_pressTimer = setTimeout(function(){
+					if(!_dropdownOpen){
+						// Small delay for touch devices to allow for native window scrolling
+						if(_hasTouch){
 							cancelPress();
+							_pressTimer = setTimeout(function(){
+								cancelPress();
+								onLongPress(event);
+							}, 100);
+							
+							$document.on(_moveEvents, cancelPress);
+							$document.on(_releaseEvents, cancelPress);
+						}else if(!_hasTouch){
 							onLongPress(event);
-						}, 100);
-						
-						$document.on(_moveEvents, cancelPress);
-						$document.on(_releaseEvents, cancelPress);
-					}else if(!_hasTouch){
-						onLongPress(event);
+						}
+					} else {
+						$document.triggerHandler('click');
 					}
 				};
 				
@@ -1222,7 +1261,6 @@ cardsModule
 						panel: _card
 					});
 					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
-						console.log('toggleoverlap');
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
 							panel: _card
 						});
@@ -1370,6 +1408,8 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 	function(Cards, HomeDemo, Pcs, $rootScope){
 		var service = {};
 		
+		service.windowHeight = 0;
+		
 		var x_dim = 15;
 		var y_dim = 21;
 		var x_tab = 3;
@@ -1379,6 +1419,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var _moveSpeed = 800;
 		var cardMoved = false;
 		var cardMoving = false;
+		var dropdownOpen;
 		var moveTimer;
 		
 		var deckList = [];
@@ -1489,6 +1530,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var toggleListeners = function(enable){
 			if(!enable) return;
 			$rootScope.$on('$destroy', onDestroy);
+			$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 			
 			$rootScope.$on('cardPanel:onPressCard', onPressCard);
 			$rootScope.$on('cardPanel:onReleaseCard', onReleaseCard);
@@ -1507,14 +1549,18 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			toggleListeners(false);
 		};
 		
+		var onHeightChange = function(event, object){
+			service.windowHeight = object.newHeight;
+		};
+		
 		// Set move booleans
-		var setCardMoving = function(interval){
+		var setCardMoving = function(interval, deckType){
 			clearTimeout(moveTimer);
 			cardMoving = true;
 			cardMoved = true;
-			moveTimer = setTimeout(function() {
+			moveTimer = setTimeout(function(){
 				cardMoving = false;
-				setDeckWidth('home');
+				setDeckWidth(deckType);
 			}, interval);
 		};
 		
@@ -1641,7 +1687,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				if(slot_y === 0 && panel_y === 0){
 					if(panel_x - slot_x > 0){
 					// PANEL MOVING LEFT
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						
 						if(slot_x === 0 && panel_x_overlap){
 							slot_position = 0;
@@ -1668,7 +1714,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					} else if(panel_x - slot_x < 0){
 					// PANEL MOVING RIGHT
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						if(panel_x === 0 && slot_x_overlap){
 							var first_index = getFirstIndex(_deckType);
 					//		_deck[first_index].x_coord = 0;
@@ -1717,7 +1763,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				
 				if(panel_y - slot_y > 0){
 				// PANEL MOVING UP
-					setCardMoving(_moveSpeed);
+					setCardMoving(_moveSpeed, _deckType);
 					
 					_deck[slot_index].y_coord = panel_y;
 					_deck[slot_index].y_overlap = panel_y_overlap;
@@ -1727,7 +1773,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					
 				} else if(panel_y - slot_y < 0){
 				// PANEL MOVING DOWN
-					setCardMoving(_moveSpeed);
+					setCardMoving(_moveSpeed, _deckType);
 					
 					_deck[slot_index].y_coord = panel_y;
 					_deck[slot_index].y_overlap = panel_y_overlap;
@@ -1761,7 +1807,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				var newColumn = panel_x > slot_x ? slot_x : slot_x - x_dim;
 				
 				if(!slot_x_overlap && !panel_x_overlap){
-					setCardMoving(_moveSpeed);
+					setCardMoving(_moveSpeed, _deckType);
 					for(var ia = 0; ia < _deck.length; ia++){
 						if(!_deck[ia].dragging && _deck[ia].x_coord === newColumn && _deck[ia].y_coord > slot_y){
 							_deck[ia].y_coord += panel_lowest_coord + y_tab;
@@ -1802,7 +1848,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				var slot_lowest_coord = _deck[getLowestIndex(_deckType, slot_x)].y_coord;
 				var newColumn = panel_x > slot_x ? slot_x : slot_x - x_dim;
 				
-				setCardMoving(_moveSpeed);
+				setCardMoving(_moveSpeed, _deckType);
 				for(var ia = 0; ia < _deck.length; ia++){
 					if(!_deck[ia].dragging && _deck[ia].x_coord === slot_x){
 						_deck[ia].y_coord += panel_lowest_coord + y_tab;
@@ -1839,7 +1885,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					
 					if(panel_x - slot_x > 0){
 					// Card is unstacking to the left
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						if(panel_y_overlap){
 						// Unstack multiple cards to the left
 							for(var ia = 0; ia < _deck.length; ia++){
@@ -1885,7 +1931,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					} else if(panel_x - slot_x < 0 && !cardMoving){
 					//Card is unstacking to the right
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						if(panel_y_overlap){
 						// Unstack multiple cards to the right
 							for(var ic = 0; ic < _deck.length; ic++){
@@ -1949,7 +1995,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				// x_overlap
 					if(panel_x_overlap && !cardMoving){
 					// Card overlapped
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						_deck[panel_index].x_overlap = false;
 						for(var ia = 0; ia < _deck.length; ia++){
 							if(panel_x <= _deck[ia].x_coord){
@@ -1958,7 +2004,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					} else if(!panel_x_overlap && !cardMoving){
 					// Card not overlapped
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						_deck[panel_index].x_overlap = true;
 						for(var ib = 0; ib < _deck.length; ib++){
 							if(panel_x <= _deck[ib].x_coord){
@@ -1970,7 +2016,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				// y_overlap
 					if(panel_y_overlap && !cardMoving){
 					// Card overlapped
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						_deck[panel_index].y_overlap = false;
 						for(var ic = 0; ic < _deck.length; ic++){
 							if(panel_x === _deck[ic].x_coord && panel_y < _deck[ic].y_coord){
@@ -1979,7 +2025,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					} else if(!panel_y_overlap && !cardMoving){
 					// Card not overlapped
-						setCardMoving(_moveSpeed);
+						setCardMoving(_moveSpeed, _deckType);
 						_deck[panel_index].y_overlap = true;
 						for(var id = 0; id < _deck.length; id++){
 							if(panel_x === _deck[id].x_coord && panel_y < _deck[id].y_coord){
@@ -2378,7 +2424,6 @@ angular.module('core').service('Menus', [
 				items: [],
 				shouldRender: shouldRender
 			};
-
 			// Return the menu object
 			return this.menus[menuId];
 		};
@@ -2410,7 +2455,7 @@ angular.module('core').service('Menus', [
 				items: [],
 				shouldRender: shouldRender
 			});
-
+			
 			// Return the menu object
 			return this.menus[menuId];
 		};
@@ -2444,7 +2489,6 @@ angular.module('core').service('Menus', [
 		this.removeMenuItem = function(menuId, menuItemURL) {
 			// Validate that the menu exists
 			this.validateMenuExistance(menuId);
-
 			// Search for menu item to remove
 			for (var itemIndex in this.menus[menuId].items) {
 				if (this.menus[menuId].items[itemIndex].link === menuItemURL) {
@@ -2481,29 +2525,30 @@ angular.module('core').service('Menus', [
 'use strict';
 
 // Configuring the NPC module
-angular.module('npcs').run(['Menus',
+angular.module('narrator').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Non-player Characters', 'npcs', '/npcs');
+		Menus.addMenuItem('topbar', 'Narrator', 'narrator', 'dropdown', '/narrator(/npcs)?', true, ['user'], '1');
+		Menus.addSubMenuItem('topbar', 'narrator', 'List My NPCs', 'narrator/npcs');
 	}
 ]);
 'use strict';
 
 //Setting up route
-angular.module('npcs').config(['$stateProvider',
+angular.module('narrator').config(['$stateProvider',
 	function($stateProvider) {
 		// Npcs state routing
 		$stateProvider.
 		state('listNpcs', {
-			url: '/npcs',
-			templateUrl: 'modules/npcs/views/list-npcs.client.view.html'
+			url: '/narrator/npcs',
+			templateUrl: 'modules/narrator/views/list-npcs.client.view.html'
 		});
 	}
 ]);
 'use strict';
 
 // Npcs controller
-angular.module('npcs').controller('NpcsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Npcs',
+angular.module('narrator').controller('NpcsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Npcs',
 	function($scope, $stateParams, $location, Authentication, Npcs ) {
 		$scope.authentication = Authentication;
 
@@ -2572,7 +2617,7 @@ angular.module('npcs').controller('NpcsController', ['$scope', '$stateParams', '
 'use strict';
 
 //Npcs service used to communicate Npcs REST endpoints
-angular.module('npcs').factory('Npcs', ['$resource',
+angular.module('narrator').factory('Npcs', ['$resource',
 	function($resource) {
 		return $resource('npcs/:npcId', {
 			npcId: '@_id'
@@ -2586,186 +2631,184 @@ angular.module('npcs').factory('Npcs', ['$resource',
 'use strict';
 
 // Configuring the PC module
-angular.module('pcs').run(['Menus',
+angular.module('player').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Player Characters', 'pcs', '/pcs');
+		Menus.addMenuItem('topbar', 'Player', 'player', 'dropdown', '/player(/pcs)?', true, ['user'], '0');
+		Menus.addSubMenuItem('topbar', 'player', 'List My PCs', 'player/pcs');
 	}
 ]);
 'use strict';
 
 //Setting up route
-angular.module('pcs').config(['$stateProvider',
+angular.module('player').config(['$stateProvider',
 	function($stateProvider) {
-		// Pcs state routing
+		// player state routing
 		$stateProvider.
 		state('listPcs', {
-			url: '/pcs',
-			templateUrl: 'modules/pcs/views/list-pcs.client.view.html'
+			url: '/player/pcs',
+			templateUrl: 'modules/player/views/list-pcs.client.view.html'
 		}).
 		state('editPc', {
-			url: '/pcs/:pcId/edit',
-			templateUrl: 'modules/pcs/views/edit-pc.client.view.html'
+			url: '/player/pcs/:pcId/edit',
+			templateUrl: 'modules/player/views/edit-pc.client.view.html'
 		});
 	}
 ]);
 'use strict';
 
-var pcsModule = angular.module('pcs');
-
 // Pcs Controller
-pcsModule.controller('PcsCtrl', ['$scope', '$location', '$log', '$rootScope', '$window', 'DataSRVC', 'CardDeck', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
-	function($scope, $location, $log, $rootScope, $window, DataSRVC, CardDeck, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems){
-		
-		var _window = angular.element($window);
-		
-		$scope.windowHeight = 0;
-		
-		$scope.windowScale = 0;
-		
-		$scope.dataSRVC = DataSRVC;
-		
-		$scope.cardDeck = CardDeck;
-		
-		$scope.pcs = Pcs;
-		
-		$scope.pcsCard1 = PcsCard1;
-		
-		$scope.pcsCard2 = PcsCard2;
-		
-		$scope.pcsCard3 = PcsCard3;
-		
-		$scope.pcsTraits = PcsTraits;
-		
-		$scope.pcsFeats = PcsFeats;
-		
-		$scope.pcsAugments = PcsAugments;
-		
-		$scope.pcsItems = PcsItems;
-		
-		$scope.status = {
-			dropdownOpen: false
-		};
-		
-		$scope.toggleOverlay = function(){
-			$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
-		};
-		
-		$scope.newPc = function(){
-			Pcs.addPc();
-			Pcs.pcNew = true;
-			Pcs.pcSaved = false;
-		};
-		
-		$scope.openPc = function(pc){
-			$location.path('pcs/'+pc._id+'/edit');
-			Pcs.pcNew = false;
-			Pcs.pcSaved = false;
-		};
-		
-		$scope.savePc = function(){
-			Pcs.editPc();
-			Pcs.pcNew = false;
-			Pcs.pcSaved = true;
-		};
-		
-		$scope.exitPc = function(){
-			if(Pcs.pcNew){
-				Pcs.deletePc();
-			}
-			$location.path('pcs');
-		};
-		
-		var initialize = function(){
-			toggleListeners(true);
-		};
-		
-		var toggleListeners = function(enable){
-			if(!enable) return;
-			$scope.$on('$destroy', onDestroy);
-			$scope.$on('screenSize:onHeightChange', onHeightChange);
-			$scope.$on('pcsCard1:updateAbility', updateAbility);
-			$scope.$watch('pcsCard2.EXP', watchEXP);
-			$scope.$watch('pcs.pc.experience', watchExperience);
-			$scope.$watch('pcs.pc.level', watchLevel);
-		};
-		
-		var onDestroy = function(){
-			toggleListeners(false);
-		};
-		
-		var onHeightChange = function(event, object){
-			$scope.windowHeight = object.newHeight;
-			$scope.windowScale = object.newScale;
-			$scope.$digest();
-		};
-		
-		var updateAbility = function(event, object){
-			var abilityPair = object.abilityPair;
-			var ability1 = object.ability1;
-			var ability2 = object.ability2;
-			switch(abilityPair){
-				case 1:
-					PcsCard1.factorBlock(ability1, ability2);
+angular.module('player')
+	.controller('PcsCtrl', ['$scope', '$location', '$log', '$rootScope', '$window', 'DataSRVC', 'CardDeck', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
+		function($scope, $location, $log, $rootScope, $window, DataSRVC, CardDeck, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems){
+			
+			var _window = angular.element($window);
+			
+			$scope.windowHeight = 0;
+			
+			$scope.windowScale = 0;
+			
+			$scope.dataSRVC = DataSRVC;
+			
+			$scope.cardDeck = CardDeck;
+			
+			$scope.pcs = Pcs;
+			
+			$scope.pcsCard1 = PcsCard1;
+			
+			$scope.pcsCard2 = PcsCard2;
+			
+			$scope.pcsCard3 = PcsCard3;
+			
+			$scope.pcsTraits = PcsTraits;
+			
+			$scope.pcsFeats = PcsFeats;
+			
+			$scope.pcsAugments = PcsAugments;
+			
+			$scope.pcsItems = PcsItems;
+			
+			$scope.status = {
+				dropdownOpen: false
+			};
+			
+			$scope.toggleOverlay = function(){
+				$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
+			};
+			
+			$scope.newPc = function(){
+				Pcs.addPc();
+				Pcs.pcNew = true;
+				Pcs.pcSaved = false;
+			};
+			
+			$scope.openPc = function(pc){
+				$location.path('player/pcs/'+pc._id+'/edit');
+				Pcs.pcNew = false;
+				Pcs.pcSaved = false;
+			};
+			
+			$scope.savePc = function(){
+				Pcs.editPc();
+				Pcs.pcNew = false;
+				Pcs.pcSaved = true;
+			};
+			
+			$scope.exitPc = function(){
+				if(Pcs.pcNew){
+					Pcs.deletePc();
+				}
+				$location.path('player/pcs');
+			};
+			
+			var initialize = function(){
+				toggleListeners(true);
+			};
+			
+			var toggleListeners = function(enable){
+				if(!enable) return;
+				$scope.$on('$destroy', onDestroy);
+				$scope.$on('screenSize:onHeightChange', onHeightChange);
+				$scope.$on('pcsCard1:updateAbility', updateAbility);
+				$scope.$watch('pcsCard2.EXP', watchEXP);
+				$scope.$watch('pcs.pc.experience', watchExperience);
+				$scope.$watch('pcs.pc.level', watchLevel);
+			};
+			
+			var onDestroy = function(){
+				toggleListeners(false);
+			};
+			
+			var onHeightChange = function(event, object){
+				$scope.windowHeight = object.newHeight;
+				$scope.windowScale = object.newScale;
+				$scope.$digest();
+			};
+			
+			var updateAbility = function(event, object){
+				var abilityPair = object.abilityPair;
+				var ability1 = object.ability1;
+				var ability2 = object.ability2;
+				switch(abilityPair){
+					case 1:
+						PcsCard1.factorBlock(ability1, ability2);
+						PcsCard2.factorHealth();
+						PcsCard2.factorStamina();
+						PcsCard2.factorCarryingCapacity();
+						break;
+					case 2:
+						PcsCard1.factorDodge(ability1, ability2);
+						break;
+					case 3:
+						PcsCard1.factorAlertness(ability1, ability2);
+						break;
+					case 4:
+						PcsCard1.factorTenacity(ability1, ability2);
+						break;
+				}
+			};
+			
+			//Watch for change in EXP input
+			var watchEXP = function(newValue, oldValue){
+				if(Pcs.pc && newValue !== oldValue){
+					PcsCard2.EXP = parseInt(newValue);
+					Pcs.pc.experience = parseInt(newValue);
+				}
+			};
+			
+			//Watch for change in experience
+			var watchExperience = function(newValue, oldValue){
+				if(Pcs.pc && newValue !== oldValue){
+					PcsCard2.factorExperience();
+					if(newValue !== PcsCard2.EXP){
+						PcsCard2.EXP = newValue;
+					}
+				}
+			};
+			
+			//Watch for changes in level
+			var watchLevel = function(newValue, oldValue){
+				if(Pcs.pc.abilities){
 					PcsCard2.factorHealth();
 					PcsCard2.factorStamina();
-					PcsCard2.factorCarryingCapacity();
-					break;
-				case 2:
-					PcsCard1.factorDodge(ability1, ability2);
-					break;
-				case 3:
-					PcsCard1.factorAlertness(ability1, ability2);
-					break;
-				case 4:
-					PcsCard1.factorTenacity(ability1, ability2);
-					break;
-			}
-		};
-		
-		//Watch for change in EXP input
-		var watchEXP = function(newValue, oldValue){
-			if(Pcs.pc && newValue !== oldValue){
-				PcsCard2.EXP = parseInt(newValue);
-				Pcs.pc.experience = parseInt(newValue);
-			}
-		};
-		
-		//Watch for change in experience
-		var watchExperience = function(newValue, oldValue){
-			if(Pcs.pc && newValue !== oldValue){
-				PcsCard2.factorExperience();
-				if(newValue !== PcsCard2.EXP){
-					PcsCard2.EXP = newValue;
+					PcsTraits.factorTraitLimit();
+					PcsFeats.factorFeatLimit();
+					PcsAugments.factorAugmentLimit();
 				}
-			}
-		};
-		
-		//Watch for changes in level
-		var watchLevel = function(newValue, oldValue){
-			if(Pcs.pc.abilities){
-				PcsCard2.factorHealth();
-				PcsCard2.factorStamina();
-				PcsTraits.factorTraitLimit();
-				PcsFeats.factorFeatLimit();
-				PcsAugments.factorAugmentLimit();
-			}
-		};
-		
-		initialize();
-		
-}]);
+			};
+			
+			initialize();
+			
+	}]);
 
 'use strict';
 
-var pcsModule = angular.module('pcs');
-
 // Directive for managing ability dice
-pcsModule
+angular.module('player')
 	.directive('diceBox', ['$window', 'CardDeck', function($window, CardDeck) {
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/pcs/views/dice-box.html',
+			templateUrl: '../modules/player/views/dice-box.html',
 			link: function(scope, element, attrs) {
 				
 				var initialize = function(){
@@ -2890,10 +2933,9 @@ pcsModule
 		};
 	}]);
 'use strict';
-var cardsModule = angular.module('pcs');
 
 // Factory-service for managing PC card deck.
-cardsModule.factory('PcsAugments', ['Pcs', 'CardDeck', 
+angular.module('player').factory('PcsAugments', ['Pcs', 'CardDeck', 
 	function(Pcs, CardDeck){
 		var service = {};
 		
@@ -2948,10 +2990,8 @@ cardsModule.factory('PcsAugments', ['Pcs', 'CardDeck',
 	}]);
 'use strict';
 
-var pcsModule = angular.module('pcs');
-
 // Factory-service for managing pc1 data.
-pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
+angular.module('player').factory('PcsCard1', ['$rootScope', 'Pcs',
 	function($rootScope, Pcs){
 		var service = {};
 		
@@ -3067,10 +3107,8 @@ pcsModule.factory('PcsCard1', ['$rootScope', 'Pcs',
 	}]);
 'use strict';
 
-var pcsModule = angular.module('pcs');
-
 // Factory-service for managing pc2 data.
-pcsModule.factory('PcsCard2', ['$rootScope', 'Pcs',
+angular.module('player').factory('PcsCard2', ['$rootScope', 'Pcs',
 	function($rootScope, Pcs){
 		var service = {};
 		
@@ -3121,20 +3159,17 @@ pcsModule.factory('PcsCard2', ['$rootScope', 'Pcs',
 	}]);
 'use strict';
 
-var pcsModule = angular.module('pcs');
-
 // Factory-service for managing pc3 data.
-pcsModule.factory('PcsCard3', ['$rootScope', 'Pcs',
+angular.module('player').factory('PcsCard3', ['$rootScope', 'Pcs',
 	function($rootScope, Pcs){
 		var service = {};
 		
 		return service;
 	}]);
 'use strict';
-var cardsModule = angular.module('pcs');
 
 // Factory-service for managing PC card deck.
-cardsModule.factory('PcsFeats', ['Pcs', 'CardDeck', 
+angular.module('player').factory('PcsFeats', ['Pcs', 'CardDeck', 
 	function(Pcs, CardDeck){
 		var service = {};
 		
@@ -3190,10 +3225,9 @@ cardsModule.factory('PcsFeats', ['Pcs', 'CardDeck',
 	}]);
 
 'use strict';
-var cardsModule = angular.module('pcs');
 
-// Factory-service for managing PC card deck.
-cardsModule.factory('PcsItems', ['Pcs',
+// Factory-service for managing PC items.
+angular.module('player').factory('PcsItems', ['Pcs',
 	function(Pcs){
 		var service = {};
 		
@@ -3202,10 +3236,9 @@ cardsModule.factory('PcsItems', ['Pcs',
 		return service;
 	}]);
 'use strict';
-var cardsModule = angular.module('pcs');
 
-// Factory-service for managing PC card deck.
-cardsModule.factory('PcsTraits', ['Pcs', 'CardDeck', 
+// Factory-service for managing PC traits
+angular.module('player').factory('PcsTraits', ['Pcs', 'CardDeck', 
 	function(Pcs, CardDeck){
 		var service = {};
 		
@@ -3260,10 +3293,8 @@ cardsModule.factory('PcsTraits', ['Pcs', 'CardDeck',
 	}]);
 'use strict';
 
-var pcsModule = angular.module('pcs');
-
 // Factory-service for Browsing, Reading, Editting, Adding, and Deleting PCs.
-pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resource', 
+angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resource', 
 	function($stateParams, $location, Authentication, $resource){
 		
 		var Pcs = $resource(
@@ -3405,7 +3436,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 			});
 			
 			this.pc.$save(function(response) {
-				$location.path('pcs/'+response._id+'/edit');
+				$location.path('player/pcs/'+response._id+'/edit');
 			}, function(errorResponse) {
 				this.error = errorResponse.data.message;
 			});
@@ -3421,7 +3452,7 @@ pcsModule.factory('Pcs', ['$stateParams', '$location', 'Authentication', '$resou
 				}
 			} else {
 				this.pc.$remove(function() {
-					$location.path('pcs');
+					$location.path('player/pcs');
 				});
 			}
 			this.browsePcs();

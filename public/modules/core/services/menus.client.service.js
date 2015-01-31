@@ -64,7 +64,6 @@ angular.module('core').service('Menus', [
 				items: [],
 				shouldRender: shouldRender
 			};
-
 			// Return the menu object
 			return this.menus[menuId];
 		};
@@ -96,7 +95,7 @@ angular.module('core').service('Menus', [
 				items: [],
 				shouldRender: shouldRender
 			});
-
+			
 			// Return the menu object
 			return this.menus[menuId];
 		};
@@ -130,7 +129,6 @@ angular.module('core').service('Menus', [
 		this.removeMenuItem = function(menuId, menuItemURL) {
 			// Validate that the menu exists
 			this.validateMenuExistance(menuId);
-
 			// Search for menu item to remove
 			for (var itemIndex in this.menus[menuId].items) {
 				if (this.menus[menuId].items[itemIndex].link === menuItemURL) {

@@ -1,0 +1,99 @@
+<div class="card-header fill-parent">
+	<div ng-class="{'text-9': card.cardType !== 'augment',
+			'text-8': card.cardType === 'augment'}">
+		<input ng-if="!card.locked" type="text"
+			style="font-weight: bold; margin-top: -1px;"
+			class="card-input text-bold"
+			ng-model="card.name" stop-event>
+		<strong ng-if="card.locked">
+			{{card.name}}
+		</strong>
+	</div>
+	<hr class="black-line">
+	<div ng-if="card.cardType !== 'item'"
+		ng-class="{'text-8': card.cardType !== 'augment',
+			'text-7': card.cardType === 'augment'}">
+		<span ng-if="card.locked">
+			{{card.keyword}}
+		</span>
+		<span ng-if="card.locked && !card.keyword">
+			[Keyword]
+		</span>
+		<div ng-if="!card.locked" class="dropdown" dropdown stop-event on-toggle="toggled(open)">
+			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
+				ng-click="dropdown" aria-expanded="true">
+				<span class="text-capitalize">
+					{{card.keyword}}
+				</span>
+				<span ng-if="!card.keyword">
+					[Keyword]
+				</span>
+			</a>
+			<ul class="card-menu-list dropdown-menu" aria-labelledby="cardDropdown" stop-click>
+				<li role="presentation" class="dropdown-header">Archetype</li>
+				<li role="presentation" ng-repeat="archetype in $parent.dataSRVC.archetypes"><label>
+					<input type="radio" ng-model="card.keyword" value="{{archetype}}">
+					{{archetype}}
+				</label></li>
+				<li role="presentation" class="dropdown-header">Allegiance</li>
+				<li role="presentation" ng-repeat="allegiance in $parent.dataSRVC.allegiances" ng-if="allegiance !== 'Unaligned'"><label>
+					<input type="radio" ng-model="card.keyword" value="{{allegiance}}">
+					{{allegiance}}
+				</label></li>
+				<li role="presentation" class="dropdown-header">Race</li>
+				<li role="presentation" ng-repeat="race in $parent.dataSRVC.races" ng-if="race !== 'Weolda'"><label>
+					<input type="radio" ng-model="card.keyword" value="{{race}}">
+					{{race}}
+				</label></li>
+			</ul>
+		</div>
+		<span class="text-capitalize">
+			{{card.cardType}}
+		</span>
+	</div>
+	
+	<div ng-if="card.cardType === 'item'" class="title-block text-8">
+		<div class="title-block" ng-if="card.itemSlot === 'One-handed'
+				|| card.itemSlot === 'Two-handed'
+				|| card.itemSlot === 'One-handed or Paired'
+				|| card.itemSlot === 'One-handed or Two-handed'">
+			<span ng-if="card.locked">
+				{{card.itemType}}
+			</span>
+			<span ng-if="card.locked && !card.itemType">
+				[Item Type]
+			</span>
+			<div ng-if="!card.locked" class="dropdown" dropdown stop-event on-toggle="toggled(open)">
+				<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
+					ng-click="dropdown" aria-expanded="true">
+					<span>
+						{{card.itemType}}
+					</span>
+					<span ng-if="!card.itemType">
+						[Item Type]
+					</span>
+				</a>
+				<div class="dropdown-menu" aria-labelledby="cardDropdown">
+					<ul class='card-menu-list'>
+						<li role="presentation" class="dropdown-header">Weapon/Implement Type</li>
+						<li role="presentation" ng-repeat="itemType in $parent.dataSRVC.itemTypes"><label>
+							<input type="radio" ng-model="card.itemType" value="{{itemType}}">
+							{{itemType}}
+						</label></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="title-block" ng-if="card.itemSlot !== 'One-handed'
+				&& card.itemSlot !== 'Two-handed'
+				&& card.itemSlot !== 'One-handed or Paired'
+				&& card.itemSlot !== 'One-handed or Two-handed'">
+			<span>
+				{{card.itemSlot}}
+			</span>
+			<span ng-if="!card.itemSlot">
+				[Item Type]
+			</span>
+		</div>
+	</div>
+</div>
