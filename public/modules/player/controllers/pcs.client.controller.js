@@ -88,6 +88,18 @@ angular.module('player')
 				$scope.$digest();
 			};
 			
+	 		$scope.status = {
+	 			isopen: false
+	 		};
+		 	
+	 		$scope.toggled = function(open){
+	 			$scope.status.isopen = open;
+	 			console.log($scope.status.isopen);
+	 			$rootScope.$broadcast('CardsCtrl:onDropdown', {
+	 				isOpen: $scope.status.isopen
+	 			});
+	 		};
+	
 			var updateAbility = function(event, object){
 				var abilityPair = object.abilityPair;
 				var ability1 = object.ability1;
