@@ -1,15 +1,15 @@
 <div ng-if="cardAction.effect.show && cardAction.usage !== 'Defense'"
-	style="white-space: normal;">
-	<div ng-if="$parent.$parent.card.locked">
+	style="white-space: normal;" class="text-8">
+	<div ng-if="$parent.$parent.card.locked" >
 		<strong>Effect: </strong>{{cardAction.effect.content}}
 	</div>
 	<div ng-if="!$parent.$parent.card.locked">
-		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.toggled(open)">
+		<div class="dropdown indent-left" dropdown stop-event on-toggle="$parent.$parent.$parent.toggled(open)">
 			<a id="actionDropdown" class="dropdown-toggle" dropdown-toggle>
 				<strong class="absolute-left">Effect: </strong>
 			</a>
 			<div class="dropdown-menu" aria-labelledby="cardDropdown" stop-click>
-				<ul class="col-xs-6 card-menu-list">
+				<ul class="col-xs-6">
 					<li><label>
 						<input type="radio" value="none"
 							ng-model="cardAction.effect.list.listType"> None
@@ -33,37 +33,36 @@
 				</ul>
 			</div>
 		</div>
-		<textarea elastic-textarea stop-event
-			ng-model="cardAction.effect.content"
-			class="fill-width card-input" 
-			style="text-indent: 3.2em;" rows="1">
+		<textarea elastic-textarea stop-event ng-model="cardAction.effect.content"
+			class="card-textarea" style="text-indent: 3.2em;" rows="1">
 		</textarea>
+		<br />
 	</div>
 	<div ng-if="cardAction.effect.list.listType !== 'none'">
-		<div ng-if="$parent.$parent.card.locked">
+		<div ng-if="$parent.$parent.$parent.card.locked">
 			<ul class="card-list" ng-if="cardAction.effect.list.listType !== 'skillCheck'">
 				<li class="row">
 					<div class="col-xs-1 text-center"><strong> &#9679 </strong></div>
-					<div class="col-xs-10">
+					<div class="col-xs-11">
 						{{cardAction.effect.list.items[0]}}
 					</div>
 				</li>
 				<li class="row">
 					<div class="col-xs-1 text-center"><strong> &#9679 </strong></div>
-					<div class="col-xs-10">
+					<div class="col-xs-11">
 						{{cardAction.effect.list.items[1]}}
 					</div>
 				</li>
 				<li class="row" ng-if="cardAction.effect.list.listType === 'bullets3'
 					|| cardAction.effect.list.listType === 'bullets4'">
 					<div class="col-xs-1 text-center"><strong> &#9679 </strong></div>
-					<div class="col-xs-10">
+					<div class="col-xs-11">
 						{{cardAction.effect.list.items[2]}}
 					</div>
 				</li>
 				<li class="row" ng-if="cardAction.effect.list.listType === 'bullets4'">
 					<div class="col-xs-1 text-center"><strong> &#9679 </strong></div>
-					<div class="col-xs-10">
+					<div class="col-xs-11">
 						{{cardAction.effect.list.items[3]}}
 					</div>
 				</li>
@@ -87,42 +86,42 @@
 			</ul>
 		</div>
 		
-		<div ng-show="cardAction.effect.list.listType">
+		<div ng-if="!$parent.$parent.$parent.card.locked">
 			<ul class="card-list" ng-show="cardAction.effect.list.listType !== 'skillCheck'">
 				<li class="row">
 					<div class="col-xs-1 text-center"><strong> &#9679 </strong></div>
-					<div class="col-xs-10">
+					<div class="col-xs-11">
 						<textarea elastic-textarea stop-event
 							ng-model="cardAction.effect.list.items[0]"
-							class="card-input fill-width" rows="1">
+							class="card-textarea" rows="1">
 						</textarea>
 					</div>
 				</li>
 				<li class="row">
 					<div class="col-xs-1 text-center"><strong> &#9679 </strong></div>
-					<div class="col-xs-10">
+					<div class="col-xs-11">
 						<textarea elastic-textarea stop-event
 							ng-model="cardAction.effect.list.items[1]"
-							class="card-input fill-width" rows="1">
+							class="card-textarea" rows="1">
 						</textarea>
 					</div>
 				</li>
 				<li class="row" ng-if="cardAction.effect.list.listType === 'bullets3'
 					|| cardAction.effect.list.listType === 'bullets4'">
 					<div class="col-xs-1 text-center"><strong> &#9679 </strong></div>
-					<div class="col-xs-10">
+					<div class="col-xs-11">
 						<textarea elastic-textarea stop-event
 							ng-model="cardAction.effect.list.items[2]"
-							class="card-input fill-width" rows="1">
+							class="card-textarea" rows="1">
 						</textarea>
 					</div>
 				</li>
 				<li class="row" ng-if="cardAction.effect.list.listType === 'bullets4'">
 					<div class="col-xs-1 text-center"><strong> &#9679 </strong></div>
-					<div class="col-xs-10">
+					<div class="col-xs-11">
 						<textarea elastic-textarea stop-event
 							ng-model="cardAction.effect.list.items[3]"
-							class="card-input fill-width" rows="1">
+							class="card-textarea" rows="1">
 						</textarea>
 					</div>
 				</li>
@@ -132,7 +131,7 @@
 					<label style="position: absolute; left: 1.5em;" for="result1">12 or higher: </label>
 					<textarea elastic-textarea stop-event
 						ng-model="cardAction.effect.list.items[0]"
-						id="result1" class="card-indent card-input"
+						id="result1" class="card-textarea-indent"
 						style="text-indent: 6.35em;" rows="1">
 					</textarea>
 				</li>
@@ -140,7 +139,7 @@
 					<label style="position: absolute; left: 1.5em;" for="result2">11 to 7: </label>
 					<textarea elastic-textarea stop-event
 						ng-model="cardAction.effect.list.items[1]"
-						id="result2" class="card-indent card-input"
+						id="result2" class="card-textarea-indent"
 						style="text-indent: 3.8em;" rows="1">
 					</textarea>
 				</li>
@@ -148,7 +147,7 @@
 					<label style="position: absolute; left: 1.5em;" for="result3">6 or lower: </label>
 					<textarea elastic-textarea stop-event
 						ng-model="cardAction.effect.list.items[2]"
-						id="result3" class="card-indent card-input"
+						id="result3" class="card-textarea-indent"
 						style="text-indent: 5.35em;" rows="1">
 					</textarea>
 				</li>

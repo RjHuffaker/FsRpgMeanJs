@@ -47,22 +47,6 @@
 	margin: 0;
 }
 
-.card-menu-list {
-	white-space: normal;
-	padding-left: .25em;
-	list-style-type: none;
-	font-size: .8em;
-}
-
-.card-menu-list > li > label {
-	cursor: pointer;
-	font-size: .8em;
-}
-
-.card-menu-list > li > label:hover {
-	text-shadow: 0.5px 0.5px #555;
-}
-
 ul.card-list {
 	width: 100%;
 	list-style-type: none;
@@ -75,23 +59,9 @@ ul.card-list li div {
 	margin: 0 !important;
 }
 
-[type = "checkbox"]:not(old),
-[type = "radio"]:not(old){
+.card-icon {
+	font-size: 1.2em;
 	cursor: pointer;
-	width: 1.2em;
-	height: 1.2em;
-}
-
-a.dropdown-toggle {
-	text-decoration: none !important;
-	cursor: pointer;
-	text-transform: capitalize;
-}
-
-a.dropdown-toggle:hover {
-	-webkit-text-shadow:	1px 1px 1px #333;
-	-moz-text-shadow:		1px 1px 1px #333;
-	text-shadow:			1px 1px 1px #333;
 }
 
 .card-icon-top-left {
@@ -122,9 +92,9 @@ a.dropdown-toggle:hover {
 	left: 0;
 }
 
-.thirteen-left {
+.indent-left {
 	position: absolute;
-	left: 1em;
+	left: .8em;
 }
 
 .text-descriptive {
@@ -142,63 +112,58 @@ a.dropdown-toggle:hover {
 	display: table-cell;
 }
 
-.number-picker {
-	width: 8em !important;
-	padding: .5em;
-}
-
-div.number-picker input{
-	font-size: 1.2em !important;
-}
-
-div.dropdown {
-	display: inline;
-}
-
-div.dropdown-menu {
-	min-width: 5em !important;
-	width: 13em;
+.card-width {
+	position: absolute;
+	left: .8em;
+	width: 17rem;
 }
 
 .card-indent {
 	position: relative;
-	left: 1em;
-	width: 90%;
+	left: .5em;
+	width: 14em;
 }
 
 .card-input {
 	font: inherit;
+	overflow: hidden;
+	height: 1.4em !important;
+	padding: 0;
+	margin: -4px 0 0 0;
+	border: none;
+	background: transparent;
+}
+
+.card-textarea {
+	font: inherit;
+	overflow: hidden;
 	width: 100%;
+	padding: 0;
+	margin: 0 0 -5px 0;
+	border: none;
+	background: transparent;
+}
+
+.card-textarea-indent {
+	font: inherit;
+	overflow: hidden;
+	width: 96%;
+	padding: 0;
+	margin: 0 0 -5px 0;
+	margin-left: 4%;
+	border: none;
+	background: transparent;
+}
+
+.card-input-indent {
+	font: inherit;
+	position: relative;
+	left: .5em;
+	width: 14em;
 	overflow: hidden;
 	padding: 0;
 	margin-bottom: -.25em;
 	border: none;
 	background: transparent;
 	background-origin: none;
-}
-
-[card-pc-1],
-[card-pc-2],
-[card-pc-3] {
-	background-color: Tan;
-}
-
-.card-trait {
-	background-color: BurlyWood;
-}
-
-.card-feat {
-	background-color: DarkKhaki;
-}
-
-.card-augment {
-	background-color: DarkSeaGreen;
-}
-
-.card-item {
-	background-color: Khaki;
-}
-
-.card-note {
-	background-color: cornsilk;
 }

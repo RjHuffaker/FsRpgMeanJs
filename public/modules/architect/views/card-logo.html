@@ -7,9 +7,9 @@
 			{{card.cardType}}&nbsp;
 		</span>
 	</a>
-	<div class="dropdown-menu" aria-labelledby="cardDropdown"
-		style="width: 15em;">
-		<ul class="col-xs-6 card-menu-list">
+	<div ng-if="card.deckType==='card'" class="dropdown-menu" aria-labelledby="cardDropdown"
+		style="width: 14.8em; left: -.65em;">
+		<ul class="col-xs-6 text-8">
 			<li role="presentation" class="dropdown-header" stop-click>File Options</li>
 			<li ng-click="cards.addCard(card.cardNumber)"><label>
 				<i class="glyphicon glyphicon-chevron-left alert-primary"></i> Insert Before
@@ -34,7 +34,7 @@
 				<i class="glyphicon glyphicon-trash alert-warning"></i> Delete Card
 			</label></li>
 		</ul>
-		<ul class="col-xs-6 card-menu-list" ng-if="!card.locked">
+		<ul class="col-xs-6 text-8" ng-if="!card.locked">
 			<li role="presentation" class="dropdown-header">Card Features</li>
 			<li stop-click><label>
 				<input type="checkbox" ng-model="card.description.show"> Description
@@ -63,6 +63,15 @@
 			</label></li>
 			<li ng-if="card.cardType === 'item'" stop-click><label>
 				<input type="checkbox" ng-model="card.finesse.show"> Finesse
+			</label></li>
+		</ul>
+	</div>
+	<div ng-if="card.deckType !== 'card'" class="dropdown-menu" aria-labelledby="cardDropdown"
+		style="width: 14.8em; left: -.65em;">
+		<ul class="col-xs-6 text-8">
+			<li role="presentation" class="dropdown-header" stop-click>File Options</li>
+			<li ng-click=""><label>
+				<i class="glyphicon glyphicon-chevron-left alert-primary"></i> Change {{card.cardType}}
 			</label></li>
 		</ul>
 	</div>

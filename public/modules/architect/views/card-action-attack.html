@@ -1,4 +1,4 @@
-<div ng-if="cardAction.attack.show && cardAction.usage !== 'Defense'" style="white-space: normal;">
+<div ng-if="cardAction.attack.show && cardAction.usage !== 'Defense'" style="white-space: normal;" class="text-8">
 	<div ng-if="$parent.$parent.card.locked">
 		<strong>Attack:</strong>
 		{{cardAction.attack.dice_a}}
@@ -22,7 +22,7 @@
 				<strong>Attack: </strong>
 			</a>
 			<div class="dropdown-menu" aria-labelledby="cardDropdown" stop-click>
-				<ul class="col-xs-5 card-menu-list">
+				<ul class="col-xs-5">
 					<li role="presentation" class="dropdown-header">Attack Type</li>
 					<li ng-repeat="attackType in $parent.$parent.$parent.dataSRVC.attackTypes"><label>
 						<input type="radio" value="{{attackType}}"
@@ -30,7 +30,7 @@
 						{{attackType}}
 					</label></li>
 				</ul>
-				<ul class="col-xs-7 card-menu-list">
+				<ul class="col-xs-7">
 					<li role="presentation" class="dropdown-header">Attack Options</li>
 					<li ng-show="cardAction.attack.attackType === 'Melee'"><label>
 						<input type="checkbox" ng-model="cardAction.reflexive"> Reflexive
@@ -55,14 +55,14 @@
 				<span ng-hide="cardAction.attack.dice_a">1d__</span>
 			</a>
 			<div class="dropdown-menu" aria-labelledby="cardDropdown">
-				<ul class="col-xs-6 card-menu-list">
+				<ul class="col-xs-6">
 					<li ng-repeat="dice in $parent.$parent.dataSRVC.dice"><label>
 						<input type="radio" value="{{dice}}"
 							ng-model="cardAction.attack.dice_a">
 						{{dice}}
 					</label></li>
 				</ul>
-				<ul class="col-xs-6 card-menu-list">
+				<ul class="col-xs-6">
 					<li ng-repeat="ability in $parent.$parent.$parent.dataSRVC.abilities"><label>
 						<input type="radio" value="{{ability}}"
 							ng-model="cardAction.attack.dice_a">
@@ -79,14 +79,14 @@
 				<span ng-hide="cardAction.attack.dice_b">1d__</span>
 			</a>
 			<div class="dropdown-menu" aria-labelledby="cardDropdown">
-				<ul class="col-xs-6 card-menu-list">
+				<ul class="col-xs-6">
 					<li ng-repeat="dice in $parent.$parent.dataSRVC.dice"><label>
 						<input type="radio" value="{{dice}}"
 							ng-model="cardAction.attack.dice_b">
 						{{dice}}
 					</label></li>
 				</ul>
-				<ul class="col-xs-6 card-menu-list">
+				<ul class="col-xs-6">
 					<li ng-repeat="ability in $parent.$parent.$parent.dataSRVC.abilities"><label>
 						<input type="radio" value="{{ability}}"
 							ng-model="cardAction.attack.dice_b">
@@ -102,7 +102,7 @@
 				{{cardAction.attack.versus}}
 				<span ng-hide="cardAction.attack.versus">[Defense]</span>
 			</a>
-			<ul class="dropdown-menu card-menu-list" aria-labelledby="cardDropdown">
+			<ul class="dropdown-menu" aria-labelledby="cardDropdown">
 				<li role="presentation" class="dropdown-header">Defense Attacked</li>
 				<li ng-repeat="defenseType in $parent.$parent.$parent.dataSRVC.defenseTypes"><label>
 					<input type="radio" value="{{defenseType}}"
@@ -113,20 +113,20 @@
 			<br />
 		</div>
 		<div ng-if="cardAction.attack.success.show">
-			<label style="position: absolute;" for="attackSuccess">Success: </label>
+			<label for="attackSuccess" class="indent-left">Success: </label>
 			<textarea elastic-textarea stop-event
 				ng-model="cardAction.attack.success.content"
 				id="attackSuccess"
-				class="fill-width card-input" 
+				class="card-textarea"
 				style="text-indent: 4.5em;" rows="1">
 			</textarea>
 		</div>
 		<div ng-if="cardAction.attack.criticalSuccess.show">
-			<label style="position: absolute;" for="attackCriticalSuccess">Critical Success: </label>
+			<label for="attackCriticalSuccess" class="indent-left">Critical Success: </label>
 			<textarea elastic-textarea stop-event
 				ng-model="cardAction.attack.criticalSuccess.content"
 				id="attackCriticalSuccess"
-				class="fill-width card-input" 
+				class="card-textarea"
 				style="text-indent: 8.3em;" rows="1">
 			</textarea>
 		</div>

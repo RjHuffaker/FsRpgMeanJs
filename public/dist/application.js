@@ -254,6 +254,12 @@ architectModule
 			}
 		};
 	})
+	.directive('cardActionIcon', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/architect/views/card-action-icon.html'
+		};
+	})
 	.directive('cardActionTitle', function(){
 		return {
 			restrict: 'A',

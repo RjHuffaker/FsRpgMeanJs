@@ -30,7 +30,7 @@ div[card-deck] {
 }
 
 [card-panel] {
-	padding: 1px;
+	padding: .1em;
 	margin-top: 3em;
 	cursor: move;
 	cursor: -webkit-grab;
@@ -74,4 +74,30 @@ div[card-deck] {
 [card-panel].ng-leave,
 [card-panel].ng-enter.ng-enter-active {
 	margin-top: 0;
+}
+
+[card-pc-1],
+[card-pc-2],
+[card-pc-3] {
+	background-color: Tan;
+}
+
+.card-trait {
+	background-color: BurlyWood;
+}
+
+.card-feat {
+	background-color: DarkKhaki;
+}
+
+.card-augment {
+	background-color: DarkSeaGreen;
+}
+
+.card-item {
+	background-color: Khaki;
+}
+
+.card-note {
+	background-color: cornsilk;
 }

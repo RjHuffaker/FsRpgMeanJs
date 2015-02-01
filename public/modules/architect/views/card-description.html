@@ -1,10 +1,10 @@
 <div ng-if="card.description.show" class="text-8"
 	style="margin: .25em">
-	<pre ng-if="card.locked" class="card-input text-descriptive text-center">
+	<pre ng-if="card.locked" class="card-textarea text-descriptive text-center">
 		{{card.description.content}}
 	</pre>
 	<textarea ng-if="!card.locked"
-		class="card-input text-descriptive text-center"
+		class="card-textarea text-descriptive text-center"
 		elastic-textarea ng-change="resize()" rows="1"
 		ng-model="card.description.content" stop-event>
 	</textarea>

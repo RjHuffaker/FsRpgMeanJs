@@ -1,11 +1,11 @@
-<div class="title-row" ng-if="cardAction.usage !== 'Defense'">
-	<div class="title-block pull-left">
-		<strong >
+<div class="title-row text-8" ng-if="cardAction.usage !== 'Defense'">
+	<div class="title-block">
+		<strong class="pull-left">
 			{{cardAction.usage}}<span ng-if="cardAction.attack.show && cardAction.attack.attackType">, {{cardAction.attack.attackType}}</span><span ng-if="cardAction.reflexive && cardAction.attack.attackType === 'Melee'">, Reflexive</span><span ng-if="cardAction.thrown && cardAction.attack.attackType === 'Ranged'">, Thrown</span>
 		</strong>
 	</div>
-	<div class="title-block pull-right">
-		<div class="title-block" ng-if="$parent.$parent.card.locked">
+	<div class="title-block">
+		<div class="pull-right" ng-if="$parent.$parent.card.locked">
 			<strong>
 				{{cardAction.frequency}}
 			</strong>
@@ -13,14 +13,14 @@
 				[Frequency]
 			</strong>
 		</div>
-		<div ng-if="!$parent.$parent.card.locked" class="dropdown dropup"
+		<div ng-if="!$parent.$parent.card.locked" class="dropdown dropup pull-right"
 			dropdown stop-event on-toggle="$parent.$parent.$parent.toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				<strong>{{cardAction.frequency}}</strong>
 				<strong ng-if="!cardAction.frequency">[Frequency]</strong>
 			</a>
-			<ul class="dropdown-menu card-menu-list" aria-labelledby="cardDropdown" stop-click>
+			<ul class="dropdown-menu" aria-labelledby="cardDropdown" stop-click>
 				<li role="presentation" class="dropdown-header">Action Frequency</li>
 				<li ng-repeat="frequency in $parent.$parent.$parent.dataSRVC.actionFrequency"><label>
 					<input type="radio" value="{{frequency}}"
@@ -30,5 +30,4 @@
 			</ul>
 		</div>
 	</div>
-	<br />
 </div>

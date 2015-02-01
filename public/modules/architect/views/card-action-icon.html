@@ -1,0 +1,31 @@
+<div ng-if="!$parent.card.locked" class="dropdown"
+	style="position: absolute; left: -.4em;"
+	dropdown stop-event on-toggle="$parent.$parent.toggled(open)">
+	<a id="actionDropdown" class="dropdown-toggle card-icon" dropdown-toggle>
+		<i class="glyphicon glyphicon-cog"></i>
+	</a>
+	<div class="dropdown-menu dropup" style="width: 15em;"
+		aria-labelledby="cardDropdown" stop-click>
+		<ul class="col-xs-5 text-8">
+			<li role="presentation" class="dropdown-header">Action Usage</li>
+			<li><label>
+				<input type="radio" ng-model="cardAction.usage" value="Defense"> Defense
+			</label></li>
+			<li><label>
+				<input type="radio" ng-model="cardAction.usage" value="Default"> Default
+			</label></li>
+			<li><label>
+				<input type="radio" ng-model="cardAction.usage" value="Single-use"> Single-use
+			</label></li>
+		</ul>
+		<ul class="col-xs-7 text-8">
+			<li role="presentation" class="dropdown-header">Action Entries</li>
+			<li ng-show="cardAction.usage !== 'Defense'"><label>
+				<input type="checkbox" ng-model="cardAction.effect.show"> Effect
+			</label></li>
+			<li ng-show="cardAction.usage !== 'Defense'"><label>
+				<input type="checkbox" ng-model="cardAction.attack.show"> Attack
+			</label></li>
+		</ul>
+	</div>
+</div>

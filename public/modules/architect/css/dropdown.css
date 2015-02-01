@@ -1,0 +1,66 @@
+div.dropdown {
+	display: inline-block;
+}
+
+a.dropdown-toggle {
+	text-decoration: none !important;
+	cursor: pointer;
+	text-transform: capitalize;
+}
+
+a.dropdown-toggle:hover {
+	-webkit-text-shadow:	1px 1px 1px #333;
+	-moz-text-shadow:		1px 1px 1px #333;
+	text-shadow:			1px 1px 1px #333;
+}
+
+.dropdown-menu {
+	min-width: 15em !important;
+	font-size: 1em !important;
+}
+
+.dropdown-menu {
+	white-space: normal;
+	padding-left: .25em;
+}
+
+.dropdown-menu ul {
+	list-style-type: none;
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
+.dropdown-menu li {
+	margin: 0 !important;
+	white-space: nowrap;
+}
+
+.dropdown-menu li :not(.dropdown-header){
+	margin: 0 !important;
+	padding: .15em;
+	white-space: nowrap;
+}
+
+.dropdown-menu label {
+	cursor: pointer;
+}
+
+.dropdown-menu label:hover {
+	text-shadow: 0.5px 0.5px #555;
+}
+
+.number-picker {
+	width: 12em !important;
+	padding: .5em;
+}
+
+div.number-picker input{
+	font-size: 1.2em !important;
+}
+
+[type = "checkbox"]:not(old),
+[type = "radio"]:not(old){
+	cursor: pointer;
+	margin-top: -.25em;
+	width: 1.2em;
+}

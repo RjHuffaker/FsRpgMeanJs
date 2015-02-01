@@ -1,13 +1,14 @@
 <hr class="black-line">
 <div class="title-row text-8">
 	<div ng-if="card.cardType !== 'item'" class="title-block">
-		<strong ng-if="card.locked">
+		<strong ng-if="card.locked" class="pull-left">
 			{{card.keyword}} {{card.prerequisite}}
 		</strong>
-		<strong ng-if="card.locked && !card.keyword && !card.prerequisite">
+		<strong ng-if="card.locked && !card.keyword && !card.prerequisite" class="pull-left">
 			[Prerequisites]
 		</strong>
-		<div ng-if="!card.locked" class="dropdown dropup" dropdown stop-event on-toggle="toggled(open)">
+		<div ng-if="!card.locked" class="dropdown dropup pull-left"
+			dropdown stop-event on-toggle="toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				<strong>
@@ -17,7 +18,7 @@
 					[Prerequisites]
 				</strong>
 			</a>
-			<ul class='card-menu-list dropdown-menu' aria-labelledby="cardDropdown">
+			<ul class='card-menu-list dropdown-menu' aria-labelledby="cardDropdown" style="width: 15em;">
 				<li role="presentation" class="dropdown-header">Prerequisite</li>
 				<li ><label>
 					<input type="radio" ng-model="card.prerequisite" value="">
@@ -31,13 +32,13 @@
 		</div>
 	</div>
 	<div ng-if="card.cardType === 'item'" class="title-block">
-		<strong ng-if="card.locked">
+		<strong ng-if="card.locked" class="pull-left">
 			{{card.itemSlot}}
 		</strong>
-		<strong ng-if="card.locked && !card.itemSlot">
+		<strong ng-if="card.locked && !card.itemSlot" class="pull-left">
 			[Item Slot]
 		</strong>
-		<div ng-if="!card.locked" class="dropdown dropup" dropdown stop-event on-toggle="toggled(open)">
+		<div ng-if="!card.locked" class="dropdown dropup pull-left" dropdown stop-event on-toggle="toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				<strong>
@@ -47,8 +48,8 @@
 					[Item Slot]
 				</strong>
 			</a>
-			<div class="dropdown-menu" aria-labelledby="cardDropdown">
-				<ul class='row card-menu-list' stop-click>
+			<div class="dropdown-menu" aria-labelledby="cardDropdown" style="width: 18em; left: -.5em">
+				<ul class="row text-9" stop-click>
 					<li role="presentation" class="col-xs-12 dropdown-header">Weapons & Implements</li>
 					<li role="presentation" class="col-xs-6"><label>
 						<input type="radio" ng-model="card.itemSlot" value="One-handed">
@@ -66,7 +67,8 @@
 						<input type="radio" ng-model="card.itemSlot" value="One-handed or Two-handed">
 						One-handed or Two-handed
 					</label></li>
-					
+				</ul>
+				<ul class="row text-9" stop-click>
 					<li role="presentation" class="col-xs-12 dropdown-header">Armor & Accessories</li>
 					<li role="presentation" class="col-xs-4"><label>
 						<input type="radio" ng-model="card.itemSlot" value="Armor">
@@ -80,7 +82,8 @@
 						<input type="radio" ng-model="card.itemSlot" value="Ring">
 						Ring
 					</label></li>
-					
+				</ul>
+				<ul class="row text-9" stop-click>
 					<li role="presentation" class="col-xs-4"><label>
 						<input type="radio" ng-model="card.itemSlot" value="Shield">
 						Shield
@@ -93,7 +96,8 @@
 						<input type="radio" ng-model="card.itemSlot" value="Helmet">
 						Helmet
 					</label></li>
-					
+				</ul>
+				<ul class="row text-9" stop-click>
 					<li role="presentation" class="col-xs-4"><label>
 						<input type="radio" ng-model="card.itemSlot" value="Gloves">
 						Gloves
@@ -106,7 +110,8 @@
 						<input type="radio" ng-model="card.itemSlot" value="Belt">
 						Belt
 					</label></li>
-					
+				</ul>
+				<ul class="row text-9" stop-click>
 					<li role="presentation" class="col-xs-12 dropdown-header">Miscellaneous</li>
 					<li role="presentation" class="col-xs-6"><label>
 						<input type="radio" ng-model="card.itemSlot" value="Consumable">
@@ -120,15 +125,15 @@
 			</div>
 		</div>
 	</div>
-	<div ng-if="card.cardType === 'item'" class="title-block pull-right">
-		<div ng-if="card.locked" class="title-block">
+	<div ng-if="card.cardType === 'item'" class="title-block">
+		<div ng-if="card.locked" class="pull-right">
 			<strong>W:</strong>
 			{{card.weight}}
 			/
 			<strong>C:</strong>
 			{{card.cost}}
 		</div>
-		<div ng-if="!card.locked" class="dropdown dropup" dropdown stop-event on-toggle="toggled(open)">
+		<div ng-if="!card.locked" class="dropdown dropup pull-right" dropdown stop-event on-toggle="toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				<strong>W:</strong>
@@ -137,7 +142,7 @@
 				<strong>C:</strong> 
 				{{card.cost}}
 			</a>
-			<div class="dropdown-menu dropdown-menu-right dropup number-picker" style="width: 8em;">
+			<div class="dropdown-menu dropdown-menu-right dropup number-picker">
 				<h5 class="text-center"><strong>Item Weight</strong></h5>
 				<div class="input-group input-group-sm">
 					<a type="button" class="input-group-addon btn btn-default"
@@ -169,10 +174,14 @@
 	</div>
 </div>
 <div class="title-row">
-	<span class="text-6">
-		&COPY 2015 R. j. Huffaker
-	</span>
-	<span class="pull-right text-7 text-capitalize">
-		{{card.cardType}} {{card.cardNumber}}/{{cards.cardList.length}}
-	</span>
+	<div class="title-block">
+		<span class="text-6 pull-left">
+			&COPY 2015 R. j. Huffaker
+		</span>
+	</div>
+	<div class="title-block">
+		<span class="text-7 pull-right text-capitalize">
+			{{card.cardType}} {{card.cardNumber}}/{{cards.cardList.length}}
+		</span>
+	</div>
 </div>

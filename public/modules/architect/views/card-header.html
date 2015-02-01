@@ -3,25 +3,25 @@
 			'text-8': card.cardType === 'augment'}">
 		<input ng-if="!card.locked" type="text"
 			style="font-weight: bold; margin-top: -1px;"
-			class="card-input text-bold"
+			class="card-input text-bold fill-width"
 			ng-model="card.name" stop-event>
 		<strong ng-if="card.locked">
 			{{card.name}}
 		</strong>
 	</div>
 	<hr class="black-line">
-	<div ng-if="card.cardType !== 'item'"
-		ng-class="{'text-8': card.cardType !== 'augment',
-			'text-7': card.cardType === 'augment'}">
-		<span ng-if="card.locked">
+	<div ng-if="card.cardType !== 'item'">
+		<span ng-class="{'text-8': card.cardType !== 'augment',
+			'text-7': card.cardType === 'augment'}" ng-if="card.locked">
 			{{card.keyword}}
 		</span>
-		<span ng-if="card.locked && !card.keyword">
+		<span ng-class="{'text-8': card.cardType !== 'augment',
+			'text-7': card.cardType === 'augment'}" ng-if="card.locked && !card.keyword">
 			[Keyword]
 		</span>
 		<div ng-if="!card.locked" class="dropdown" dropdown stop-event on-toggle="toggled(open)">
-			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
-				ng-click="dropdown" aria-expanded="true">
+			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle ng-click="dropdown" aria-expanded="true"
+				ng-class="{'text-8': card.cardType !== 'augment', 'text-7': card.cardType === 'augment'}">
 				<span class="text-capitalize">
 					{{card.keyword}}
 				</span>
@@ -29,23 +29,33 @@
 					[Keyword]
 				</span>
 			</a>
-			<ul class="card-menu-list dropdown-menu" aria-labelledby="cardDropdown" stop-click>
-				<li role="presentation" class="dropdown-header">Archetype</li>
-				<li role="presentation" ng-repeat="archetype in $parent.dataSRVC.archetypes"><label>
-					<input type="radio" ng-model="card.keyword" value="{{archetype}}">
-					{{archetype}}
-				</label></li>
-				<li role="presentation" class="dropdown-header">Allegiance</li>
-				<li role="presentation" ng-repeat="allegiance in $parent.dataSRVC.allegiances" ng-if="allegiance !== 'Unaligned'"><label>
-					<input type="radio" ng-model="card.keyword" value="{{allegiance}}">
-					{{allegiance}}
-				</label></li>
-				<li role="presentation" class="dropdown-header">Race</li>
-				<li role="presentation" ng-repeat="race in $parent.dataSRVC.races" ng-if="race !== 'Weolda'"><label>
-					<input type="radio" ng-model="card.keyword" value="{{race}}">
-					{{race}}
-				</label></li>
-			</ul>
+			<div class="dropdown-menu row" style="width: 14em; left: -5em;"
+				aria-labelledby="cardDropdown" stop-click>
+				<ul class="col-xs-6">
+					<li role="presentation" class="dropdown-header">Archetype</li>
+					<li role="presentation" ng-repeat="archetype in $parent.dataSRVC.archetypes"><label>
+						<input type="radio" ng-model="card.keyword" value="{{archetype}}">
+						{{archetype}}
+					</label></li>
+				</ul>
+				<ul class="col-xs-6">
+					<li role="presentation" class="dropdown-header">Allegiance</li>
+					<li role="presentation" ng-repeat="allegiance in $parent.dataSRVC.allegiances" ng-if="allegiance !== 'Unaligned'"><label>
+						<input type="radio" ng-model="card.keyword" value="{{allegiance}}">
+						{{allegiance}}
+					</label></li>
+				</ul>
+				<ul class="col-xs-12 row">
+					<li role="presentation" class="col-xs-12 dropdown-header">Race</li>
+					<li role="presentation" class="col-xs-6" style="display: inline-block;"
+						ng-repeat="race in $parent.dataSRVC.races" ng-if="race !== 'Weolda'">
+						<label>
+							<input type="radio" ng-model="card.keyword" value="{{race}}">
+							{{race}}
+						</label>
+					</li>
+				</ul>
+			</div>
 		</div>
 		<span class="text-capitalize">
 			{{card.cardType}}
@@ -74,7 +84,7 @@
 					</span>
 				</a>
 				<div class="dropdown-menu" aria-labelledby="cardDropdown">
-					<ul class='card-menu-list'>
+					<ul>
 						<li role="presentation" class="dropdown-header">Weapon/Implement Type</li>
 						<li role="presentation" ng-repeat="itemType in $parent.dataSRVC.itemTypes"><label>
 							<input type="radio" ng-model="card.itemType" value="{{itemType}}">

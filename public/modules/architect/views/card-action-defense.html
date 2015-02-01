@@ -1,5 +1,6 @@
-<div ng-if="cardAction.usage === 'Defense'" style="white-space: normal;">
+<div ng-if="cardAction.usage === 'Defense'" class="text-8" style="white-space: normal;">
 	<div ng-if="$parent.$parent.card.locked">
+		<strong ng-hide="cardAction.defense.defenseType">[Type]</strong>
 		<strong>{{cardAction.defense.defenseType}} Defense: </strong>
 		{{cardAction.defense.dice_a}}
 		<span ng-hide="cardAction.defense.dice_a">1d__</span>
@@ -17,11 +18,11 @@
 		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
-				<span ng-hide="cardAction.defense.defenseType">[Type]</span>
-				{{cardAction.defense.defenseType}} Defense: 
+				<strong ng-hide="cardAction.defense.defenseType">[Type]</strong>
+				<strong>{{cardAction.defense.defenseType}} Defense: </strong>
 			</a>
 			<div class="dropdown-menu" aria-labelledby="cardDropdown">
-				<ul class="col-xs-5 card-menu-list">
+				<ul class="col-xs-5">
 					<li role="presentation" class="dropdown-header">Defense Type</li>
 					<li ng-repeat="defenseType in $parent.$parent.$parent.dataSRVC.defenseTypes"><label>
 						<input type="radio" value="{{defenseType}}"
@@ -29,7 +30,7 @@
 						{{defenseType}}
 					</label></li>
 				</ul>
-				<ul class="col-xs-7 card-menu-list">
+				<ul class="col-xs-7">
 					<li role="presentation" class="dropdown-header">Defense Options</li>
 					<li><label>
 						<input type="checkbox" ng-model="cardAction.defense.success.show"> Success
@@ -48,7 +49,7 @@
 				<span ng-hide="cardAction.defense.dice_a">1d__</span>
 			</a>
 			<div class="dropdown-menu" aria-labelledby="cardDropdown">
-				<ul class="col-xs-4 card-menu-list" stop-click>
+				<ul class="col-xs-4" stop-click>
 					<li role="presentation" class="dropdown-header"><strong>Fixed Die</Strong></li>
 					<li ng-repeat="dice in $parent.$parent.$parent.dataSRVC.dice"><label>
 						<input type="radio" value="{{dice}}"
@@ -56,7 +57,7 @@
 						{{dice}}
 					</label></li>
 				</ul>
-				<ul class="col-xs-4 card-menu-list" stop-click>
+				<ul class="col-xs-4 text-8" stop-click>
 					<li role="presentation" class="dropdown-header"><strong>Physical</Strong></li>
 					<li ng-repeat="ability in $parent.$parent.$parent.dataSRVC.abilities" ng-if="$index < 4"><label>
 						<input type="radio" value="{{ability}}"
@@ -64,7 +65,7 @@
 						{{ability}}
 					</label></li>
 				</ul>
-				<ul class="col-xs-4 card-menu-list" stop-click>
+				<ul class="col-xs-4 text-8" stop-click>
 					<li role="presentation" class="dropdown-header"><strong>Mental</Strong></li>
 					<li ng-repeat="ability in $parent.$parent.$parent.dataSRVC.abilities" ng-if="$index > 3"><label>
 						<input type="radio" value="{{ability}}"
@@ -82,7 +83,7 @@
 				<span ng-hide="cardAction.defense.dice_b">1d__</span>
 			</a>
 			<div class="dropdown-menu" aria-labelledby="cardDropdown">
-				<ul class="col-xs-4 card-menu-list" stop-click>
+				<ul class="col-xs-4 text-8" stop-click>
 					<li role="presentation" class="dropdown-header"><strong>Fixed Die</Strong></li>
 					<li ng-repeat="dice in $parent.$parent.$parent.dataSRVC.dice"><label>
 						<input type="radio" value="{{dice}}"
@@ -90,7 +91,7 @@
 						{{dice}}
 					</label></li>
 				</ul>
-				<ul class="col-xs-4 card-menu-list" stop-click>
+				<ul class="col-xs-4 text-8" stop-click>
 					<li role="presentation" class="dropdown-header"><strong>Physical</Strong></li>
 					<li ng-repeat="ability in $parent.$parent.$parent.dataSRVC.abilities" ng-if="$index < 4"><label>
 						<input type="radio" value="{{ability}}"
@@ -98,7 +99,7 @@
 						{{ability}}
 					</label></li>
 				</ul>
-				<ul class="col-xs-4 card-menu-list" stop-click>
+				<ul class="col-xs-4 text-8" stop-click>
 					<li role="presentation" class="dropdown-header"><strong>Mental</Strong></li>
 					<li ng-repeat="ability in $parent.$parent.$parent.dataSRVC.abilities" ng-if="$index > 3"><label>
 						<input type="radio" value="{{ability}}"
@@ -109,20 +110,20 @@
 			</div>
 		</div>
 		<div ng-if="cardAction.defense.success.show">
-			<label style="position: absolute;" for="defenseSuccess">Success: </label>
+			<label for="defenseSuccess" class="indent-left">Success: </label>
 			<textarea elastic-textarea stop-event
 				ng-model="cardAction.defense.success.content"
 				id="defenseSuccess"
-				class="fill-width card-input"
+				class="card-textarea"
 				style="text-indent: 4.5em;" rows="1">
 			</textarea>
 		</div>
 		<div ng-if="cardAction.defense.criticalSuccess.show">
-			<label style="position: absolute;" for="defenseCriticalSuccess">Critical Success: </label>
+			<label for="defenseCriticalSuccess" class="indent-left">Critical Success: </label>
 			<textarea elastic-textarea stop-event
 				ng-model="cardAction.defense.criticalSuccess.content"
 				id="defenseCriticalSuccess"
-				class="fill-width card-input"
+				class="card-textarea"
 				style="text-indent: 8.3em;" rows="1">
 			</textarea>
 		</div>
