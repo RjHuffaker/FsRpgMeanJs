@@ -14,6 +14,20 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 		
 		service.pc = {};
 		
+		service.modalShown = false;
+		
+		service.modalCardList = [];
+		
+		service.diceBoxShown = false;
+		
+		service.modalDeckShown = false;
+		
+		service.hideModal = function(){
+			service.modalShown = false;
+			service.diceBoxShown = false;
+			service.modalDeckShown = false;
+		};
+		
 		service.lastCard = function(){
 			var _last = 0;
 			var _card = {};
@@ -95,7 +109,7 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 				cards: [
 					{
 						cardType: 'pc1',
-						deckType: 'pc',
+						cardRole: 'player',
 						x_coord: 0,
 						y_coord: 0,
 						x_overlap: false,
@@ -106,7 +120,7 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 					},
 					{
 						cardType: 'pc2',
-						deckType: 'pc',
+						cardRole: 'player',
 						x_coord: 15,
 						y_coord: 0,
 						x_overlap: false,
@@ -117,7 +131,7 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 					},
 					{
 						cardType: 'pc3',
-						deckType: 'pc',
+						cardRole: 'player',
 						x_coord: 30,
 						y_coord: 0,
 						x_overlap: false,
@@ -129,7 +143,7 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 					{
 						name: 'Level 0 Trait',
 						cardType: 'trait',
-						deckType: 'pc',
+						cardRole: 'player',
 						x_coord: 45,
 						y_coord: 0,
 						x_overlap: false,

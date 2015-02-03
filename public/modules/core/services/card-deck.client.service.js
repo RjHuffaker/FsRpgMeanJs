@@ -22,18 +22,18 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		
 		var deckList = [];
 		
-		var getCardList = function(deckType){
-			if(deckType === 'pc'){
+		var getCardList = function(cardRole){
+			if(cardRole === 'player'){
 				return Pcs.pc.cards;
-			} else if(deckType === 'card'){
+			} else if(cardRole === 'architect'){
 				return Cards.cardList;
-			} else if(deckType === 'home'){
+			} else if(cardRole === 'home'){
 				return HomeDemo.cards;
 			}
 		};
 		
-		var getCardIndex = function(deckType, x_coord, y_coord){
-			var _deck = getCardList(deckType);
+		var getCardIndex = function(cardRole, x_coord, y_coord){
+			var _deck = getCardList(cardRole);
 			var _card = {};
 			for(var i = 0; i < _deck.length; i++){
 				if(_deck[i].x_coord === x_coord && _deck[i].y_coord === y_coord){
@@ -42,12 +42,12 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			}
 		};
 		
-		var getFirstIndex = function(deckType){
-			return getCardIndex(deckType, 0, 0);
+		var getFirstIndex = function(cardRole){
+			return getCardIndex(cardRole, 0, 0);
 		};
 		
-		service.getLastIndex = function(deckType){
-			var _deck = getCardList(deckType);
+		service.getLastIndex = function(cardRole){
+			var _deck = getCardList(cardRole);
 			var _card = {};
 			var _last = 0;
 			for(var i = 0; i < _deck.length; i++){
@@ -59,14 +59,14 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			return _last;
 		};
 		
-		service.getDeckWidth = function(deckType){
-			var _deck = getCardList(deckType);
-			return _deck[service.getLastIndex(deckType)].x_coord + x_dim;
+		service.getDeckWidth = function(cardRole){
+			var _deck = getCardList(cardRole);
+			return _deck[service.getLastIndex(cardRole)].x_coord + x_dim;
 		};
 		
-		var setDeckWidth = function(deckType){
-			var _deck = getCardList(deckType);
-			var _deckWidth = _deck[service.getLastIndex(deckType)].x_coord + x_dim;
+		var setDeckWidth = function(cardRole){
+			var _deck = getCardList(cardRole);
+			var _deckWidth = _deck[service.getLastIndex(cardRole)].x_coord + x_dim;
 			$rootScope.$broadcast('CardDeck:setDeckWidth', {
 				deckWidth: _deckWidth
 			});
@@ -152,24 +152,24 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		};
 		
 		// Set move booleans
-		var setCardMoving = function(interval, deckType){
+		var setCardMoving = function(interval, cardRole){
 			clearTimeout(moveTimer);
 			cardMoving = true;
 			cardMoved = true;
 			moveTimer = setTimeout(function(){
 				cardMoving = false;
-				setDeckWidth(deckType);
+				setDeckWidth(cardRole);
 			}, interval);
 		};
 		
 		// Reset move variables
 		var onPressCard = function(event, object){
 			var panel = object.panel;
-			var _deckType = panel.deckType;
-			var _deck = getCardList(_deckType);
+			var _cardRole = panel.cardRole;
+			var _deck = getCardList(_cardRole);
 			var panel_x = panel.x_coord;
 			var panel_y = panel.y_coord;
-			var panel_index = getCardIndex(_deckType, panel_x, panel_y);
+			var panel_index = getCardIndex(_cardRole, panel_x, panel_y);
 			
 			cardMoved = false;
 			if(_deck[panel_index].y_overlap){
@@ -188,9 +188,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		// Reset move variables
 		var onReleaseCard = function(event, object){
 			var panel = object.panel;
-			var _deckType = panel.deckType;
-			var _deck = getCardList(_deckType);
-			var panel_index = getCardIndex(_deckType, panel.x_coord, panel.y_coord);
+			var _cardRole = panel.cardRole;
+			var _deck = getCardList(_cardRole);
+			var panel_index = getCardIndex(_cardRole, panel.x_coord, panel.y_coord);
 			
 			cardMoved = false;
 			
@@ -204,9 +204,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var moveHorizontal = function(event, object){
 			var _slot = object.slot;
 			var _panel = object.panel;
-			var _deckType = _panel.deckType;
-			var _deck = getCardList(_deckType);
-			var _lowest_index = getLowestIndex(_deckType, _panel.x_coord);
+			var _cardRole = _panel.cardRole;
+			var _deck = getCardList(_cardRole);
+			var _lowest_index = getLowestIndex(_cardRole, _panel.x_coord);
 			if(_panel.y_coord > 0 || (_panel.y_coord === 0 && _panel.stacked && !_panel.y_overlap)){
 				unstackCard(_slot, _panel);
 			} else if (_panel.y_coord === 0 && _slot.y_coord === 0){
@@ -217,9 +217,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var moveDiagonalUp = function(event, object){
 			var _slot = object.slot;
 			var _panel = object.panel;
-			var _deckType = _slot.deckType;
-			var _deck = getCardList(_deckType);
-			var _lowest_index = getLowestIndex(_deckType, _panel.x_coord);
+			var _cardRole = _slot.cardRole;
+			var _deck = getCardList(_cardRole);
+			var _lowest_index = getLowestIndex(_cardRole, _panel.x_coord);
 			if(_panel.y_coord === 0){
 				stackUnder(_slot, _panel);
 			} else {
@@ -230,9 +230,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var moveDiagonalDown = function(event, object){
 			var _slot = object.slot;
 			var _panel = object.panel;
-			var _deckType = _slot.deckType;
-			var _deck = getCardList(_deckType);
-			var _lowest_index = getLowestIndex(_deckType, _panel.x_coord);
+			var _cardRole = _slot.cardRole;
+			var _deck = getCardList(_cardRole);
+			var _lowest_index = getLowestIndex(_cardRole, _panel.x_coord);
 			if(_panel.y_coord === 0){
 				stackOver(_slot, _panel);
 			} else {
@@ -247,9 +247,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var unstackLeft = function(event, object){
 			if(object.panel.y_coord > 0){
 				var _panel = object.panel;
-				var _deckType = _panel.deckType;
-				var _deck = getCardList(_deckType);
-				var unstack_coord = _deck[getFirstIndex(_deckType)].x_coord - x_dim;
+				var _cardRole = _panel.cardRole;
+				var _deck = getCardList(_cardRole);
+				var unstack_coord = _deck[getFirstIndex(_cardRole)].x_coord - x_dim;
 				unstackCard({x_coord: unstack_coord}, _panel);
 			}
 		};
@@ -257,9 +257,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var unstackRight = function(event, object){
 			if(object.panel.y_coord > 0){
 				var _panel = object.panel;
-				var _deckType = _panel.deckType;
-				var _deck = getCardList(_deckType);
-				var unstack_coord = _deck[getLastIndex(_deckType)].x_coord + x_dim;
+				var _cardRole = _panel.cardRole;
+				var _deck = getCardList(_cardRole);
+				var unstack_coord = _deck[getLastIndex(_cardRole)].x_coord + x_dim;
 				unstackCard({x_coord: unstack_coord}, _panel);
 			}
 		};
@@ -267,25 +267,25 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		// Swap card order along horizontal axis
 		var switchHorizontal = function(slot, panel){
 			if(!cardMoving){
-				var _deckType = panel.deckType;
-				var _deck = getCardList(_deckType);
+				var _cardRole = panel.cardRole;
+				var _deck = getCardList(_cardRole);
 				
 				var slot_x = slot.x_coord;
 				var slot_y = slot.y_coord;
-				var slot_index = getCardIndex(_deckType, slot_x, slot_y);
+				var slot_index = getCardIndex(_cardRole, slot_x, slot_y);
 				var slot_x_overlap = slot.x_overlap;
 				var slot_position = slot_x;
 				
 				var panel_x = panel.x_coord;
 				var panel_y = panel.y_coord;
-				var panel_index = getCardIndex(_deckType, panel_x, panel_y);
+				var panel_index = getCardIndex(_cardRole, panel_x, panel_y);
 				var panel_x_overlap = panel.x_overlap;
 				var panel_width = x_dim;
 				
 				if(slot_y === 0 && panel_y === 0){
 					if(panel_x - slot_x > 0){
 					// PANEL MOVING LEFT
-						setCardMoving(_moveSpeed, _deckType);
+						setCardMoving(_moveSpeed, _cardRole);
 						
 						if(slot_x === 0 && panel_x_overlap){
 							slot_position = 0;
@@ -312,9 +312,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					} else if(panel_x - slot_x < 0){
 					// PANEL MOVING RIGHT
-						setCardMoving(_moveSpeed, _deckType);
+						setCardMoving(_moveSpeed, _cardRole);
 						if(panel_x === 0 && slot_x_overlap){
-							var first_index = getFirstIndex(_deckType);
+							var first_index = getFirstIndex(_cardRole);
 					//		_deck[first_index].x_coord = 0;
 							_deck[first_index].x_overlap = false;
 							_deck[panel_index].x_overlap = true;
@@ -343,25 +343,25 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		// Swap card order along vertical axis
 		var switchVertical = function(slot, panel){
 			if(!cardMoving){
-				var _deckType = slot.deckType;
-				var _deck = getCardList(_deckType);
+				var _cardRole = slot.cardRole;
+				var _deck = getCardList(_cardRole);
 				
 				var slot_x = slot.x_coord;
 				var slot_y = slot.y_coord;
-				var slot_index = getCardIndex(_deckType, slot_x, slot_y);
+				var slot_index = getCardIndex(_cardRole, slot_x, slot_y);
 				var slot_y_overlap = slot.y_overlap;
 				
 				var panel_x = panel.x_coord;
 				var panel_y = panel.y_coord;
-				var panel_index = getCardIndex(_deckType, panel_x, panel_y);
+				var panel_index = getCardIndex(_cardRole, panel_x, panel_y);
 				var panel_y_overlap = panel.y_overlap;
 				
-				var lowest_index = getLowestIndex(_deckType, slot_x);
+				var lowest_index = getLowestIndex(_cardRole, slot_x);
 				var lowest_y = _deck[lowest_index].y_coord;
 				
 				if(panel_y - slot_y > 0){
 				// PANEL MOVING UP
-					setCardMoving(_moveSpeed, _deckType);
+					setCardMoving(_moveSpeed, _cardRole);
 					
 					_deck[slot_index].y_coord = panel_y;
 					_deck[slot_index].y_overlap = panel_y_overlap;
@@ -371,7 +371,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					
 				} else if(panel_y - slot_y < 0){
 				// PANEL MOVING DOWN
-					setCardMoving(_moveSpeed, _deckType);
+					setCardMoving(_moveSpeed, _cardRole);
 					
 					_deck[slot_index].y_coord = panel_y;
 					_deck[slot_index].y_overlap = panel_y_overlap;
@@ -385,27 +385,27 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		
 		var stackOver = function(slot, panel){
 			if(!cardMoving && !slot.x_overlap && !panel.x_overlap){
-				var _deckType = slot.deckType;
-				var _deck = getCardList(_deckType);
+				var _cardRole = slot.cardRole;
+				var _deck = getCardList(_cardRole);
 				
 				var slot_x = slot.x_coord;
 				var slot_y = slot.y_coord;
-				var slot_index = getCardIndex(_deckType, slot_x, slot_y);
+				var slot_index = getCardIndex(_cardRole, slot_x, slot_y);
 				var slot_x_overlap = slot.x_overlap;
 				var slot_y_overlap = slot.y_overlap;
 				
 				var panel_x = panel.x_coord;
 				var panel_y = panel.y_coord;
-				var panel_index = getCardIndex(_deckType, panel_x, panel_y);
+				var panel_index = getCardIndex(_cardRole, panel_x, panel_y);
 				var panel_x_overlap = panel.x_overlap;
 				var panel_y_overlap = panel.y_overlap;
-				var panel_lowest_index = getLowestIndex(_deckType, panel_x);
+				var panel_lowest_index = getLowestIndex(_cardRole, panel_x);
 				var panel_lowest_coord = _deck[panel_lowest_index].y_coord;
 				
 				var newColumn = panel_x > slot_x ? slot_x : slot_x - x_dim;
 				
 				if(!slot_x_overlap && !panel_x_overlap){
-					setCardMoving(_moveSpeed, _deckType);
+					setCardMoving(_moveSpeed, _cardRole);
 					for(var ia = 0; ia < _deck.length; ia++){
 						if(!_deck[ia].dragging && _deck[ia].x_coord === newColumn && _deck[ia].y_coord > slot_y){
 							_deck[ia].y_coord += panel_lowest_coord + y_tab;
@@ -418,9 +418,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 							_deck[ia].x_coord -= x_dim;
 						}
 					}
-					setColumn(_deckType, newColumn);
-					setColumn(_deckType, slot_x);
-					setColumn(_deckType, panel_x);
+					setColumn(_cardRole, newColumn);
+					setColumn(_cardRole, slot_x);
+					setColumn(_cardRole, panel_x);
 				}
 				$rootScope.$digest();
 			}
@@ -430,23 +430,23 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		// Stack one card behind another and reposition deck to fill the gap
 		var stackUnder = function(slot, panel){
 			if(!cardMoving && !slot.x_overlap && !panel.x_overlap){
-				var _deckType = slot.deckType;
-				var _deck = getCardList(_deckType);
+				var _cardRole = slot.cardRole;
+				var _deck = getCardList(_cardRole);
 				
 				var panel_x = panel.x_coord;
 				var panel_y = panel.y_coord;
-				var panel_index = getCardIndex(_deckType, panel_x, panel_y);
+				var panel_index = getCardIndex(_cardRole, panel_x, panel_y);
 				var panel_x_overlap = panel.x_overlap;
 				var panel_y_overlap = panel.y_overlap;
-				var panel_lowest_coord = _deck[getLowestIndex(_deckType, panel_x)].y_coord;
+				var panel_lowest_coord = _deck[getLowestIndex(_cardRole, panel_x)].y_coord;
 				
 				var slot_x = slot.x_coord;
 				var slot_y = slot.y_coord;
-				var slot_index = getCardIndex(_deckType, slot_x, slot_y);
-				var slot_lowest_coord = _deck[getLowestIndex(_deckType, slot_x)].y_coord;
+				var slot_index = getCardIndex(_cardRole, slot_x, slot_y);
+				var slot_lowest_coord = _deck[getLowestIndex(_cardRole, slot_x)].y_coord;
 				var newColumn = panel_x > slot_x ? slot_x : slot_x - x_dim;
 				
-				setCardMoving(_moveSpeed, _deckType);
+				setCardMoving(_moveSpeed, _cardRole);
 				for(var ia = 0; ia < _deck.length; ia++){
 					if(!_deck[ia].dragging && _deck[ia].x_coord === slot_x){
 						_deck[ia].y_coord += panel_lowest_coord + y_tab;
@@ -458,9 +458,9 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						_deck[ia].x_coord = newColumn;
 					}
 				}
-				setColumn(_deckType, newColumn - x_dim);
-				setColumn(_deckType, slot_x);
-				setColumn(_deckType, panel_x);
+				setColumn(_cardRole, newColumn - x_dim);
+				setColumn(_cardRole, slot_x);
+				setColumn(_cardRole, panel_x);
 				$rootScope.$digest();
 			}
 		};
@@ -468,13 +468,13 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		// Withdraw card from stack and reposition deck to make room
 		var unstackCard = function(slot, panel){
 			if(!cardMoving){
-				var _deckType = panel.deckType;
-				var _deck = getCardList(_deckType);
+				var _cardRole = panel.cardRole;
+				var _deck = getCardList(_cardRole);
 				
-				if(_deck[getLowestIndex(_deckType, panel.x_coord)].y_coord > 0){
+				if(_deck[getLowestIndex(_cardRole, panel.x_coord)].y_coord > 0){
 					var panel_x = panel.x_coord;
 					var panel_y = panel.y_coord;
-					var panel_index = getCardIndex(_deckType, panel_x, panel_y);
+					var panel_index = getCardIndex(_cardRole, panel_x, panel_y);
 					var panel_x_overlap = panel.x_overlap;
 					var panel_y_overlap = panel.y_overlap;
 					var slot_x = slot.x_coord;
@@ -483,7 +483,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					
 					if(panel_x - slot_x > 0){
 					// Card is unstacking to the left
-						setCardMoving(_moveSpeed, _deckType);
+						setCardMoving(_moveSpeed, _cardRole);
 						if(panel_y_overlap){
 						// Unstack multiple cards to the left
 							for(var ia = 0; ia < _deck.length; ia++){
@@ -515,8 +515,8 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 							_deck[panel_index].y_coord = 0;
 							_deck[panel_index].stacked = false;
 						}
-						new_slot_index = getLowestIndex(_deckType, panel_x);
-						new_panel_index = getLowestIndex(_deckType, panel_x + x_dim);
+						new_slot_index = getLowestIndex(_cardRole, panel_x);
+						new_panel_index = getLowestIndex(_cardRole, panel_x + x_dim);
 						
 						_deck[new_slot_index].y_overlap = false;
 						if(_deck[new_slot_index].y_coord === 0){
@@ -529,7 +529,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					} else if(panel_x - slot_x < 0 && !cardMoving){
 					//Card is unstacking to the right
-						setCardMoving(_moveSpeed, _deckType);
+						setCardMoving(_moveSpeed, _cardRole);
 						if(panel_y_overlap){
 						// Unstack multiple cards to the right
 							for(var ic = 0; ic < _deck.length; ic++){
@@ -557,8 +557,8 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 							_deck[panel_index].y_coord = 0;
 						}
 						
-						new_slot_index = getLowestIndex(_deckType, panel_x);
-						new_panel_index = getLowestIndex(_deckType, slot_x);
+						new_slot_index = getLowestIndex(_cardRole, panel_x);
+						new_panel_index = getLowestIndex(_cardRole, slot_x);
 						
 						_deck[new_slot_index].y_overlap = false;
 						if(_deck[new_slot_index].y_coord === 0){
@@ -579,21 +579,21 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var toggleOverlap = function(event, object){
 			if(!cardMoved){
 				var panel = object.panel;
-				var _deckType = panel.deckType;
-				var _deck = getCardList(_deckType);
+				var _cardRole = panel.cardRole;
+				var _deck = getCardList(_cardRole);
 				var panel_x = panel.x_coord;
 				var panel_y = panel.y_coord;
 				var panel_x_overlap = panel.x_overlap;
 				var panel_y_overlap = panel.y_overlap;
-				var panel_index = getCardIndex(_deckType, panel_x, panel_y);
-				var lowest_index = getLowestIndex(_deckType, panel_x);
+				var panel_index = getCardIndex(_cardRole, panel_x, panel_y);
+				var lowest_index = getLowestIndex(_cardRole, panel_x);
 				var lowest_y = _deck[lowest_index].y_coord;
 				
 				if(panel_x > 0 && lowest_y === 0){
 				// x_overlap
 					if(panel_x_overlap && !cardMoving){
 					// Card overlapped
-						setCardMoving(_moveSpeed, _deckType);
+						setCardMoving(_moveSpeed, _cardRole);
 						_deck[panel_index].x_overlap = false;
 						for(var ia = 0; ia < _deck.length; ia++){
 							if(panel_x <= _deck[ia].x_coord){
@@ -602,7 +602,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					} else if(!panel_x_overlap && !cardMoving){
 					// Card not overlapped
-						setCardMoving(_moveSpeed, _deckType);
+						setCardMoving(_moveSpeed, _cardRole);
 						_deck[panel_index].x_overlap = true;
 						for(var ib = 0; ib < _deck.length; ib++){
 							if(panel_x <= _deck[ib].x_coord){
@@ -614,7 +614,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 				// y_overlap
 					if(panel_y_overlap && !cardMoving){
 					// Card overlapped
-						setCardMoving(_moveSpeed, _deckType);
+						setCardMoving(_moveSpeed, _cardRole);
 						_deck[panel_index].y_overlap = false;
 						for(var ic = 0; ic < _deck.length; ic++){
 							if(panel_x === _deck[ic].x_coord && panel_y < _deck[ic].y_coord){
@@ -623,7 +623,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 						}
 					} else if(!panel_y_overlap && !cardMoving){
 					// Card not overlapped
-						setCardMoving(_moveSpeed, _deckType);
+						setCardMoving(_moveSpeed, _cardRole);
 						_deck[panel_index].y_overlap = true;
 						for(var id = 0; id < _deck.length; id++){
 							if(panel_x === _deck[id].x_coord && panel_y < _deck[id].y_coord){
@@ -639,14 +639,14 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		
 		var removeCard = function(panel){
 			// FUNCTIONAL ?
-			var _deckType = panel.deckType;
-			var _deck = getCardList(_deckType);
+			var _cardRole = panel.cardRole;
+			var _deck = getCardList(_cardRole);
 			var panel_x = panel.x_coord;
 			var panel_y = panel.y_coord;
-			var panel_index = getCardIndex(_deckType, panel_x, panel_y);
+			var panel_index = getCardIndex(_cardRole, panel_x, panel_y);
 			var panel_width = panel.x_overlap ? x_tab : x_dim;
 			var panel_height = panel.y_overlap ? y_tab : y_dim;
-			var lowest_y_coord = _deck[getLowestIndex(_deckType, panel_x)].y_coord;
+			var lowest_y_coord = _deck[getLowestIndex(_cardRole, panel_x)].y_coord;
 			
 			_deck.splice(panel_index, 1);
 			for(var id = 0; id < _deck.length; id++){
@@ -654,7 +654,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 					if(_deck[id].x_coord === panel_x && _deck[id].y_coord > panel_y){
 						_deck[id].y_coord -= panel_height;
 					}
-					_deck[getLowestIndex(_deckType, panel_x)].y_overlap = false;
+					_deck[getLowestIndex(_cardRole, panel_x)].y_overlap = false;
 				} else if(lowest_y_coord === 0){
 					if(_deck[id].x_coord > panel_x){
 						_deck[id].x_coord -= panel_width;

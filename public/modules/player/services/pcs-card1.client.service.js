@@ -5,16 +5,9 @@ angular.module('player').factory('PcsCard1', ['$rootScope', 'Pcs',
 	function($rootScope, Pcs){
 		var service = {};
 		
-		service.diceBoxShown = false;
-		
 		service.chosenDie = {};
 		service.previousDie = {};
 		service.chosenAbility = {};
-		
-		service.hideDiceModal = function(){
-			console.log('hide me');
-			service.diceBoxShown = !service.diceBoxShown;
-		};
 		
 		service.chooseAbility = function(ability){
 			service.chosenAbility = Pcs.pc.abilities[ability];
@@ -22,13 +15,14 @@ angular.module('player').factory('PcsCard1', ['$rootScope', 'Pcs',
 		
 		$rootScope.$on('ability:onPress', function(event, object){
 			service.chosenAbility = Pcs.pc.abilities[object.ability.order];
-			service.diceBoxShown = true;
+			Pcs.modalShown = true;
+			Pcs.diceBoxShown = true;
 			console.log(object);
 		});
 		
 		
 		service.chooseDie = function(dice){
-			service.diceBoxShown = false;
+			Pcs.modalShown = false;
 			
 			var _abilityPair;
 			var _ability1;
@@ -79,6 +73,8 @@ angular.module('player').factory('PcsCard1', ['$rootScope', 'Pcs',
 				ability2: _ability2
 			});
 			
+			Pcs.modalShown = false;
+			Pcs.diceBoxShown = false;
 		};
 		
 		service.factorBlock = function(_str, _phy){

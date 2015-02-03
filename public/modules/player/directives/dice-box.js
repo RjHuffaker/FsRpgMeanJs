@@ -49,8 +49,6 @@ angular.module('player')
 					});
 				};
 				
-				
-				
 				initialize();
 				
 			}

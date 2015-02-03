@@ -48,7 +48,7 @@ angular.module('architect')
 		service.cardSaved = false;
 		
 		service.lockCard = function(card){
-			card.deckType = 'card';
+			card.cardRole = 'architect';
 			card.locked = true;
 			card.x_coord = (card.cardNumber - 1) * 15;
 			card.y_coord = 0;
@@ -57,7 +57,7 @@ angular.module('architect')
 		};
 		
 		service.unlockCard = function(card){
-			card.deckType = 'card';
+			card.cardRole = 'architect';
 			card.locked = false;
 			card.x_coord = (card.cardNumber - 1) * 15;
 			card.y_coord = 0;
@@ -200,7 +200,7 @@ angular.module('architect')
 			switch(service.cardType){
 				case 1:
 					this.card = new Traits ({
-						deckType: 'card',
+						cardRole: 'architect',
 						cardNumber: index,
 						dragging: false,
 						stacked: false
@@ -221,7 +221,7 @@ angular.module('architect')
 					break;
 				case 2:
 					this.card = new Feats ({
-						deckType: 'card',
+						cardRole: 'architect',
 						cardNumber: index,
 						dragging: false,
 						stacked: false
@@ -242,7 +242,7 @@ angular.module('architect')
 					break;
 				case 3:
 					this.card = new Augments ({
-						deckType: 'card',
+						cardRole: 'architect',
 						cardNumber: index,
 						dragging: false,
 						stacked: false
@@ -263,7 +263,7 @@ angular.module('architect')
 					break;
 				case 4:
 					this.card = new Items ({
-						deckType: 'card',
+						cardRole: 'architect',
 						cardNumber: index,
 						dragging: false,
 						stacked: false
@@ -284,7 +284,7 @@ angular.module('architect')
 					break;
 				case 5:
 					this.card = new Notes ({
-						deckType: 'card',
+						cardRole: 'architect',
 						cardNumber: index,
 						dragging: false,
 						stacked: false

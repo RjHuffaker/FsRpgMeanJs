@@ -1,7 +1,7 @@
 <section data-ng-controller="PcsCtrl"
 	data-ng-init="pcs.readPc()" screen-size>
 	<div class="container-fluid deck-panel" ng-style="{'height': (cardDeck.windowHeight - 50)+'px'}">
-		<div class="fill-parent modal-overlay" ng-click="pcsCard1.diceBoxShown = !pcsCard1.diceBoxShown" ng-show="pcsCard1.diceBoxShown"></div>
+		<div class="fill-parent modal-overlay" ng-click="pcs.hideModal()" ng-show="pcs.modalShown"></div>
 		<div card-deck ng-mouseleave="true">
 			<ul ng-cloak>
 				<li card-panel card="card" ng-repeat="card in pcs.pc.cards"
@@ -13,5 +13,6 @@
 			</ul>
 		</div>
 	</div>
-	<div dice-box ng-show="pcsCard1.diceBoxShown"></div>
+	<div dice-box ng-show="pcs.diceBoxShown"></div>
+	<div modal-deck ng-show="pcs.modalDeckShown"></div>
 </section>

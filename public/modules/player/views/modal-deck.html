@@ -1,0 +1,12 @@
+<div class="container-fluid deck-panel" style="height: 28em;">
+	<div card-deck ng-mouseleave="true">
+		<ul ng-cloak>
+			<li card-panel card="card" ng-repeat="card in pcs.modalCardList"
+				ng-class="{'stacked': card.stacked, 'dragging': card.dragging,
+					'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap}"
+				ng-style="{'z-index': 4998 - card.x_coord + card.y_coord}"
+				ng-mousemove="true" ng-click="true">
+			</li>
+		</ul>
+	</div>
+</div>

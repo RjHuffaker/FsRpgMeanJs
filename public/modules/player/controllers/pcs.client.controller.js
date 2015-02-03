@@ -31,14 +31,6 @@ angular.module('player')
 			
 			$scope.pcsItems = PcsItems;
 			
-			$scope.status = {
-				dropdownOpen: false
-			};
-			
-			$scope.toggleOverlay = function(){
-				$scope.status.dropdownOpen = !$scope.status.dropdownOpen;
-			};
-			
 			$scope.newPc = function(){
 				Pcs.addPc();
 				Pcs.pcNew = true;
@@ -62,6 +54,12 @@ angular.module('player')
 					Pcs.deletePc();
 				}
 				$location.path('player/pcs');
+			};
+			
+			$scope.changeFeatureCard = function(card){
+				Pcs.modalShown = true;
+				Pcs.modalDeckShown = true;
+				PcsTraits.browseCards();
 			};
 			
 			var initialize = function(){
@@ -94,7 +92,6 @@ angular.module('player')
 		 	
 	 		$scope.toggled = function(open){
 	 			$scope.status.isopen = open;
-	 			console.log($scope.status.isopen);
 	 			$rootScope.$broadcast('CardsCtrl:onDropdown', {
 	 				isOpen: $scope.status.isopen
 	 			});

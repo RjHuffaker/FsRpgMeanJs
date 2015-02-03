@@ -1,9 +1,17 @@
 'use strict';
 
 // Factory-service for managing PC traits
-angular.module('player').factory('PcsTraits', ['Pcs', 'CardDeck', 
-	function(Pcs, CardDeck){
+angular.module('player')
+	.factory('PcsTraits', ['$resource', 'Pcs', 'CardDeck', 
+			function($resource, Pcs, CardDeck){
+		
 		var service = {};
+		
+		var Traits = $resource(
+			'traits/:traitId',
+			{ traitId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
 		
 		// Factor Trait Limit
 		service.factorTraitLimit = function(){
@@ -50,6 +58,29 @@ angular.module('player').factory('PcsTraits', ['Pcs', 'CardDeck',
 				level: level
 			};
 			Pcs.pc.cards.push(newTrait);
+		};
+		
+		service.lockCard = function(card){
+			card.cardRole = 'player';
+			card.locked = true;
+			card.x_coord = (card.cardNumber - 1) * 15;
+			card.y_coord = 0;
+			card.dragging = false;
+			card.stacked = false;
+		};
+		
+		service.setCardList = function(){
+			for(var i = 0; i < Pcs.modalCardList.length; i++){
+				service.lockCard(Pcs.modalCardList[i]);
+			}
+		};
+		
+		service.browseCards = function(){
+			Pcs.modalCardList = Traits.query(
+				function(response){
+					service.setCardList();
+				}
+			);
 		};
 		
 		return service;

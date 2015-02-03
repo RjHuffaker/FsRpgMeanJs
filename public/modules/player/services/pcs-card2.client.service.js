@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing pc2 data.
-angular.module('player').factory('PcsCard2', ['$rootScope', 'Pcs',
-	function($rootScope, Pcs){
+angular.module('player').factory('PcsCard2', ['$rootScope', 'Pcs', 'PcsTraits',
+	function($rootScope, Pcs, PcsTraits){
 		var service = {};
 		
 		service.EXP = 0;

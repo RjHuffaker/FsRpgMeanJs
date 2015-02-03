@@ -1,5 +1,5 @@
 <div class="content-panel">
-	<div class="dropdown card-icon-top-left" dropdown stop-event
+	<div class="dropdown card-icon-top-left text-8" dropdown stop-event
 		on-toggle="toggled(open)" >
 		<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 			ng-click="dropdown" aria-expanded="true">
@@ -29,20 +29,20 @@
 				</td>
 			</tr>
 
-			<tr height="45%">
+			<tr height="45%" class="text-9">
 				<td width="25%">
-					<label for="race" class="text-10"><strong>Race:  </strong></label>
+					<label for="race"><strong>Race:  </strong></label>
 				</td>
 				<td width="30%">
-					<div id="race" class="text-10">
+					<div id="race">
 						{{pcs.pc.race}}
 					</div>
 				</td>
 				<td width="15%">
-					<label for="sex" class="text-10"><strong>Sex: </strong></label>
+					<label for="sex"><strong>Sex: </strong></label>
 				</td>
 				<td width="30%">
-					<div id="race" class="text-10">
+					<div id="race">
 						{{pcs.pc.sex}}
 					</div>
 				</td>
@@ -51,20 +51,20 @@
 	</table>
 	
 	<table width="100%" height="84%">
-		<tbody class="text-10">
+		<tbody>
 			<tr height="15%">
-				<td width="20%">
+				<td width="15%">
 					<img ability="pcs.pc.abilities[0]" 
 						ng-src={{pcs.pc.abilities[0].dice.image}} />
 				</td>
-				<td width="30%">
+				<td width="35%" class="text-9">
 					<strong>STR</strong>ength
 				</td>
-				<td width="20%">
+				<td width="15%">
 					<img ability="pcs.pc.abilities[1]" 
 						ng-src={{pcs.pc.abilities[1].dice.image}} />
 				</td>
-				<td width="30%">
+				<td width="35%" class="text-9">
 					<strong>PHY</strong>sique
 				</td>	
 			</tr>
@@ -86,7 +86,7 @@
 					<img ability="pcs.pc.abilities[2]" 
 						ng-src={{pcs.pc.abilities[2].dice.image}} />
 				</td>
-				<td width="35%">
+				<td width="35%" class="text-9">
 					<strong>FLE</strong>xibility
 				</td>
 				
@@ -94,7 +94,7 @@
 					<img ability="pcs.pc.abilities[3]" 
 						ng-src={{pcs.pc.abilities[3].dice.image}} />
 				</td>
-				<td width="35%">
+				<td width="35%" class="text-9">
 					<strong>DEX</strong>terity
 				</td>
 			</tr>
@@ -116,14 +116,14 @@
 					<img ability="pcs.pc.abilities[4]" 
 						ng-src={{pcs.pc.abilities[4].dice.image}} />
 				</td>
-				<td width="35%">
+				<td width="35%" class="text-9">
 					<strong>ACU</strong>ity
 				</td>
 				<td width="15%">
 					<img ability="pcs.pc.abilities[5]" 
 						ng-src={{pcs.pc.abilities[5].dice.image}} />
 				</td>
-				<td width="35%">
+				<td width="35%" class="text-9">
 					<strong>INT</strong>ellect
 				</td>
 			</tr>
@@ -145,14 +145,14 @@
 					<img ability="pcs.pc.abilities[6]" 
 						ng-src={{pcs.pc.abilities[6].dice.image}} />
 				</td>
-				<td width="35%">
+				<td width="35%" class="text-9">
 					<strong>WIS</strong>dom
 				</td>
 				<td width="15%">
 					<img ability="pcs.pc.abilities[7]" 
 						ng-src={{pcs.pc.abilities[7].dice.image}} />
 				</td>
-				<td width="35%">
+				<td width="35%" class="text-9">
 					<strong>CHA</strong>risma
 				</td>
 			</tr>
