@@ -30,6 +30,9 @@ var ActionSchema = new Schema({
 	frequency: {
 		type: String
 	},
+	prompt: {
+		type: String
+	},
 	reflexive: {
 		type: Boolean,
 		default: false

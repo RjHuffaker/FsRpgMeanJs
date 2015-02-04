@@ -24,20 +24,16 @@ a.dropdown-toggle:hover {
 	padding-left: .25em;
 }
 
-.dropdown-menu ul {
+.dropdown-menu ul{
 	list-style-type: none;
+	display: inline-block;
 	padding: 0 !important;
 	margin: 0 !important;
 }
 
-.dropdown-menu li {
-	margin: 0 !important;
-	white-space: nowrap;
-}
-
 .dropdown-menu li :not(.dropdown-header){
 	margin: 0 !important;
-	padding: .15em;
+	padding: .15em !important;
 	white-space: nowrap;
 }
 

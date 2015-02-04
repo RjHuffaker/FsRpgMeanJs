@@ -47,7 +47,7 @@ body {
 }
 
 .black-line {
-	margin: 2px 0;
+	margin: 1px 0;
 	border: solid 1px black;
 	background-color: black;
 	height: 0;

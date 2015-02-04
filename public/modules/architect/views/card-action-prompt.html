@@ -3,12 +3,12 @@
 	|| cardAction.frequency === 'Disruptive'"
 	style="white-space: normal;" class="text-8">
 	<div ng-if="$parent.$parent.card.locked">
-		<strong>Prompt: </strong>{{cardAction.prompt.content}}
+		<strong>Prompt: </strong>{{cardAction.prompt}}
 	</div>
 	<div ng-if="!$parent.$parent.card.locked">
 		<label for="prompt" class="indent-left">Prompt: </label>
 		<textarea elastic-textarea stop-event ng-change="resize()"
-			ng-model="editAction.prompt.content"
+			ng-model="cardAction.prompt"
 			id="prompt" class="card-textarea" 
 			style="text-indent: 3.9em;" rows="1">
 		</textarea>

@@ -96,7 +96,7 @@ angular.module('player')
 	 				isOpen: $scope.status.isopen
 	 			});
 	 		};
-	
+			
 			var updateAbility = function(event, object){
 				var abilityPair = object.abilityPair;
 				var ability1 = object.ability1;

@@ -40,7 +40,9 @@
 	</div>
 	<div ng-if="cardAction.effect.list.listType !== 'none'">
 		<div ng-if="$parent.$parent.$parent.card.locked">
-			<ul class="card-list" ng-if="cardAction.effect.list.listType !== 'skillCheck'">
+			<ul class="card-list" ng-if="cardAction.effect.list.listType === 'bullets2' 
+					|| cardAction.effect.list.listType === 'bullets3'
+					|| cardAction.effect.list.listType === 'bullets4'">
 				<li class="row">
 					<div class="col-xs-1 text-center"><strong> &#9679 </strong></div>
 					<div class="col-xs-11">
@@ -87,7 +89,9 @@
 		</div>
 		
 		<div ng-if="!$parent.$parent.$parent.card.locked">
-			<ul class="card-list" ng-show="cardAction.effect.list.listType !== 'skillCheck'">
+			<ul class="card-list" ng-if="cardAction.effect.list.listType === 'bullets2' 
+					|| cardAction.effect.list.listType === 'bullets3'
+					|| cardAction.effect.list.listType === 'bullets4'">
 				<li class="row">
 					<div class="col-xs-1 text-center"><strong> &#9679 </strong></div>
 					<div class="col-xs-11">
