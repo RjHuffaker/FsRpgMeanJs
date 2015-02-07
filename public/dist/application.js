@@ -2476,9 +2476,7 @@ angular.module('core').service('Menus', [
 //socket factory that provides the socket service
 angular.module('core').factory('Socket', ['socketFactory',
     function(socketFactory) {
-        return socketFactory({
-            prefix: ''
-        });
+        return socketFactory();
     }
 ]);
 'use strict';
