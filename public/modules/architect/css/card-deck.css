@@ -98,6 +98,10 @@ div[card-deck] {
 	background-color: Khaki;
 }
 
+.card-origin {
+	background-color: Beige;
+}
+
 .card-note {
-	background-color: cornsilk;
+	background-color: CornSilk;
 }

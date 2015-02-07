@@ -1,8 +1,8 @@
 'use strict';
 
 // Cards controller
-angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$log', '$rootScope', 'DataSRVC', 'CardDeck', 'Cards',
-	function($scope, $location, $log, $rootScope, DataSRVC, CardDeck, Cards) {
+angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$log', '$rootScope', 'DataSRVC', 'CardDeck', 'Cards', 'Socket',
+	function($scope, $location, $log, $rootScope, DataSRVC, CardDeck, Cards, Socket) {
 		
 		$scope.dataSRVC = DataSRVC;
 		
@@ -13,6 +13,10 @@ angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$lo
 		$scope.status = {
 			isopen: false
 		};
+		
+		Socket.on('trait.created', function(card) {
+			console.log('trait.created: '+card);
+		});
 		
 		$scope.toggled = function(open){
 			$scope.status.isopen = open;

@@ -1,0 +1,42 @@
+<div class="text-7">
+	<div class="fill-width">
+		<div class="col-xs-3">
+			<strong>Block: </strong>
+		</div>
+		<div class="col-xs-3 text-right">
+			{{card.block}}2d10
+		</div>
+		<div class="col-xs-3">
+			<strong>Dodge: </strong>
+		</div>
+		<div class="col-xs-3 text-right">
+			{{card.dodge}}2d10
+		</div>
+	</div>
+	<div class="fill-width">
+		<div class="col-xs-3">
+			<strong>Tenacity: </strong>
+		</div>
+		<div class="col-xs-3 text-right">
+			{{card.tenacity}}2d10
+		</div>
+		<div class="col-xs-3">
+			<strong>Alertness: </strong>
+		</div>
+		<div class="col-xs-3 text-right">
+			{{card.alertness}}2d10
+		</div>
+	</div>
+	<div>
+		<strong ng-if="card.block.success.show">*Block Success: </strong>{{card.block.success}}
+	</div>
+	<div>
+		<strong ng-if="card.dodge.success.show">*Dodge Success: </strong>{{card.dodge.success}}
+	</div>
+	<div>
+		<strong ng-if="card.alertness.success.show">*Alertness Success: </strong>{{card.alertness.success}}
+	</div>
+	<div>
+		<strong ng-if="card.tenacity.success.show">*Tenacity Success: </strong>{{card.tenacity.success}}
+	</div>
+</div>

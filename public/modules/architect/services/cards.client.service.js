@@ -29,9 +29,9 @@ angular.module('architect')
 			{ update: { method: 'PUT' } }
 		);
 		
-		var Notes = $resource(
-			'notes/:noteId',
-			{ noteId: '@_id' },
+		var Origins = $resource(
+			'origins/:originId',
+			{ originId: '@_id' },
 			{ update: { method: 'PUT' } }
 		);
 		
@@ -144,7 +144,7 @@ angular.module('architect')
 					);
 					break;
 				case 5:
-					service.cardList = Notes.query(
+					service.cardList = Origins.query(
 						function(response){
 							service.setCardList();
 						}
@@ -177,9 +177,9 @@ angular.module('architect')
 						itemId: cardId
 					});
 					break;
-				case 4:
-					card = Notes.get({
-						noteId: cardId
+				case 5:
+					card = Origins.get({
+						originId: cardId
 					});
 					break;
 			}
@@ -283,7 +283,7 @@ angular.module('architect')
 					});
 					break;
 				case 5:
-					this.card = new Notes ({
+					this.card = new Origins ({
 						cardRole: 'architect',
 						cardNumber: index,
 						dragging: false,
@@ -311,7 +311,7 @@ angular.module('architect')
 			if(card){
 				card.$remove();
 				for(var i in service.cardList){
-					if(this.cardList[i] === card ) {
+					if(this.cardList[i] === card){
 						this.cardList.splice(i, 1);
 					}
 					if (this.cardList[i] && this.cardList[i].cardNumber > card.cardNumber){

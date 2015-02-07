@@ -20,6 +20,10 @@ angular.module('architect').config(['$stateProvider',
 		state('editItems', {
 			url: '/architect/items',
 			templateUrl: 'modules/architect/views/edit-items.client.view.html'
+		}).
+		state('editOrigins', {
+			url: '/architect/origins',
+			templateUrl: 'modules/architect/views/edit-origins.client.view.html'
 		});
 	}
 ]);

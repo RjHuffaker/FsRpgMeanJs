@@ -5,104 +5,102 @@
  */
 var mongoose = require('mongoose'),
     errorHandler = require('./errors'),
-	Trait = mongoose.model('Trait'),
+	Origin = mongoose.model('Origin'),
 	_ = require('lodash');
 
 /**
- * Create a Trait
+ * Create an Origin
  */
 exports.create = function(req, res) {
-	var trait = new Trait(req.body);
-	trait.user = req.user;
+	var origin = new Origin(req.body);
+	origin.user = req.user;
 	
-	trait.save(function(err) {
+	origin.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			var socketio = req.app.get('socketio'); // tacke out socket instance from the app container
-			socketio.sockets.emit('trait.created', trait); // emit an event for all connected clients
-			res.jsonp(trait);
+			res.jsonp(origin);
 		}
 	});
 };
 
 /**
- * Show the current Trait
+ * Show the current Origin
  */
 exports.read = function(req, res) {
-	res.jsonp(req.trait);
+	res.jsonp(req.origin);
 };
 
 /**
- * Update a Trait
+ * Update a Origin
  */
 exports.update = function(req, res) {
-	var trait = req.trait;
+	var origin = req.origin;
 
-	trait = _.extend(trait, req.body);
+	origin = _.extend(origin, req.body);
 
-	trait.save(function(err) {
+	origin.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(trait);
+			res.jsonp(origin);
 		}
 	});
 };
 
 /**
- * Delete n Trait
+ * Delete an Origin
  */
 exports.delete = function(req, res) {
-	var trait = req.trait ;
+	var origin = req.origin ;
 
-	trait.remove(function(err) {
+	origin.remove(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(trait);
+			res.jsonp(origin);
 		}
 	});
 };
 
 /**
- * List of Traits
+ * List of Origins
  */
 exports.list = function(req, res){
-	Trait.find().exec(function(err, traits){
+	Origin.find().exec(function(err, origins){
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(traits);
+			res.jsonp(origins);
 		}
 	});
 };
 
 /**
- * Trait middleware
+ * Origin middleware
  */
-exports.traitByID = function(req, res, next, id){
-	Trait.findById(id).populate('user', 'displayName').exec(function(err, trait){
+exports.originByID = function(req, res, next, id){
+	Origin.findById(id).populate('user', 'displayName').exec(function(err, origin){
 		if (err) return next(err);
-		if (! trait) return next(new Error('Failed to load Trait ' + id));
-		req.trait = trait;
+		if (! origin) return next(new Error('Failed to load Origin ' + id));
+		req.origin = origin;
 		next();
 	});
 };
 
 /**
- * Trait authorization middleware
+ * Origin authorization middleware
  */
 exports.hasAuthorization = function(req, res, next){
-	if (req.trait.user.id !== req.user.id) {
+	if (req.origin.user.id !== req.user.id) {
 		return res.status(403).send('User is not authorized');
 	}
 	next();

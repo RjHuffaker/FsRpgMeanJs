@@ -4,7 +4,7 @@
 var ApplicationConfiguration = (function() {
 	// Init module configuration options
 	var applicationModuleName = 'fsrpg';
-	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies', 'ngAnimate', 'ngTouch', 'ngSanitize', 'ui.router', 'ui.bootstrap', 'ui.utils'];
+	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies', 'ngAnimate', 'ngTouch', 'ngSanitize', 'ui.router', 'ui.bootstrap', 'ui.utils', 'btford.socket-io'];
 
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {
@@ -76,6 +76,7 @@ angular.module('architect').run(['Menus',
 		Menus.addSubMenuItem('topbar', 'architect', 'PC Feats', 'architect/feats');
 		Menus.addSubMenuItem('topbar', 'architect', 'PC Augments', 'architect/augments');
 		Menus.addSubMenuItem('topbar', 'architect', 'PC Items', 'architect/items');
+		Menus.addSubMenuItem('topbar', 'architect', 'NPC Origins', 'architect/origins');
 	}
 ]);
 'use strict';
@@ -100,14 +101,18 @@ angular.module('architect').config(['$stateProvider',
 		state('editItems', {
 			url: '/architect/items',
 			templateUrl: 'modules/architect/views/edit-items.client.view.html'
+		}).
+		state('editOrigins', {
+			url: '/architect/origins',
+			templateUrl: 'modules/architect/views/edit-origins.client.view.html'
 		});
 	}
 ]);
 'use strict';
 
 // Cards controller
-angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$log', '$rootScope', 'DataSRVC', 'CardDeck', 'Cards',
-	function($scope, $location, $log, $rootScope, DataSRVC, CardDeck, Cards) {
+angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$log', '$rootScope', 'DataSRVC', 'CardDeck', 'Cards', 'Socket',
+	function($scope, $location, $log, $rootScope, DataSRVC, CardDeck, Cards, Socket) {
 		
 		$scope.dataSRVC = DataSRVC;
 		
@@ -118,6 +123,10 @@ angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$lo
 		$scope.status = {
 			isopen: false
 		};
+		
+		Socket.on('trait.created', function(card) {
+			console.log('trait.created: '+card);
+		});
 		
 		$scope.toggled = function(open){
 			$scope.status.isopen = open;
@@ -195,6 +204,28 @@ architectModule
 					event.stopPropagation();
 				});
 			}
+		};
+	});
+'use strict';
+
+// npc-origin directive
+angular.module('architect')
+	.directive('npcOrigin', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/architect/views/npc-origin.html'
+		};
+	})
+	.directive('originStats', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/architect/views/origin-stats.html'
+		};
+	})
+	.directive('originDefenses', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/architect/views/origin-defenses.html'
 		};
 	});
 'use strict';
@@ -391,9 +422,9 @@ angular.module('architect')
 			{ update: { method: 'PUT' } }
 		);
 		
-		var Notes = $resource(
-			'notes/:noteId',
-			{ noteId: '@_id' },
+		var Origins = $resource(
+			'origins/:originId',
+			{ originId: '@_id' },
 			{ update: { method: 'PUT' } }
 		);
 		
@@ -506,7 +537,7 @@ angular.module('architect')
 					);
 					break;
 				case 5:
-					service.cardList = Notes.query(
+					service.cardList = Origins.query(
 						function(response){
 							service.setCardList();
 						}
@@ -539,9 +570,9 @@ angular.module('architect')
 						itemId: cardId
 					});
 					break;
-				case 4:
-					card = Notes.get({
-						noteId: cardId
+				case 5:
+					card = Origins.get({
+						originId: cardId
 					});
 					break;
 			}
@@ -645,7 +676,7 @@ angular.module('architect')
 					});
 					break;
 				case 5:
-					this.card = new Notes ({
+					this.card = new Origins ({
 						cardRole: 'architect',
 						cardNumber: index,
 						dragging: false,
@@ -673,7 +704,7 @@ angular.module('architect')
 			if(card){
 				card.$remove();
 				for(var i in service.cardList){
-					if(this.cardList[i] === card ) {
+					if(this.cardList[i] === card){
 						this.cardList.splice(i, 1);
 					}
 					if (this.cardList[i] && this.cardList[i].cardNumber > card.cardNumber){
@@ -724,35 +755,34 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
 ]);
 'use strict';
 
-var coreModule = angular.module('core');
-
 // Core Controller
-coreModule.controller('HomeController', ['$scope', 'Authentication', 'CardDeck', 'HomeDemo',
-	function($scope, Authentication, CardDeck, HomeDemo) {
-		// This provides Authentication context.
-		$scope.authentication = Authentication;
-		
-		$scope.cardDeck = CardDeck;
-		
-		$scope.homeDemo = HomeDemo;
-		
-		var initialize = function(){
-			toggleListeners(true);
-		};
-		
-		var toggleListeners = function(enable){
-			if(!enable) return;
-			$scope.$on('$destroy', onDestroy);
-		};
-		
-		var onDestroy = function(){
-			toggleListeners(false);
-		};
-		
-		initialize();
-		
-	}
-]);
+angular.module('core')
+	.controller('HomeController', ['$scope', 'Authentication', 'CardDeck', 'HomeDemo',
+		function($scope, Authentication, CardDeck, HomeDemo) {
+			// This provides Authentication context.
+			$scope.authentication = Authentication;
+			
+			$scope.cardDeck = CardDeck;
+			
+			$scope.homeDemo = HomeDemo;
+			
+			var initialize = function(){
+				toggleListeners(true);
+			};
+			
+			var toggleListeners = function(enable){
+				if(!enable) return;
+				$scope.$on('$destroy', onDestroy);
+			};
+			
+			var onDestroy = function(){
+				toggleListeners(false);
+			};
+			
+			initialize();
+			
+		}
+	]);
 'use strict';
 
 var cardsModule = angular.module('core');
@@ -2440,6 +2470,16 @@ angular.module('core').service('Menus', [
 		//Adding the topbar menu
 		this.addMenu('topbar');
 	}
+]);
+'use strict';
+
+//socket factory that provides the socket service
+angular.module('core').factory('Socket', ['socketFactory',
+    function(socketFactory) {
+        return socketFactory({
+            prefix: ''
+        });
+    }
 ]);
 'use strict';
 

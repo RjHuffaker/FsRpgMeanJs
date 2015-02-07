@@ -9,5 +9,6 @@ angular.module('architect').run(['Menus',
 		Menus.addSubMenuItem('topbar', 'architect', 'PC Feats', 'architect/feats');
 		Menus.addSubMenuItem('topbar', 'architect', 'PC Augments', 'architect/augments');
 		Menus.addSubMenuItem('topbar', 'architect', 'PC Items', 'architect/items');
+		Menus.addSubMenuItem('topbar', 'architect', 'NPC Origins', 'architect/origins');
 	}
 ]);
