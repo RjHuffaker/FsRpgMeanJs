@@ -135,11 +135,11 @@ architectModule
 					setTimeout(
 						function(){
 							var fontSize = parseInt(element.css('font-size'));
-							console.log('Measure: '+element[0].offsetHeight+' / ' + element.parent()[0].offsetHeight);
+				//			console.log('Measure: '+element[0].offsetHeight+' / ' + element.parent()[0].offsetHeight);
 							while( element[0].offsetHeight > element.parent()[0].offsetHeight && fontSize >= 6 ){
 								fontSize--;
 								element.css('font-size', fontSize + 'px' );
-								console.log('Reducing: '+element[0].offsetHeight+' / ' + parseInt(element.css('font-size')));
+				//				console.log('Reducing: '+element[0].offsetHeight+' / ' + parseInt(element.css('font-size')));
 							}
 						},
 					25);

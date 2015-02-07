@@ -124,14 +124,13 @@ angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$lo
 			isopen: false
 		};
 		
-		Socket.on('trait.created', function(card) {
-			console.log('trait.created:');
+		Socket.on('socket:trait', function(card) {
+			console.log('socket:trait:');
 			console.log(card);
 		});
 		
 		$scope.toggled = function(open){
 			$scope.status.isopen = open;
-			console.log($scope.status.isopen);
 			$rootScope.$broadcast('CardsCtrl:onDropdown', {
 				isOpen: $scope.status.isopen
 			});
@@ -366,11 +365,11 @@ architectModule
 					setTimeout(
 						function(){
 							var fontSize = parseInt(element.css('font-size'));
-							console.log('Measure: '+element[0].offsetHeight+' / ' + element.parent()[0].offsetHeight);
+				//			console.log('Measure: '+element[0].offsetHeight+' / ' + element.parent()[0].offsetHeight);
 							while( element[0].offsetHeight > element.parent()[0].offsetHeight && fontSize >= 6 ){
 								fontSize--;
 								element.css('font-size', fontSize + 'px' );
-								console.log('Reducing: '+element[0].offsetHeight+' / ' + parseInt(element.css('font-size')));
+				//				console.log('Reducing: '+element[0].offsetHeight+' / ' + parseInt(element.css('font-size')));
 							}
 						},
 					25);
@@ -2477,7 +2476,7 @@ angular.module('core').service('Menus', [
 //socket factory that provides the socket service
 angular.module('core').factory('Socket', ['socketFactory',
     function(socketFactory) {
-        return socketFactory();
+		return socketFactory();
     }
 ]);
 'use strict';

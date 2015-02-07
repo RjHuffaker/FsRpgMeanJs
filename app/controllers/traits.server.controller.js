@@ -14,15 +14,15 @@ var mongoose = require('mongoose'),
 exports.create = function(req, res) {
 	var trait = new Trait(req.body);
 	trait.user = req.user;
-	var socketio = req.app.get('socketio'); // tacke out socket instance from the app container
+	
 	trait.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			
-			socketio.sockets.emit('trait.created', trait); // emit an event for all connected clients
+			var socketio = req.app.get('socketio'); // take out socket instance from the app container
+			socketio.sockets.emit('socket:trait', trait); // emit an event for all connected clients
 			res.jsonp(trait);
 		}
 	});

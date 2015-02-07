@@ -14,14 +14,13 @@ angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$lo
 			isopen: false
 		};
 		
-		Socket.on('trait.created', function(card) {
-			console.log('trait.created:');
+		Socket.on('socket:trait', function(card) {
+			console.log('socket:trait:');
 			console.log(card);
 		});
 		
 		$scope.toggled = function(open){
 			$scope.status.isopen = open;
-			console.log($scope.status.isopen);
 			$rootScope.$broadcast('CardsCtrl:onDropdown', {
 				isOpen: $scope.status.isopen
 			});
