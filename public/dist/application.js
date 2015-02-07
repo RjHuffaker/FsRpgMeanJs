@@ -125,7 +125,8 @@ angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$lo
 		};
 		
 		Socket.on('trait.created', function(card) {
-			console.log('trait.created: '+card);
+			console.log('trait.created:');
+			console.log(card);
 		});
 		
 		$scope.toggled = function(open){
