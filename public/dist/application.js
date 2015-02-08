@@ -395,8 +395,8 @@ architectModule
 
 // Factory-service for Browsing, Reading, Editting, Adding, and Deleting Cards.
 angular.module('architect')
-	.factory('Cards', ['$stateParams', '$location', 'Authentication', '$resource', 
-			function($stateParams, $location, Authentication, $resource){
+	.factory('Cards', ['$stateParams', '$location', 'Authentication', '$resource', 'Socket',
+			function($stateParams, $location, Authentication, $resource, Socket){
 		
 		var Traits = $resource(
 			'traits/:traitId',
@@ -2476,9 +2476,7 @@ angular.module('core').service('Menus', [
 //socket factory that provides the socket service
 angular.module('core').factory('Socket', ['socketFactory',
     function(socketFactory) {
-		return socketFactory({
-            prefix: ''
-        });
+		return socketFactory();
     }
 ]);
 'use strict';

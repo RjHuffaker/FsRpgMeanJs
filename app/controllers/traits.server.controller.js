@@ -49,6 +49,8 @@ exports.update = function(req, res) {
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
+			var socketio = req.app.get('socketio'); // take out socket instance from the app container
+			socketio.sockets.emit('socket:trait', trait); // emit an event for all connected clients
 			res.jsonp(trait);
 		}
 	});
@@ -66,6 +68,8 @@ exports.delete = function(req, res) {
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
+			var socketio = req.app.get('socketio'); // take out socket instance from the app container
+			socketio.sockets.emit('socket:trait', trait); // emit an event for all connected clients
 			res.jsonp(trait);
 		}
 	});
