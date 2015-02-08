@@ -22,7 +22,7 @@ exports.create = function(req, res) {
 			});
 		} else {
 			var socketio = req.app.get('socketio'); // take out socket instance from the app container
-			socketio.sockets.broadcast.emit('socket:trait', trait); // emit an event for all connected clients
+			socketio.sockets.emit('socket:trait', trait); // emit an event for all connected clients
 			res.jsonp(trait);
 		}
 	});
