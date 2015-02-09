@@ -124,11 +124,6 @@ angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$lo
 			isopen: false
 		};
 		
-		Socket.on('socket:trait', function(card) {
-			console.log('socket:trait:');
-			console.log(card);
-		});
-		
 		$scope.toggled = function(open){
 			$scope.status.isopen = open;
 			$rootScope.$broadcast('CardsCtrl:onDropdown', {
@@ -395,8 +390,8 @@ architectModule
 
 // Factory-service for Browsing, Reading, Editting, Adding, and Deleting Cards.
 angular.module('architect')
-	.factory('Cards', ['$stateParams', '$location', 'Authentication', '$resource', 'Socket',
-			function($stateParams, $location, Authentication, $resource, Socket){
+	.factory('Cards', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Socket',
+			function($stateParams, $location, Authentication, $resource, $rootScope, Socket){
 		
 		var Traits = $resource(
 			'traits/:traitId',
@@ -429,6 +424,27 @@ angular.module('architect')
 		);
 		
 		var service = {};
+		
+		Socket.on('trait.created', function(trait) {
+			console.log('Trait created(socket):');
+			console.log(trait);
+		});
+		
+		Socket.on('trait.deleted', function(trait) {
+			console.log('Trait deleted(socket):');
+			console.log(trait);
+		});
+		
+		$rootScope.$on('socket:trait.created', function(card) {
+			console.log('Trait created(scope):');
+			console.log(card);
+		});
+		
+		$rootScope.$on('socket:trait.deleted', function(card) {
+			console.log('Trait deleted(scope):');
+			console.log(card);
+		});
+		
 		
 		service.card = {};
 		
@@ -2476,7 +2492,10 @@ angular.module('core').service('Menus', [
 //socket factory that provides the socket service
 angular.module('core').factory('Socket', ['socketFactory',
     function(socketFactory) {
-		return socketFactory();
+		var mySocket = socketFactory();
+		 mySocket.forward('trait.created');
+		 mySocket.forward('trait.deleted');
+		return mySocket;
     }
 ]);
 'use strict';
