@@ -10,6 +10,17 @@ angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$lo
 		
 		$scope.cardDeck = CardDeck;
 		
+		$scope.$on('socket:trait.created', function(card) {
+			console.log('Trait created(scope):');
+			console.log(card);
+		});
+		
+		$scope.$on('socket:trait.deleted', function(card) {
+			console.log('Trait deleted(scope):');
+			console.log(card);
+		});
+		
+		
 		$scope.status = {
 			isopen: false
 		};

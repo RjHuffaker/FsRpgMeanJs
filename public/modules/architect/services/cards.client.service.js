@@ -47,16 +47,6 @@ angular.module('architect')
 			console.log(trait);
 		});
 		
-		$rootScope.$on('socket:trait.created', function(card) {
-			console.log('Trait created(scope):');
-			console.log(card);
-		});
-		
-		$rootScope.$on('socket:trait.deleted', function(card) {
-			console.log('Trait deleted(scope):');
-			console.log(card);
-		});
-		
 		
 		service.card = {};
 		
