@@ -37,14 +37,14 @@ angular.module('architect')
 		
 		var service = {};
 		
-		Socket.on('trait.created', function(trait) {
-			console.log('Trait created(socket):');
-			console.log(trait);
+		Socket.on('card.created', function(card) {
+			console.log('Card created(socket):');
+			console.log(card);
 		});
 		
-		Socket.on('trait.deleted', function(trait) {
-			console.log('Trait deleted(socket):');
-			console.log(trait);
+		Socket.on('card.deleted', function(card) {
+			console.log('Card deleted(socket):');
+			console.log(card);
 		});
 		
 		

@@ -120,17 +120,6 @@ angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$lo
 		
 		$scope.cardDeck = CardDeck;
 		
-		$scope.$on('socket:trait.created', function(card) {
-			console.log('Trait created(scope):');
-			console.log(card);
-		});
-		
-		$scope.$on('socket:trait.deleted', function(card) {
-			console.log('Trait deleted(scope):');
-			console.log(card);
-		});
-		
-		
 		$scope.status = {
 			isopen: false
 		};
@@ -436,14 +425,14 @@ angular.module('architect')
 		
 		var service = {};
 		
-		Socket.on('trait.created', function(trait) {
-			console.log('Trait created(socket):');
-			console.log(trait);
+		Socket.on('card.created', function(card) {
+			console.log('Card created(socket):');
+			console.log(card);
 		});
 		
-		Socket.on('trait.deleted', function(trait) {
-			console.log('Trait deleted(socket):');
-			console.log(trait);
+		Socket.on('card.deleted', function(card) {
+			console.log('Card deleted(socket):');
+			console.log(card);
 		});
 		
 		
@@ -2493,10 +2482,10 @@ angular.module('core').service('Menus', [
 //socket factory that provides the socket service
 angular.module('core').factory('Socket', ['socketFactory',
     function(socketFactory) {
-		var mySocket = socketFactory();
-		 mySocket.forward('trait.created');
-		 mySocket.forward('trait.deleted');
-		return mySocket;
+		var mSocket = socketFactory();
+		 mSocket.forward('card.created');
+		 mSocket.forward('card.deleted');
+		return mSocket;
     }
 ]);
 'use strict';

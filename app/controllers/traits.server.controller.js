@@ -7,7 +7,7 @@ var mongoose = require('mongoose'),
     errorHandler = require('./errors'),
 	Trait = mongoose.model('Trait'),
 	_ = require('lodash');
-
+	
 /**
  * Create a Trait
  */
@@ -22,7 +22,7 @@ exports.create = function(req, res) {
 			});
 		} else {
 			var socketio = req.app.get('socketio');
-			socketio.sockets.emit('trait.created', trait);
+			socketio.sockets.emit('card.created', trait);
 			res.jsonp(trait);
 		}
 	});
@@ -67,7 +67,7 @@ exports.delete = function(req, res) {
 			});
 		} else {
 			var socketio = req.app.get('socketio');
-			socketio.sockets.emit('trait.deleted', trait);
+			socketio.sockets.emit('card.deleted', trait);
 			res.jsonp(trait);
 		}
 	});
