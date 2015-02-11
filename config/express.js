@@ -148,5 +148,14 @@ module.exports = function(db) {
 	app.set('socketio', io);
 	app.set('server', server);
 	
+	io.on('connection', function(socket){
+	  console.log('a user connected');
+	  socket.on('disconnect', function(){
+		console.log('user disconnected');
+	  });
+	});
+	
+	
+	
 	return app;
 };
