@@ -1,8 +1,8 @@
 <section data-ng-controller="CampaignController">
 	Campaign Messages
-    <ul>
-        <li ng-repeat="message in messages"></li>
-    </ul>
-    <input type="text" ng-model="message">
-    <input type="submit" ng-click="sendMessage(data)">
+	<ul>
+		<li ng-repeat="message in messages">{{message}}</li>
+	</ul>
+	<input type="text" ng-model="message">
+	<input type="submit" ng-click="sendMessage(data)">
 </section>

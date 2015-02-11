@@ -747,8 +747,12 @@ angular.module('campaign').config(['$stateProvider',
 
 angular.module('campaign').controller('CampaignController', ['$scope',
 	function($scope) {
-		
+		$scope.messages = ["First Message"];
+          $scope.sendMessage = function(data){
+
+          };
 	}]);
+
 'use strict';
 
 angular.module('campaign').factory('Campaigns', ['$stateParams', '$location', 'Authentication', '$resource', 
