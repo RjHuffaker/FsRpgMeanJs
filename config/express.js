@@ -4,8 +4,8 @@
  * Module dependencies.
  */
 var express = require('express'),
-	http = require('http'),
-    socketio = require('socket.io'),
+	server = require('http').createServer(express),
+     socketio = require('socket.io').listen(server),
 	socket = require('../app/socket.js'),
 	morgan = require('morgan'),
 	bodyParser = require('body-parser'),
@@ -144,12 +144,11 @@ module.exports = function(db) {
 	});
 	
 	// Attach Socket.io
-	var server = http.createServer(app);
-	var io = socketio.listen(server);
-	app.set('socketio', io);
+	
+	app.set('socketio', socketio);
 	app.set('server', server);
 	
-	io.sockets.on('connection', socket);
+	socketio.sockets.on('connection', socket);
 	
 	
 	
