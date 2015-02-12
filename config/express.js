@@ -6,6 +6,7 @@
 var express = require('express'),
 	http = require('http'),
     socketio = require('socket.io'),
+	socket = require('../app/socket.js'),
 	morgan = require('morgan'),
 	bodyParser = require('body-parser'),
 	session = require('express-session'),
@@ -148,12 +149,7 @@ module.exports = function(db) {
 	app.set('socketio', io);
 	app.set('server', server);
 	
-	io.on('connection', function(socket){
-	  console.log('a user connected');
-	  socket.on('disconnect', function(){
-		console.log('user disconnected');
-	  });
-	});
+	io.sockets.on('connection', socket);
 	
 	
 	

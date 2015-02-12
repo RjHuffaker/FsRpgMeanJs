@@ -7,7 +7,7 @@ var mongoose = require('mongoose'),
 	errorHandler = require('./errors'),
 	Campaign = mongoose.model('Campaign'),
 	_ = require('lodash');
-
+	
 /**
  * Create a Campaign
  */
