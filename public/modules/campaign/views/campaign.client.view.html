@@ -1,6 +1,7 @@
 <section data-ng-controller="CampaignController">
-	Message-board<br />
-	User Name: <input type="text" class="col-xs-10" ng-model="name"><br />
+	<h3>Message-board</h3>
+	<label for="userName" class="col-xs-2">User: </label><input name="userName" type="text" class="col-xs-10" ng-model="name"><br />
+	<br />
 	<div class="col-xs-12" style="border: solid 1px black; background-color: white;">
 		<ul style="list-style: none;">
 			<li ng-repeat="message in messages">{{message.user}}: {{message.text}}</li>
