@@ -4,6 +4,7 @@
  */
 var init = require('./config/init')(),
 	config = require('./config/config'),
+	socket = require('./config/socket.js'),
 	mongoose = require('mongoose');
 
 /**
@@ -27,6 +28,8 @@ require('./config/passport')();
 
 // Start the app by listening on <port>
 app.get('server').listen(config.port || 3000);
+
+app.get('socketio').sockets.on('connection', socket);
 
 // Expose app
 exports = module.exports = app;
