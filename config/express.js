@@ -5,7 +5,7 @@
  */
 var express = require('express'),
 	http = require('http'),
-    socketio = require('socket.io'),
+	socketio = require('socket.io'),
 	socket = require('../app/socket.js'),
 	morgan = require('morgan'),
 	bodyParser = require('body-parser'),
