@@ -144,12 +144,13 @@ module.exports = function(db) {
 	});
 	
 	// Attach Socket.io
+	
 	var server = http.createServer(app);
 	app.set('server', server);
 	var io = socketio.listen(server);
 	app.set('socketio', io);
 	
-	io.sockets.on('connection', socket);
+	socketio.sockets.on('connection', socket);
 	
 	return app;
 };
