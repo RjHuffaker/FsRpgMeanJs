@@ -150,7 +150,7 @@ module.exports = function(db) {
 	var io = socketio.listen(server);
 	app.set('socketio', io);
 	
-	socketio.sockets.on('connection', socket);
+	io.sockets.on('connection', socket);
 	
 	return app;
 };
