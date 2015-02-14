@@ -6,6 +6,7 @@
 var express = require('express'),
 	http = require('http'),
 	socketio = require('socket.io'),
+	socket = require('../config/socket.js'),
 	morgan = require('morgan'),
 	bodyParser = require('body-parser'),
 	session = require('express-session'),
@@ -148,6 +149,10 @@ module.exports = function(db) {
 	app.set('server', server);
 	var io = socketio.listen(server);
 	app.set('socketio', io);
+	
+	io.sockets.on('connection', socket);
+	
+	server.listen(config.port);
 	
 	return app;
 };
