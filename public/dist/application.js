@@ -2680,7 +2680,7 @@ angular.module('core').factory('Socket', ['socketFactory',
     function(socketFactory) {
 		var mSocket = socketFactory({
 			prefix: '',
-            ioSocket: io.connect('fsrpg.herokuapp.com/#!/')
+            ioSocket: io.connect('http://fsrpg.herokuapp.com/#!/')
 		});
 		return mSocket;
     }
