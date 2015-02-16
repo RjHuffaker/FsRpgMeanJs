@@ -21,8 +21,6 @@ exports.create = function(req, res) {
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			var socketio = req.app.get('socketio');
-			socketio.sockets.emit('card.created', trait);
 			res.jsonp(trait);
 		}
 	});
@@ -66,8 +64,6 @@ exports.delete = function(req, res) {
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			var socketio = req.app.get('socketio');
-			socketio.sockets.emit('card.deleted', trait);
 			res.jsonp(trait);
 		}
 	});

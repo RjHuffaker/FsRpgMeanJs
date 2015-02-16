@@ -430,17 +430,6 @@ angular.module('architect')
 		
 		var service = {};
 		
-		Socket.on('card.created', function(card) {
-			console.log('Card created(socket):');
-			console.log(card);
-		});
-		
-		Socket.on('card.deleted', function(card) {
-			console.log('Card deleted(socket):');
-			console.log(card);
-		});
-		
-		
 		service.card = {};
 		
 		service.cardList = [];
@@ -2675,13 +2664,11 @@ angular.module('core').service('Menus', [
 ]);
 'use strict';
 
+
 //socket factory that provides the socket service
 angular.module('core').factory('Socket', ['socketFactory',
     function(socketFactory) {
-		var mSocket = socketFactory({
-			prefix: '',
-            ioSocket: io.connect('http://fsrpg.herokuapp.com/#!/')
-		});
+		var mSocket = socketFactory();
 		return mSocket;
     }
 ]);

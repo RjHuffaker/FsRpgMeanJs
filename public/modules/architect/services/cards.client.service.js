@@ -37,17 +37,6 @@ angular.module('architect')
 		
 		var service = {};
 		
-		Socket.on('card.created', function(card) {
-			console.log('Card created(socket):');
-			console.log(card);
-		});
-		
-		Socket.on('card.deleted', function(card) {
-			console.log('Card deleted(socket):');
-			console.log(card);
-		});
-		
-		
 		service.card = {};
 		
 		service.cardList = [];
