@@ -737,7 +737,9 @@ angular.module('campaign').config(['$stateProvider',
 angular.module('campaign').controller('CampaignController', ['$scope', 'Socket',
 	function($scope, Socket) {
 		
-		console.log(window.user);
+		$scope.messages = [];
+		
+		$scope.users = [];
 		
 		var init = function(){
 			$scope.name = window.user.username;
@@ -746,6 +748,15 @@ angular.module('campaign').controller('CampaignController', ['$scope', 'Socket',
 			});
 		};
 		
+		Socket.on('user:init', function(data){
+			for(var message in data.messages){
+				$scope.messages.push(message);
+			}
+			for(var user in data.users){
+				$scope.users.push(user);
+			}
+		});
+		
 		Socket.on('send:message', function (message) {
 			$scope.messages.push(message);
 		});
@@ -753,7 +764,7 @@ angular.module('campaign').controller('CampaignController', ['$scope', 'Socket',
 		Socket.on('user:join', function (data) {
 			$scope.messages.push({
 				user: 'chatroom',
-				text: 'User ' + data.name + ' has joined.'
+				text: data.name + ' has joined.'
 			});
 			$scope.users.push(data.name);
 		});
@@ -762,26 +773,28 @@ angular.module('campaign').controller('CampaignController', ['$scope', 'Socket',
 		Socket.on('user:left', function (data) {
 			$scope.messages.push({
 				user: 'chatroom',
-				text: 'User ' + data.name + ' has left.'
+				text: data.name + ' has left.'
 			});
 		});
 
 		$scope.messages = [];
 
 		$scope.sendMessage = function () {
-			Socket.emit('send:message', {
-				user: $scope.name,
-				text: $scope.message
-			});
+			if($scope.message){
+				Socket.emit('send:message', {
+					user: $scope.name,
+					text: $scope.message
+				});
 
-			// add the message to our model locally
-			$scope.messages.push({
-				user: $scope.name,
-				text: $scope.message
-			});
+				// add the message to our model locally
+				$scope.messages.push({
+					user: $scope.name,
+					text: $scope.message
+				});
 
-			// clear message box
-			$scope.message = '';
+				// clear message box
+				$scope.message = '';
+			}
 		};
 		
 		init();
