@@ -152,7 +152,5 @@ module.exports = function(db) {
 	
 	io.sockets.on('connection', socket);
 	
-	// server.listen(config.port);
-	
 	return app;
 };

@@ -45,9 +45,17 @@
 <body class="ng-cloak">
 	
 	<script src="/socket.io/socket.io.js"></script>
+	{% if process.env.NODE_ENV === 'development' %}
+	<script>
+		var socket = io.connect('http://localhost:3000');
+	</script>
+	{% endif %}
+	
+	{% if process.env.NODE_ENV === 'production' %}
 	<script>
 		var socket = io.connect('http://fsrpg.herokuapp.com');
 	</script>
+	{% endif %}
 	
 	<header data-ng-include="'/modules/core/views/header.client.view.html'" class="navbar navbar-fixed-top navbar-inverse"></header>
 	<section class="content">
