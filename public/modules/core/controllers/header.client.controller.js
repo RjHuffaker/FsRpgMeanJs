@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Menus',
-	function($scope, Authentication, Menus) {
+angular.module('core').controller('HeaderController', ['$rootScope', '$scope', 'Authentication', 'Menus',
+	function($rootScope, $scope, Authentication, Menus) {
 		$scope.authentication = Authentication;
 		$scope.isCollapsed = false;
 		$scope.menu = Menus.getMenu('topbar');
@@ -14,5 +14,17 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
 		$scope.$on('$stateChangeSuccess', function() {
 			$scope.isCollapsed = false;
 		});
+		
+		$scope.fetchPcs = function(){
+			$rootScope.$broadcast('fetchPcs');
+		};
+		
+		$scope.fetchDeck = function(cardType){
+			$rootScope.$broadcast('fetchDeck', {
+				cardType: cardType
+			});
+		};
+		
+		
 	}
 ]);

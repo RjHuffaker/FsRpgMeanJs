@@ -78,9 +78,9 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 		};
 		
 		// READ single Pc
-		service.readPc = function() {
+		service.readPc = function(pcId) {
 			service.pc = Pcs.get({
-				pcId: $stateParams.pcId
+				pcId: pcId
 			});
 			return service.pc;
 		};

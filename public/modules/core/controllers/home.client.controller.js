@@ -33,24 +33,12 @@ angular.module('core')
 			
 			$scope.pc = {};
 			
-			$scope.fetchCards = function(){
-				var path = $location.path().split('/');
-				
-				console.log(path);
-				
-				if(path.length === 2){
-					this.resource = HomeDemo.cards;
-				} else if (path.length === 3){
-					if (path[1] === 'player'){
-						this.resource = Pcs.browsePcs();
-					} else if(path[1] === 'architect'){
-						this.resource = Cards.browseCards();
-					} 
-				} else if (path.length === 5){
-					if (path[2] === 'pcs'){
-						this.resource = Pcs.readPc();
-					}
-				}
+			var fetchPcs = function(){
+				$scope.resource = Pcs.browsePcs();
+			};
+			
+			var fetchDeck = function(event, object){
+				$scope.resource = Cards.browseCards(object.cardType);
 			};
 			
 			var initialize = function(){
@@ -61,6 +49,8 @@ angular.module('core')
 				if(!enable) return;
 				$scope.$on('$destroy', onDestroy);
 				$scope.$on('screenSize:onHeightChange', onHeightChange);
+				$scope.$on('fetchPcs', fetchPcs);
+				$scope.$on('fetchDeck', fetchDeck);
 				$scope.$on('pcsCard1:updateAbility', updateAbility);
 				$scope.$watch('pcsCard2.EXP', watchEXP);
 				$scope.$watch('pcs.pc.experience', watchExperience);
@@ -83,6 +73,11 @@ angular.module('core')
 				Pcs.pcSaved = false;
 			};
 			
+			$scope.readPc = function(pc){
+				console.log(pc);
+				$scope.resource = Pcs.readPc(pc._id);
+			};
+			
 			$scope.openPc = function(pc){
 				$location.path('player/pcs/'+pc._id+'/edit');
 				Pcs.pcNew = false;
@@ -99,7 +94,7 @@ angular.module('core')
 				if(Pcs.pcNew){
 					Pcs.deletePc();
 				}
-				$location.path('player/pcs');
+				fetchPcs();
 			};
 			
 			$scope.changeFeatureCard = function(card){

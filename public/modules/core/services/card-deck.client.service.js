@@ -32,7 +32,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', 'Campaigns', '$rootS
 			} else if(cardRole === 'architect'){
 				return Cards.cardList;
 			} else if(cardRole === 'home'){
-				return HomeDemo.cards;
+				return HomeDemo.cards.cardList;
 			}
 		};
 		

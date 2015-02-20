@@ -112,39 +112,45 @@ angular.module('architect')
 		};
 		
 		// BROWSE cards
-		service.browseCards = function(){
-			var _path = $location.path().split('/');
-			if(_path[2] === 'traits'){
-				service.cardList = Traits.query(
-					function(response){
-						service.setCardList();
-					}
-				);
-			} else if(_path[2] === 'feats'){
-				service.cardList = Feats.query(
-					function(response){
-						service.setCardList();
-					}
-				);
-			} else if(_path[2] === 'augments'){
-				service.cardList = Augments.query(
-					function(response){
-						service.setCardList();
-					}
-				);
-			} else if(_path[2] === 'items'){
-				service.cardList = Items.query(
-					function(response){
-						service.setCardList();
-					}
-				);
-			} else if(_path[2] === 'origins'){
-				service.cardList = Origins.query(
-					function(response){
-						service.setCardList();
-					}
-				);
+		service.browseCards = function(cardType){
+			switch(cardType){
+				case 1:
+					service.cardList = Traits.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+				case 2:
+					service.cardList = Feats.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+				case 3:
+					service.cardList = Augments.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+				case 4:
+					service.cardList = Origins.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+				case 5:
+					service.cardList = Origins.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
 			}
+			
 			return {cardList: service.cardList};
 		};
 		

@@ -72,49 +72,6 @@ ApplicationConfiguration.registerModule('users');
 
 'use strict';
 
-// Configuring the Articles module
-angular.module('architect').run(['Menus',
-	function(Menus) {
-		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Architect', 'architect', 'dropdown', '/architect(/traits|/feats|/augments|/items)?', true, ['user'], '2');
-		Menus.addSubMenuItem('topbar', 'architect', 'PC Traits', 'architect/traits');
-		Menus.addSubMenuItem('topbar', 'architect', 'PC Feats', 'architect/feats');
-		Menus.addSubMenuItem('topbar', 'architect', 'PC Augments', 'architect/augments');
-		Menus.addSubMenuItem('topbar', 'architect', 'PC Items', 'architect/items');
-		Menus.addSubMenuItem('topbar', 'architect', 'NPC Origins', 'architect/origins');
-	}
-]);
-'use strict';
-
-//Setting up route
-angular.module('architect').config(['$stateProvider',
-	function($stateProvider) {
-		// Architect state routing
-		$stateProvider.
-		state('editTraits', {
-			url: '/architect/traits',
-			templateUrl: 'modules/core/views/home.client.view.html'
-		}).
-		state('editFeats', {
-			url: '/architect/feats',
-			templateUrl: 'modules/core/views/home.client.view.html'
-		}).
-		state('editAugments', {
-			url: '/architect/augments',
-			templateUrl: 'modules/core/views/home.client.view.html'
-		}).
-		state('editItems', {
-			url: '/architect/items',
-			templateUrl: 'modules/core/views/home.client.view.html'
-		}).
-		state('editOrigins', {
-			url: '/architect/origins',
-			templateUrl: 'modules/core/views/home.client.view.html'
-		});
-	}
-]);
-'use strict';
-
 // Cards controller
 angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$log', '$rootScope', 'DataSRVC', 'CardDeck', 'Cards',
 	function($scope, $location, $log, $rootScope, DataSRVC, CardDeck, Cards) {
@@ -518,39 +475,45 @@ angular.module('architect')
 		};
 		
 		// BROWSE cards
-		service.browseCards = function(){
-			var _path = $location.path().split('/');
-			if(_path[2] === 'traits'){
-				service.cardList = Traits.query(
-					function(response){
-						service.setCardList();
-					}
-				);
-			} else if(_path[2] === 'feats'){
-				service.cardList = Feats.query(
-					function(response){
-						service.setCardList();
-					}
-				);
-			} else if(_path[2] === 'augments'){
-				service.cardList = Augments.query(
-					function(response){
-						service.setCardList();
-					}
-				);
-			} else if(_path[2] === 'items'){
-				service.cardList = Items.query(
-					function(response){
-						service.setCardList();
-					}
-				);
-			} else if(_path[2] === 'origins'){
-				service.cardList = Origins.query(
-					function(response){
-						service.setCardList();
-					}
-				);
+		service.browseCards = function(cardType){
+			switch(cardType){
+				case 1:
+					service.cardList = Traits.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+				case 2:
+					service.cardList = Feats.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+				case 3:
+					service.cardList = Augments.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+				case 4:
+					service.cardList = Origins.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
+				case 5:
+					service.cardList = Origins.query(
+						function(response){
+							service.setCardList();
+						}
+					);
+					break;
 			}
+			
 			return {cardList: service.cardList};
 		};
 		
@@ -897,8 +860,8 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
 ]);
 'use strict';
 
-angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Menus',
-	function($scope, Authentication, Menus) {
+angular.module('core').controller('HeaderController', ['$rootScope', '$scope', 'Authentication', 'Menus',
+	function($rootScope, $scope, Authentication, Menus) {
 		$scope.authentication = Authentication;
 		$scope.isCollapsed = false;
 		$scope.menu = Menus.getMenu('topbar');
@@ -911,6 +874,18 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
 		$scope.$on('$stateChangeSuccess', function() {
 			$scope.isCollapsed = false;
 		});
+		
+		$scope.fetchPcs = function(){
+			$rootScope.$broadcast('fetchPcs');
+		};
+		
+		$scope.fetchDeck = function(cardType){
+			$rootScope.$broadcast('fetchDeck', {
+				cardType: cardType
+			});
+		};
+		
+		
 	}
 ]);
 'use strict';
@@ -948,24 +923,12 @@ angular.module('core')
 			
 			$scope.pc = {};
 			
-			$scope.fetchCards = function(){
-				var path = $location.path().split('/');
-				
-				console.log(path);
-				
-				if(path.length === 2){
-					this.resource = HomeDemo.cards;
-				} else if (path.length === 3){
-					if (path[1] === 'player'){
-						this.resource = Pcs.browsePcs();
-					} else if(path[1] === 'architect'){
-						this.resource = Cards.browseCards();
-					} 
-				} else if (path.length === 5){
-					if (path[2] === 'pcs'){
-						this.resource = Pcs.readPc();
-					}
-				}
+			var fetchPcs = function(){
+				$scope.resource = Pcs.browsePcs();
+			};
+			
+			var fetchDeck = function(event, object){
+				$scope.resource = Cards.browseCards(object.cardType);
 			};
 			
 			var initialize = function(){
@@ -976,6 +939,8 @@ angular.module('core')
 				if(!enable) return;
 				$scope.$on('$destroy', onDestroy);
 				$scope.$on('screenSize:onHeightChange', onHeightChange);
+				$scope.$on('fetchPcs', fetchPcs);
+				$scope.$on('fetchDeck', fetchDeck);
 				$scope.$on('pcsCard1:updateAbility', updateAbility);
 				$scope.$watch('pcsCard2.EXP', watchEXP);
 				$scope.$watch('pcs.pc.experience', watchExperience);
@@ -998,6 +963,11 @@ angular.module('core')
 				Pcs.pcSaved = false;
 			};
 			
+			$scope.readPc = function(pc){
+				console.log(pc);
+				$scope.resource = Pcs.readPc(pc._id);
+			};
+			
 			$scope.openPc = function(pc){
 				$location.path('player/pcs/'+pc._id+'/edit');
 				Pcs.pcNew = false;
@@ -1014,7 +984,7 @@ angular.module('core')
 				if(Pcs.pcNew){
 					Pcs.deletePc();
 				}
-				$location.path('player/pcs');
+				fetchPcs();
 			};
 			
 			$scope.changeFeatureCard = function(card){
@@ -1690,7 +1660,7 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', 'Campaigns', '$rootS
 			} else if(cardRole === 'architect'){
 				return Cards.cardList;
 			} else if(cardRole === 'home'){
-				return HomeDemo.cards;
+				return HomeDemo.cards.cardList;
 			}
 		};
 		
@@ -2792,38 +2762,6 @@ angular.module('core').factory('Socket', ['socketFactory',
 ]);
 'use strict';
 
-// Configuring the NPC module
-angular.module('narrator').run(['Menus',
-	function(Menus) {
-		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Narrator', 'narrator', 'dropdown', '/narrator(/npcs)?', true, ['user'], '1');
-		Menus.addSubMenuItem('topbar', 'narrator', 'List My NPCs', 'narrator/npcs');
-		Menus.addSubMenuItem('topbar', 'narrator', 'List My Campaigns', 'narrator/campaigns');
-	}
-]);
-'use strict';
-
-//Setting up route
-angular.module('narrator').config(['$stateProvider',
-	function($stateProvider) {
-		// Npcs state routing
-		$stateProvider.
-		state('listNpcs', {
-			url: '/narrator/npcs',
-			templateUrl: 'modules/narrator/views/list-npcs.client.view.html'
-		}).
-		state('listNarratorCampaigns', {
-			url: '/narrator/campaigns',
-			templateUrl: 'modules/campaign/views/list-narrator-campaigns.client.view.html'
-		}).
-		state('editNarratorCampaign', {
-			url: '/narrator/campaigns/:campaignId/edit',
-			templateUrl: 'modules/campaigns/views/edit-narrator-campaign.client.view.html'
-		});
-	}
-]);
-'use strict';
-
 // Npcs controller
 angular.module('narrator').controller('NpcsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Npcs',
 	function($scope, $stateParams, $location, Authentication, Npcs ) {
@@ -2902,42 +2840,6 @@ angular.module('narrator').factory('Npcs', ['$resource',
 			update: {
 				method: 'PUT'
 			}
-		});
-	}
-]);
-'use strict';
-
-// Configuring the PC module
-angular.module('player').run(['Menus',
-	function(Menus) {
-		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Player', 'player', 'dropdown', '/player(/pcs)?', true, ['user'], '0');
-		Menus.addSubMenuItem('topbar', 'player', 'List My PCs', 'player/pcs');
-		Menus.addSubMenuItem('topbar', 'player', 'List My Campaigns', 'player/campaigns');
-	}
-]);
-'use strict';
-
-//Setting up route
-angular.module('player').config(['$stateProvider',
-	function($stateProvider) {
-		// Player state routing
-		$stateProvider.
-		state('listPcs', {
-			url: '/player/pcs',
-			templateUrl: 'modules/core/views/home.client.view.html'
-		}).
-		state('editPc', {
-			url: '/player/pcs/:pcId/edit',
-			templateUrl: 'modules/core/views/home.client.view.html'
-		}).
-		state('listPlayerCampaigns', {
-			url: '/player/campaigns',
-			templateUrl: 'modules/campaign/views/list-player-campaigns.client.view.html'
-		}).
-		state('editPlayerCampaign', {
-			url: '/player/campaigns/:campaignId/edit',
-			templateUrl: 'modules/campaigns/views/edit-player-campaign.client.view.html'
 		});
 	}
 ]);
@@ -3701,9 +3603,9 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 		};
 		
 		// READ single Pc
-		service.readPc = function() {
+		service.readPc = function(pcId) {
 			service.pc = Pcs.get({
-				pcId: $stateParams.pcId
+				pcId: pcId
 			});
 			return service.pc;
 		};
