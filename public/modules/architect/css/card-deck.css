@@ -76,6 +76,8 @@ div[card-deck] {
 	margin-top: 0;
 }
 
+[card-pc-summary],
+[card-campaign-summary],
 [card-pc-1],
 [card-pc-2],
 [card-pc-3] {

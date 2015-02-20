@@ -9,12 +9,17 @@ angular.module('campaign').controller('CampaignController', ['$scope', 'Socket',
 		
 		var init = function(){
 			$scope.name = window.user.username;
+			$scope.messages.push({
+				user: '',
+				text: $scope.name+' has joined.'
+			});
 			Socket.emit('user:init', {
 				name: window.user.username
 			});
 		};
 		
 		Socket.on('user:init', function(data){
+			console.log(data);
 			for(var message in data.messages){
 				$scope.messages.push(message);
 			}
@@ -29,7 +34,7 @@ angular.module('campaign').controller('CampaignController', ['$scope', 'Socket',
 
 		Socket.on('user:join', function (data) {
 			$scope.messages.push({
-				user: 'chatroom',
+				user: '',
 				text: data.name + ' has joined.'
 			});
 			$scope.users.push(data.name);

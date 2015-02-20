@@ -6,5 +6,6 @@ angular.module('narrator').run(['Menus',
 		// Set top bar menu items
 		Menus.addMenuItem('topbar', 'Narrator', 'narrator', 'dropdown', '/narrator(/npcs)?', true, ['user'], '1');
 		Menus.addSubMenuItem('topbar', 'narrator', 'List My NPCs', 'narrator/npcs');
+		Menus.addSubMenuItem('topbar', 'narrator', 'List My Campaigns', 'narrator/campaigns');
 	}
 ]);

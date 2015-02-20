@@ -8,23 +8,31 @@ module.exports = function(socket) {
 	
 	var messages = [];
 	
+	var isHost = function(){
+		return(name === users[0]);
+	};
+	
 	socket.on('user:init', function(data){
+		console.log(data);
 		name = data.name;
-		messages.push(
-			{user: 'chatroom', text: name+'has joined.'}
-		);
+		users.push(name);
 		
-		socket.emit('user:init', {
-			users: users,
-			messages: messages
+		messages.push({
+			user: 'chatroom',
+			text: name+'has joined.'
 		});
 		
 		socket.broadcast.emit('user:join', {
-			name: name,
-			users: users
+			name: name
 		});
 	});
 	
+	socket.on('user:join', function(data){
+		users.push(data.name);
+		if(isHost){
+			
+		}
+	});
 	
 	// broadcast a user's message to other users
 	socket.on('send:message', function (data) {

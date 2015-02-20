@@ -2,14 +2,56 @@
 
 // Core Controller
 angular.module('core')
-	.controller('HomeController', ['$scope', 'Authentication', 'CardDeck', 'HomeDemo',
-		function($scope, Authentication, CardDeck, HomeDemo) {
+	.controller('HomeController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'HomeDemo', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'Cards',
+		function($location, $scope, $rootScope, $window, Authentication, CardDeck, HomeDemo, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems, Cards) {
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
 			
 			$scope.cardDeck = CardDeck;
 			
-			$scope.homeDemo = HomeDemo;
+			$scope.pcs = Pcs;
+			
+			$scope.pcsCard1 = PcsCard1;
+			
+			$scope.pcsCard2 = PcsCard2;
+			
+			$scope.pcsCard3 = PcsCard3;
+			
+			$scope.pcsTraits = PcsTraits;
+			
+			$scope.pcsFeats = PcsFeats;
+			
+			$scope.pcsAugments = PcsAugments;
+			
+			$scope.pcsItems = PcsItems;
+			
+			$scope.cards = Cards;
+			
+			$scope.resource = {};
+			
+			$scope.cardList = [];
+			
+			$scope.pc = {};
+			
+			$scope.fetchCards = function(){
+				var path = $location.path().split('/');
+				
+				console.log(path);
+				
+				if(path.length === 2){
+					this.resource = HomeDemo.cards;
+				} else if (path.length === 3){
+					if (path[1] === 'player'){
+						this.resource = Pcs.browsePcs();
+					} else if(path[1] === 'architect'){
+						this.resource = Cards.browseCards();
+					} 
+				} else if (path.length === 5){
+					if (path[2] === 'pcs'){
+						this.resource = Pcs.readPc();
+					}
+				}
+			};
 			
 			var initialize = function(){
 				toggleListeners(true);
@@ -18,10 +60,115 @@ angular.module('core')
 			var toggleListeners = function(enable){
 				if(!enable) return;
 				$scope.$on('$destroy', onDestroy);
+				$scope.$on('screenSize:onHeightChange', onHeightChange);
+				$scope.$on('pcsCard1:updateAbility', updateAbility);
+				$scope.$watch('pcsCard2.EXP', watchEXP);
+				$scope.$watch('pcs.pc.experience', watchExperience);
+				$scope.$watch('pcs.pc.level', watchLevel);
 			};
 			
 			var onDestroy = function(){
 				toggleListeners(false);
+			};
+			
+			var onHeightChange = function(event, object){
+				$scope.windowHeight = object.newHeight;
+				$scope.windowScale = object.newScale;
+				$scope.$digest();
+			};
+			
+			$scope.newPc = function(){
+				Pcs.addPc();
+				Pcs.pcNew = true;
+				Pcs.pcSaved = false;
+			};
+			
+			$scope.openPc = function(pc){
+				$location.path('player/pcs/'+pc._id+'/edit');
+				Pcs.pcNew = false;
+				Pcs.pcSaved = false;
+			};
+			
+			$scope.savePc = function(){
+				Pcs.editPc();
+				Pcs.pcNew = false;
+				Pcs.pcSaved = true;
+			};
+			
+			$scope.exitPc = function(){
+				if(Pcs.pcNew){
+					Pcs.deletePc();
+				}
+				$location.path('player/pcs');
+			};
+			
+			$scope.changeFeatureCard = function(card){
+				Pcs.modalShown = true;
+				Pcs.modalDeckShown = true;
+				PcsTraits.browseCards();
+			};
+			
+	 		$scope.status = {
+	 			isopen: false
+	 		};
+		 	
+	 		$scope.toggled = function(open){
+	 			$scope.status.isopen = open;
+	 			$rootScope.$broadcast('CardsCtrl:onDropdown', {
+	 				isOpen: $scope.status.isopen
+	 			});
+	 		};
+			
+			var updateAbility = function(event, object){
+				var abilityPair = object.abilityPair;
+				var ability1 = object.ability1;
+				var ability2 = object.ability2;
+				switch(abilityPair){
+					case 1:
+						PcsCard1.factorBlock(ability1, ability2);
+						PcsCard2.factorHealth();
+						PcsCard2.factorStamina();
+						PcsCard2.factorCarryingCapacity();
+						break;
+					case 2:
+						PcsCard1.factorDodge(ability1, ability2);
+						break;
+					case 3:
+						PcsCard1.factorAlertness(ability1, ability2);
+						break;
+					case 4:
+						PcsCard1.factorTenacity(ability1, ability2);
+						break;
+				}
+			};
+			
+			//Watch for change in EXP input
+			var watchEXP = function(newValue, oldValue){
+				if(Pcs.pc && newValue !== oldValue){
+					PcsCard2.EXP = parseInt(newValue);
+					Pcs.pc.experience = parseInt(newValue);
+				}
+			};
+			
+			//Watch for change in experience
+			var watchExperience = function(newValue, oldValue){
+				if(Pcs.pc && newValue !== oldValue){
+					PcsCard2.factorExperience();
+					if(newValue !== PcsCard2.EXP){
+						PcsCard2.EXP = newValue;
+					}
+				}
+			};
+			
+			//Watch for changes in level
+			var watchLevel = function(newValue, oldValue){
+				if(Pcs.pc.abilities){
+					PcsCard2.factorHealth();
+					PcsCard2.factorStamina();
+					PcsTraits.factorTraitLimit();
+					PcsFeats.factorFeatLimit();
+					PcsAugments.factorAugmentLimit();
+				}
 			};
 			
 			initialize();

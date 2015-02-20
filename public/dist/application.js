@@ -93,31 +93,31 @@ angular.module('architect').config(['$stateProvider',
 		$stateProvider.
 		state('editTraits', {
 			url: '/architect/traits',
-			templateUrl: 'modules/architect/views/edit-traits.client.view.html'
+			templateUrl: 'modules/core/views/home.client.view.html'
 		}).
 		state('editFeats', {
 			url: '/architect/feats',
-			templateUrl: 'modules/architect/views/edit-feats.client.view.html'
+			templateUrl: 'modules/core/views/home.client.view.html'
 		}).
 		state('editAugments', {
 			url: '/architect/augments',
-			templateUrl: 'modules/architect/views/edit-augments.client.view.html'
+			templateUrl: 'modules/core/views/home.client.view.html'
 		}).
 		state('editItems', {
 			url: '/architect/items',
-			templateUrl: 'modules/architect/views/edit-items.client.view.html'
+			templateUrl: 'modules/core/views/home.client.view.html'
 		}).
 		state('editOrigins', {
 			url: '/architect/origins',
-			templateUrl: 'modules/architect/views/edit-origins.client.view.html'
+			templateUrl: 'modules/core/views/home.client.view.html'
 		});
 	}
 ]);
 'use strict';
 
 // Cards controller
-angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$log', '$rootScope', 'DataSRVC', 'CardDeck', 'Cards', 'Socket',
-	function($scope, $location, $log, $rootScope, DataSRVC, CardDeck, Cards, Socket) {
+angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$log', '$rootScope', 'DataSRVC', 'CardDeck', 'Cards',
+	function($scope, $location, $log, $rootScope, DataSRVC, CardDeck, Cards) {
 		
 		$scope.dataSRVC = DataSRVC;
 		
@@ -158,6 +158,19 @@ var architectModule = angular.module('architect');
 
 // feature-card directive
 architectModule
+	.directive('cardPcSummary', function(){
+		return {
+			restrict: 'A',
+			replace: true,
+			templateUrl: '../modules/player/views/card-pc-summary.html'
+		};
+	})
+	.directive('cardCampaignSummary', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/campaign/views/card-campaign-summary.html'
+		};
+	})
 	.directive('cardPc1', function(){
 		return {
 			restrict: 'A',
@@ -505,45 +518,40 @@ angular.module('architect')
 		};
 		
 		// BROWSE cards
-		service.browseCards = function(cardType){
-			service.cardType = cardType;
-			switch(service.cardType){
-				case 1:
-					service.cardList = Traits.query(
-						function(response){
-							service.setCardList();
-						}
-					);
-					break;
-				case 2:
-					service.cardList = Feats.query(
-						function(response){
-							service.setCardList();
-						}
-					);
-					break;
-				case 3:
-					service.cardList = Augments.query(
-						function(response){
-							service.setCardList();
-						}
-					);
-					break;
-				case 4:
-					service.cardList = Items.query(
-						function(response){
-							service.setCardList();
-						}
-					);
-					break;
-				case 5:
-					service.cardList = Origins.query(
-						function(response){
-							service.setCardList();
-						}
-					);
-					break;
+		service.browseCards = function(){
+			var _path = $location.path().split('/');
+			if(_path[2] === 'traits'){
+				service.cardList = Traits.query(
+					function(response){
+						service.setCardList();
+					}
+				);
+			} else if(_path[2] === 'feats'){
+				service.cardList = Feats.query(
+					function(response){
+						service.setCardList();
+					}
+				);
+			} else if(_path[2] === 'augments'){
+				service.cardList = Augments.query(
+					function(response){
+						service.setCardList();
+					}
+				);
+			} else if(_path[2] === 'items'){
+				service.cardList = Items.query(
+					function(response){
+						service.setCardList();
+					}
+				);
+			} else if(_path[2] === 'origins'){
+				service.cardList = Origins.query(
+					function(response){
+						service.setCardList();
+					}
+				);
 			}
+			return {cardList: service.cardList};
 		};
 		
 		// READ single Card
@@ -721,19 +729,6 @@ angular.module('architect')
 	}]);
 'use strict';
 
-//Setting up route
-angular.module('campaign').config(['$stateProvider',
-	function($stateProvider) {
-		// Campaign state routing
-		$stateProvider.
-		state('campaign', {
-			url: '/campaign',
-			templateUrl: 'modules/campaign/views/campaign.client.view.html'
-		});
-	}
-]);
-'use strict';
-
 angular.module('campaign').controller('CampaignController', ['$scope', 'Socket',
 	function($scope, Socket) {
 		
@@ -743,12 +738,17 @@ angular.module('campaign').controller('CampaignController', ['$scope', 'Socket',
 		
 		var init = function(){
 			$scope.name = window.user.username;
+			$scope.messages.push({
+				user: '',
+				text: $scope.name+' has joined.'
+			});
 			Socket.emit('user:init', {
 				name: window.user.username
 			});
 		};
 		
 		Socket.on('user:init', function(data){
+			console.log(data);
 			for(var message in data.messages){
 				$scope.messages.push(message);
 			}
@@ -763,7 +763,7 @@ angular.module('campaign').controller('CampaignController', ['$scope', 'Socket',
 
 		Socket.on('user:join', function (data) {
 			$scope.messages.push({
-				user: 'chatroom',
+				user: '',
 				text: data.name + ' has joined.'
 			});
 			$scope.users.push(data.name);
@@ -917,14 +917,56 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
 
 // Core Controller
 angular.module('core')
-	.controller('HomeController', ['$scope', 'Authentication', 'CardDeck', 'HomeDemo',
-		function($scope, Authentication, CardDeck, HomeDemo) {
+	.controller('HomeController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'HomeDemo', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'Cards',
+		function($location, $scope, $rootScope, $window, Authentication, CardDeck, HomeDemo, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems, Cards) {
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
 			
 			$scope.cardDeck = CardDeck;
 			
-			$scope.homeDemo = HomeDemo;
+			$scope.pcs = Pcs;
+			
+			$scope.pcsCard1 = PcsCard1;
+			
+			$scope.pcsCard2 = PcsCard2;
+			
+			$scope.pcsCard3 = PcsCard3;
+			
+			$scope.pcsTraits = PcsTraits;
+			
+			$scope.pcsFeats = PcsFeats;
+			
+			$scope.pcsAugments = PcsAugments;
+			
+			$scope.pcsItems = PcsItems;
+			
+			$scope.cards = Cards;
+			
+			$scope.resource = {};
+			
+			$scope.cardList = [];
+			
+			$scope.pc = {};
+			
+			$scope.fetchCards = function(){
+				var path = $location.path().split('/');
+				
+				console.log(path);
+				
+				if(path.length === 2){
+					this.resource = HomeDemo.cards;
+				} else if (path.length === 3){
+					if (path[1] === 'player'){
+						this.resource = Pcs.browsePcs();
+					} else if(path[1] === 'architect'){
+						this.resource = Cards.browseCards();
+					} 
+				} else if (path.length === 5){
+					if (path[2] === 'pcs'){
+						this.resource = Pcs.readPc();
+					}
+				}
+			};
 			
 			var initialize = function(){
 				toggleListeners(true);
@@ -933,10 +975,115 @@ angular.module('core')
 			var toggleListeners = function(enable){
 				if(!enable) return;
 				$scope.$on('$destroy', onDestroy);
+				$scope.$on('screenSize:onHeightChange', onHeightChange);
+				$scope.$on('pcsCard1:updateAbility', updateAbility);
+				$scope.$watch('pcsCard2.EXP', watchEXP);
+				$scope.$watch('pcs.pc.experience', watchExperience);
+				$scope.$watch('pcs.pc.level', watchLevel);
 			};
 			
 			var onDestroy = function(){
 				toggleListeners(false);
+			};
+			
+			var onHeightChange = function(event, object){
+				$scope.windowHeight = object.newHeight;
+				$scope.windowScale = object.newScale;
+				$scope.$digest();
+			};
+			
+			$scope.newPc = function(){
+				Pcs.addPc();
+				Pcs.pcNew = true;
+				Pcs.pcSaved = false;
+			};
+			
+			$scope.openPc = function(pc){
+				$location.path('player/pcs/'+pc._id+'/edit');
+				Pcs.pcNew = false;
+				Pcs.pcSaved = false;
+			};
+			
+			$scope.savePc = function(){
+				Pcs.editPc();
+				Pcs.pcNew = false;
+				Pcs.pcSaved = true;
+			};
+			
+			$scope.exitPc = function(){
+				if(Pcs.pcNew){
+					Pcs.deletePc();
+				}
+				$location.path('player/pcs');
+			};
+			
+			$scope.changeFeatureCard = function(card){
+				Pcs.modalShown = true;
+				Pcs.modalDeckShown = true;
+				PcsTraits.browseCards();
+			};
+			
+	 		$scope.status = {
+	 			isopen: false
+	 		};
+		 	
+	 		$scope.toggled = function(open){
+	 			$scope.status.isopen = open;
+	 			$rootScope.$broadcast('CardsCtrl:onDropdown', {
+	 				isOpen: $scope.status.isopen
+	 			});
+	 		};
+			
+			var updateAbility = function(event, object){
+				var abilityPair = object.abilityPair;
+				var ability1 = object.ability1;
+				var ability2 = object.ability2;
+				switch(abilityPair){
+					case 1:
+						PcsCard1.factorBlock(ability1, ability2);
+						PcsCard2.factorHealth();
+						PcsCard2.factorStamina();
+						PcsCard2.factorCarryingCapacity();
+						break;
+					case 2:
+						PcsCard1.factorDodge(ability1, ability2);
+						break;
+					case 3:
+						PcsCard1.factorAlertness(ability1, ability2);
+						break;
+					case 4:
+						PcsCard1.factorTenacity(ability1, ability2);
+						break;
+				}
+			};
+			
+			//Watch for change in EXP input
+			var watchEXP = function(newValue, oldValue){
+				if(Pcs.pc && newValue !== oldValue){
+					PcsCard2.EXP = parseInt(newValue);
+					Pcs.pc.experience = parseInt(newValue);
+				}
+			};
+			
+			//Watch for change in experience
+			var watchExperience = function(newValue, oldValue){
+				if(Pcs.pc && newValue !== oldValue){
+					PcsCard2.factorExperience();
+					if(newValue !== PcsCard2.EXP){
+						PcsCard2.EXP = newValue;
+					}
+				}
+			};
+			
+			//Watch for changes in level
+			var watchLevel = function(newValue, oldValue){
+				if(Pcs.pc.abilities){
+					PcsCard2.factorHealth();
+					PcsCard2.factorStamina();
+					PcsTraits.factorTraitLimit();
+					PcsFeats.factorFeatLimit();
+					PcsAugments.factorAugmentLimit();
+				}
 			};
 			
 			initialize();
@@ -1513,8 +1660,8 @@ coreModule
 var coreModule = angular.module('core');
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
-	function(Cards, HomeDemo, Pcs, $rootScope){
+coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', 'Campaigns', '$rootScope',
+	function(Cards, HomeDemo, Pcs, Campaigns, $rootScope){
 		var service = {};
 		
 		service.windowHeight = 0;
@@ -1534,8 +1681,12 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var deckList = [];
 		
 		var getCardList = function(cardRole){
-			if(cardRole === 'player'){
-				return Pcs.pc.cards;
+			if(cardRole === 'pcSummary'){
+				return Pcs.pcList;
+			} else if(cardRole === 'campaignSummary'){
+				return Campaigns.campaignList;
+			} else if(cardRole === 'player'){
+				return Pcs.pc.cardList;
 			} else if(cardRole === 'architect'){
 				return Cards.cardList;
 			} else if(cardRole === 'home'){
@@ -1638,7 +1789,6 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		
 		var toggleListeners = function(enable){
 			if(!enable) return;
-			$rootScope.$on('$destroy', onDestroy);
 			$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 			
 			$rootScope.$on('cardPanel:onPressCard', onPressCard);
@@ -1652,10 +1802,6 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			
 			$rootScope.$on('cardDeck:unstackLeft', unstackLeft);
 			$rootScope.$on('cardDeck:unstackRight', unstackRight);
-		};
-		
-		var onDestroy = function(){
-			toggleListeners(false);
 		};
 		
 		var onHeightChange = function(event, object){
@@ -2369,100 +2515,102 @@ coreModule.factory('HomeDemo', ['$rootScope',
 	
 	var service = {};
 	
-	service.cards = [
-		{
-			name: 'A Trait Card',
-			cardType: 'trait',
-			cardRole: 'home',
-			x_coord: 0,
-			y_coord: 0,
-			x_overlap: false,
-			y_overlap: false,
-			dragging: false,
-			stacked: false,
-			locked: true
-		},
-		{
-			name: 'A Feat Card',
-			cardType: 'feat',
-			cardRole: 'home',
-			x_coord: 15,
-			y_coord: 0,
-			x_overlap: false,
-			y_overlap: false,
-			dragging: false,
-			stacked: false,
-			locked: true
-		},
-		{
-			name: 'An Augment Card',
-			cardType: 'augment',
-			cardRole: 'home',
-			x_coord: 30,
-			y_coord: 0,
-			x_overlap: false,
-			y_overlap: false,
-			dragging: false,
-			stacked: false,
-			locked: true,
-			description: {
-				show: true,
-				content: 'Truly amazing...'
+	service.cards = { 
+		cardList: [
+			{
+				name: 'A Trait Card',
+				cardType: 'trait',
+				cardRole: 'home',
+				x_coord: 0,
+				y_coord: 0,
+				x_overlap: false,
+				y_overlap: false,
+				dragging: false,
+				stacked: false,
+				locked: true
+			},
+			{
+				name: 'A Feat Card',
+				cardType: 'feat',
+				cardRole: 'home',
+				x_coord: 15,
+				y_coord: 0,
+				x_overlap: false,
+				y_overlap: false,
+				dragging: false,
+				stacked: false,
+				locked: true
+			},
+			{
+				name: 'An Augment Card',
+				cardType: 'augment',
+				cardRole: 'home',
+				x_coord: 30,
+				y_coord: 0,
+				x_overlap: false,
+				y_overlap: false,
+				dragging: false,
+				stacked: false,
+				locked: true,
+				description: {
+					show: true,
+					content: 'Truly amazing...'
+				}
+			},
+			{
+				name: 'An Item Card',
+				cardType: 'item',
+				cardRole: 'home',
+				x_coord: 45,
+				y_coord: 0,
+				x_overlap: false,
+				y_overlap: false,
+				dragging: false,
+				stacked: false,
+				locked: true
+			},
+			{
+				name: 'Another Feat Card',
+				cardType: 'feat',
+				cardRole: 'home',
+				x_coord: 60,
+				y_coord: 0,
+				x_overlap: false,
+				y_overlap: false,
+				dragging: false,
+				stacked: false,
+				locked: true
+			},
+			{
+				name: 'Another Item Card',
+				cardType: 'item',
+				cardRole: 'home',
+				x_coord: 75,
+				y_coord: 0,
+				x_overlap: false,
+				y_overlap: true,
+				dragging: false,
+				stacked: true,
+				locked: true,
+				description: {
+					show: true,
+					content: 'This is the best one by far!!'
+				}
+			},
+			{
+				name: 'Yet Another Feat Card',
+				cardType: 'feat',
+				cardRole: 'home',
+				x_coord: 75,
+				y_coord: 3,
+				x_overlap: false,
+				y_overlap: false,
+				dragging: false,
+				stacked: true,
+				locked: true
 			}
-		},
-		{
-			name: 'An Item Card',
-			cardType: 'item',
-			cardRole: 'home',
-			x_coord: 45,
-			y_coord: 0,
-			x_overlap: false,
-			y_overlap: false,
-			dragging: false,
-			stacked: false,
-			locked: true
-		},
-		{
-			name: 'Another Feat Card',
-			cardType: 'feat',
-			cardRole: 'home',
-			x_coord: 60,
-			y_coord: 0,
-			x_overlap: false,
-			y_overlap: false,
-			dragging: false,
-			stacked: false,
-			locked: true
-		},
-		{
-			name: 'Another Item Card',
-			cardType: 'item',
-			cardRole: 'home',
-			x_coord: 75,
-			y_coord: 0,
-			x_overlap: false,
-			y_overlap: true,
-			dragging: false,
-			stacked: true,
-			locked: true,
-			description: {
-				show: true,
-				content: 'This is the best one by far!!'
-			}
-		},
-		{
-			name: 'Yet Another Feat Card',
-			cardType: 'feat',
-			cardRole: 'home',
-			x_coord: 75,
-			y_coord: 3,
-			x_overlap: false,
-			y_overlap: false,
-			dragging: false,
-			stacked: true,
-			locked: true
-		}
-	];
+		]
+	};
 	
 	return service;
 	
@@ -2650,6 +2798,7 @@ angular.module('narrator').run(['Menus',
 		// Set top bar menu items
 		Menus.addMenuItem('topbar', 'Narrator', 'narrator', 'dropdown', '/narrator(/npcs)?', true, ['user'], '1');
 		Menus.addSubMenuItem('topbar', 'narrator', 'List My NPCs', 'narrator/npcs');
+		Menus.addSubMenuItem('topbar', 'narrator', 'List My Campaigns', 'narrator/campaigns');
 	}
 ]);
 'use strict';
@@ -2662,6 +2811,14 @@ angular.module('narrator').config(['$stateProvider',
 		state('listNpcs', {
 			url: '/narrator/npcs',
 			templateUrl: 'modules/narrator/views/list-npcs.client.view.html'
+		}).
+		state('listNarratorCampaigns', {
+			url: '/narrator/campaigns',
+			templateUrl: 'modules/campaign/views/list-narrator-campaigns.client.view.html'
+		}).
+		state('editNarratorCampaign', {
+			url: '/narrator/campaigns/:campaignId/edit',
+			templateUrl: 'modules/campaigns/views/edit-narrator-campaign.client.view.html'
 		});
 	}
 ]);
@@ -2756,7 +2913,7 @@ angular.module('player').run(['Menus',
 		// Set top bar menu items
 		Menus.addMenuItem('topbar', 'Player', 'player', 'dropdown', '/player(/pcs)?', true, ['user'], '0');
 		Menus.addSubMenuItem('topbar', 'player', 'List My PCs', 'player/pcs');
-		Menus.addSubMenuItem('topbar', 'player', 'List My Campaigns', 'campaign');
+		Menus.addSubMenuItem('topbar', 'player', 'List My Campaigns', 'player/campaigns');
 	}
 ]);
 'use strict';
@@ -2764,15 +2921,23 @@ angular.module('player').run(['Menus',
 //Setting up route
 angular.module('player').config(['$stateProvider',
 	function($stateProvider) {
-		// player state routing
+		// Player state routing
 		$stateProvider.
 		state('listPcs', {
 			url: '/player/pcs',
-			templateUrl: 'modules/player/views/list-pcs.client.view.html'
+			templateUrl: 'modules/core/views/home.client.view.html'
 		}).
 		state('editPc', {
 			url: '/player/pcs/:pcId/edit',
-			templateUrl: 'modules/player/views/edit-pc.client.view.html'
+			templateUrl: 'modules/core/views/home.client.view.html'
+		}).
+		state('listPlayerCampaigns', {
+			url: '/player/campaigns',
+			templateUrl: 'modules/campaign/views/list-player-campaigns.client.view.html'
+		}).
+		state('editPlayerCampaign', {
+			url: '/player/campaigns/:campaignId/edit',
+			templateUrl: 'modules/campaigns/views/edit-player-campaign.client.view.html'
 		});
 	}
 ]);
@@ -2780,14 +2945,12 @@ angular.module('player').config(['$stateProvider',
 
 // Pcs Controller
 angular.module('player')
-	.controller('PcsCtrl', ['$scope', '$location', '$log', '$rootScope', '$window', 'DataSRVC', 'CardDeck', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
-		function($scope, $location, $log, $rootScope, $window, DataSRVC, CardDeck, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems){
+	.controller('PcsCtrl', ['$scope', '$location', '$rootScope', '$window', 'DataSRVC', 'CardDeck', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
+		function($scope, $location, $rootScope, $window, DataSRVC, CardDeck, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems){
 			
 			var _window = angular.element($window);
 			
 			$scope.windowHeight = 0;
-			
-			$scope.windowScale = 0;
 			
 			$scope.dataSRVC = DataSRVC;
 			
@@ -2860,7 +3023,6 @@ angular.module('player')
 			
 			var onHeightChange = function(event, object){
 				$scope.windowHeight = object.newHeight;
-				$scope.windowScale = object.newScale;
 				$scope.$digest();
 			};
 			
@@ -3515,20 +3677,35 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 		
 		service.pcSaved = false;
 		
+		service.setPcList = function(){
+			for(var i = 0; i < this.pcList.length; i++){
+				this.pcList[i].cardRole = 'pcSummary';
+				this.pcList[i].cardType = 'pcSummary';
+				this.pcList[i].locked = true;
+				this.pcList[i].x_coord = i * 15;
+				this.pcList[i].y_coord = 0;
+				this.pcList[i].dragging = false;
+				this.pcList[i].stacked = false;
+			}
+		};
+		
 		// BROWSE Pcs
 		service.browsePcs = function() {
 			this.pcList = Pcs.query(
 				function(response) {
-					
+					service.pcList.unshift({optionCard: true});
+					service.setPcList();
 				}
 			);
+			return {cardList: service.pcList};
 		};
 		
 		// READ single Pc
 		service.readPc = function() {
-			this.pc = Pcs.get({
+			service.pc = Pcs.get({
 				pcId: $stateParams.pcId
 			});
+			return service.pc;
 		};
 		
 		// EDIT existing Pc
@@ -3567,7 +3744,7 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 					{ name: 'd10', image: 'modules/core/img/d_10.png', sides: '10', order: 7 },
 					{ name: 'd12', image: 'modules/core/img/d_12.png', sides: '12', order: 8 }
 				],
-				cards: [
+				cardList: [
 					{
 						cardType: 'pc1',
 						cardRole: 'player',

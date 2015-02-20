@@ -2,8 +2,8 @@
 var coreModule = angular.module('core');
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
-	function(Cards, HomeDemo, Pcs, $rootScope){
+coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', 'Campaigns', '$rootScope',
+	function(Cards, HomeDemo, Pcs, Campaigns, $rootScope){
 		var service = {};
 		
 		service.windowHeight = 0;
@@ -23,8 +23,12 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		var deckList = [];
 		
 		var getCardList = function(cardRole){
-			if(cardRole === 'player'){
-				return Pcs.pc.cards;
+			if(cardRole === 'pcSummary'){
+				return Pcs.pcList;
+			} else if(cardRole === 'campaignSummary'){
+				return Campaigns.campaignList;
+			} else if(cardRole === 'player'){
+				return Pcs.pc.cardList;
 			} else if(cardRole === 'architect'){
 				return Cards.cardList;
 			} else if(cardRole === 'home'){
@@ -127,7 +131,6 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 		
 		var toggleListeners = function(enable){
 			if(!enable) return;
-			$rootScope.$on('$destroy', onDestroy);
 			$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 			
 			$rootScope.$on('cardPanel:onPressCard', onPressCard);
@@ -141,10 +144,6 @@ coreModule.factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', '$rootScope',
 			
 			$rootScope.$on('cardDeck:unstackLeft', unstackLeft);
 			$rootScope.$on('cardDeck:unstackRight', unstackRight);
-		};
-		
-		var onDestroy = function(){
-			toggleListeners(false);
 		};
 		
 		var onHeightChange = function(event, object){

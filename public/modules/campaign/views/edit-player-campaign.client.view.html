@@ -1,0 +1,22 @@
+<section data-ng-controller="CampaignController">
+	<h2>Public Message-board</h2>
+	<br />
+	<div class="row table-row">
+		<div class="col-xs-4 col-sm-5 table-cell" style="y-overflow: auto; border: solid 1px black; background-color: white;">
+			<h3>Messages</h3>
+			<ul style="list-style: none;">
+				<li ng-repeat="message in messages"><strong>{{message.user}}</strong> {{message.text}}</li>
+			</ul>
+		</div>
+		<div class="col-xs-2 col-sm-1 table-cell" style="y-overflow: auto; border: solid 1px black; background-color: white;">
+			<h4>Users</h4>
+			<ul style="list-style: none;">
+				<li ng-repeat="user in users">{{user}}</li>
+			</ul>
+		</div>
+	</div>
+	<div class="row table-row">
+		<input type="text" class="col-xs-4 col-sm-5" ng-model="message">
+		<input type="submit" class="col-xs-2 col-sm-1 fill-height" ng-click="sendMessage()">
+	</div>
+</section>

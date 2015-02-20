@@ -4,6 +4,19 @@ var architectModule = angular.module('architect');
 
 // feature-card directive
 architectModule
+	.directive('cardPcSummary', function(){
+		return {
+			restrict: 'A',
+			replace: true,
+			templateUrl: '../modules/player/views/card-pc-summary.html'
+		};
+	})
+	.directive('cardCampaignSummary', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/campaign/views/card-campaign-summary.html'
+		};
+	})
 	.directive('cardPc1', function(){
 		return {
 			restrict: 'A',

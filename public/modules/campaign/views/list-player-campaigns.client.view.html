@@ -1,0 +1,21 @@
+<section data-ng-controller="CampaignController" ng-init="campaigns.browseCampaigns()">
+	<h1>My Campaigns</h1>
+	<br />
+	<div class="row">
+		<div class="col-xs-12 col-sm-8 col-md-9"
+			style="padding-bottom: 2%">
+			<div class="input-group input-group-lg">
+				<span class="input-group-btn">
+					<button class="btn btn-default" type="button">
+						<i class="glyphicon glyphicon-search text-muted"></i>
+					</button>
+				</span>
+				<input type="text" class="form-control" ng-model="searchText" placeholder="Search...">
+			</div>
+		</div>
+	</div>
+	<ul>
+		<li ng-repeat="campaign in campaignList">{{name}}</li>
+	</ul>
+	
+</section>

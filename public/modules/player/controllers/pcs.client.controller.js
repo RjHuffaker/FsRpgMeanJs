@@ -2,14 +2,12 @@
 
 // Pcs Controller
 angular.module('player')
-	.controller('PcsCtrl', ['$scope', '$location', '$log', '$rootScope', '$window', 'DataSRVC', 'CardDeck', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
-		function($scope, $location, $log, $rootScope, $window, DataSRVC, CardDeck, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems){
+	.controller('PcsCtrl', ['$scope', '$location', '$rootScope', '$window', 'DataSRVC', 'CardDeck', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
+		function($scope, $location, $rootScope, $window, DataSRVC, CardDeck, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems){
 			
 			var _window = angular.element($window);
 			
 			$scope.windowHeight = 0;
-			
-			$scope.windowScale = 0;
 			
 			$scope.dataSRVC = DataSRVC;
 			
@@ -82,7 +80,6 @@ angular.module('player')
 			
 			var onHeightChange = function(event, object){
 				$scope.windowHeight = object.newHeight;
-				$scope.windowScale = object.newScale;
 				$scope.$digest();
 			};
 			

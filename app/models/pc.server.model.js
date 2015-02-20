@@ -146,7 +146,7 @@ var PcSchema = new Schema({
 		type: Number,
 		default: 0
 	},
-	cards: []
+	cardList: []
 });
 
 mongoose.model('Pc', PcSchema);

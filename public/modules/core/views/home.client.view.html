@@ -1,8 +1,10 @@
-<section data-ng-controller="HomeController" screen-size>
+<section data-ng-controller="HomeController" data-ng-init="fetchCards()"
+	screen-size>
 	<div class="container-fluid deck-panel" ng-style="{'height': (cardDeck.windowHeight - 50)+'px'}">
+		<div class="fill-parent modal-overlay" ng-click="pcs.hideModal()" ng-show="pcs.modalShown"></div>
 		<div card-deck ng-mouseleave="true">
 			<ul ng-cloak>
-				<li card-panel card="card" ng-repeat="card in homeDemo.cards"
+				<li card-panel card="card" ng-repeat="card in resource.cardList"
 					ng-class="{'stacked': card.stacked, 'dragging': card.dragging,
 						'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap}"
 					ng-style="{'z-index': 4998 - card.x_coord + card.y_coord}"
@@ -11,4 +13,6 @@
 			</ul>
 		</div>
 	</div>
+	<div dice-box ng-show="pcs.diceBoxShown"></div>
+	<div modal-deck ng-show="pcs.modalDeckShown"></div>
 </section>

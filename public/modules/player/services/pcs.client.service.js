@@ -54,20 +54,35 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 		
 		service.pcSaved = false;
 		
+		service.setPcList = function(){
+			for(var i = 0; i < this.pcList.length; i++){
+				this.pcList[i].cardRole = 'pcSummary';
+				this.pcList[i].cardType = 'pcSummary';
+				this.pcList[i].locked = true;
+				this.pcList[i].x_coord = i * 15;
+				this.pcList[i].y_coord = 0;
+				this.pcList[i].dragging = false;
+				this.pcList[i].stacked = false;
+			}
+		};
+		
 		// BROWSE Pcs
 		service.browsePcs = function() {
 			this.pcList = Pcs.query(
 				function(response) {
-					
+					service.pcList.unshift({optionCard: true});
+					service.setPcList();
 				}
 			);
+			return {cardList: service.pcList};
 		};
 		
 		// READ single Pc
 		service.readPc = function() {
-			this.pc = Pcs.get({
+			service.pc = Pcs.get({
 				pcId: $stateParams.pcId
 			});
+			return service.pc;
 		};
 		
 		// EDIT existing Pc
@@ -106,7 +121,7 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 					{ name: 'd10', image: 'modules/core/img/d_10.png', sides: '10', order: 7 },
 					{ name: 'd12', image: 'modules/core/img/d_12.png', sides: '12', order: 8 }
 				],
-				cards: [
+				cardList: [
 					{
 						cardType: 'pc1',
 						cardRole: 'player',

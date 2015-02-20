@@ -1,8 +1,8 @@
 'use strict';
 
 // Cards controller
-angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$log', '$rootScope', 'DataSRVC', 'CardDeck', 'Cards', 'Socket',
-	function($scope, $location, $log, $rootScope, DataSRVC, CardDeck, Cards, Socket) {
+angular.module('architect').controller('CardsCtrl', ['$scope', '$location', '$log', '$rootScope', 'DataSRVC', 'CardDeck', 'Cards',
+	function($scope, $location, $log, $rootScope, DataSRVC, CardDeck, Cards) {
 		
 		$scope.dataSRVC = DataSRVC;
 		
