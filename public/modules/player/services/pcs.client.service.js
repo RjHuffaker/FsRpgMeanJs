@@ -82,6 +82,7 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 			service.pc = Pcs.get({
 				pcId: pcId
 			});
+			console.log(service.pc);
 			return service.pc;
 		};
 		
@@ -171,11 +172,8 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 				]
 			});
 			
-			this.pc.$save(function(response) {
-				$location.path('player/pcs/'+response._id+'/edit');
-			}, function(errorResponse) {
-				this.error = errorResponse.data.message;
-			});
+			this.pc.$save();
+			return service.pc;
 		};
 		
 		// DELETE existing Pc
@@ -187,9 +185,7 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 					}
 				}
 			} else {
-				this.pc.$remove(function() {
-					$location.path('player/pcs');
-				});
+				this.pc.$remove();
 			}
 			this.browsePcs();
 		};

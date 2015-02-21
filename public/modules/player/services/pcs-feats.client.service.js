@@ -18,18 +18,18 @@ angular.module('player').factory('PcsFeats', ['Pcs', 'CardDeck',
 					this.addFeat(ia + 1);
 				}
 			}
-			for(var ic = 0; ic < Pcs.pc.cards.length; ic++){
-				if(Pcs.pc.cards[ic].level > Pcs.pc.level){
-					CardDeck.removeCard( Pcs.pc.cards[ic] );
+			for(var ic = 0; ic < Pcs.pc.cardList.length; ic++){
+				if(Pcs.pc.cardList[ic].level > Pcs.pc.level){
+					CardDeck.removeCard( Pcs.pc.cardList[ic] );
 				}
 			}
 		};
 		
 		service.featAtLevel = function(level){
 			var featAtLevel = false;
-			for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
-				if(Pcs.pc.cards[ib].cardType === 'feat'){
-					if(Pcs.pc.cards[ib].level === level){
+			for(var ib = 0; ib < Pcs.pc.cardList.length; ib++){
+				if(Pcs.pc.cardList[ib].cardType === 'feat'){
+					if(Pcs.pc.cardList[ib].level === level){
 						featAtLevel = true;
 					}
 				}
@@ -41,7 +41,7 @@ angular.module('player').factory('PcsFeats', ['Pcs', 'CardDeck',
 			var newFeat = {
 				name: 'Level '+level+' Feat',
 				cardType: 'feat',
-				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 15,
+				x_coord: Pcs.pc.cardList[Pcs.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -50,7 +50,7 @@ angular.module('player').factory('PcsFeats', ['Pcs', 'CardDeck',
 				locked: true,
 				level: level
 			};
-			Pcs.pc.cards.push(newFeat);
+			Pcs.pc.cardList.push(newFeat);
 		};
 		
 		return service;

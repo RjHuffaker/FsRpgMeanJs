@@ -499,7 +499,7 @@ angular.module('architect')
 					);
 					break;
 				case 4:
-					service.cardList = Origins.query(
+					service.cardList = Items.query(
 						function(response){
 							service.setCardList();
 						}
@@ -929,6 +929,7 @@ angular.module('core')
 			
 			var fetchDeck = function(event, object){
 				$scope.resource = Cards.browseCards(object.cardType);
+				console.log($scope.resource);
 			};
 			
 			var initialize = function(){
@@ -958,20 +959,15 @@ angular.module('core')
 			};
 			
 			$scope.newPc = function(){
-				Pcs.addPc();
+				$scope.resource = {};
+				$scope.resource = Pcs.addPc();
 				Pcs.pcNew = true;
 				Pcs.pcSaved = false;
 			};
 			
-			$scope.readPc = function(pc){
-				console.log(pc);
-				$scope.resource = Pcs.readPc(pc._id);
-			};
-			
-			$scope.openPc = function(pc){
-				$location.path('player/pcs/'+pc._id+'/edit');
-				Pcs.pcNew = false;
-				Pcs.pcSaved = false;
+			$scope.readPc = function(pcId){
+				$scope.resource = {};
+				$scope.resource = Pcs.readPc(pcId);
 			};
 			
 			$scope.savePc = function(){
@@ -982,7 +978,7 @@ angular.module('core')
 			
 			$scope.exitPc = function(){
 				if(Pcs.pcNew){
-					Pcs.deletePc();
+					$scope.resource = Pcs.deletePc();
 				}
 				fetchPcs();
 			};
@@ -3156,8 +3152,8 @@ angular.module('player').factory('PcsAugments', ['Pcs', 'CardDeck',
 					this.addAugment(ia * 4 + 2);
 				}
 			}
-			for(var ic = 0; ic < Pcs.pc.cards.length; ic++){
-				if(Pcs.pc.cards[ic].level > Pcs.pc.level){
+			for(var ic = 0; ic < Pcs.pc.cardList.length; ic++){
+				if(Pcs.pc.cardList[ic].level > Pcs.pc.level){
 					CardDeck.removeCard(ic);
 				}
 			}
@@ -3165,9 +3161,9 @@ angular.module('player').factory('PcsAugments', ['Pcs', 'CardDeck',
 		
 		service.augmentAtLevel = function(level){
 			var augmentAtLevel = false;
-			for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
-				if(Pcs.pc.cards[ib].cardType === 'augment'){
-					if(Pcs.pc.cards[ib].level === level){
+			for(var ib = 0; ib < Pcs.pc.cardList.length; ib++){
+				if(Pcs.pc.cardList[ib].cardType === 'augment'){
+					if(Pcs.pc.cardList[ib].level === level){
 						augmentAtLevel = true;
 					}
 				}
@@ -3179,7 +3175,7 @@ angular.module('player').factory('PcsAugments', ['Pcs', 'CardDeck',
 			var newAugment = {
 				name: 'Level '+level+' Augment',
 				cardType: 'augment',
-				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 15,
+				x_coord: Pcs.pc.cardList[Pcs.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -3188,7 +3184,7 @@ angular.module('player').factory('PcsAugments', ['Pcs', 'CardDeck',
 				locked: true,
 				level: level
 			};
-			Pcs.pc.cards.push(newAugment);
+			Pcs.pc.cardList.push(newAugment);
 		};
 		
 		return service;
@@ -3387,18 +3383,18 @@ angular.module('player').factory('PcsFeats', ['Pcs', 'CardDeck',
 					this.addFeat(ia + 1);
 				}
 			}
-			for(var ic = 0; ic < Pcs.pc.cards.length; ic++){
-				if(Pcs.pc.cards[ic].level > Pcs.pc.level){
-					CardDeck.removeCard( Pcs.pc.cards[ic] );
+			for(var ic = 0; ic < Pcs.pc.cardList.length; ic++){
+				if(Pcs.pc.cardList[ic].level > Pcs.pc.level){
+					CardDeck.removeCard( Pcs.pc.cardList[ic] );
 				}
 			}
 		};
 		
 		service.featAtLevel = function(level){
 			var featAtLevel = false;
-			for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
-				if(Pcs.pc.cards[ib].cardType === 'feat'){
-					if(Pcs.pc.cards[ib].level === level){
+			for(var ib = 0; ib < Pcs.pc.cardList.length; ib++){
+				if(Pcs.pc.cardList[ib].cardType === 'feat'){
+					if(Pcs.pc.cardList[ib].level === level){
 						featAtLevel = true;
 					}
 				}
@@ -3410,7 +3406,7 @@ angular.module('player').factory('PcsFeats', ['Pcs', 'CardDeck',
 			var newFeat = {
 				name: 'Level '+level+' Feat',
 				cardType: 'feat',
-				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 15,
+				x_coord: Pcs.pc.cardList[Pcs.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -3419,7 +3415,7 @@ angular.module('player').factory('PcsFeats', ['Pcs', 'CardDeck',
 				locked: true,
 				level: level
 			};
-			Pcs.pc.cards.push(newFeat);
+			Pcs.pc.cardList.push(newFeat);
 		};
 		
 		return service;
@@ -3463,8 +3459,8 @@ angular.module('player')
 					this.addTrait(ia * 4);
 				}
 			}
-			for(var ic = 0; ic < Pcs.pc.cards.length; ic++){
-				if(Pcs.pc.cards[ic].level > Pcs.pc.level){
+			for(var ic = 0; ic < Pcs.pc.cardList.length; ic++){
+				if(Pcs.pc.cardList[ic].level > Pcs.pc.level){
 					CardDeck.removeCard(ic);
 				}
 			}
@@ -3472,9 +3468,9 @@ angular.module('player')
 		
 		service.traitAtLevel = function(level){
 			var traitAtLevel = false;
-			for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
-				if(Pcs.pc.cards[ib].cardType === 'trait'){
-					if(Pcs.pc.cards[ib].level === level){
+			for(var ib = 0; ib < Pcs.pc.cardList.length; ib++){
+				if(Pcs.pc.cardList[ib].cardType === 'trait'){
+					if(Pcs.pc.cardList[ib].level === level){
 						traitAtLevel = true;
 					}
 				}
@@ -3486,7 +3482,7 @@ angular.module('player')
 			var newTrait = {
 				name: 'Level '+level+' Trait',
 				cardType: 'trait',
-				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 15,
+				x_coord: Pcs.pc.cardList[Pcs.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -3495,7 +3491,7 @@ angular.module('player')
 				locked: true,
 				level: level
 			};
-			Pcs.pc.cards.push(newTrait);
+			Pcs.pc.cardList.push(newTrait);
 		};
 		
 		service.lockCard = function(card){
@@ -3607,6 +3603,7 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 			service.pc = Pcs.get({
 				pcId: pcId
 			});
+			console.log(service.pc);
 			return service.pc;
 		};
 		
@@ -3696,11 +3693,8 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 				]
 			});
 			
-			this.pc.$save(function(response) {
-				$location.path('player/pcs/'+response._id+'/edit');
-			}, function(errorResponse) {
-				this.error = errorResponse.data.message;
-			});
+			this.pc.$save();
+			return service.pc;
 		};
 		
 		// DELETE existing Pc
@@ -3712,9 +3706,7 @@ angular.module('player').factory('Pcs', ['$stateParams', '$location', 'Authentic
 					}
 				}
 			} else {
-				this.pc.$remove(function() {
-					$location.path('player/pcs');
-				});
+				this.pc.$remove();
 			}
 			this.browsePcs();
 		};

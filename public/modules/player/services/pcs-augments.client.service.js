@@ -17,8 +17,8 @@ angular.module('player').factory('PcsAugments', ['Pcs', 'CardDeck',
 					this.addAugment(ia * 4 + 2);
 				}
 			}
-			for(var ic = 0; ic < Pcs.pc.cards.length; ic++){
-				if(Pcs.pc.cards[ic].level > Pcs.pc.level){
+			for(var ic = 0; ic < Pcs.pc.cardList.length; ic++){
+				if(Pcs.pc.cardList[ic].level > Pcs.pc.level){
 					CardDeck.removeCard(ic);
 				}
 			}
@@ -26,9 +26,9 @@ angular.module('player').factory('PcsAugments', ['Pcs', 'CardDeck',
 		
 		service.augmentAtLevel = function(level){
 			var augmentAtLevel = false;
-			for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
-				if(Pcs.pc.cards[ib].cardType === 'augment'){
-					if(Pcs.pc.cards[ib].level === level){
+			for(var ib = 0; ib < Pcs.pc.cardList.length; ib++){
+				if(Pcs.pc.cardList[ib].cardType === 'augment'){
+					if(Pcs.pc.cardList[ib].level === level){
 						augmentAtLevel = true;
 					}
 				}
@@ -40,7 +40,7 @@ angular.module('player').factory('PcsAugments', ['Pcs', 'CardDeck',
 			var newAugment = {
 				name: 'Level '+level+' Augment',
 				cardType: 'augment',
-				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 15,
+				x_coord: Pcs.pc.cardList[Pcs.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -49,7 +49,7 @@ angular.module('player').factory('PcsAugments', ['Pcs', 'CardDeck',
 				locked: true,
 				level: level
 			};
-			Pcs.pc.cards.push(newAugment);
+			Pcs.pc.cardList.push(newAugment);
 		};
 		
 		return service;

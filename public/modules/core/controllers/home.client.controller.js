@@ -39,6 +39,7 @@ angular.module('core')
 			
 			var fetchDeck = function(event, object){
 				$scope.resource = Cards.browseCards(object.cardType);
+				console.log($scope.resource);
 			};
 			
 			var initialize = function(){
@@ -68,20 +69,15 @@ angular.module('core')
 			};
 			
 			$scope.newPc = function(){
-				Pcs.addPc();
+				$scope.resource = {};
+				$scope.resource = Pcs.addPc();
 				Pcs.pcNew = true;
 				Pcs.pcSaved = false;
 			};
 			
-			$scope.readPc = function(pc){
-				console.log(pc);
-				$scope.resource = Pcs.readPc(pc._id);
-			};
-			
-			$scope.openPc = function(pc){
-				$location.path('player/pcs/'+pc._id+'/edit');
-				Pcs.pcNew = false;
-				Pcs.pcSaved = false;
+			$scope.readPc = function(pcId){
+				$scope.resource = {};
+				$scope.resource = Pcs.readPc(pcId);
 			};
 			
 			$scope.savePc = function(){
@@ -92,7 +88,7 @@ angular.module('core')
 			
 			$scope.exitPc = function(){
 				if(Pcs.pcNew){
-					Pcs.deletePc();
+					$scope.resource = Pcs.deletePc();
 				}
 				fetchPcs();
 			};

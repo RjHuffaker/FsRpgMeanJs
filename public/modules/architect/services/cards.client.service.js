@@ -136,7 +136,7 @@ angular.module('architect')
 					);
 					break;
 				case 4:
-					service.cardList = Origins.query(
+					service.cardList = Items.query(
 						function(response){
 							service.setCardList();
 						}

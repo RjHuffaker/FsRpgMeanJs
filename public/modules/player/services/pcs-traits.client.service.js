@@ -25,8 +25,8 @@ angular.module('player')
 					this.addTrait(ia * 4);
 				}
 			}
-			for(var ic = 0; ic < Pcs.pc.cards.length; ic++){
-				if(Pcs.pc.cards[ic].level > Pcs.pc.level){
+			for(var ic = 0; ic < Pcs.pc.cardList.length; ic++){
+				if(Pcs.pc.cardList[ic].level > Pcs.pc.level){
 					CardDeck.removeCard(ic);
 				}
 			}
@@ -34,9 +34,9 @@ angular.module('player')
 		
 		service.traitAtLevel = function(level){
 			var traitAtLevel = false;
-			for(var ib = 0; ib < Pcs.pc.cards.length; ib++){
-				if(Pcs.pc.cards[ib].cardType === 'trait'){
-					if(Pcs.pc.cards[ib].level === level){
+			for(var ib = 0; ib < Pcs.pc.cardList.length; ib++){
+				if(Pcs.pc.cardList[ib].cardType === 'trait'){
+					if(Pcs.pc.cardList[ib].level === level){
 						traitAtLevel = true;
 					}
 				}
@@ -48,7 +48,7 @@ angular.module('player')
 			var newTrait = {
 				name: 'Level '+level+' Trait',
 				cardType: 'trait',
-				x_coord: Pcs.pc.cards[Pcs.lastCard()].x_coord + 15,
+				x_coord: Pcs.pc.cardList[Pcs.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -57,7 +57,7 @@ angular.module('player')
 				locked: true,
 				level: level
 			};
-			Pcs.pc.cards.push(newTrait);
+			Pcs.pc.cardList.push(newTrait);
 		};
 		
 		service.lockCard = function(card){
