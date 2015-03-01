@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', 'Campaigns', '$rootScope',
-	function(Cards, HomeDemo, Pcs, Campaigns, $rootScope){
+angular.module('core').factory('CardDeck', ['HomeDemo', 'Pcs', 'Cards', 'Decks', 'Campaigns', '$rootScope',
+	function(HomeDemo, Pcs, Cards, Decks, Campaigns, $rootScope){
 		var service = {};
 		
 		service.windowHeight = 0;
@@ -26,6 +26,8 @@ angular.module('core').factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', 'Campaig
 				return Pcs.pcList;
 			} else if(cardRole === 'campaignSummary'){
 				return Campaigns.campaignList;
+			} else if(cardRole === 'deckSummary'){
+				return Decks.cardList;
 			} else if(cardRole === 'player'){
 				return Pcs.pc.cardList;
 			} else if(cardRole === 'architect'){

@@ -2,17 +2,22 @@
 
 // feature-card directive
 angular.module('cards')
-	.directive('cardPcSummary', function(){
+	.directive('pcSummary', function(){
 		return {
 			restrict: 'A',
-			replace: true,
-			templateUrl: '../modules/pcs/views/card-pc-summary.html'
+			templateUrl: '../modules/pcs/views/pc-summary.html'
 		};
 	})
-	.directive('cardCampaignSummary', function(){
+	.directive('campaignSummary', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/campaign/views/card-campaign-summary.html'
+			templateUrl: '../modules/campaign/views/campaign-summary.html'
+		};
+	})
+	.directive('deckSummary', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/decks/views/deck-summary.html'
 		};
 	})
 	.directive('cardPc1', function(){
@@ -33,10 +38,10 @@ angular.module('cards')
 			templateUrl: '../modules/pcs/views/card-pc-3.html'
 		};
 	})
-	.directive('deckOptions', function(){
+	.directive('optionsPanel', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/deck-options.html'
+			templateUrl: '../modules/cards/views/options-panel.html'
 		};
 	})
 	.directive('diceDropdown', function(){

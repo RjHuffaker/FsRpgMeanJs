@@ -76,9 +76,10 @@ div[card-deck] {
 	margin-top: 0;
 }
 
-[card-pc-summary],
-[deck-options],
-[card-campaign-summary],
+[pc-summary],
+[campaign-summary],
+[deck-summary],
+[options-panel],
 [card-pc-1],
 [card-pc-2],
 [card-pc-3] {

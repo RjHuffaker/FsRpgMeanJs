@@ -1,7 +1,7 @@
 'use strict';
 
 // Directive for managing card decks.
-angular.module('deck')
+angular.module('decks')
 	.directive('cardDeck', ['$rootScope', '$window', 'CardDeck', function($rootScope, $window, CardDeck){
 		return {
 			restrict: 'A',

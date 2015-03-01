@@ -6,6 +6,9 @@
 			ng-model="card.name" stop-event>
 		<strong ng-if="card.locked">
 			{{card.name}}
+			<span class="text-capitalize" ng-if="!card.name">
+				[{{card.cardType}} name]
+			</span>
 		</strong>
 	</div>
 	<hr class="black-line">

@@ -1,5 +1,4 @@
-<section data-ng-controller="CoreController" data-ng-init="fetchCards()"
-	screen-size>
+<section data-ng-controller="CoreController" screen-size>
 	<div class="container-fluid deck-panel" ng-style="{'height': (cardDeck.windowHeight - 50)+'px'}">
 		<div class="fill-parent modal-overlay" ng-click="pcs.hideModal()" ng-show="pcs.modalShown"></div>
 		<div card-deck ng-mouseleave="true">

@@ -12,6 +12,10 @@ angular.module('pcs').factory('Pcs', ['$stateParams', '$location', 'Authenticati
 		
 		var service = {};
 		
+		var optionsPanel = {
+			optionsPanel: true
+		};
+		
 		service.pc = {};
 		
 		service.modalShown = false;
@@ -70,7 +74,7 @@ angular.module('pcs').factory('Pcs', ['$stateParams', '$location', 'Authenticati
 		service.browsePcs = function() {
 			this.pcList = Pcs.query(
 				function(response) {
-					service.pcList.unshift({optionCard: true});
+					service.pcList.unshift(optionsPanel);
 					service.setPcList();
 				}
 			);

@@ -1,10 +1,11 @@
-<div ng-switch on="card.cardType" class="fill-parent">
+<div ng-if="!card.optionsPanel" ng-switch on="card.cardType" class="fill-parent">
 	<div ng-switch-when="pcSummary" card="card"
-		card-pc-summary class="fill-parent"></div>
+		pc-summary class="fill-parent"></div>
 	<div ng-switch-when="campaignSummary" card="card"
-		card-campaign-summary class="fill-parent"></div>
-	<div ng-switch-when="deckOptions" card="card"
-		deck-options class="fill-parent"></div>
+		campaign-summary class="fill-parent"></div>
+	<div ng-switch-when="deckSummary" card="card"
+		deck-summary class="fill-parent"></div>
+		
 	<div ng-switch-when="pc1" card="card"
 		card-pc-1 class="fill-parent"></div>
 	<div ng-switch-when="pc2" card="card"
@@ -24,3 +25,5 @@
 	<div ng-switch-when="origin" card="card"
 		npc-origin class="card-origin fill-parent"></div>
 </div>
+<div ng-if="card.optionsPanel" card="card"
+	options-panel class="fill-parent"></div>

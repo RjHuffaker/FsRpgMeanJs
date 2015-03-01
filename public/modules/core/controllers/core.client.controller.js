@@ -2,8 +2,8 @@
 
 // Core Controller
 angular.module('core')
-	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'HomeDemo', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'Cards',
-		function($location, $scope, $rootScope, $window, Authentication, CardDeck, HomeDemo, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems, Cards) {
+	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'HomeDemo', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'Cards', 'Decks',
+		function($location, $scope, $rootScope, $window, Authentication, CardDeck, HomeDemo, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems, Cards, Decks) {
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
 			
@@ -27,6 +27,8 @@ angular.module('core')
 			
 			$scope.cards = Cards;
 			
+			$scope.decks = Decks;
+			
 			$scope.resource = {};
 			
 			$scope.cardList = [];
@@ -37,8 +39,13 @@ angular.module('core')
 				$scope.resource = Pcs.browsePcs();
 			};
 			
-			var fetchDeck = function(event, object){
+			var fetchCards = function(event, object){
 				$scope.resource = Cards.browseCards(object.cardType);
+				console.log($scope.resource);
+			};
+			
+			var fetchDecks = function(event, object){
+				$scope.resource = Decks.browseDecks(object.deckType);
 				console.log($scope.resource);
 			};
 			
@@ -51,7 +58,8 @@ angular.module('core')
 				$scope.$on('$destroy', onDestroy);
 				$scope.$on('screenSize:onHeightChange', onHeightChange);
 				$scope.$on('fetchPcs', fetchPcs);
-				$scope.$on('fetchDeck', fetchDeck);
+				$scope.$on('fetchCards', fetchCards);
+				$scope.$on('fetchDecks', fetchDecks);
 				$scope.$on('pcsCard1:updateAbility', updateAbility);
 				$scope.$watch('pcsCard2.EXP', watchEXP);
 				$scope.$watch('pcs.pc.experience', watchExperience);
@@ -75,9 +83,21 @@ angular.module('core')
 				Pcs.pcSaved = false;
 			};
 			
+			$scope.newDeck = function(){
+				$scope.resource = {};
+				$scope.resource = Decks.addDeck();
+				
+			};
+			
 			$scope.readPc = function(pcId){
 				$scope.resource = {};
 				$scope.resource = Pcs.readPc(pcId);
+			};
+			
+			$scope.readDeck = function(deckId){
+				$scope.resource = {};
+				$scope.resource = Decks.readDeck(deckId);
+				console.log($scope.resource);
 			};
 			
 			$scope.savePc = function(){

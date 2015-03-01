@@ -1,11 +1,11 @@
 'use strict';
 
 // Directive for managing card decks.
-angular.module('deck')
+angular.module('decks')
 	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'CardDeck', function($document, $parse, $rootScope, $window, CardDeck){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/deck/views/card-panel.html',
+			templateUrl: '../modules/decks/views/card-panel.html',
 			link: function(scope, element, attrs){
 				
 				Array.min = function(array){

@@ -58,7 +58,7 @@ ApplicationConfiguration.registerModule('core');
 'use strict';
 
 // Use application configuration module to register a new module
-ApplicationConfiguration.registerModule('deck');
+ApplicationConfiguration.registerModule('decks');
 
 'use strict';
 
@@ -270,17 +270,22 @@ angular.module('cards').controller('CardsCtrl', ['$scope', '$location', '$log', 
 
 // feature-card directive
 angular.module('cards')
-	.directive('cardPcSummary', function(){
+	.directive('pcSummary', function(){
 		return {
 			restrict: 'A',
-			replace: true,
-			templateUrl: '../modules/pcs/views/card-pc-summary.html'
+			templateUrl: '../modules/pcs/views/pc-summary.html'
 		};
 	})
-	.directive('cardCampaignSummary', function(){
+	.directive('campaignSummary', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/campaign/views/card-campaign-summary.html'
+			templateUrl: '../modules/campaign/views/campaign-summary.html'
+		};
+	})
+	.directive('deckSummary', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/decks/views/deck-summary.html'
 		};
 	})
 	.directive('cardPc1', function(){
@@ -301,10 +306,10 @@ angular.module('cards')
 			templateUrl: '../modules/pcs/views/card-pc-3.html'
 		};
 	})
-	.directive('deckOptions', function(){
+	.directive('optionsPanel', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/deck-options.html'
+			templateUrl: '../modules/cards/views/options-panel.html'
 		};
 	})
 	.directive('diceDropdown', function(){
@@ -532,36 +537,12 @@ angular.module('cards').factory('traitService', ['Cards', 'CardDeck',
 
 // Factory-service for Browsing, Reading, Editting, Adding, and Deleting Cards.
 angular.module('cards')
-	.factory('Cards', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Socket',
-			function($stateParams, $location, Authentication, $resource, $rootScope, Socket){
+	.factory('Cards', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope',
+			function($stateParams, $location, Authentication, $resource, $rootScope){
 		
-		var Traits = $resource(
-			'traits/:traitId',
-			{ traitId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
-		
-		var Feats = $resource(
-			'feats/:featId',
-			{ featId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
-		
-		var Augments = $resource(
-			'augments/:augmentId',
-			{ augmentId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
-		
-		var Items = $resource(
-			'items/:itemId',
-			{ itemId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
-		
-		var Origins = $resource(
-			'origins/:originId',
-			{ originId: '@_id' },
+		var Cards = $resource(
+			'cards/:cardId:cardType',
+			{ cardId: '@_id'},
 			{ update: { method: 'PUT' } }
 		);
 		
@@ -571,47 +552,33 @@ angular.module('cards')
 		
 		service.cardList = [];
 		
-		service.cardType = 0;
+		service.cardType = 'trait';
 		
 		service.cardNew = false;
 		
 		service.cardSaved = false;
 		
-		var optionsCard = {
-			cardNumber: 0,
-			cardRole: 'architect',
-			cardType: 'deckOptions',
-			deckType: 'card',
-			locked: true,
-			x_coord: 0,
-			y_coord: 0,
-			x_overlap: false,
-			y_overlap: false,
-			dragging: false,
-			stacked: false
+		var optionsPanel = {
+			cardType: service.cardType,
+			optionsPanel: true
 		};
 		
 		service.lockCard = function(card){
-			card.cardRole = 'architect';
 			card.locked = true;
-			card.x_coord = card.cardNumber * 15;
-			card.y_coord = 0;
-			card.dragging = false;
-			card.stacked = false;
 		};
 		
 		service.unlockCard = function(card){
-			card.cardRole = 'architect';
 			card.locked = false;
-			card.x_coord = card.cardNumber * 15;
-			card.y_coord = 0;
-			card.dragging = false;
-			card.stacked = false;
 		};
 		
 		service.setCardList = function(){
 			for(var i = 0; i < service.cardList.length; i++){
-				service.lockCard(service.cardList[i]);
+				this.cardList[i].cardRole = 'architect';
+				this.cardList[i].locked = false;
+				this.cardList[i].x_coord = i * 15;
+				this.cardList[i].y_coord = 0;
+				this.cardList[i].dragging = false;
+				this.cardList[i].stacked = false;
 			}
 		};
 		
@@ -658,82 +625,23 @@ angular.module('cards')
 		// BROWSE cards
 		service.browseCards = function(cardType){
 			service.cardType = cardType;
-			switch(service.cardType){
-				case 1:
-					service.cardList = Traits.query(
-						function(response){
-							service.cardList.unshift(optionsCard);
-							service.setCardList();
-						}
-					);
-					break;
-				case 2:
-					service.cardList = Feats.query(
-						function(response){
-							service.cardList.unshift(optionsCard);
-							service.setCardList();
-						}
-					);
-					break;
-				case 3:
-					service.cardList = Augments.query(
-						function(response){
-							service.cardList.unshift(optionsCard);
-							service.setCardList();
-						}
-					);
-					break;
-				case 4:
-					service.cardList = Items.query(
-						function(response){
-							service.cardList.unshift(optionsCard);
-							service.setCardList();
-						}
-					);
-					break;
-				case 5:
-					service.cardList = Origins.query(
-						function(response){
-							service.cardList.unshift(optionsCard);
-							service.setCardList();
-						}
-					);
-					break;
-			}
+			service.cardList = Cards.query(
+				{'cardType': cardType},
+				function(response){
+					service.cardList.unshift(optionsPanel);
+					service.setCardList();
+				}
+			);
 			
 			return {cardList: service.cardList};
 		};
 		
 		// READ single Card
 		service.readCard = function(card){
-			var cardId = card._id;
-			switch(service.cardType){
-				case 1:
-					card = Traits.get({
-						traitId: cardId
-					});
-					break;
-				case 2:
-					card = Feats.get({
-						featId: cardId
-					});
-					break;
-				case 3:
-					card = Augments.get({
-						augmentId: cardId
-					});
-					break;
-				case 4:
-					card = Items.get({
-						itemId: cardId
-					});
-					break;
-				case 5:
-					card = Origins.get({
-						originId: cardId
-					});
-					break;
-			}
+			card = Cards.get({
+				cardId: card._id
+			});
+			
 			service.unlockCard(card);
 		};
 		
@@ -754,113 +662,27 @@ angular.module('cards')
 			} else {
 				index = cardNumber;
 			}
-			switch(service.cardType){
-				case 1:
-					this.card = new Traits ({
-						cardRole: 'architect',
-						cardNumber: index,
-						dragging: false,
-						stacked: false
-					});
-					this.card.$save(function(response) {
-						for(var i in service.cardList){
-							if(service.cardList[i].cardNumber >= index){
-								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_coord += 15;
-								service.cardList[i].$update();
-							}
+			this.card = new Cards ({
+				cardRole: 'architect',
+				cardType: service.cardType,
+				cardNumber: index,
+				dragging: false,
+				stacked: false
+			});
+			this.card.$save(function(response) {
+					for(var i in service.cardList){
+						if(service.cardList[i].cardNumber >= index){
+							service.cardList[i].cardNumber += 1;
+							service.cardList[i].x_coord += 15;
+							service.cardList[i].$update();
 						}
-						service.cardList.push(service.card);
-						service.unlockCard(service.card);
-					}, function(errorResponse) {
-						console.log(errorResponse);
-					});
-					break;
-				case 2:
-					this.card = new Feats ({
-						cardRole: 'architect',
-						cardNumber: index,
-						dragging: false,
-						stacked: false
-					});
-					this.card.$save(function(response) {
-						for(var i in service.cardList){
-							if(service.cardList[i].cardNumber >= index){
-								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_coord += 15;
-								service.cardList[i].$update();
-							}
-						}
-						service.cardList.push(service.card);
-						service.unlockCard(service.card);
-					}, function(errorResponse) {
-						console.log(errorResponse);
-					});
-					break;
-				case 3:
-					this.card = new Augments ({
-						cardRole: 'architect',
-						cardNumber: index,
-						dragging: false,
-						stacked: false
-					});
-					this.card.$save(function(response) {
-						for(var i in service.cardList){
-							if(service.cardList[i].cardNumber >= index){
-								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_coord += 15;
-								service.cardList[i].$update();
-							}
-						}
-						service.cardList.push(service.card);
-						service.unlockCard(service.card);
-					}, function(errorResponse) {
-						console.log(errorResponse);
-					});
-					break;
-				case 4:
-					this.card = new Items ({
-						cardRole: 'architect',
-						cardNumber: index,
-						dragging: false,
-						stacked: false
-					});
-					this.card.$save(function(response){
-						for(var i in service.cardList){
-							if(service.cardList[i].cardNumber >= index){
-								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_coord += 15;
-								service.cardList[i].$update();
-							}
-						}
-						service.cardList.push(service.card);
-						service.unlockCard(service.card);
-					}, function(errorResponse){
-						console.log(errorResponse);
-					});
-					break;
-				case 5:
-					this.card = new Origins ({
-						cardRole: 'architect',
-						cardNumber: index,
-						dragging: false,
-						stacked: false
-					});
-					this.card.$save(function(response){
-						for(var i in service.cardList){
-							if(service.cardList[i].cardNumber >= index){
-								service.cardList[i].cardNumber += 1;
-								service.cardList[i].x_coord += 15;
-								service.cardList[i].$update();
-							}
-						}
-						service.cardList.push(service.card);
-						service.unlockCard(service.card);
-					}, function(errorResponse){
-						console.log(errorResponse);
-					});
-					break;
-			}
+					}
+					service.cardList.push(service.card);
+					service.setCardList();
+				}, function(errorResponse) {
+					console.log(errorResponse);
+				}
+			);
 		};
 		
 		// DELETE existing Card
@@ -907,8 +729,8 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
 
 // Core Controller
 angular.module('core')
-	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'HomeDemo', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'Cards',
-		function($location, $scope, $rootScope, $window, Authentication, CardDeck, HomeDemo, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems, Cards) {
+	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'HomeDemo', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'Cards', 'Decks',
+		function($location, $scope, $rootScope, $window, Authentication, CardDeck, HomeDemo, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems, Cards, Decks) {
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
 			
@@ -932,6 +754,8 @@ angular.module('core')
 			
 			$scope.cards = Cards;
 			
+			$scope.decks = Decks;
+			
 			$scope.resource = {};
 			
 			$scope.cardList = [];
@@ -942,8 +766,13 @@ angular.module('core')
 				$scope.resource = Pcs.browsePcs();
 			};
 			
-			var fetchDeck = function(event, object){
+			var fetchCards = function(event, object){
 				$scope.resource = Cards.browseCards(object.cardType);
+				console.log($scope.resource);
+			};
+			
+			var fetchDecks = function(event, object){
+				$scope.resource = Decks.browseDecks(object.deckType);
 				console.log($scope.resource);
 			};
 			
@@ -956,7 +785,8 @@ angular.module('core')
 				$scope.$on('$destroy', onDestroy);
 				$scope.$on('screenSize:onHeightChange', onHeightChange);
 				$scope.$on('fetchPcs', fetchPcs);
-				$scope.$on('fetchDeck', fetchDeck);
+				$scope.$on('fetchCards', fetchCards);
+				$scope.$on('fetchDecks', fetchDecks);
 				$scope.$on('pcsCard1:updateAbility', updateAbility);
 				$scope.$watch('pcsCard2.EXP', watchEXP);
 				$scope.$watch('pcs.pc.experience', watchExperience);
@@ -980,9 +810,21 @@ angular.module('core')
 				Pcs.pcSaved = false;
 			};
 			
+			$scope.newDeck = function(){
+				$scope.resource = {};
+				$scope.resource = Decks.addDeck();
+				
+			};
+			
 			$scope.readPc = function(pcId){
 				$scope.resource = {};
 				$scope.resource = Pcs.readPc(pcId);
+			};
+			
+			$scope.readDeck = function(deckId){
+				$scope.resource = {};
+				$scope.resource = Decks.readDeck(deckId);
+				console.log($scope.resource);
 			};
 			
 			$scope.savePc = function(){
@@ -1097,12 +939,17 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
 			$rootScope.$broadcast('fetchPcs');
 		};
 		
-		$scope.fetchDeck = function(cardType){
-			$rootScope.$broadcast('fetchDeck', {
+		$scope.fetchCards = function(cardType){
+			$rootScope.$broadcast('fetchCards', {
 				cardType: cardType
 			});
 		};
 		
+		$scope.fetchDecks = function(deckType){
+			$rootScope.$broadcast('fetchDecks', {
+				deckType: deckType
+			});
+		};
 		
 	}
 ]);
@@ -1647,7 +1494,7 @@ angular.module('core').factory('Socket', ['socketFactory',
 'use strict';
 
 // Directive for managing card decks.
-angular.module('deck')
+angular.module('decks')
 	.directive('cardDeck', ['$rootScope', '$window', 'CardDeck', function($rootScope, $window, CardDeck){
 		return {
 			restrict: 'A',
@@ -1740,11 +1587,11 @@ angular.module('deck')
 'use strict';
 
 // Directive for managing card decks.
-angular.module('deck')
+angular.module('decks')
 	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'CardDeck', function($document, $parse, $rootScope, $window, CardDeck){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/deck/views/card-panel.html',
+			templateUrl: '../modules/decks/views/card-panel.html',
 			link: function(scope, element, attrs){
 				
 				Array.min = function(array){
@@ -2136,8 +1983,8 @@ angular.module('deck')
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', 'Campaigns', '$rootScope',
-	function(Cards, HomeDemo, Pcs, Campaigns, $rootScope){
+angular.module('core').factory('CardDeck', ['HomeDemo', 'Pcs', 'Cards', 'Decks', 'Campaigns', '$rootScope',
+	function(HomeDemo, Pcs, Cards, Decks, Campaigns, $rootScope){
 		var service = {};
 		
 		service.windowHeight = 0;
@@ -2161,6 +2008,8 @@ angular.module('core').factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', 'Campaig
 				return Pcs.pcList;
 			} else if(cardRole === 'campaignSummary'){
 				return Campaigns.campaignList;
+			} else if(cardRole === 'deckSummary'){
+				return Decks.cardList;
 			} else if(cardRole === 'player'){
 				return Pcs.pc.cardList;
 			} else if(cardRole === 'architect'){
@@ -2801,6 +2650,128 @@ angular.module('core').factory('CardDeck', ['Cards', 'HomeDemo', 'Pcs', 'Campaig
 		return service;
 	}]);
 
+'use strict';
+
+// Factory-service for Browsing, Reading, Editting, Adding, and Deleting Cards.
+angular.module('decks')
+	.factory('Decks', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Cards',
+			function($stateParams, $location, Authentication, $resource, $rootScope, Cards){
+		
+		var Decks = $resource(
+			'decks/:deckId:deckType',
+			{ deckId: '@_id'},
+			{ update: { method: 'PUT' } }
+		);
+		
+		var service = {};
+		
+		service.deck = {};
+		
+		service.cardList = [];
+		
+		service.card = {};
+		
+		var optionsPanel = {
+			optionsPanel: true
+		};
+		
+		var setCardList = function(cardList){
+			for(var i = 0; i < cardList.length; i++){
+				cardList[i].cardRole = 'deckSummary';
+				cardList[i].cardType = 'deckSummary';
+				cardList[i].x_coord = i * 15;
+				cardList[i].y_coord = 0;
+				cardList[i].dragging = false;
+				cardList[i].stacked = false;
+			}
+		};
+		
+		// BROWSE Decks
+		service.browseDecks = function(){
+			service.cardList = Decks.query(
+				function(response) {
+					service.cardList.unshift(optionsPanel);
+					setCardList(service.cardList);
+				}
+			);
+			return {cardList: service.cardList};
+		};
+		
+		// READ single Deck
+		service.readDeck = function(deck){
+			service.deck = Decks.get({
+				deckId: deck._id
+			}, function(response){
+				console.log(response);
+				service.deck.cardList.unshift(optionsPanel);
+				setCardList(service.deck.cardList);
+			});
+			
+			return service.deck;
+		};
+		
+		// EDIT existing Deck
+		service.editDeck = function(deck) {
+			deck.$update(function(response) {
+				setCardList(deck.cardList);
+			}, function(errorResponse) {
+				console.log(errorResponse);
+			});
+		};
+		
+		// ADD a new Card
+		service.addDeck = function(cardNumber){
+			var index;
+			if(cardNumber < 1){
+				index = service.cardList.length;
+			} else {
+				index = cardNumber;
+			}
+			service.deck = new Decks ({
+				deckType: 'custom'
+			});
+			service.deck.$save(function(response) {
+					for(var i in service.cardList){
+						if(service.cardList[i].cardNumber >= index){
+							service.cardList[i].cardNumber += 1;
+							service.cardList[i].x_coord += 15;
+							service.cardList[i].$update();
+						}
+					}
+					service.cardList.push(service.deck);
+					setCardList(service.deck.cardList);
+				}, function(errorResponse) {
+					console.log(errorResponse);
+				}
+			);
+			
+			return service.deck;
+		};
+		
+		// DELETE existing Card
+		service.deleteDeck = function(deck){
+			if(deck){
+				console.log('Delete:');
+				console.log(deck);
+				deck.$remove();
+				for(var i in service.cardList){
+					if(service.cardList[i] === deck){
+						console.log('Delete:');
+						console.log(service.cardList[i]);
+						service.cardList.splice(i, 1);
+					}
+					if (service.cardList[i] && service.cardList[i].cardNumber > deck.cardNumber){
+						console.log('reordering '+service.cardList[i].cardNumber +' / '+ deck.cardNumber);
+						service.cardList[i].cardNumber -= 1;
+					}
+				}
+				setCardList(deck.cardList);
+				return {cardList: service.cardList};
+			}
+		};
+		
+		return service;
+	}]);
 'use strict';
 
 // Npcs controller
@@ -3578,6 +3549,10 @@ angular.module('pcs').factory('Pcs', ['$stateParams', '$location', 'Authenticati
 		
 		var service = {};
 		
+		var optionsPanel = {
+			optionsPanel: true
+		};
+		
 		service.pc = {};
 		
 		service.modalShown = false;
@@ -3636,7 +3611,7 @@ angular.module('pcs').factory('Pcs', ['$stateParams', '$location', 'Authenticati
 		service.browsePcs = function() {
 			this.pcList = Pcs.query(
 				function(response) {
-					service.pcList.unshift({optionCard: true});
+					service.pcList.unshift(optionsPanel);
 					service.setPcList();
 				}
 			);

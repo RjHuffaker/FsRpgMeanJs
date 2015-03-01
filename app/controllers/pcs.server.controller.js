@@ -72,7 +72,8 @@ exports.delete = function(req, res) {
 /**
  * List of Pcs
  */
-exports.list = function(req, res) { Pc.find( { user: req.user._id } ).sort('-created').populate('user', 'displayName').exec(function(err, pcs) {
+exports.list = function(req, res) {
+	Pc.find( { user: req.user._id } ).sort('-created').populate('user', 'displayName').exec(function(err, pcs) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
@@ -86,7 +87,8 @@ exports.list = function(req, res) { Pc.find( { user: req.user._id } ).sort('-cre
 /**
  * Pc middleware
  */
-exports.pcByID = function(req, res, next, id) { Pc.findById(id).populate('user', 'displayName').exec(function(err, pc) {
+exports.pcByID = function(req, res, next, id) {
+	Pc.findById(id).populate('user', 'displayName').exec(function(err, pc) {
 		if (err) return next(err);
 		if (! pc) return next(new Error('Failed to load Pc ' + id));
 		req.pc = pc ;

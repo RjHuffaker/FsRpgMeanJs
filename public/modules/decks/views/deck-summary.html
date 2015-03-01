@@ -1,0 +1,20 @@
+<div class="content-panel">
+	<h4>
+		<i style="font-size: 80px;" class="glyphicon glyphicon-user"></i>
+	</h4>
+	<h4>
+		{{card.name}}
+	</h4>
+	<small class="list-group-item-text text-muted">
+		Created
+		<span data-ng-bind="card.created | date:'short'"></span>
+	</small>
+	<div class="pull-right" >
+		<a class="btn btn-sm btn-primary" data-ng-click="readDeck(card);" stop-event>
+			<i class="glyphicon glyphicon-edit"></i>
+		</a>
+		<a class="btn btn-sm btn-danger" data-ng-click="decks.deleteDeck(card);" stop-event>
+			<i class="glyphicon glyphicon-trash"></i>
+		</a>
+	</div>
+</div>

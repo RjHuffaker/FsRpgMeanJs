@@ -47,13 +47,13 @@
 	<script src="/socket.io/socket.io.js"></script>
 	{% if process.env.NODE_ENV === 'development' %}
 	<script>
-		var socket = io.connect('http://localhost:3000');
+		socket = io.connect('http://localhost:3000');
 	</script>
 	{% endif %}
 	
 	{% if process.env.NODE_ENV === 'production' %}
 	<script>
-		var socket = io.connect('http://fsrpg.herokuapp.com');
+		socket = io.connect('http://fsrpg.herokuapp.com');
 	</script>
 	{% endif %}
 	

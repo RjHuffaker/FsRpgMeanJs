@@ -30,7 +30,7 @@ module.exports = function(socket) {
 	socket.on('user:join', function(data){
 		users.push(data.name);
 		if(isHost){
-			
+			console.log('host');
 		}
 	});
 	
