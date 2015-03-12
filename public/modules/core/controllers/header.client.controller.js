@@ -19,12 +19,6 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
 			$rootScope.$broadcast('fetchPcs');
 		};
 		
-		$scope.fetchCards = function(cardType){
-			$rootScope.$broadcast('fetchCards', {
-				cardType: cardType
-			});
-		};
-		
 		$scope.fetchDecks = function(deckType){
 			$rootScope.$broadcast('fetchDecks', {
 				deckType: deckType

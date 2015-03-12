@@ -6,8 +6,8 @@ module.exports = {
 		title: 'FsRpg - Development Environment'
 	},
 	facebook: {
-		clientID: process.env.FACEBOOK_ID || 'APP_ID',
-		clientSecret: process.env.FACEBOOK_SECRET || 'APP_SECRET',
+		clientID: process.env.FACEBOOK_ID || '1551114325176730',
+		clientSecret: process.env.FACEBOOK_SECRET || '4a781e36eeec6b776853131211a6648d',
 		callbackURL: 'http://localhost:3000/auth/facebook/callback'
 	},
 	twitter: {

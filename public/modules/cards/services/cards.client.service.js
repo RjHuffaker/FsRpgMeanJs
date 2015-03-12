@@ -13,8 +13,6 @@ angular.module('cards')
 		
 		var service = {};
 		
-		service.card = {};
-		
 		service.cardList = [];
 		
 		service.cardType = 'trait';

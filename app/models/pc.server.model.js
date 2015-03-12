@@ -36,6 +36,10 @@ var PcSchema = new Schema({
 		type: Date,
 		default: Date.now
 	},
+	cardRole: {
+		type: String, 
+		default: 'pcSummary'
+	},
 	name: {
 		type: String,
 		default: ''

@@ -1,51 +1,51 @@
 'use strict';
 
 // Factory-service for managing pc2 data.
-angular.module('pcs').factory('PcsCard2', ['$rootScope', 'Pcs', 'PcsTraits',
-	function($rootScope, Pcs, PcsTraits){
+angular.module('pcs').factory('PcsCard2', ['$rootScope', 'BREAD', 'PcsTraits',
+	function($rootScope, BREAD, PcsTraits){
 		var service = {};
 		
 		service.EXP = 0;
 		
-		if(Pcs.pc){
-			service.EXP = Pcs.pc.experience;
+		if(BREAD.resource){
+			service.EXP = BREAD.resource.experience;
 		}
 		
 		service.factorExperience = function(){
 			var mLevel = 0;
-			var mExperience = Number(Pcs.pc.experience);
+			var mExperience = Number(BREAD.resource.experience);
 			for (var increment = 8; increment <= mExperience; increment++){
 				mLevel++;
 				mExperience = mExperience - increment;
 			}
-			Pcs.pc.level = mLevel;
+			BREAD.resource.level = mLevel;
 		};
 		
 		service.factorHealth = function(){
-			Pcs.pc.healthLimit = 
+			BREAD.resource.healthLimit = 
 				Math.round(
-					(Number(Pcs.pc.abilities[0].dice.sides) +
-						Number(Pcs.pc.abilities[1].dice.sides)
-					) * ((Pcs.pc.level || 0)/16 + 1));
-			Pcs.pc.healthCurrent =
-				Number(Pcs.pc.healthLimit - Pcs.pc.injury);
+					(Number(BREAD.resource.abilities[0].dice.sides) +
+						Number(BREAD.resource.abilities[1].dice.sides)
+					) * ((BREAD.resource.level || 0)/16 + 1));
+			BREAD.resource.healthCurrent =
+				Number(BREAD.resource.healthLimit - BREAD.resource.injury);
 		};
 		
 		service.factorStamina = function(){
-			Pcs.pc.staminaLimit = 
+			BREAD.resource.staminaLimit = 
 				Math.round(
-					(Number(Pcs.pc.abilities[0].dice.sides) +
-						Number(Pcs.pc.abilities[1].dice.sides)
-					) * ((Pcs.pc.level || 0)/16 + 1));
-			Pcs.pc.staminaCurrent =
-				Number(Pcs.pc.healthLimit - Pcs.pc.injury);
+					(Number(BREAD.resource.abilities[0].dice.sides) +
+						Number(BREAD.resource.abilities[1].dice.sides)
+					) * ((BREAD.resource.level || 0)/16 + 1));
+			BREAD.resource.staminaCurrent =
+				Number(BREAD.resource.healthLimit - BREAD.resource.injury);
 		};
 		
 		service.factorCarryingCapacity = function(){
-			Pcs.pc.carryCurrent = 0;
-			Pcs.pc.carryLimit =
-				Number(Pcs.pc.abilities[0].dice.sides) +
-				Number(Pcs.pc.abilities[1].dice.sides);
+			BREAD.resource.carryCurrent = 0;
+			BREAD.resource.carryLimit =
+				Number(BREAD.resource.abilities[0].dice.sides) +
+				Number(BREAD.resource.abilities[1].dice.sides);
 		};
 		
 		return service;

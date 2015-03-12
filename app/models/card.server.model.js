@@ -29,7 +29,11 @@ var CardSchema = new Schema({
 	},
 	cardNumber: {
 		type: Number,
-		default: 0
+		default: 1
+	},
+	cardSet: {
+		type: Number,
+		default: 1
 	},
 	keyword: {
 		type: String

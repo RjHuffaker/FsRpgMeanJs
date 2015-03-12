@@ -2,12 +2,6 @@
 
 // feature-card directive
 angular.module('cards')
-	.directive('pcFeature', function(){
-		return {
-			restrict: 'A',
-			templateUrl: '../modules/cards/views/pc-feature.html'
-		};
-	})
 	.directive('cardLogo', ['$rootScope', function($rootScope){
 		return {
 			restrict: 'A',
@@ -93,6 +87,48 @@ angular.module('cards')
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/cards/views/card-action-defense.html'
+		};
+	})
+	.directive('originStats', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/cards/views/origin-stats.html'
+		};
+	})
+	.directive('originDefenses', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/cards/views/origin-defenses.html'
+		};
+	})
+	.directive('diceDropdown', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/pcs/views/dice-dropdown.html',
+			scope: {
+				ability: '='
+			}
+		};
+	})
+	.directive('stopEvent', function(){
+		return{
+			restrict: 'A',
+			link: function(scope, element, attr){
+				var _pressEvents = 'touchstart mousedown';
+				element.on(_pressEvents, function(event){
+					event.stopPropagation();
+				});
+			}
+		};
+	})
+	.directive('stopClick', function(){
+		return{
+			restrict: 'A',
+			link: function(scope, element, attr){
+				element.on('click', function(event){
+					event.stopPropagation();
+				});
+			}
 		};
 	})
 	.directive('elasticTextarea', ['$timeout', function($timeout){

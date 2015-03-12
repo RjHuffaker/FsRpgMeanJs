@@ -113,8 +113,6 @@ angular.module('decks')
 				
 				var setPosition = function(){
 					element.css({
-						'height': _y_dim+'px',
-						'width': _x_dim+'px',
 						'top': _card.y_coord + 'em',
 						'left': _card.x_coord + 'em'
 					});

@@ -1,28 +1,30 @@
-<div ng-if="card.benefit.show" style="margin: .25em 0 .25em 0; white-space: normal;">
+<div ng-if="card.data.benefit.show" class="text-8"
+	style="white-space: normal;">
 	<div ng-if="card.locked">
-		<strong>Benefit: </strong>{{card.benefit.content}}
+		<strong>Benefit: </strong>{{card.data.benefit.content}}
 	</div>
 	<div ng-if="!card.locked">
-		<label style="position: absolute;" for="benefit">Benefit: </label>
+		<label class="indent-left" for="benefit">Benefit: </label>
 		<textarea elastic-textarea stop-event
-			ng-model="card.benefit.content"
-			id="benefit" class="fill-width card-input"
+			ng-model="card.data.benefit.content"
+			id="benefit" class="fill-width card-textarea"
 			style="text-indent: 3.8em;" rows="1">
 		</textarea>
 	</div>
 	<br />
-	<div ng-if="card.benefit.criticalSuccess.show" style="margin: .25em .5em .25em .5em; white-space: normal;">
+	<div ng-if="card.data.benefit.criticalSuccess.show"
+		style="margin: .25em .5em .25em .5em; white-space: normal;">
 		<div ng-if="card.locked">
-			<strong>Critical Success: </strong>{{card.benefit.criticalSuccess.content}}
+			<strong>Critical Success: </strong>{{card.data.benefit.criticalSuccess.content}}
 		</div>
 		<div ng-if="!card.locked">
-			<label style="position: absolute; left: 1em;" for="criticalSuccess">Critical Success: </label>
+			<label class="indent-left" style="left: 1.3em;" for="criticalSuccess">Critical Success: </label>
 			<textarea elastic-textarea stop-event ng-change="resize()"
-				ng-model="card.benefit.criticalSuccess.content"
-				id="criticalSuccess" class="fill-width card-input" rows="1"
+				ng-model="card.data.benefit.criticalSuccess.content"
+				id="criticalSuccess" class="fill-width card-textarea" rows="1"
 				style="width: 12em; text-indent: 8.35em;" >
 			</textarea>
-			<br />
 		</div>
+		<br />
 	</div>
 </div>

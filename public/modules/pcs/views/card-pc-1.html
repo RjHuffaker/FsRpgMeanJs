@@ -6,10 +6,10 @@
 			<i class="card-icon glyphicon glyphicon-cog"></i>
 		</a>
 		<ul class="card-menu-list dropdown-menu" aria-labelledby="cardDropdown">
-			<li ng-click="savePc();"><label>
+			<li ng-click="savePc(BREAD.resource);"><label>
 				<i class="glyphicon glyphicon-ok alert-success"></i> Save Character
 			</label></li>
-			<li ng-click="savePc(); exitPc();"><label>
+			<li ng-click="savePc(BREAD.resource); exitPc();"><label>
 				<i class="glyphicon glyphicon-remove alert-danger"></i> Save & Exit
 			</label></li>
 			<li ng-click="exitPc();"><label>
@@ -25,7 +25,7 @@
 				</td>
 				<td colspan="3">
 					<input id="name" class="fill-width card-input" type="text"
-						 ng-model="pcs.pc.name" stop-event/>
+						 ng-model="BREAD.resource.name" stop-event/>
 				</td>
 			</tr>
 
@@ -35,7 +35,7 @@
 				</td>
 				<td width="30%">
 					<div id="race">
-						{{pcs.pc.race}}
+						{{BREAD.resource.race}}
 					</div>
 				</td>
 				<td width="15%">
@@ -43,7 +43,7 @@
 				</td>
 				<td width="30%">
 					<div id="race">
-						{{pcs.pc.sex}}
+						{{BREAD.resource.sex}}
 					</div>
 				</td>
 			</tr>
@@ -54,15 +54,15 @@
 		<tbody>
 			<tr height="15%">
 				<td width="15%">
-					<img ability="pcs.pc.abilities[0]" 
-						ng-src={{pcs.pc.abilities[0].dice.image}} />
+					<img ability="BREAD.resource.abilities[0]" 
+						ng-src={{BREAD.resource.abilities[0].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>STR</strong>ength
 				</td>
 				<td width="15%">
-					<img ability="pcs.pc.abilities[1]" 
-						ng-src={{pcs.pc.abilities[1].dice.image}} />
+					<img ability="BREAD.resource.abilities[1]" 
+						ng-src={{BREAD.resource.abilities[1].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>PHY</strong>sique
@@ -76,23 +76,23 @@
 				</td>
 				<td colspan="2" class="text-center">
 					<small>
-						{{pcs.pc.block}}
+						{{BREAD.resource.block}}
 					</small>
 				</td>
 			</tr>
 
 			<tr height="15%">
 				<td width="15%">
-					<img ability="pcs.pc.abilities[2]" 
-						ng-src={{pcs.pc.abilities[2].dice.image}} />
+					<img ability="BREAD.resource.abilities[2]" 
+						ng-src={{BREAD.resource.abilities[2].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>FLE</strong>xibility
 				</td>
 				
 				<td width="15%">
-					<img ability="pcs.pc.abilities[3]" 
-						ng-src={{pcs.pc.abilities[3].dice.image}} />
+					<img ability="BREAD.resource.abilities[3]" 
+						ng-src={{BREAD.resource.abilities[3].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>DEX</strong>terity
@@ -106,22 +106,22 @@
 				</td>
 				<td colspan="2" class="text-center">
 					<small>
-						{{pcs.pc.dodge}}
+						{{BREAD.resource.dodge}}
 					</small>
 				</td>
 			</tr>
 
 			<tr height="15%">
 				<td width="15%">
-					<img ability="pcs.pc.abilities[4]" 
-						ng-src={{pcs.pc.abilities[4].dice.image}} />
+					<img ability="BREAD.resource.abilities[4]" 
+						ng-src={{BREAD.resource.abilities[4].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>ACU</strong>ity
 				</td>
 				<td width="15%">
-					<img ability="pcs.pc.abilities[5]" 
-						ng-src={{pcs.pc.abilities[5].dice.image}} />
+					<img ability="BREAD.resource.abilities[5]" 
+						ng-src={{BREAD.resource.abilities[5].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>INT</strong>ellect
@@ -135,22 +135,22 @@
 				</td>
 				<td colspan="2" class="text-center">
 					<small>
-						{{pcs.pc.alertness}}
+						{{BREAD.resource.alertness}}
 					</small>
 				</td>
 			</tr>
 
 			<tr height="15%">
 				<td width="15%">
-					<img ability="pcs.pc.abilities[6]" 
-						ng-src={{pcs.pc.abilities[6].dice.image}} />
+					<img ability="BREAD.resource.abilities[6]" 
+						ng-src={{BREAD.resource.abilities[6].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>WIS</strong>dom
 				</td>
 				<td width="15%">
-					<img ability="pcs.pc.abilities[7]" 
-						ng-src={{pcs.pc.abilities[7].dice.image}} />
+					<img ability="BREAD.resource.abilities[7]" 
+						ng-src={{BREAD.resource.abilities[7].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>CHA</strong>risma
@@ -164,7 +164,7 @@
 				</td>
 				<td colspan="2" class="text-center">
 					<small>
-						{{pcs.pc.tenacity}}
+						{{BREAD.resource.tenacity}}
 					</small>
 				</td>
 			</tr>

@@ -32,6 +32,8 @@ div[card-deck] {
 [card-panel] {
 	padding: .1em;
 	margin-top: 3em;
+	height: 21em;
+	width: 15em;
 	cursor: move;
 	cursor: -webkit-grab;
 	cursor: -moz-grab;
@@ -61,51 +63,49 @@ div[card-deck] {
 	border-left: 1px solid #222;
 	border-right: 2px solid #111;
 	border-bottom: 2px solid #111;
+	background-color: Tan;
 }
 
-[card-panel].ng-enter {
-	margin-top: -25em;
-}
-
+[card-panel].ng-enter,
 [card-panel].ng-leave.ng-leave-active {
-	margin-top: -25em;
+	margin-top: -24em;
+	-webkit-transition: .75s ease-in-out all !important;
+	-moz-transition: .75s ease-in-out all !important;
+	-o-transition: .75s ease-in-out all !important;
+	-ms-transition: .75s ease-in-out all !important;
+	transition: .75s ease-in-out all !important;
 }
 
 [card-panel].ng-leave,
 [card-panel].ng-enter.ng-enter-active {
-	margin-top: 0;
-}
-
-[pc-summary],
-[campaign-summary],
-[deck-summary],
-[options-panel],
-[card-pc-1],
-[card-pc-2],
-[card-pc-3] {
-	background-color: Tan;
+	margin-top: 3em;
+	-webkit-transition: .75s ease-in-out all !important;
+	-moz-transition: .75s ease-in-out all !important;
+	-o-transition: .75s ease-in-out all !important;
+	-ms-transition: .75s ease-in-out all !important;
+	transition: .75s ease-in-out all !important;
 }
 
 .card-trait {
-	background-color: BurlyWood;
+	background-color: BurlyWood !important;
 }
 
 .card-feat {
-	background-color: DarkKhaki;
+	background-color: DarkKhaki !important;
 }
 
 .card-augment {
-	background-color: DarkSeaGreen;
+	background-color: DarkSeaGreen !important;
 }
 
-.card-item {
-	background-color: Khaki;
+.card-item  {
+	background-color: Khaki !important;
 }
 
 .card-origin {
-	background-color: Beige;
+	background-color: Beige !important;
 }
 
 .card-note {
-	background-color: CornSilk;
+	background-color: CornSilk !important;
 }

@@ -1,9 +1,8 @@
 'use strict';
 
 // Factory-service for managing PC traits
-angular.module('pcs')
-	.factory('PcsTraits', ['$resource', 'Pcs', 'CardDeck', 
-			function($resource, Pcs, CardDeck){
+angular.module('pcs').factory('PcsTraits', ['$resource', 'BREAD', 'CardDeck', 
+	function($resource, BREAD, CardDeck){
 		
 		var service = {};
 		
@@ -15,18 +14,18 @@ angular.module('pcs')
 		
 		// Factor Trait Limit
 		service.factorTraitLimit = function(){
-			Pcs.pc.traitLimit = Math.floor((Pcs.pc.level || 0) / 4 + 1);
+			BREAD.resource.traitLimit = Math.floor((BREAD.resource.level || 0) / 4 + 1);
 			this.validateTraits();
 		};
 		
 		service.validateTraits = function(){
-			for(var ia = 0; ia < Pcs.pc.traitLimit; ia++){
+			for(var ia = 0; ia < BREAD.resource.traitLimit; ia++){
 				if(!this.traitAtLevel(ia * 4)){
 					this.addTrait(ia * 4);
 				}
 			}
-			for(var ic = 0; ic < Pcs.pc.cardList.length; ic++){
-				if(Pcs.pc.cardList[ic].level > Pcs.pc.level){
+			for(var ic = 0; ic < BREAD.resource.cardList.length; ic++){
+				if(BREAD.resource.cardList[ic].level > BREAD.resource.level){
 					CardDeck.removeCard(ic);
 				}
 			}
@@ -34,9 +33,9 @@ angular.module('pcs')
 		
 		service.traitAtLevel = function(level){
 			var traitAtLevel = false;
-			for(var ib = 0; ib < Pcs.pc.cardList.length; ib++){
-				if(Pcs.pc.cardList[ib].cardType === 'trait'){
-					if(Pcs.pc.cardList[ib].level === level){
+			for(var ib = 0; ib < BREAD.resource.cardList.length; ib++){
+				if(BREAD.resource.cardList[ib].cardType === 'trait'){
+					if(BREAD.resource.cardList[ib].level === level){
 						traitAtLevel = true;
 					}
 				}
@@ -48,7 +47,7 @@ angular.module('pcs')
 			var newTrait = {
 				name: 'Level '+level+' Trait',
 				cardType: 'trait',
-				x_coord: Pcs.pc.cardList[Pcs.lastCard()].x_coord + 15,
+				x_coord: BREAD.resource.cardList[BREAD.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -57,7 +56,7 @@ angular.module('pcs')
 				locked: true,
 				level: level
 			};
-			Pcs.pc.cardList.push(newTrait);
+			BREAD.resource.cardList.push(newTrait);
 		};
 		
 		service.lockCard = function(card){
@@ -67,20 +66,6 @@ angular.module('pcs')
 			card.y_coord = 0;
 			card.dragging = false;
 			card.stacked = false;
-		};
-		
-		service.setCardList = function(){
-			for(var i = 0; i < Pcs.modalCardList.length; i++){
-				service.lockCard(Pcs.modalCardList[i]);
-			}
-		};
-		
-		service.browseCards = function(){
-			Pcs.modalCardList = Traits.query(
-				function(response){
-					service.setCardList();
-				}
-			);
 		};
 		
 		return service;

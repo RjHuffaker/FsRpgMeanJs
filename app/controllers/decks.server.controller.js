@@ -15,8 +15,10 @@ exports.create = function(req, res) {
 	var deck = new Deck(req.body);
 	deck.user = req.user;
 	
-	deck.save(function(err) {
+	deck.save(function(err){
 		if (err) {
+			console.log('save error');
+			console.log(err);
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
@@ -30,8 +32,6 @@ exports.create = function(req, res) {
  * Show the current Deck
  */
 exports.read = function(req, res) {
-	console.log('read');
-	console.log(req.deck);
 	res.jsonp(req.deck);
 };
 
@@ -91,17 +91,18 @@ exports.list = function(req, res) {
  * Deck middleware
  */
 exports.deckByID = function(req, res, next, id) {
-	console.log('deckByID');
-	Deck.findById(id).populate('user', 'displayName').populate('cardList').exec(function(err, deck) {
-		if (err) return next(err);
-		if (! deck) return next(new Error('Failed to load Deck ' + id));
-		if (deck){
-			console.log(deck.cardList);
-		}
-		
-		req.deck = deck;
-		next();
-	});
+	Deck.findById(id)
+		.populate('user', 'displayName')
+		.populate({ path: 'cardList.data', model: 'Card'})
+		.exec(
+			function(err, deck) {
+				if (err) return next(err);
+				if (! deck) return next(new Error('Failed to load Deck ' + id));
+				
+				
+				req.deck = deck;
+				next();
+			});
 };
 
 /**

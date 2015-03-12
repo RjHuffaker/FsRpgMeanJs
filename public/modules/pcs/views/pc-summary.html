@@ -12,10 +12,10 @@
 		<span data-ng-bind="card.created | date:'short'"></span>
 	</small>
 	<div class="pull-right" >
-		<a class="btn btn-sm btn-primary" data-ng-click="readPc(card._id);" stop-event>
+		<a class="btn btn-sm btn-primary" data-ng-click="BREAD.readPc(card);" stop-event>
 			<i class="glyphicon glyphicon-edit"></i>
 		</a>
-		<a class="btn btn-sm btn-danger" data-ng-click="pcs.deletePc(card);" stop-event>
+		<a class="btn btn-sm btn-danger" data-ng-click="BREAD.deletePc(card);" stop-event>
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 	</div>

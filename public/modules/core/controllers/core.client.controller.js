@@ -2,14 +2,14 @@
 
 // Core Controller
 angular.module('core')
-	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'HomeDemo', 'Pcs', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'Cards', 'Decks',
-		function($location, $scope, $rootScope, $window, Authentication, CardDeck, HomeDemo, Pcs, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems, Cards, Decks) {
+	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'BREAD', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
+		function($location, $scope, $rootScope, $window, Authentication, CardDeck, BREAD, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems) {
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
 			
 			$scope.cardDeck = CardDeck;
 			
-			$scope.pcs = Pcs;
+			$scope.BREAD = BREAD;
 			
 			$scope.pcsCard1 = PcsCard1;
 			
@@ -25,28 +25,24 @@ angular.module('core')
 			
 			$scope.pcsItems = PcsItems;
 			
-			$scope.cards = Cards;
+			$scope.modalShown = false;
 			
-			$scope.decks = Decks;
+			$scope.diceBoxShown = false;
 			
-			$scope.resource = {};
+			$scope.modalDeckShown = false;
 			
-			$scope.cardList = [];
-			
-			$scope.pc = {};
+			var pcNew = false;
 			
 			var fetchPcs = function(){
-				$scope.resource = Pcs.browsePcs();
+				BREAD.browsePcs();
 			};
 			
 			var fetchCards = function(event, object){
-				$scope.resource = Cards.browseCards(object.cardType);
-				console.log($scope.resource);
+				BREAD.browseCards(object.cardType);
 			};
 			
 			var fetchDecks = function(event, object){
-				$scope.resource = Decks.browseDecks(object.deckType);
-				console.log($scope.resource);
+				BREAD.browseDecks(object.deckType);
 			};
 			
 			var initialize = function(){
@@ -60,10 +56,11 @@ angular.module('core')
 				$scope.$on('fetchPcs', fetchPcs);
 				$scope.$on('fetchCards', fetchCards);
 				$scope.$on('fetchDecks', fetchDecks);
+				$scope.$on('ability:onPress', chooseAbility);
 				$scope.$on('pcsCard1:updateAbility', updateAbility);
 				$scope.$watch('pcsCard2.EXP', watchEXP);
-				$scope.$watch('pcs.pc.experience', watchExperience);
-				$scope.$watch('pcs.pc.level', watchLevel);
+				$scope.$watch('BREAD.resource.experience', watchExperience);
+				$scope.$watch('BREAD.resource.level', watchLevel);
 			};
 			
 			var onDestroy = function(){
@@ -77,45 +74,40 @@ angular.module('core')
 			};
 			
 			$scope.newPc = function(){
-				$scope.resource = {};
-				$scope.resource = Pcs.addPc();
-				Pcs.pcNew = true;
-				Pcs.pcSaved = false;
+				BREAD.addPc();
+				pcNew = true;
 			};
 			
-			$scope.newDeck = function(){
-				$scope.resource = {};
-				$scope.resource = Decks.addDeck();
-				
+			$scope.readPc = function(pc){
+				BREAD.readPc(pc);
+				pcNew = false;
 			};
 			
-			$scope.readPc = function(pcId){
-				$scope.resource = {};
-				$scope.resource = Pcs.readPc(pcId);
+			$scope.readDeck = function(deck){
+				BREAD.readDeck(deck);
 			};
 			
-			$scope.readDeck = function(deckId){
-				$scope.resource = {};
-				$scope.resource = Decks.readDeck(deckId);
-				console.log($scope.resource);
-			};
-			
-			$scope.savePc = function(){
-				Pcs.editPc();
-				Pcs.pcNew = false;
-				Pcs.pcSaved = true;
+			$scope.savePc = function(pc){
+				BREAD.editPc(pc);
+				pcNew = false;
 			};
 			
 			$scope.exitPc = function(){
-				if(Pcs.pcNew){
-					$scope.resource = Pcs.deletePc();
+				if(pcNew){
+					BREAD.deletePc();
 				}
 				fetchPcs();
 			};
 			
+			$scope.hideModal = function(){
+				$scope.modalShown = false;
+				$scope.diceBoxShown = false;
+				$scope.modalDeckShown = false;
+			};
+			
 			$scope.changeFeatureCard = function(card){
-				Pcs.modalShown = true;
-				Pcs.modalDeckShown = true;
+				$scope.modalShown = true;
+				$scope.modalDeckShown = true;
 				PcsTraits.browseCards();
 			};
 			
@@ -130,9 +122,9 @@ angular.module('core')
 	 			});
 	 		};
 			
-			$scope.deleteCard = function(card){
-				$scope.resource = Cards.deleteCard(card);
-				$scope.$digest();
+			var chooseAbility = function(event, object){
+				$scope.modalShown = true;
+				$scope.diceBoxShown = true;
 			};
 			
 			var updateAbility = function(event, object){
@@ -156,19 +148,21 @@ angular.module('core')
 						PcsCard1.factorTenacity(ability1, ability2);
 						break;
 				}
+				$scope.modalShown = false;
+				$scope.diceBoxShown = false;
 			};
 			
 			//Watch for change in EXP input
 			var watchEXP = function(newValue, oldValue){
-				if(Pcs.pc && newValue !== oldValue){
+				if(BREAD.resource && newValue !== oldValue){
 					PcsCard2.EXP = parseInt(newValue);
-					Pcs.pc.experience = parseInt(newValue);
+					BREAD.resource.experience = parseInt(newValue);
 				}
 			};
 			
 			//Watch for change in experience
 			var watchExperience = function(newValue, oldValue){
-				if(Pcs.pc && newValue !== oldValue){
+				if(BREAD.resource && newValue !== oldValue){
 					PcsCard2.factorExperience();
 					if(newValue !== PcsCard2.EXP){
 						PcsCard2.EXP = newValue;
@@ -178,7 +172,7 @@ angular.module('core')
 			
 			//Watch for changes in level
 			var watchLevel = function(newValue, oldValue){
-				if(Pcs.pc.abilities){
+				if(BREAD.resource.abilities){
 					PcsCard2.factorHealth();
 					PcsCard2.factorStamina();
 					PcsTraits.factorTraitLimit();

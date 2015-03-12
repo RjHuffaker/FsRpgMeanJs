@@ -1,13 +1,13 @@
-<div ng-if="card.cardType === 'item'" class="text-8">
-	<div ng-if="card.locked && card.durability.show">
-		<strong>Durability Modifier: </strong>{{card.durability.modifier}}
+<div ng-if="card.data.cardType === 'item'" class="text-8">
+	<div ng-if="card.locked && card.data.durability.show">
+		<strong>Durability Modifier: </strong>{{card.data.durability.modifier}}
 	</div>
-	<div ng-if="!card.locked && card.durability.show">
+	<div ng-if="!card.locked && card.data.durability.show">
 		<div class="dropdown dropup" dropdown stop-event on-toggle="toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				<strong>Durability Modifier: </strong>
-				{{card.durability.modifier}}
+				{{card.data.durability.modifier}}
 			</a>
 			<div class="dropdown-menu dropup number-picker">
 				<div class="text-center"><strong>Durability<br />Modifier</strong></div>
@@ -17,7 +17,7 @@
 						<i class="glyphicon glyphicon-minus"></i>
 					</a>
 					<input type="text" class="form-control text-center"
-						ng-model="card.durability.modifier" stop-click stop-event/>
+						ng-model="card.data.durability.modifier" stop-click stop-event/>
 					<a type="button" class="input-group-addon btn btn-default"
 						ng-click="$parent.cards.changeDurability(card, 1);" stop-click stop-event>
 						<i class="glyphicon glyphicon-plus"></i>
@@ -27,15 +27,15 @@
 			<br />
 		</div>
 	</div>
-	<div ng-if="card.locked && card.speed.show">
-		<strong>Speed Modifier: </strong>{{card.speed.modifier}}
+	<div ng-if="card.locked && card.data.speed.show">
+		<strong>Speed Modifier: </strong>{{card.data.speed.modifier}}
 	</div>
-	<div ng-if="!card.locked && card.speed.show">
+	<div ng-if="!card.locked && card.data.speed.show">
 		<div class="dropdown dropup" dropdown stop-event on-toggle="toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				<strong>Speed Modifier: </strong>
-				{{card.speed.modifier}}
+				{{card.data.speed.modifier}}
 			</a>
 			<div class="dropdown-menu dropup number-picker">
 				<div class="text-center"><strong>Speed<br />Modifier</strong></div>
@@ -45,7 +45,7 @@
 						<i class="glyphicon glyphicon-minus"></i>
 					</a>
 					<input type="text" class="form-control text-center"
-						ng-model="card.speed.modifier" stop-click stop-event/>
+						ng-model="card.data.speed.modifier" stop-click stop-event/>
 					<a type="button" class="input-group-addon btn btn-default"
 						ng-click="$parent.cards.changeSpeed(card, 1);" stop-click stop-event>
 						<i class="glyphicon glyphicon-plus"></i>
@@ -55,15 +55,15 @@
 			<br />
 		</div>
 	</div>
-	<div ng-if="card.locked && card.finesse.show">
-		<strong>Finesse Modifier: </strong>{{card.finesse.modifier}}
+	<div ng-if="card.locked && card.data.finesse.show">
+		<strong>Finesse Modifier: </strong>{{card.data.finesse.modifier}}
 	</div>
-	<div ng-if="!card.locked && card.finesse.show">
+	<div ng-if="!card.locked && card.data.finesse.show">
 		<div class="dropdown dropup" dropdown stop-event on-toggle="toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				<strong>Finesse Modifier: </strong>
-				{{card.finesse.modifier}}
+				{{card.data.finesse.modifier}}
 			</a>
 			<div class="dropdown-menu dropup number-picker">
 				<div class="text-center"><strong>Finesse<br />Modifier</strong></div>
@@ -73,7 +73,7 @@
 						<i class="glyphicon glyphicon-minus"></i>
 					</a>
 					<input type="text" class="form-control text-center"
-						ng-model="card.finesse.modifier" stop-click stop-event/>
+						ng-model="card.data.finesse.modifier" stop-click stop-event/>
 					<a type="button" class="input-group-addon btn btn-default"
 						ng-click="$parent.cards.changeFinesse(card, 1);" stop-click stop-event>
 						<i class="glyphicon glyphicon-plus"></i>
@@ -84,4 +84,4 @@
 		</div>
 	</div>
 </div>
-<br ng-if="card.durability.show || card.speed.show || card.finesse.show" />
+<br ng-if="card.data.durability.show || card.data.speed.show || card.data.finesse.show" />
