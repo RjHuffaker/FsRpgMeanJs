@@ -2,7 +2,7 @@
 
 // Directive for managing card decks.
 angular.module('decks')
-	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'CardDeck', function($document, $parse, $rootScope, $window, CardDeck){
+	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'BREAD', 'CardDeck', function($document, $parse, $rootScope, $window, BREAD, CardDeck){
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/decks/views/card-panel.html',
@@ -79,12 +79,12 @@ angular.module('decks')
 					
 					element.css({
 						top: '0',
-						left: '-21em',
-						transform: 'rotate(-'+(_card.x_coord/15)+'deg)'
+						left: '-21em'
 					});
 					
 					setTimeout(function(){
 						setPosition();
+						setTransform();
 					}, 0);
 				};
 				
@@ -102,7 +102,6 @@ angular.module('decks')
 					return value * getElementFontSize();
 				};
 				
-				
 				var onHeightChange = function(event, object){
 					_x_dim = convertEm(15);
 					_y_dim = convertEm(21);
@@ -117,14 +116,22 @@ angular.module('decks')
 				var resetPosition = function(newVal, oldVal){
 					if(element.hasClass('card-moving')){
 						setPosition();
+						setTransform();
 					}
 				};
 				
 				var setPosition = function(){
 					element.css({
-						'top': _card.y_coord + 'em',
-						'left': _card.x_coord + 'em',
-						'transform': 'rotate('+(_card.x_coord/15)+'deg)'
+						top: _card.y_coord + 'em',
+						left: _card.x_coord + 'em'
+					});
+				};
+				
+				var setTransform = function(){
+					var deckWidth = BREAD.deckWidth();
+					var rotation = 2*((_card.x_coord+7.5)/deckWidth)-1;
+					element.css({
+						transform: 'rotate('+rotation+'deg)'
 					});
 				};
 				
@@ -221,8 +228,7 @@ angular.module('decks')
 					
 					element.css({
 						left: _moveX + _startCol + 'px',
-						top: _moveY + _startRow + 'px',
-						transform: 'rotate('+(_card.x_coord/15)+'deg)'
+						top: _moveY + _startRow + 'px'
 					});
 					
 					$rootScope.$broadcast('cardPanel:onMoveCard', {
@@ -347,10 +353,8 @@ angular.module('decks')
 				var onReleaseCard = function(event, object){
 					element.addClass('card-moving');
 					setTimeout(function(){
-						element.css({
-							left: _card.x_coord + 'em',
-							top: _card.y_coord + 'em'
-						});
+						setPosition();
+						setTransform();
 					}, 0);
 					
 					clearTimeout(_moveTimer);
