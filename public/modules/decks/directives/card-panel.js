@@ -76,7 +76,16 @@ angular.module('decks')
 				
 				var onCardChange = function(newVal, oldVal){
 					_card = newVal;
-					setPosition();
+					
+					element.css({
+						top: '0',
+						left: '-21em',
+						transform: 'rotate(-'+(_card.x_coord/15)+'deg)'
+					});
+					
+					setTimeout(function(){
+						setPosition();
+					}, 0);
 				};
 				
 				var onDropdown = function(event, object){
@@ -114,7 +123,8 @@ angular.module('decks')
 				var setPosition = function(){
 					element.css({
 						'top': _card.y_coord + 'em',
-						'left': _card.x_coord + 'em'
+						'left': _card.x_coord + 'em',
+						'transform': 'rotate('+(_card.x_coord/15)+'deg)'
 					});
 				};
 				
@@ -211,7 +221,8 @@ angular.module('decks')
 					
 					element.css({
 						left: _moveX + _startCol + 'px',
-						top: _moveY + _startRow + 'px'
+						top: _moveY + _startRow + 'px',
+						transform: 'rotate('+(_card.x_coord/15)+'deg)'
 					});
 					
 					$rootScope.$broadcast('cardPanel:onMoveCard', {

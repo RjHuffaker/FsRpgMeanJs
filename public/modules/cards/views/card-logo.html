@@ -8,7 +8,17 @@
 			{{card.data.cardType}}&nbsp;
 		</span>
 	</a>
-	<div ng-if="card.cardRole==='architect'" class="dropdown-menu" aria-labelledby="cardDropdown"
+	<div ng-if="card.locked" class="dropdown-menu" aria-labelledby="cardDropdown"
+		style="width: 14.8em; left: -.65em;">
+		<ul class="col-xs-6 text-8">
+			<li role="presentation" class="dropdown-header" stop-click>File Options</li>
+			<li ng-click="changeFeatureCard(card)"><label>
+				<i class="glyphicon glyphicon-chevron-left alert-primary"></i> Change <span class="text-capitalize">{{card.data.cardType}}</span>
+			</label></li>
+		</ul>
+	</div>
+	
+	<div ng-if="!card.locked" class="dropdown-menu" aria-labelledby="cardDropdown"
 		style="width: 14.8em; left: -.65em;">
 		<ul class="col-xs-6 text-8">
 			<li role="presentation" class="dropdown-header" stop-click>File Options</li>
@@ -65,22 +75,6 @@
 			<li ng-if="card.data.cardType === 'item'" stop-click><label>
 				<input type="checkbox" ng-model="card.data.finesse.show"> Finesse
 			</label></li>
-		</ul>
-	</div>
-	<div ng-if="card.cardRole === 'player'" class="dropdown-menu" aria-labelledby="cardDropdown"
-		style="width: 14.8em; left: -.65em;">
-		<ul class="col-xs-6 text-8">
-			<li role="presentation" class="dropdown-header" stop-click>File Options</li>
-			<li ng-click="changeFeatureCard(card)"><label>
-				<i class="glyphicon glyphicon-chevron-left alert-primary"></i> Change <span class="text-capitalize">{{card.data.cardType}}</span>
-			</label></li>
-		</ul>
-	</div>
-	<div ng-if="card.cardRole === 'home'" class="dropdown-menu" aria-labelledby="cardDropdown"
-		style="width: 14.8em; left: -.65em;">
-		<ul class="col-xs-6 text-8">
-			<li role="presentation" class="dropdown-header" stop-click>File Options</li>
-			
 		</ul>
 	</div>
 	

@@ -726,14 +726,16 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
 
 // Core Controller
 angular.module('core')
-	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'BREAD', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
-		function($location, $scope, $rootScope, $window, Authentication, CardDeck, BREAD, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems) {
+	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'BREAD', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
+		function($location, $scope, $rootScope, $window, Authentication, CardDeck, BREAD, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems) {
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
 			
 			$scope.cardDeck = CardDeck;
 			
 			$scope.BREAD = BREAD;
+			
+			$scope.dataSRVC = DataSRVC;
 			
 			$scope.pcsCard1 = PcsCard1;
 			
@@ -1647,7 +1649,16 @@ angular.module('decks')
 				
 				var onCardChange = function(newVal, oldVal){
 					_card = newVal;
-					setPosition();
+					
+					element.css({
+						top: '0',
+						left: '-21em',
+						transform: 'rotate(-'+(_card.x_coord/15)+'deg)'
+					});
+					
+					setTimeout(function(){
+						setPosition();
+					}, 0);
 				};
 				
 				var onDropdown = function(event, object){
@@ -1685,7 +1696,8 @@ angular.module('decks')
 				var setPosition = function(){
 					element.css({
 						'top': _card.y_coord + 'em',
-						'left': _card.x_coord + 'em'
+						'left': _card.x_coord + 'em',
+						'transform': 'rotate('+(_card.x_coord/15)+'deg)'
 					});
 				};
 				
@@ -1782,7 +1794,8 @@ angular.module('decks')
 					
 					element.css({
 						left: _moveX + _startCol + 'px',
-						top: _moveY + _startRow + 'px'
+						top: _moveY + _startRow + 'px',
+						transform: 'rotate('+(_card.x_coord/15)+'deg)'
 					});
 					
 					$rootScope.$broadcast('cardPanel:onMoveCard', {
@@ -2118,23 +2131,24 @@ angular.module('decks')
 		
 		// ADD
 		service.addPc = function(){
-			service.resource = new Pcs (
+			var pc = new Pcs (
 				pcsDefaults
 			);
 			
-			service.resource.$save();
-			return service.resource;
+			pc.$save(function(response){
+				service.resource = response;
+			});
 		};
 		
-		service.addCard = function(cardType, cardNumber, saveDeck){
+		service.addCard = function(deck, cardType, cardNumber, saveDeck){
 			var cardData = new Cards({
-				cardSet: service.resource.deckSize,
+				cardSet: deck.deckSize,
 				cardNumber: cardNumber,
 				cardType: cardType
 			});
 			
 			cardData.$save(function(response){
-				service.resource.cardList.push({
+				deck.cardList.push({
 					data: response,
 					cardRole: 'featureCard',
 					x_coord: cardNumber * 15,
@@ -2145,12 +2159,11 @@ angular.module('decks')
 					stacked: false,
 					locked: false
 				});
-			})
-			.then(function(response){
+			}).then(function(response){
 				if(saveDeck){
 					console.log('saveDeck');
-					service.resource.$update(function(response){
-						console.log(response);
+					deck.$update(function(response){
+						service.resource = response;
 					});
 				}
 			});
@@ -2159,7 +2172,7 @@ angular.module('decks')
 		service.addDeck = function(type, size){
 			console.log('addDeck');
 			
-			service.resource = new Decks ({
+			var deck = new Decks ({
 				deckType: type,
 				deckSize: size,
 				cardList: [{
@@ -2175,27 +2188,24 @@ angular.module('decks')
 				}]
 			});
 			
-			service.resource.$save(
+			deck.$save(
 				function(response){
 					for(var i = 0; i < size; i++){
-						service.addCard(type, i+1, (i+1 === size));
+						service.addCard(deck, type, i+1, (i+1 === size));
 					}
 				});
-			
-			console.log(service.resource);
-			
 		};
 		
 		// DELETE existing Pc
 		service.deletePc = function(pc) {
 			if(pc){
-				pc.$remove();
-				for (var i in service.resource.cardList ) {
-					if (service.resource.cardList[i] === pc ) {
-						service.resource.cardList.splice(i, 1);
+				pc.$remove(function(response){
+					for (var i in service.resource.cardList ) {
+						if (service.resource.cardList[i] === pc ) {
+							service.resource.cardList.splice(i, 1);
+						}
 					}
-				}
-				service.browsePcs();
+				});
 			}
 		};
 		
@@ -2246,9 +2256,9 @@ angular.module('decks')
 							service.resource.cardList.splice(i, 1);
 						}
 					}
-					for(var i = 0; i < response.cardList.length; i++){
-						if(response.cardList[i].data){
-							var card = new Cards(response.cardList[i].data);
+					for(var ii = 0; ii < response.cardList.length; ii++){
+						if(response.cardList[ii].data){
+							var card = new Cards(response.cardList[ii].data);
 							console.log(card);
 							card.$remove();
 						}

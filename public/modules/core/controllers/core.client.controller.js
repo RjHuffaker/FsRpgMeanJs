@@ -2,14 +2,16 @@
 
 // Core Controller
 angular.module('core')
-	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'BREAD', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
-		function($location, $scope, $rootScope, $window, Authentication, CardDeck, BREAD, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems) {
+	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'BREAD', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
+		function($location, $scope, $rootScope, $window, Authentication, CardDeck, BREAD, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems) {
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
 			
 			$scope.cardDeck = CardDeck;
 			
 			$scope.BREAD = BREAD;
+			
+			$scope.dataSRVC = DataSRVC;
 			
 			$scope.pcsCard1 = PcsCard1;
 			
