@@ -38,10 +38,11 @@ div[card-deck] {
 	cursor: -webkit-grab;
 	cursor: -moz-grab;
 	cursor: grab;
+	-webkit-backface-visibility: hidden;
 }
 
 [card-panel].card-moving {
-	transition-property: top, left;
+	transition-property: position;
 	-webkit-transition: .75s ease-in-out !important;
 	-moz-transition: .75s ease-in-out !important;
 	-o-transition: .75s ease-in-out !important;
@@ -68,7 +69,7 @@ div[card-deck] {
 }
 
 [card-panel].ng-leave, [card-panel].ng-enter {
-	transition-property: top, left;
+	transition-property:  left;
 	-webkit-transition: 1s ease-in-out !important;
 	-moz-transition: 1s ease-in-out !important;
 	-o-transition: 1s ease-in-out !important;

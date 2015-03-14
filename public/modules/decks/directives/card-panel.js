@@ -84,7 +84,7 @@ angular.module('decks')
 					
 					setTimeout(function(){
 						setPosition();
-						setTransform();
+						setRotation();
 					}, 0);
 				};
 				
@@ -116,7 +116,7 @@ angular.module('decks')
 				var resetPosition = function(newVal, oldVal){
 					if(element.hasClass('card-moving')){
 						setPosition();
-						setTransform();
+						setRotation();
 					}
 				};
 				
@@ -127,13 +127,12 @@ angular.module('decks')
 					});
 				};
 				
-				var setTransform = function(){
-					var deckWidth = BREAD.deckWidth();
-					var rotation = 2*((_card.x_coord+7.5)/deckWidth)-1;
+				var setRotation = function(){
 					element.css({
-						transform: 'rotate('+rotation+'deg)'
+						transform: 'rotate('+(Math.random()*2 - 1)+'deg)',
+						
 					});
-				};
+				}
 				
 				// When the element is clicked start the drag behaviour
 				var onPress = function(event){
@@ -354,7 +353,6 @@ angular.module('decks')
 					element.addClass('card-moving');
 					setTimeout(function(){
 						setPosition();
-						setTransform();
 					}, 0);
 					
 					clearTimeout(_moveTimer);
