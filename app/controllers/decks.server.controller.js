@@ -90,10 +90,14 @@ exports.list = function(req, res) {
 /**
  * Deck middleware
  */
-exports.deckByID = function(req, res, next, id) {
+exports.deckByID = function(req, res, next, id){
 	Deck.findById(id)
 		.populate('user', 'displayName')
-		.populate({ path: 'cardList.data', model: 'Card'})
+		.populate('cardList.traitData')
+		.populate('cardList.featData')
+		.populate('cardList.augmentData')
+		.populate('cardList.itemData')
+		.populate('cardList.originData')
 		.exec(
 			function(err, deck) {
 				if (err) return next(err);
@@ -103,6 +107,8 @@ exports.deckByID = function(req, res, next, id) {
 				req.deck = deck;
 				next();
 			});
+	
+	
 };
 
 /**

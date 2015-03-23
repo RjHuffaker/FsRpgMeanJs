@@ -1,11 +1,11 @@
 <div class="content-panel">
-	<table class="fill-parent" fit-content>
+	<table class="fill-parent">
 		<tbody>
 			<tr>
 				<td style="vertical-align: top; width: 1px;">
 					<div card-logo></div>
 				</td>
-				 <td style="vertical-align: top;">
+				<td style="vertical-align: top;">
 					<div card-header></div>
 				</td>
 			</tr>
@@ -18,18 +18,26 @@
 				<td colspan="2" style="vertical-align: bottom;">
 					<div card-modifiers></div>
 					<div card-benefit></div>
-					<div ng-repeat="action in card.data.actions" card-action="action"></div>
+					<div ng-repeat="action in card.actions" card-action="action" panel="panel"></div>
 					<div card-footer></div>
 				 </td>
 			</tr>
 		</tbody>
 	</table>
 </div>
-<div style="color: darkRed; position: absolute; top: 0; left: 13em; width: 2em;" class="text-center">
-	<span class="text-5">
-		<span ng-show="card.dragging">D</span>
-		<span ng-show="card.stacked">S</span>
-		<span ng-show="card.x_overlap">X</span>
-		<span ng-show="card.y_overlap">Y</span>
-	</span>
+<div style="color: darkRed; position: absolute; top: 20em; left: 0; width: 2em;" class="text-center">
+	<a data-ng-click="$parent.BREAD.editCard(card);" stop-event>
+		<i class="glyphicon glyphicon-ok green-icon"></i>
+	</a>
+	
+	<a data-ng-click="$parent.BREAD.toggleCardLock($parent.panel);" stop-event>
+		<i ng-hide="$parent.panel.locked" class="glyphicon glyphicon-lock grey-icon"></i>
+		<i ng-show="$parent.panel.locked" class="glyphicon glyphicon-lock blue-icon"></i>
+	</a>
+		
+</div>
+<div style="color: darkRed; position: absolute; top: 20em; left: 14em; width: 1em;" class="text-center">
+	<a data-ng-click="$parent.BREAD.readCard(card);" stop-event>
+		<i class="glyphicon glyphicon-remove red-icon"></i>
+	</a>
 </div>

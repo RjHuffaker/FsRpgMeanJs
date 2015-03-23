@@ -60,8 +60,38 @@ ul.card-list li div {
 }
 
 .card-icon {
-	font-size: 1.2em;
+	font-size: 1em;
 	cursor: pointer;
+}
+
+.green-icon {
+	font-size: 1em;
+	cursor: pointer;
+	color: green;
+}
+
+.grey-icon {
+	font-size: 1em;
+	cursor: pointer;
+	color: grey;
+}
+
+.blue-icon {
+	font-size: 1em;
+	cursor: pointer;
+	color: dark-blue;
+}
+
+.orange-icon {
+	font-size: 1em;
+	cursor: pointer;
+	color: orange;
+}
+
+.red-icon {
+	font-size: 1em;
+	cursor: pointer;
+	color: red;
 }
 
 .card-icon-top-left {

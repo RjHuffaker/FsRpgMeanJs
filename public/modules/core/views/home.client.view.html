@@ -3,10 +3,10 @@
 		<div class="fill-parent modal-overlay" ng-click="hideModal()" ng-show="modalShown"></div>
 		<div card-deck ng-mouseleave="true">
 			<ul>
-				<li card-panel card="card" ng-repeat="card in BREAD.resource.cardList"
-					ng-class="{'stacked': card.stacked, 'dragging': card.dragging,
-						'x_overlap': card.x_overlap, 'y_overlap': card.y_overlap}"
-					ng-style="{'z-index': 4998 - card.x_coord + card.y_coord}"
+				<li card-panel panel="panel" ng-repeat="panel in BREAD.resource.cardList"
+					ng-class="{'stacked': panel.stacked, 'dragging': panel.dragging,
+						'x_overlap': panel.x_overlap, 'y_overlap': panel.y_overlap}"
+					ng-style="{'z-index': 4998 - panel.x_coord + panel.y_coord}"
 					ng-mousemove="true" ng-click="true">
 				</li>
 			</ul>

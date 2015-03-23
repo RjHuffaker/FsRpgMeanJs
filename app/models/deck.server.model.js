@@ -7,13 +7,28 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 var Panel = {
-	data: {
-		type: Schema.Types.ObjectId,
-		ref: 'Card'
-	},
 	cardRole: {
-		type: String,
-		default: 'featureCard'
+		type: String
+	},
+	traitData: {
+		type: Schema.Types.ObjectId,
+		ref: 'Trait'
+	},
+	featData: {
+		type: Schema.Types.ObjectId,
+		ref: 'Feat'
+	},
+	augmentData: {
+		type: Schema.Types.ObjectId,
+		ref: 'Augment'
+	},
+	itemData: {
+		type: Schema.Types.ObjectId,
+		ref: 'Item'
+	},
+	originData: {
+		type: Schema.Types.ObjectId,
+		ref: 'Origin'
 	},
 	cardNumber: {
 		type: Number
@@ -25,7 +40,8 @@ var Panel = {
 		type: Number
 	},
 	y_coord: {
-		type: Number
+		type: Number,
+		default: 0
 	},
 	x_overlap: {
 		type: Boolean,

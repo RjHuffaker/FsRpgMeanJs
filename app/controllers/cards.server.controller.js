@@ -43,6 +43,7 @@ exports.update = function(req, res) {
 
 	card.save(function(err) {
 		if (err) {
+			console.log(errorHandler.getErrorMessage(err));
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
@@ -88,7 +89,19 @@ exports.list = function(req, res) {
  * Card middleware
  */
 exports.cardByID = function(req, res, next, id) {
-	Card.findById(id).populate('user', 'displayName').exec(function(err, card){
+	console.log(id);
+	var cardId;
+	
+	if(mongoose.Types.ObjectId.isValid(id)){
+		cardId = id;
+		console.log('valid: '+cardId);
+	} else {
+		cardId = mongoose.Types.ObjectId.fromString(id);
+		console.log('invalid: '+cardId);
+	}
+	
+	Card.findById(cardId).populate('user', 'displayName').exec(function(err, card){
+		if (err) console.log(err);
 		if (err) return next(err);
 		if (! card) return next(new Error('Failed to load Card ' + id));
 		req.card = card;

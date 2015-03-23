@@ -1,10 +1,10 @@
 <div ng-if="cardAction.effect.show && cardAction.usage !== 'Defense'"
 	style="white-space: normal;" class="text-8">
-	<div ng-if="$parent.$parent.card.locked" >
+	<div ng-if="panel.locked" >
 		<strong>Effect: </strong>{{cardAction.effect.content}}
 	</div>
-	<div ng-if="!$parent.$parent.card.locked">
-		<div class="dropdown indent-left" dropdown stop-event on-toggle="$parent.$parent.$parent.toggled(open)">
+	<div ng-if="!panel.locked">
+		<div class="dropdown indent-left" dropdown stop-event on-toggle="$parent.$parent.$parent.$parent.toggled(open)">
 			<a id="actionDropdown" class="dropdown-toggle" dropdown-toggle>
 				<strong class="absolute-left">Effect: </strong>
 			</a>
@@ -39,7 +39,7 @@
 		<br />
 	</div>
 	<div ng-if="cardAction.effect.list.listType !== 'none'">
-		<div ng-if="$parent.$parent.$parent.card.locked">
+		<div ng-if="panel.locked">
 			<ul class="card-list" ng-if="cardAction.effect.list.listType === 'bullets2' 
 					|| cardAction.effect.list.listType === 'bullets3'
 					|| cardAction.effect.list.listType === 'bullets4'">
@@ -88,7 +88,7 @@
 			</ul>
 		</div>
 		
-		<div ng-if="!$parent.$parent.$parent.card.locked">
+		<div ng-if="!panel.locked">
 			<ul class="card-list" ng-if="cardAction.effect.list.listType === 'bullets2' 
 					|| cardAction.effect.list.listType === 'bullets3'
 					|| cardAction.effect.list.listType === 'bullets4'">

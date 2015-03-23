@@ -1,21 +1,23 @@
 <div class="content-panel">
 	<h4>
-		<i style="font-size: 80px;" class="glyphicon glyphicon-user"></i>
+		<i style="font-size: 5em;" class="glyphicon glyphicon-user"></i>
 	</h4>
 	<h4>
-		{{card.name}}
+	Pc: {{panel.name}}
 	</h4>
-		{{card.sex}} {{card.race}}
+	Race: {{panel.race}} ({{panel.sex}})
+	</br>
+	Level: {{panel.level}}
 	<br />
 	<small class="list-group-item-text text-muted">
 		Created
-		<span data-ng-bind="card.created | date:'short'"></span>
+		<span data-ng-bind="panel.created | date:'short'"></span>
 	</small>
 	<div class="pull-right" >
-		<a class="btn btn-sm btn-primary" data-ng-click="BREAD.readPc(card);" stop-event>
+		<a class="btn btn-sm btn-primary" data-ng-click="BREAD.readPc(panel);" stop-event>
 			<i class="glyphicon glyphicon-edit"></i>
 		</a>
-		<a class="btn btn-sm btn-danger" data-ng-click="BREAD.deletePc(card);" stop-event>
+		<a class="btn btn-sm btn-danger" data-ng-click="BREAD.deletePc(panel);" stop-event>
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 	</div>

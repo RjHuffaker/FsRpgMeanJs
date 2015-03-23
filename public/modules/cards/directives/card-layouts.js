@@ -38,12 +38,16 @@ angular.module('cards')
 			templateUrl: '../modules/pcs/views/card-pc-3.html'
 		};
 	})
-	.directive('featureCard', function(){
+	.directive('featureCard', ['DataSRVC', function(DataSRVC){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/feature-card.html'
+			templateUrl: '../modules/cards/views/feature-card.html',
+			scope: { card: '=', panel: '=' },
+			link: function(scope, element, attrs){
+				scope.dataSRVC = DataSRVC;
+			}
 		};
-	})
+	}])
 	.directive('narratorOptions', function(){
 		return {
 			restrict: 'A',
@@ -89,12 +93,12 @@ angular.module('cards')
 	.directive('campaignSummary', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/campaign/views/campaign-summary.html'
+			templateUrl: '../modules/campaigns/views/campaign-summary.html'
 		};
 	})
 	.directive('campaignOptions', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/campaign/views/campaign-options.html'
+			templateUrl: '../modules/campaigns/views/campaign-options.html'
 		};
 	});

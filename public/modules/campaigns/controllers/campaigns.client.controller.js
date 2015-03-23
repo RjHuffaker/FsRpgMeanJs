@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('campaign').controller('CampaignController', ['$scope', 'Socket',
+angular.module('campaigns').controller('CampaignsController', ['$scope', 'Socket',
 	function($scope, Socket) {
 		
 		$scope.messages = [];

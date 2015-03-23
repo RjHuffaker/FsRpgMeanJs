@@ -5,7 +5,7 @@
 		</strong>
 	</div>
 	<div class="title-block">
-		<div class="pull-right" ng-if="$parent.$parent.card.locked">
+		<div class="pull-right" ng-if="panel.locked">
 			<strong>
 				{{cardAction.frequency}}
 			</strong>
@@ -13,8 +13,8 @@
 				[Frequency]
 			</strong>
 		</div>
-		<div ng-if="!$parent.$parent.card.locked" class="dropdown dropup pull-right"
-			dropdown stop-event on-toggle="$parent.$parent.$parent.toggled(open)">
+		<div ng-if="!panel.locked" class="dropdown dropup pull-right"
+			dropdown stop-event on-toggle="$parent.$parent.$parent.$parent.toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				<strong>{{cardAction.frequency}}</strong>

@@ -5,21 +5,57 @@ angular.module('decks')
 	.factory('BREAD', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'pcsDefaults',
 			function($stateParams, $location, Authentication, $resource, $rootScope, pcsDefaults){
 		
-		var Pcs = $resource(
-			'pcs/:pcId',
-			{ pcId: '@_id' },
+		var Aspects = $resource(
+			'aspects/:aspectId:aspectType',
+			{ aspectId: '@_id' },
 			{ update: { method: 'PUT' } }
 		);
 		
 		var Cards = $resource(
-			'cards/:cardId:cardType',
-			{ cardId: '@_id'},
+			'cards/:cardId',
+			{ cardId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Traits = $resource(
+			'traits/:traitId',
+			{ traitId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Feats = $resource(
+			'feats/:featId',
+			{ featId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Augments = $resource(
+			'augments/:augmentId',
+			{ augmentId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Items = $resource(
+			'items/:itemId',
+			{ itemId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Origins = $resource(
+			'origins/:originId',
+			{ originId: '@_id' },
 			{ update: { method: 'PUT' } }
 		);
 		
 		var Decks = $resource(
 			'decks/:deckId:deckType',
-			{ deckId: '@_id'},
+			{ deckId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Pcs = $resource(
+			'pcs/:pcId',
+			{ pcId: '@_id' },
 			{ update: { method: 'PUT' } }
 		);
 		
@@ -63,8 +99,40 @@ angular.module('decks')
 			}
 		};
 		
+		service.toggleCardLock = function(panel){
+			for(var i = 0; i < service.resource.cardList.length; i++){
+				if(panel === service.resource.cardList[i]){
+					service.resource.cardList[i].locked = !service.resource.cardList[i].locked;
+				}
+			}
+		};
+		
 		// BROWSE
-		service.browsePcs = function() {
+		
+		service.browseAspects = function(aspectType){
+			service.resource = {};
+			service.resource.cardList = [];
+			Aspects.query(
+				function(response){
+					setCardList(response);
+				}
+			);
+		};
+		
+		service.browseDecks = function(){
+			service.resource = {};
+			service.resource.cardList = [];
+			Decks.query(
+				function(response){
+					response.unshift({
+						cardRole: 'architectOptions'
+					});
+					setCardList(response);
+				}
+			);
+		};
+		
+		service.browsePcs = function(){
 			service.resource = {};
 			service.resource.cardList = [];
 			Pcs.query(
@@ -77,20 +145,62 @@ angular.module('decks')
 			);
 		};
 		
-		service.browseDecks = function(){
-			service.resource = {};
-			service.resource.cardList = [];
-			Decks.query(
-				function(response) {
-					response.unshift({
-						cardRole: 'architectOptions'
-					});
-					setCardList(response);
-				}
-			);
+		// READ
+		
+		service.readAspect = function(aspect){
+			var _aspect = Aspects.get({
+				aspectId: aspect._id
+			});
+			return _aspect;
 		};
 		
-		// READ
+		service.readCard = function(card){
+			console.log('readCard: ' + card._id);
+			console.log(card);
+			
+			var _card;
+			
+			if(card.cardType === 'Trait'){
+				_card = Traits.get({
+					traitId: card._id
+				});
+			} else if(card.cardType === 'Feat'){
+				_card = Feats.get({
+					featId: card._id
+				});
+			} else if(card.cardType === 'Augment'){
+				_card = Augments.get({
+					augmentId: card._id
+				});
+			} else if(card.cardType === 'Item'){
+				_card = Items.get({
+					itemId: card._id
+				});
+			} else if(card.cardType === 'Origin'){
+				_card = Origins.get({
+					originId: card._id
+				});
+			}
+			
+			_card.$promise.then(function(response){
+				console.log(response);
+			});
+		};
+		
+		service.readDeck = function(deck){
+			console.log('readDeck: ' + deck._id);
+			console.log(deck);
+			
+			service.resource = Decks.get({
+				deckId: deck._id
+			});
+			
+			service.resource.$promise.then(function(response){
+				console.log(response);
+			});
+			
+		};
+		
 		service.readPc = function(pc) {
 			service.resource = Pcs.get({
 				pcId: pc._id
@@ -99,23 +209,75 @@ angular.module('decks')
 			});
 		};
 		
-		service.readCard = function(card){
-			var _card = Cards.get({
-				cardId: card._id
-			});
-			return _card;
-		};
-		
-		service.readDeck = function(deck){
-			console.log('readDeck');
-			service.resource = Decks.get({
-				deckId: deck._id
-			}, function(response){
-				console.log(response);
-			});
-		};
-		
 		//EDIT
+		service.editAspect = function(aspect){
+			aspect.$update(function(response) {
+				
+			}, function(errorResponse) {
+				console.log(errorResponse);
+			});
+		};
+		
+		service.editCard = function(card) {
+			var _card = 0;
+			
+			if(card.cardType === 'Trait'){
+				_card = new Traits(card);
+			} else if(card.cardType === 'Feat'){
+				_card = new Feats(card);
+			} else if(card.cardType === 'Augment'){
+				_card = new Augments(card);
+			} else if(card.cardType === 'Item'){
+				_card = new Items(card);
+			} else if(card.cardType === 'Origin'){
+				_card = new Origins(card);
+			}
+			
+			if(_card){
+				_card.$update();
+			}
+		};
+		
+		service.editDeck = function(deck) {
+			var _deck = new Decks(deck);
+			
+			_deck.$update(function(response) {
+				for(var i = 0; i < deck.cardList.length; i++){
+					service.editPanel(deck.cardList[i]);
+				}
+			}, function(errorResponse) {
+				console.log(errorResponse);
+			});
+		};
+		
+		service.editPanel = function(panel){
+			var _card = 0;
+			
+			if(panel.cardRole === 'Trait'){
+				_card = new Traits(panel.traitData);
+			} else if(panel.cardRole === 'Feat'){
+				_card = new Feats(panel.featData);
+			} else if(panel.cardRole === 'Augment'){
+				_card = new Augments(panel.augmentData);
+			} else if(panel.cardRole === 'Item'){
+				_card = new Items(panel.itemData);
+			} else if(panel.cardRole === 'Origin'){
+				_card = new Origins(panel.originData);
+			}
+			
+			if(_card){
+				_card.$update();
+			}
+		};
+		
+		service.editDeckStructure = function(deck){
+			deck.$update(function(response){
+				
+			}, function(errorResponse){
+				console.log(errorResponse);
+			});
+		};
+		
 		service.editPc = function(pc) {
 			pc.$update(function(response) {
 				
@@ -124,71 +286,117 @@ angular.module('decks')
 			});
 		};
 		
-		service.editCard = function(card) {
-			if(card.data){
-				console.log(card);
-				var _card = new Cards(card.data);
-				
-				_card.$update(function(response) {
-					
-				}, function(errorResponse) {
-					console.log(errorResponse);
-				});
-			} else if(!card.data){
-				card.$update(function(response) {
-					
-				}, function(errorResponse) {
-					console.log(errorResponse);
-				});
-			}
-		};
-		
-		service.editDeck = function(deck) {
-			deck.$update(function(response) {
-				
-			}, function(errorResponse) {
-				console.log(errorResponse);
-			});
-		};
-		
 		// ADD
-		service.addPc = function(){
-			var pc = new Pcs (
-				pcsDefaults
+		
+		service.addAspect = function(){
+			var aspect = new Aspects (
+				
 			);
 			
-			pc.$save(function(response){
+			aspect.$save(function(response){
 				service.resource = response;
 			});
 		};
 		
 		service.addCard = function(deck, cardType, cardNumber, saveDeck){
-			var cardData = new Cards({
-				cardSet: deck.deckSize,
-				cardNumber: cardNumber,
-				cardType: cardType
-			});
+			var cardData;
 			
-			cardData.$save(function(response){
-				deck.cardList.push({
-					data: response,
-					cardRole: 'featureCard',
-					x_coord: cardNumber * 15,
-					y_coord: 0,
-					x_overlap: false,
-					y_overlap: false,
-					dragging: false,
-					stacked: false,
-					locked: false
+			if(cardType === 'Trait'){
+				cardData = new Traits({
+					cardSet: deck.deckSize,
+					cardNumber: cardNumber,
+					cardType: cardType
 				});
-			}).then(function(response){
-				if(saveDeck){
-					console.log('saveDeck');
-					deck.$update(function(response){
-						service.resource = response;
+				cardData.$save(function(response){
+					deck.cardList.push({
+						traitData: response,
+						cardRole: cardType,
+						x_coord: cardNumber * 15
 					});
-				}
-			});
+				}).then(function(response){
+					if(saveDeck){
+						deck.$update(function(response){
+							service.resource = response;
+						});
+					}
+				});
+			} else if(cardType === 'Feat'){
+				cardData = new Feats({
+					cardSet: deck.deckSize,
+					cardNumber: cardNumber,
+					cardType: cardType
+				});
+				cardData.$save(function(response){
+					deck.cardList.push({
+						featData: response,
+						cardRole: cardType,
+						x_coord: cardNumber * 15
+					});
+				}).then(function(response){
+					if(saveDeck){
+						deck.$update(function(response){
+							service.resource = response;
+						});
+					}
+				});
+			} else if(cardType === 'Augment'){
+				cardData = new Augments({
+					cardSet: deck.deckSize,
+					cardNumber: cardNumber,
+					cardType: cardType
+				});
+				cardData.$save(function(response){
+					deck.cardList.push({
+						augmentData: response,
+						cardRole: cardType,
+						x_coord: cardNumber * 15
+					});
+				}).then(function(response){
+					if(saveDeck){
+						deck.$update(function(response){
+							service.resource = response;
+						});
+					}
+				});
+			} else if(cardType === 'Item'){
+				cardData = new Items({
+					cardSet: deck.deckSize,
+					cardNumber: cardNumber,
+					cardType: cardType
+				});
+				cardData.$save(function(response){
+					deck.cardList.push({
+						itemData: response,
+						cardRole: cardType,
+						x_coord: cardNumber * 15
+					});
+				}).then(function(response){
+					if(saveDeck){
+						deck.$update(function(response){
+							service.resource = response;
+						});
+					}
+				});
+			} else if(cardType === 'Origin'){
+				cardData = new Origins({
+					cardSet: deck.deckSize,
+					cardNumber: cardNumber,
+					cardType: cardType
+				});
+				cardData.$save(function(response){
+					deck.cardList.push({
+						originData: response,
+						cardRole: cardType,
+						x_coord: cardNumber * 15
+					});
+				}).then(function(response){
+					if(saveDeck){
+						deck.$update(function(response){
+							service.resource = response;
+						});
+					}
+				});
+			}
 		};
 		
 		service.addDeck = function(type, size){
@@ -199,14 +407,7 @@ angular.module('decks')
 				deckSize: size,
 				cardList: [{
 					cardRole: 'deckOptions',
-					x_coord: 0,
-					y_coord: 0,
-					x_overlap: false,
-					y_overlap: false,
-					dragging: false,
-					stacked: false,
-					locked: false
-					
+					x_coord: 0
 				}]
 			});
 			
@@ -216,14 +417,26 @@ angular.module('decks')
 						service.addCard(deck, type, i+1, (i+1 === size));
 					}
 				});
+			
+			console.log(deck);
+		};
+		
+		service.addPc = function(){
+			var pc = new Pcs (
+				pcsDefaults
+			);
+			
+			pc.$save(function(response){
+				service.resource = response;
+			});
 		};
 		
 		// DELETE existing Pc
-		service.deletePc = function(pc) {
-			if(pc){
-				pc.$remove(function(response){
+		service.deleteAspect = function(aspect){
+			if(aspect){
+				aspect.$remove(function(response){
 					for (var i in service.resource.cardList ) {
-						if (service.resource.cardList[i] === pc ) {
+						if (service.resource.cardList[i] === aspect ) {
 							service.resource.cardList.splice(i, 1);
 						}
 					}
@@ -283,6 +496,18 @@ angular.module('decks')
 							var card = new Cards(response.cardList[ii].data);
 							console.log(card);
 							card.$remove();
+						}
+					}
+				});
+			}
+		};
+		
+		service.deletePc = function(pc) {
+			if(pc){
+				pc.$remove(function(response){
+					for (var i in service.resource.cardList ) {
+						if (service.resource.cardList[i] === pc ) {
+							service.resource.cardList.splice(i, 1);
 						}
 					}
 				});

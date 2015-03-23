@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('campaign').factory('Campaigns', ['$stateParams', '$location', 'Authentication', '$resource', 
+angular.module('campaigns').factory('Campaigns', ['$stateParams', '$location', 'Authentication', '$resource', 
 	function($stateParams, $location, Authentication, $resource){
 		
 		var Campaigns = $resource(

@@ -1,5 +1,5 @@
 <div ng-if="cardAction.usage === 'Defense'" class="text-8" style="white-space: normal;">
-	<div ng-if="$parent.$parent.card.locked">
+	<div ng-if="panel.locked">
 		<strong ng-hide="cardAction.defense.defenseType">[Type]</strong>
 		<strong>{{cardAction.defense.defenseType}} Defense: </strong>
 		{{cardAction.defense.dice_a}}
@@ -14,8 +14,8 @@
 			<strong>Critical Success: </strong>{{cardAction.defense.criticalSuccess.content}}
 		</div>
 	</div>
-	<div ng-if="!$parent.$parent.card.locked">
-		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.toggled(open)">
+	<div ng-if="!panel.locked">
+		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.$parent.toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				<strong ng-hide="cardAction.defense.defenseType">[Type]</strong>
@@ -42,7 +42,7 @@
 			</div>
 		</div>
 		
-		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.toggled(open)">
+		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.$parent.toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				{{cardAction.defense.dice_a}}
@@ -76,7 +76,7 @@
 			</div>
 		</div>
 		+
-		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.toggled(open)">
+		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.$parent.toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				{{cardAction.defense.dice_b}}

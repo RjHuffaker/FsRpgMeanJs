@@ -38,15 +38,18 @@ angular.module('cards')
 			templateUrl: '../modules/cards/views/card-footer.html'
 		};
 	})
-	.directive('cardAction', function(){
+	.directive('cardAction', ['DataSRVC', function(DataSRVC){
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/cards/views/card-action.html',
 			scope: {
-				cardAction: '='
+				cardAction: '=', panel: '='
+			},
+			link: function(scope, element, attrs){
+				scope.dataSRVC = DataSRVC;
 			}
 		};
-	})
+	}])
 	.directive('cardActionIcon', function(){
 		return {
 			restrict: 'A',
@@ -113,10 +116,13 @@ angular.module('cards')
 	.directive('stopEvent', function(){
 		return{
 			restrict: 'A',
-			link: function(scope, element, attr){
+			link: function(scope, element, attrs){
 				var _pressEvents = 'touchstart mousedown';
 				element.on(_pressEvents, function(event){
-					event.stopPropagation();
+					console.log(scope);
+					if(!scope.panel.x_overlap && !scope.panel.y_overlap){
+						event.stopPropagation();
+					}
 				});
 			}
 		};
@@ -124,7 +130,7 @@ angular.module('cards')
 	.directive('stopClick', function(){
 		return{
 			restrict: 'A',
-			link: function(scope, element, attr){
+			link: function(scope, element, attrs){
 				element.on('click', function(event){
 					event.stopPropagation();
 				});
@@ -163,6 +169,7 @@ angular.module('cards')
 	.directive('fitContent', function(){
 		return {
 			restrict: 'A',
+			scope: false,
 			link: function(scope, element, attrs){
 				
 				var reduceText = function(){

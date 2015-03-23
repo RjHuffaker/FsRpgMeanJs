@@ -1,5 +1,5 @@
 <div ng-if="cardAction.attack.show && cardAction.usage !== 'Defense'" style="white-space: normal;" class="text-8">
-	<div ng-if="$parent.$parent.card.locked">
+	<div ng-if="panel.locked">
 		<strong>Attack:</strong>
 		{{cardAction.attack.dice_a}}
 		<span ng-hide="cardAction.attack.dice_a">1d__</span>
@@ -16,8 +16,8 @@
 			<strong>Critical Success: </strong>{{cardAction.attack.criticalSuccess.content}}
 		</div>
 	</div>
-	<div ng-if="!$parent.$parent.card.locked">
-		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.toggled(open)">
+	<div ng-if="!panel.locked">
+		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.$parent.toggled(open)">
 			<a id="actionDropdown" class="dropdown-toggle" dropdown-toggle>
 				<strong>Attack: </strong>
 			</a>
@@ -48,7 +48,7 @@
 			</div>
 		</div>
 		
-		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.toggled(open)">
+		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.$parent.toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				{{cardAction.attack.dice_a}}
@@ -56,7 +56,7 @@
 			</a>
 			<div class="dropdown-menu" aria-labelledby="cardDropdown">
 				<ul class="col-xs-6">
-					<li ng-repeat="dice in $parent.$parent.dataSRVC.dice"><label>
+					<li ng-repeat="dice in $parent.$parent.$parent.dataSRVC.dice"><label>
 						<input type="radio" value="{{dice}}"
 							ng-model="cardAction.attack.dice_a">
 						{{dice}}
@@ -72,7 +72,7 @@
 			</div>
 		</div>
 		+
-		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.toggled(open)">
+		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.$parent.toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				{{cardAction.attack.dice_b}}
@@ -80,7 +80,7 @@
 			</a>
 			<div class="dropdown-menu" aria-labelledby="cardDropdown">
 				<ul class="col-xs-6">
-					<li ng-repeat="dice in $parent.$parent.dataSRVC.dice"><label>
+					<li ng-repeat="dice in $parent.$parent.$parent.dataSRVC.dice"><label>
 						<input type="radio" value="{{dice}}"
 							ng-model="cardAction.attack.dice_b">
 						{{dice}}
@@ -96,7 +96,7 @@
 			</div>
 		</div>
 		vs
-		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.toggled(open)">
+		<div class="dropdown" dropdown stop-event on-toggle="$parent.$parent.$parent.$parent.toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-click="dropdown" aria-expanded="true">
 				{{cardAction.attack.versus}}

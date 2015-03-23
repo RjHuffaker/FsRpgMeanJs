@@ -3,17 +3,17 @@
 		<i style="font-size: 80px;" class="glyphicon glyphicon-user"></i>
 	</h4>
 	<h4>
-		{{card.name}}
+		{{panel.name}}
 	</h4>
 	<small class="list-group-item-text text-muted">
 		Created
-		<span data-ng-bind="card.created | date:'short'"></span>
+		<span data-ng-bind="panel.created | date:'short'"></span>
 	</small>
 	<div class="pull-right" >
-		<a class="btn btn-sm btn-primary" data-ng-click="BREAD.readDeck(card);" stop-event>
+		<a class="btn btn-sm btn-primary" data-ng-click="BREAD.readDeck(panel);" stop-event>
 			<i class="glyphicon glyphicon-edit"></i>
 		</a>
-		<a class="btn btn-sm btn-danger" data-ng-click="BREAD.deleteDeck(card);" stop-event>
+		<a class="btn btn-sm btn-danger" data-ng-click="BREAD.deleteDeck(panel);" stop-event>
 			<i class="glyphicon glyphicon-trash"></i>
 		</a>
 	</div>

@@ -43,8 +43,12 @@ angular.element(document).ready(function() {
 });
 'use strict';
 
+// Use applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('aspects');
+'use strict';
+
 // Use application configuration module to register a new module
-ApplicationConfiguration.registerModule('campaign');
+ApplicationConfiguration.registerModule('campaigns');
 
 'use strict';
 
@@ -77,7 +81,111 @@ ApplicationConfiguration.registerModule('users');
 
 'use strict';
 
-angular.module('campaign').controller('CampaignController', ['$scope', 'Socket',
+//Setting up route
+angular.module('aspects').config(['$stateProvider',
+	function($stateProvider) {
+		// Aspects state routing
+		$stateProvider.
+		state('listAspects', {
+			url: '/aspects',
+			templateUrl: 'modules/aspects/views/list-aspects.client.view.html'
+		}).
+		state('createAspect', {
+			url: '/aspects/create',
+			templateUrl: 'modules/aspects/views/create-aspect.client.view.html'
+		}).
+		state('viewAspect', {
+			url: '/aspects/:aspectId',
+			templateUrl: 'modules/aspects/views/view-aspect.client.view.html'
+		}).
+		state('editAspect', {
+			url: '/aspects/:aspectId/edit',
+			templateUrl: 'modules/aspects/views/edit-aspect.client.view.html'
+		});
+	}
+]);
+'use strict';
+
+// Aspects controller
+angular.module('aspects').controller('AspectsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Aspects',
+	function($scope, $stateParams, $location, Authentication, Aspects) {
+		$scope.authentication = Authentication;
+
+		// Create new Aspect
+		$scope.create = function() {
+			// Create new Aspect object
+			var aspect = new Aspects ({
+				name: this.name
+			});
+
+			// Redirect after save
+			aspect.$save(function(response) {
+				$location.path('aspects/' + response._id);
+
+				// Clear form fields
+				$scope.name = '';
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+			});
+		};
+
+		// Remove existing Aspect
+		$scope.remove = function(aspect) {
+			if ( aspect ) { 
+				aspect.$remove();
+
+				for (var i in $scope.aspects) {
+					if ($scope.aspects [i] === aspect) {
+						$scope.aspects.splice(i, 1);
+					}
+				}
+			} else {
+				$scope.aspect.$remove(function() {
+					$location.path('aspects');
+				});
+			}
+		};
+
+		// Update existing Aspect
+		$scope.update = function() {
+			var aspect = $scope.aspect;
+
+			aspect.$update(function() {
+				$location.path('aspects/' + aspect._id);
+			}, function(errorResponse) {
+				$scope.error = errorResponse.data.message;
+			});
+		};
+
+		// Find a list of Aspects
+		$scope.find = function() {
+			$scope.aspects = Aspects.query();
+		};
+
+		// Find existing Aspect
+		$scope.findOne = function() {
+			$scope.aspect = Aspects.get({ 
+				aspectId: $stateParams.aspectId
+			});
+		};
+	}
+]);
+'use strict';
+
+//Aspects service used to communicate Aspects REST endpoints
+angular.module('aspects').factory('Aspects', ['$resource',
+	function($resource) {
+		return $resource('aspects/:aspectId', { aspectId: '@_id'
+		}, {
+			update: {
+				method: 'PUT'
+			}
+		});
+	}
+]);
+'use strict';
+
+angular.module('campaigns').controller('CampaignsController', ['$scope', 'Socket',
 	function($scope, Socket) {
 		
 		$scope.messages = [];
@@ -151,7 +259,7 @@ angular.module('campaign').controller('CampaignController', ['$scope', 'Socket',
 
 'use strict';
 
-angular.module('campaign').factory('Campaigns', ['$stateParams', '$location', 'Authentication', '$resource', 
+angular.module('campaigns').factory('Campaigns', ['$stateParams', '$location', 'Authentication', '$resource', 
 	function($stateParams, $location, Authentication, $resource){
 		
 		var Campaigns = $resource(
@@ -267,15 +375,18 @@ angular.module('cards')
 			templateUrl: '../modules/cards/views/card-footer.html'
 		};
 	})
-	.directive('cardAction', function(){
+	.directive('cardAction', ['DataSRVC', function(DataSRVC){
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/cards/views/card-action.html',
 			scope: {
-				cardAction: '='
+				cardAction: '=', panel: '='
+			},
+			link: function(scope, element, attrs){
+				scope.dataSRVC = DataSRVC;
 			}
 		};
-	})
+	}])
 	.directive('cardActionIcon', function(){
 		return {
 			restrict: 'A',
@@ -342,10 +453,13 @@ angular.module('cards')
 	.directive('stopEvent', function(){
 		return{
 			restrict: 'A',
-			link: function(scope, element, attr){
+			link: function(scope, element, attrs){
 				var _pressEvents = 'touchstart mousedown';
 				element.on(_pressEvents, function(event){
-					event.stopPropagation();
+					console.log(scope);
+					if(!scope.panel.x_overlap && !scope.panel.y_overlap){
+						event.stopPropagation();
+					}
 				});
 			}
 		};
@@ -353,7 +467,7 @@ angular.module('cards')
 	.directive('stopClick', function(){
 		return{
 			restrict: 'A',
-			link: function(scope, element, attr){
+			link: function(scope, element, attrs){
 				element.on('click', function(event){
 					event.stopPropagation();
 				});
@@ -392,6 +506,7 @@ angular.module('cards')
 	.directive('fitContent', function(){
 		return {
 			restrict: 'A',
+			scope: false,
 			link: function(scope, element, attrs){
 				
 				var reduceText = function(){
@@ -463,12 +578,16 @@ angular.module('cards')
 			templateUrl: '../modules/pcs/views/card-pc-3.html'
 		};
 	})
-	.directive('featureCard', function(){
+	.directive('featureCard', ['DataSRVC', function(DataSRVC){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/cards/views/feature-card.html'
+			templateUrl: '../modules/cards/views/feature-card.html',
+			scope: { card: '=', panel: '=' },
+			link: function(scope, element, attrs){
+				scope.dataSRVC = DataSRVC;
+			}
 		};
-	})
+	}])
 	.directive('narratorOptions', function(){
 		return {
 			restrict: 'A',
@@ -514,13 +633,13 @@ angular.module('cards')
 	.directive('campaignSummary', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/campaign/views/campaign-summary.html'
+			templateUrl: '../modules/campaigns/views/campaign-summary.html'
 		};
 	})
 	.directive('campaignOptions', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/campaign/views/campaign-options.html'
+			templateUrl: '../modules/campaigns/views/campaign-options.html'
 		};
 	});
 'use strict';
@@ -1482,7 +1601,7 @@ angular.module('core').factory('Socket', ['socketFactory',
 
 // Directive for managing card decks.
 angular.module('decks')
-	.directive('cardDeck', ['$rootScope', '$window', 'CardDeck', function($rootScope, $window, CardDeck){
+	.directive('cardDeck', ['$rootScope', '$window', 'CardDeck', 'BREAD', function($rootScope, $window, CardDeck, BREAD){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -1544,10 +1663,11 @@ angular.module('decks')
 				};
 				
 				var onMoveCard = function(event, object){
+					
 					var deckOffset = element.offset();
-					var deckWidth = element[0].offsetWidth;
+					var deckWidth = BREAD.deckWidth();
 					var deckLeftEdge = deckOffset.left;
-					var deckRightEdge = deckLeftEdge + deckWidth - convertEm(3);
+					var deckRightEdge = convertEm(deckWidth + 3);
 					
 					if(object.mouseX <= deckLeftEdge){
 						scope.$emit('cardDeck:unstackLeft', {
@@ -1588,10 +1708,10 @@ angular.module('decks')
 				var _startX, _startY, 
 					_mouseX, _mouseY,
 					_moveX, _moveY,
-					_cardX, _cardY,
+					_panelX, _panelY,
 					_slotX, _slotY,
-					_startCol, _mouseCol, _cardCol,
-					_startRow, _mouseRow, _cardRow,
+					_startCol, _mouseCol, _panelCol,
+					_startRow, _mouseRow, _panelRow,
 					_moveTimer,
 					_x_dim, _y_dim,
 					_x_tab, _y_tab,
@@ -1601,7 +1721,7 @@ angular.module('decks')
 				
 				var _stacked = false;
 				
-				var _card = $parse(attrs.card) || null;
+				var _panel = $parse(attrs.panel) || null;
 				
 				var _hasTouch = ('ontouchstart' in window);
 				
@@ -1626,15 +1746,15 @@ angular.module('decks')
 					
 					// add listeners.
 					scope.$on('$destroy', onDestroy);
-					scope.$watch(attrs.card, onCardChange);
+					scope.$watch(attrs.panel, onCardChange);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
 					scope.$on('cardPanel:onPressCard', onPressCard);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
 					scope.$on('CardsCtrl:onDropdown', onDropdown);
-					scope.$watch('card.x_coord', resetPosition);
-					scope.$watch('card.y_coord', resetPosition);
+					scope.$watch('panel.x_coord', resetPosition);
+					scope.$watch('panel.y_coord', resetPosition);
 					element.on(_pressEvents, onPress);
 					
 					// prevent native drag for images
@@ -1648,7 +1768,7 @@ angular.module('decks')
 				};
 				
 				var onCardChange = function(newVal, oldVal){
-					_card = newVal;
+					_panel = newVal;
 					
 					element.css({
 						top: '0',
@@ -1657,7 +1777,7 @@ angular.module('decks')
 					
 					setTimeout(function(){
 						setPosition();
-						setRotation();
+				//		setOffset();
 					}, 0);
 				};
 				
@@ -1689,23 +1809,25 @@ angular.module('decks')
 				var resetPosition = function(newVal, oldVal){
 					if(element.hasClass('card-moving')){
 						setPosition();
-						setRotation();
+					//	setOffset();
 					}
 				};
 				
 				var setPosition = function(){
 					element.css({
-						top: _card.y_coord + 'em',
-						left: _card.x_coord + 'em'
+						top: _panel.y_coord + 'em',
+						left: _panel.x_coord + 'em'
 					});
 				};
 				
-				var setRotation = function(){
+				var setOffset = function(){
+					var offset = Math.random()*0.2 - 0.1;
 					element.css({
-						transform: 'rotate('+(Math.random()*2 - 1)+'deg)',
-						
+						'-ms-transform': 'translate('+offset+'em,'+offset+'em)',
+						'-webkit-transform': 'translate('+offset+'em,'+offset+'em)',
+						'transform': 'translate('+offset+'em,'+offset+'em)'
 					});
-				}
+				};
 				
 				// When the element is clicked start the drag behaviour
 				var onPress = function(event){
@@ -1752,21 +1874,21 @@ angular.module('decks')
 					$rootScope.$broadcast('cardPanel:onPressCard', {
 						startX: _startX,
 						startY: _startY,
-						panel: _card
+						panel: _panel
 					});
 				};
 				
 				var onPressCard = function(event, object){
 					
-					_startCol = convertEm(_card.x_coord);
-					_startRow = convertEm(_card.y_coord);
+					_startCol = convertEm(_panel.x_coord);
+					_startRow = convertEm(_panel.y_coord);
 					
 					var panel = object.panel;
 					var panel_x = panel.x_coord;
 					var panel_y = panel.y_coord;
 					var panel_y_overlap = panel.y_overlap;
 					
-					var slot = _card;
+					var slot = _panel;
 					var slot_x = slot.x_coord;
 					var slot_y = slot.y_coord;
 					
@@ -1789,14 +1911,14 @@ angular.module('decks')
 					_mouseX = (event.pageX || event.touches[0].pageX);
 					_mouseY = (event.pageY || event.touches[0].pageY);
 					
-					_mouseCol = convertEm(_card.x_coord);
-					_mouseRow = convertEm(_card.y_coord);
+					_mouseCol = convertEm(_panel.x_coord);
+					_mouseRow = convertEm(_panel.y_coord);
 					
 					_moveX = _mouseX - _startX;
 					_moveY = _mouseY - _startY;
 					
-					_cardX = _moveX + _startCol - (_startCol - _mouseCol);
-					_cardY = _moveY + _startRow - (_startRow - _mouseRow);
+					_panelX = _moveX + _startCol - (_startCol - _mouseCol);
+					_panelY = _moveY + _startRow - (_startRow - _mouseRow);
 					
 					element.css({
 						left: _moveX + _startCol + 'px',
@@ -1808,9 +1930,9 @@ angular.module('decks')
 						mouseY: _mouseY,
 						moveX: _moveX,
 						moveY: _moveY,
-						panelX: _cardX,
-						panelY: _cardY,
-						panel: _card
+						panelX: _panelX,
+						panelY: _panelY,
+						panel: _panel
 					});
 				};
 				
@@ -1832,7 +1954,7 @@ angular.module('decks')
 					var panel_x_overlap = panel.x_overlap;
 					var panel_y_overlap = panel.y_overlap;
 					
-					var slot = _card;
+					var slot = _panel;
 					var slot_x = slot.x_coord;
 					var slot_y = slot.y_coord;
 					var slot_x_overlap = slot.x_overlap;
@@ -1912,11 +2034,11 @@ angular.module('decks')
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
-						panel: _card
+						panel: _panel
 					});
 					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
-							panel: _card
+							panel: _panel
 						});
 					}
 				};
@@ -1940,7 +2062,7 @@ angular.module('decks')
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
-						panel: _card
+						panel: _panel
 					});
 				};
 				
@@ -1949,12 +2071,12 @@ angular.module('decks')
 					var cardOffset = element.offset();
 					var slotX = cardOffset.left;
 					var slotY = cardOffset.top;
-					var leftEdge = _card.x_overlap ? slotX + _x_cover : slotX;
+					var leftEdge = _panel.x_overlap ? slotX + _x_cover : slotX;
 					var rightEdge = slotX + _x_dim;
 					var topEdge = slotY;
-					var bottomEdge = _card.y_overlap ? slotY + _y_tab : slotY + _y_dim;
+					var bottomEdge = _panel.y_overlap ? slotY + _y_tab : slotY + _y_dim;
 					
-				//	console.log('testing '+_card.name+':  X '+_card.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_card.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
+				//	console.log('testing '+_panel.name+':  X '+_panel.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_panel.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
 					
 					if(mouseX >= leftEdge && mouseX <= rightEdge && mouseY >= topEdge && mouseY <= bottomEdge){
 						var left = mouseX - leftEdge;
@@ -1967,7 +2089,7 @@ angular.module('decks')
 						edgeNames = ['left', 'right', 'top', 'bottom'],
 						edgeName = edgeNames[edges.indexOf(closestEdge)];
 						
-				//		console.log('crossing '+edgeName+' edge of '+_card.name+':  X '+_card.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_card.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
+				//		console.log('crossing '+edgeName+' edge of '+_panel.name+':  X '+_panel.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_panel.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
 						
 						return edgeName;
 					}
@@ -1985,21 +2107,57 @@ angular.module('decks')
 	.factory('BREAD', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'pcsDefaults',
 			function($stateParams, $location, Authentication, $resource, $rootScope, pcsDefaults){
 		
-		var Pcs = $resource(
-			'pcs/:pcId',
-			{ pcId: '@_id' },
+		var Aspects = $resource(
+			'aspects/:aspectId:aspectType',
+			{ aspectId: '@_id' },
 			{ update: { method: 'PUT' } }
 		);
 		
 		var Cards = $resource(
-			'cards/:cardId:cardType',
-			{ cardId: '@_id'},
+			'cards/:cardId',
+			{ cardId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Traits = $resource(
+			'traits/:traitId',
+			{ traitId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Feats = $resource(
+			'feats/:featId',
+			{ featId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Augments = $resource(
+			'augments/:augmentId',
+			{ augmentId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Items = $resource(
+			'items/:itemId',
+			{ itemId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Origins = $resource(
+			'origins/:originId',
+			{ originId: '@_id' },
 			{ update: { method: 'PUT' } }
 		);
 		
 		var Decks = $resource(
 			'decks/:deckId:deckType',
-			{ deckId: '@_id'},
+			{ deckId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Pcs = $resource(
+			'pcs/:pcId',
+			{ pcId: '@_id' },
 			{ update: { method: 'PUT' } }
 		);
 		
@@ -2043,8 +2201,40 @@ angular.module('decks')
 			}
 		};
 		
+		service.toggleCardLock = function(panel){
+			for(var i = 0; i < service.resource.cardList.length; i++){
+				if(panel === service.resource.cardList[i]){
+					service.resource.cardList[i].locked = !service.resource.cardList[i].locked;
+				}
+			}
+		};
+		
 		// BROWSE
-		service.browsePcs = function() {
+		
+		service.browseAspects = function(aspectType){
+			service.resource = {};
+			service.resource.cardList = [];
+			Aspects.query(
+				function(response){
+					setCardList(response);
+				}
+			);
+		};
+		
+		service.browseDecks = function(){
+			service.resource = {};
+			service.resource.cardList = [];
+			Decks.query(
+				function(response){
+					response.unshift({
+						cardRole: 'architectOptions'
+					});
+					setCardList(response);
+				}
+			);
+		};
+		
+		service.browsePcs = function(){
 			service.resource = {};
 			service.resource.cardList = [];
 			Pcs.query(
@@ -2057,20 +2247,62 @@ angular.module('decks')
 			);
 		};
 		
-		service.browseDecks = function(){
-			service.resource = {};
-			service.resource.cardList = [];
-			Decks.query(
-				function(response) {
-					response.unshift({
-						cardRole: 'architectOptions'
-					});
-					setCardList(response);
-				}
-			);
+		// READ
+		
+		service.readAspect = function(aspect){
+			var _aspect = Aspects.get({
+				aspectId: aspect._id
+			});
+			return _aspect;
 		};
 		
-		// READ
+		service.readCard = function(card){
+			console.log('readCard: ' + card._id);
+			console.log(card);
+			
+			var _card;
+			
+			if(card.cardType === 'Trait'){
+				_card = Traits.get({
+					traitId: card._id
+				});
+			} else if(card.cardType === 'Feat'){
+				_card = Feats.get({
+					featId: card._id
+				});
+			} else if(card.cardType === 'Augment'){
+				_card = Augments.get({
+					augmentId: card._id
+				});
+			} else if(card.cardType === 'Item'){
+				_card = Items.get({
+					itemId: card._id
+				});
+			} else if(card.cardType === 'Origin'){
+				_card = Origins.get({
+					originId: card._id
+				});
+			}
+			
+			_card.$promise.then(function(response){
+				console.log(response);
+			});
+		};
+		
+		service.readDeck = function(deck){
+			console.log('readDeck: ' + deck._id);
+			console.log(deck);
+			
+			service.resource = Decks.get({
+				deckId: deck._id
+			});
+			
+			service.resource.$promise.then(function(response){
+				console.log(response);
+			});
+			
+		};
+		
 		service.readPc = function(pc) {
 			service.resource = Pcs.get({
 				pcId: pc._id
@@ -2079,23 +2311,75 @@ angular.module('decks')
 			});
 		};
 		
-		service.readCard = function(card){
-			var _card = Cards.get({
-				cardId: card._id
-			});
-			return _card;
-		};
-		
-		service.readDeck = function(deck){
-			console.log('readDeck');
-			service.resource = Decks.get({
-				deckId: deck._id
-			}, function(response){
-				console.log(response);
-			});
-		};
-		
 		//EDIT
+		service.editAspect = function(aspect){
+			aspect.$update(function(response) {
+				
+			}, function(errorResponse) {
+				console.log(errorResponse);
+			});
+		};
+		
+		service.editCard = function(card) {
+			var _card = 0;
+			
+			if(card.cardType === 'Trait'){
+				_card = new Traits(card);
+			} else if(card.cardType === 'Feat'){
+				_card = new Feats(card);
+			} else if(card.cardType === 'Augment'){
+				_card = new Augments(card);
+			} else if(card.cardType === 'Item'){
+				_card = new Items(card);
+			} else if(card.cardType === 'Origin'){
+				_card = new Origins(card);
+			}
+			
+			if(_card){
+				_card.$update();
+			}
+		};
+		
+		service.editDeck = function(deck) {
+			var _deck = new Decks(deck);
+			
+			_deck.$update(function(response) {
+				for(var i = 0; i < deck.cardList.length; i++){
+					service.editPanel(deck.cardList[i]);
+				}
+			}, function(errorResponse) {
+				console.log(errorResponse);
+			});
+		};
+		
+		service.editPanel = function(panel){
+			var _card = 0;
+			
+			if(panel.cardRole === 'Trait'){
+				_card = new Traits(panel.traitData);
+			} else if(panel.cardRole === 'Feat'){
+				_card = new Feats(panel.featData);
+			} else if(panel.cardRole === 'Augment'){
+				_card = new Augments(panel.augmentData);
+			} else if(panel.cardRole === 'Item'){
+				_card = new Items(panel.itemData);
+			} else if(panel.cardRole === 'Origin'){
+				_card = new Origins(panel.originData);
+			}
+			
+			if(_card){
+				_card.$update();
+			}
+		};
+		
+		service.editDeckStructure = function(deck){
+			deck.$update(function(response){
+				
+			}, function(errorResponse){
+				console.log(errorResponse);
+			});
+		};
+		
 		service.editPc = function(pc) {
 			pc.$update(function(response) {
 				
@@ -2104,71 +2388,117 @@ angular.module('decks')
 			});
 		};
 		
-		service.editCard = function(card) {
-			if(card.data){
-				console.log(card);
-				var _card = new Cards(card.data);
-				
-				_card.$update(function(response) {
-					
-				}, function(errorResponse) {
-					console.log(errorResponse);
-				});
-			} else if(!card.data){
-				card.$update(function(response) {
-					
-				}, function(errorResponse) {
-					console.log(errorResponse);
-				});
-			}
-		};
-		
-		service.editDeck = function(deck) {
-			deck.$update(function(response) {
-				
-			}, function(errorResponse) {
-				console.log(errorResponse);
-			});
-		};
-		
 		// ADD
-		service.addPc = function(){
-			var pc = new Pcs (
-				pcsDefaults
+		
+		service.addAspect = function(){
+			var aspect = new Aspects (
+				
 			);
 			
-			pc.$save(function(response){
+			aspect.$save(function(response){
 				service.resource = response;
 			});
 		};
 		
 		service.addCard = function(deck, cardType, cardNumber, saveDeck){
-			var cardData = new Cards({
-				cardSet: deck.deckSize,
-				cardNumber: cardNumber,
-				cardType: cardType
-			});
+			var cardData;
 			
-			cardData.$save(function(response){
-				deck.cardList.push({
-					data: response,
-					cardRole: 'featureCard',
-					x_coord: cardNumber * 15,
-					y_coord: 0,
-					x_overlap: false,
-					y_overlap: false,
-					dragging: false,
-					stacked: false,
-					locked: false
+			if(cardType === 'Trait'){
+				cardData = new Traits({
+					cardSet: deck.deckSize,
+					cardNumber: cardNumber,
+					cardType: cardType
 				});
-			}).then(function(response){
-				if(saveDeck){
-					console.log('saveDeck');
-					deck.$update(function(response){
-						service.resource = response;
+				cardData.$save(function(response){
+					deck.cardList.push({
+						traitData: response,
+						cardRole: cardType,
+						x_coord: cardNumber * 15
 					});
-				}
-			});
+				}).then(function(response){
+					if(saveDeck){
+						deck.$update(function(response){
+							service.resource = response;
+						});
+					}
+				});
+			} else if(cardType === 'Feat'){
+				cardData = new Feats({
+					cardSet: deck.deckSize,
+					cardNumber: cardNumber,
+					cardType: cardType
+				});
+				cardData.$save(function(response){
+					deck.cardList.push({
+						featData: response,
+						cardRole: cardType,
+						x_coord: cardNumber * 15
+					});
+				}).then(function(response){
+					if(saveDeck){
+						deck.$update(function(response){
+							service.resource = response;
+						});
+					}
+				});
+			} else if(cardType === 'Augment'){
+				cardData = new Augments({
+					cardSet: deck.deckSize,
+					cardNumber: cardNumber,
+					cardType: cardType
+				});
+				cardData.$save(function(response){
+					deck.cardList.push({
+						augmentData: response,
+						cardRole: cardType,
+						x_coord: cardNumber * 15
+					});
+				}).then(function(response){
+					if(saveDeck){
+						deck.$update(function(response){
+							service.resource = response;
+						});
+					}
+				});
+			} else if(cardType === 'Item'){
+				cardData = new Items({
+					cardSet: deck.deckSize,
+					cardNumber: cardNumber,
+					cardType: cardType
+				});
+				cardData.$save(function(response){
+					deck.cardList.push({
+						itemData: response,
+						cardRole: cardType,
+						x_coord: cardNumber * 15
+					});
+				}).then(function(response){
+					if(saveDeck){
+						deck.$update(function(response){
+							service.resource = response;
+						});
+					}
+				});
+			} else if(cardType === 'Origin'){
+				cardData = new Origins({
+					cardSet: deck.deckSize,
+					cardNumber: cardNumber,
+					cardType: cardType
+				});
+				cardData.$save(function(response){
+					deck.cardList.push({
+						originData: response,
+						cardRole: cardType,
+						x_coord: cardNumber * 15
+					});
+				}).then(function(response){
+					if(saveDeck){
+						deck.$update(function(response){
+							service.resource = response;
+						});
+					}
+				});
+			}
 		};
 		
 		service.addDeck = function(type, size){
@@ -2179,14 +2509,7 @@ angular.module('decks')
 				deckSize: size,
 				cardList: [{
 					cardRole: 'deckOptions',
-					x_coord: 0,
-					y_coord: 0,
-					x_overlap: false,
-					y_overlap: false,
-					dragging: false,
-					stacked: false,
-					locked: false
-					
+					x_coord: 0
 				}]
 			});
 			
@@ -2196,14 +2519,26 @@ angular.module('decks')
 						service.addCard(deck, type, i+1, (i+1 === size));
 					}
 				});
+			
+			console.log(deck);
+		};
+		
+		service.addPc = function(){
+			var pc = new Pcs (
+				pcsDefaults
+			);
+			
+			pc.$save(function(response){
+				service.resource = response;
+			});
 		};
 		
 		// DELETE existing Pc
-		service.deletePc = function(pc) {
-			if(pc){
-				pc.$remove(function(response){
+		service.deleteAspect = function(aspect){
+			if(aspect){
+				aspect.$remove(function(response){
 					for (var i in service.resource.cardList ) {
-						if (service.resource.cardList[i] === pc ) {
+						if (service.resource.cardList[i] === aspect ) {
 							service.resource.cardList.splice(i, 1);
 						}
 					}
@@ -2263,6 +2598,18 @@ angular.module('decks')
 							var card = new Cards(response.cardList[ii].data);
 							console.log(card);
 							card.$remove();
+						}
+					}
+				});
+			}
+		};
+		
+		service.deletePc = function(pc) {
+			if(pc){
+				pc.$remove(function(response){
+					for (var i in service.resource.cardList ) {
+						if (service.resource.cardList[i] === pc ) {
+							service.resource.cardList.splice(i, 1);
 						}
 					}
 				});

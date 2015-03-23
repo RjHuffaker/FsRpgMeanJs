@@ -1,18 +1,18 @@
 <div class="title-row text-8">
-	<div ng-if="$parent.card.locked" class="title-block">
+	<div ng-if="panel.locked" class="title-block">
 		<strong class="pull-left">{{cardAction.name}}</strong>
 	</div>
-	<div ng-if="!$parent.card.locked" class="title-block">
+	<div ng-if="!panel.locked" class="title-block">
 		<input stop-event
 			type="text" class="card-input fill-width pull-left"
 			style="font-weight: bold;"
 			ng-model="cardAction.name">
 	</div>
-	<div ng-if="$parent.card.locked && cardAction.usage !== 'Defense'" class="title-block">
+	<div ng-if="panel.locked && cardAction.usage !== 'Defense'" class="title-block">
 		<span class="pull-right">{{cardAction.targetType}} {{cardAction.targetDetail}}</span>
 		<span class="pull-right" ng-if="!cardAction.targetType && !cardAction.targetDetail && cardAction.usage !== 'Defense'">[Target]</span>
 	</div>
-	<div ng-if="!$parent.card.locked && cardAction.usage !== 'Defense'" class="title-block">
+	<div ng-if="!panel.locked && cardAction.usage !== 'Defense'" class="title-block">
 		<div class="dropdown pull-right" dropdown stop-event on-toggle="$parent.$parent.toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
 				ng-if="cardAction.usage !== 'Defense'"
@@ -23,7 +23,7 @@
 			<div class="dropdown-menu" style="width: 16em;" aria-labelledby="cardDropdown" stop-click>
 				<ul class="col-xs-6">
 					<li role="presentation" class="dropdown-header">Target Type</li>
-					<li ng-repeat="targetType in $parent.$parent.dataSRVC.targetTypes"><label>
+					<li ng-repeat="targetType in dataSRVC.targetTypes"><label>
 						<input type="radio" value="{{targetType}}"
 							ng-model="cardAction.targetType">
 						{{targetType}}
@@ -32,25 +32,25 @@
 				<ul class="col-xs-6">
 					<li role="presentation" class="dropdown-header">Target Details</li>
 					<li style="display: inline-block; width: 50%;" ng-if="cardAction.targetType === 'Close'"
-						ng-repeat="detail in $parent.$parent.dataSRVC.closeDetails"><label>
+						ng-repeat="detail in dataSRVC.closeDetails"><label>
 						<input type="radio" value="{{detail}}"
 							ng-model="cardAction.targetDetail">
 						{{detail}}
 					</label></li>
 					<li ng-if="cardAction.targetType === 'Close Area'"
-						ng-repeat="detail in $parent.$parent.dataSRVC.closeAreaDetails"><label>
+						ng-repeat="detail in dataSRVC.closeAreaDetails"><label>
 						<input type="radio" value="{{detail}}"
 							ng-model="cardAction.targetDetail">
 						{{detail}}
 					</label></li>
 					<li style="display: inline-block; width: 50%;" ng-if="cardAction.targetType === 'Distant'"
-						ng-repeat="detail in $parent.$parent.dataSRVC.distantDetails"><label>
+						ng-repeat="detail in dataSRVC.distantDetails"><label>
 						<input type="radio" value="{{detail}}"
 							ng-model="cardAction.targetDetail">
 						{{detail}}
 					</label></li>
 					<li ng-if="cardAction.targetType === 'Distant Area'"
-						ng-repeat="detail in $parent.$parent.dataSRVC.distantAreaDetails"><label>
+						ng-repeat="detail in dataSRVC.distantAreaDetails"><label>
 						<input type="radio" value="{{detail}}"
 							ng-model="cardAction.targetDetail">
 						{{detail}}

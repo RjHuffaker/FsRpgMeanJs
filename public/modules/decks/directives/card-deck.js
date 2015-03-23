@@ -2,7 +2,7 @@
 
 // Directive for managing card decks.
 angular.module('decks')
-	.directive('cardDeck', ['$rootScope', '$window', 'CardDeck', function($rootScope, $window, CardDeck){
+	.directive('cardDeck', ['$rootScope', '$window', 'CardDeck', 'BREAD', function($rootScope, $window, CardDeck, BREAD){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -64,10 +64,11 @@ angular.module('decks')
 				};
 				
 				var onMoveCard = function(event, object){
+					
 					var deckOffset = element.offset();
-					var deckWidth = element[0].offsetWidth;
+					var deckWidth = BREAD.deckWidth();
 					var deckLeftEdge = deckOffset.left;
-					var deckRightEdge = deckLeftEdge + deckWidth - convertEm(3);
+					var deckRightEdge = convertEm(deckWidth + 3);
 					
 					if(object.mouseX <= deckLeftEdge){
 						scope.$emit('cardDeck:unstackLeft', {

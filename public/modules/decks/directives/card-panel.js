@@ -15,10 +15,10 @@ angular.module('decks')
 				var _startX, _startY, 
 					_mouseX, _mouseY,
 					_moveX, _moveY,
-					_cardX, _cardY,
+					_panelX, _panelY,
 					_slotX, _slotY,
-					_startCol, _mouseCol, _cardCol,
-					_startRow, _mouseRow, _cardRow,
+					_startCol, _mouseCol, _panelCol,
+					_startRow, _mouseRow, _panelRow,
 					_moveTimer,
 					_x_dim, _y_dim,
 					_x_tab, _y_tab,
@@ -28,7 +28,7 @@ angular.module('decks')
 				
 				var _stacked = false;
 				
-				var _card = $parse(attrs.card) || null;
+				var _panel = $parse(attrs.panel) || null;
 				
 				var _hasTouch = ('ontouchstart' in window);
 				
@@ -53,15 +53,15 @@ angular.module('decks')
 					
 					// add listeners.
 					scope.$on('$destroy', onDestroy);
-					scope.$watch(attrs.card, onCardChange);
+					scope.$watch(attrs.panel, onCardChange);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
 					scope.$on('cardPanel:onPressCard', onPressCard);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
 					scope.$on('CardsCtrl:onDropdown', onDropdown);
-					scope.$watch('card.x_coord', resetPosition);
-					scope.$watch('card.y_coord', resetPosition);
+					scope.$watch('panel.x_coord', resetPosition);
+					scope.$watch('panel.y_coord', resetPosition);
 					element.on(_pressEvents, onPress);
 					
 					// prevent native drag for images
@@ -75,7 +75,7 @@ angular.module('decks')
 				};
 				
 				var onCardChange = function(newVal, oldVal){
-					_card = newVal;
+					_panel = newVal;
 					
 					element.css({
 						top: '0',
@@ -84,7 +84,7 @@ angular.module('decks')
 					
 					setTimeout(function(){
 						setPosition();
-						setRotation();
+				//		setOffset();
 					}, 0);
 				};
 				
@@ -116,23 +116,25 @@ angular.module('decks')
 				var resetPosition = function(newVal, oldVal){
 					if(element.hasClass('card-moving')){
 						setPosition();
-						setRotation();
+					//	setOffset();
 					}
 				};
 				
 				var setPosition = function(){
 					element.css({
-						top: _card.y_coord + 'em',
-						left: _card.x_coord + 'em'
+						top: _panel.y_coord + 'em',
+						left: _panel.x_coord + 'em'
 					});
 				};
 				
-				var setRotation = function(){
+				var setOffset = function(){
+					var offset = Math.random()*0.2 - 0.1;
 					element.css({
-						transform: 'rotate('+(Math.random()*2 - 1)+'deg)',
-						
+						'-ms-transform': 'translate('+offset+'em,'+offset+'em)',
+						'-webkit-transform': 'translate('+offset+'em,'+offset+'em)',
+						'transform': 'translate('+offset+'em,'+offset+'em)'
 					});
-				}
+				};
 				
 				// When the element is clicked start the drag behaviour
 				var onPress = function(event){
@@ -179,21 +181,21 @@ angular.module('decks')
 					$rootScope.$broadcast('cardPanel:onPressCard', {
 						startX: _startX,
 						startY: _startY,
-						panel: _card
+						panel: _panel
 					});
 				};
 				
 				var onPressCard = function(event, object){
 					
-					_startCol = convertEm(_card.x_coord);
-					_startRow = convertEm(_card.y_coord);
+					_startCol = convertEm(_panel.x_coord);
+					_startRow = convertEm(_panel.y_coord);
 					
 					var panel = object.panel;
 					var panel_x = panel.x_coord;
 					var panel_y = panel.y_coord;
 					var panel_y_overlap = panel.y_overlap;
 					
-					var slot = _card;
+					var slot = _panel;
 					var slot_x = slot.x_coord;
 					var slot_y = slot.y_coord;
 					
@@ -216,14 +218,14 @@ angular.module('decks')
 					_mouseX = (event.pageX || event.touches[0].pageX);
 					_mouseY = (event.pageY || event.touches[0].pageY);
 					
-					_mouseCol = convertEm(_card.x_coord);
-					_mouseRow = convertEm(_card.y_coord);
+					_mouseCol = convertEm(_panel.x_coord);
+					_mouseRow = convertEm(_panel.y_coord);
 					
 					_moveX = _mouseX - _startX;
 					_moveY = _mouseY - _startY;
 					
-					_cardX = _moveX + _startCol - (_startCol - _mouseCol);
-					_cardY = _moveY + _startRow - (_startRow - _mouseRow);
+					_panelX = _moveX + _startCol - (_startCol - _mouseCol);
+					_panelY = _moveY + _startRow - (_startRow - _mouseRow);
 					
 					element.css({
 						left: _moveX + _startCol + 'px',
@@ -235,9 +237,9 @@ angular.module('decks')
 						mouseY: _mouseY,
 						moveX: _moveX,
 						moveY: _moveY,
-						panelX: _cardX,
-						panelY: _cardY,
-						panel: _card
+						panelX: _panelX,
+						panelY: _panelY,
+						panel: _panel
 					});
 				};
 				
@@ -259,7 +261,7 @@ angular.module('decks')
 					var panel_x_overlap = panel.x_overlap;
 					var panel_y_overlap = panel.y_overlap;
 					
-					var slot = _card;
+					var slot = _panel;
 					var slot_x = slot.x_coord;
 					var slot_y = slot.y_coord;
 					var slot_x_overlap = slot.x_overlap;
@@ -339,11 +341,11 @@ angular.module('decks')
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
-						panel: _card
+						panel: _panel
 					});
 					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
 						$rootScope.$broadcast('cardPanel:toggleOverlap', {
-							panel: _card
+							panel: _panel
 						});
 					}
 				};
@@ -367,7 +369,7 @@ angular.module('decks')
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
-						panel: _card
+						panel: _panel
 					});
 				};
 				
@@ -376,12 +378,12 @@ angular.module('decks')
 					var cardOffset = element.offset();
 					var slotX = cardOffset.left;
 					var slotY = cardOffset.top;
-					var leftEdge = _card.x_overlap ? slotX + _x_cover : slotX;
+					var leftEdge = _panel.x_overlap ? slotX + _x_cover : slotX;
 					var rightEdge = slotX + _x_dim;
 					var topEdge = slotY;
-					var bottomEdge = _card.y_overlap ? slotY + _y_tab : slotY + _y_dim;
+					var bottomEdge = _panel.y_overlap ? slotY + _y_tab : slotY + _y_dim;
 					
-				//	console.log('testing '+_card.name+':  X '+_card.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_card.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
+				//	console.log('testing '+_panel.name+':  X '+_panel.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_panel.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
 					
 					if(mouseX >= leftEdge && mouseX <= rightEdge && mouseY >= topEdge && mouseY <= bottomEdge){
 						var left = mouseX - leftEdge;
@@ -394,7 +396,7 @@ angular.module('decks')
 						edgeNames = ['left', 'right', 'top', 'bottom'],
 						edgeName = edgeNames[edges.indexOf(closestEdge)];
 						
-				//		console.log('crossing '+edgeName+' edge of '+_card.name+':  X '+_card.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_card.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
+				//		console.log('crossing '+edgeName+' edge of '+_panel.name+':  X '+_panel.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_panel.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
 						
 						return edgeName;
 					}
