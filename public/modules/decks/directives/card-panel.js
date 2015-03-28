@@ -51,7 +51,7 @@ angular.module('decks')
 					// remove listeners
 					if (!enable)return;
 					
-					// add listeners.
+					// add listeners
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.panel, onCardChange);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
@@ -60,6 +60,7 @@ angular.module('decks')
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
 					scope.$on('CardsCtrl:onDropdown', onDropdown);
+					scope.$on('BREAD:onDeckChange', onReleaseCard);
 					scope.$watch('panel.x_coord', resetPosition);
 					scope.$watch('panel.y_coord', resetPosition);
 					element.on(_pressEvents, onPress);
@@ -271,7 +272,7 @@ angular.module('decks')
 					var changeY = Math.abs(panel_y - slot_y);
 					
 					if(changeX === 0 && slot_y > panel_y && panel_y_overlap){
-						if(!element.hasClass('card-moving')){
+						if(!element.hasClass('card-moving')){	//Enables moving all cards within a stack
 							element.css({
 								left: (_startCol + moveX) + 'px',
 								top: (_startRow + moveY) + 'px'
@@ -279,17 +280,20 @@ angular.module('decks')
 						}
 					} else if(changeX > 0 || changeY > 0){
 						if(crossingEdge(mouseX, mouseY) === 'top'){
-							if(vectorX > 0 && !slot_x_overlap && !panel_x_overlap){
+							if(vectorX > 0 && !slot_y_overlap && !slot_x_overlap && !panel_x_overlap){
+								console.log('cardSlot:moveDiagonalUp');
 								scope.$emit('cardSlot:moveDiagonalUp', {
 									slot: slot,
 									panel: panel
 								});
 							} else if(changeX === 0 && !panel_y_overlap){
+								console.log('cardSlot:moveVertical');
 								scope.$emit('cardSlot:moveVertical', {
 									slot: slot,
 									panel: panel
 								});
 							} else {
+								console.log('cardSlot:moveHorizontal');
 								scope.$emit('cardSlot:moveHorizontal', {
 									slot: slot,
 									panel: panel
@@ -297,16 +301,19 @@ angular.module('decks')
 							}
 						} else if(crossingEdge(mouseX, mouseY) === 'bottom'){
 							if(changeX > 0 && changeX <= _x_dim){
+								console.log('cardSlot:moveDiagonalDown');
 								scope.$emit('cardSlot:moveDiagonalDown', {
 									slot: slot,
 									panel: panel
 								});
 							} else if(changeX === 0 && !panel_y_overlap){
+								console.log('cardSlot:moveVertical');
 								scope.$emit('cardSlot:moveVertical', {
 									slot: slot,
 									panel: panel
 								});
 							} else {
+								console.log('cardSlot:moveHorizontal');
 								scope.$emit('cardSlot:moveHorizontal', {
 									slot: slot,
 									panel: panel
@@ -315,17 +322,20 @@ angular.module('decks')
 						} else if(crossingEdge(mouseX, mouseY) === 'left' || crossingEdge(mouseX, mouseY) === 'right'){
 							if(vectorY * 2 > vectorX){
 								if(moveY < 0){
+									console.log('cardSlot:moveDiagonalUp');
 									scope.$emit('cardSlot:moveDiagonalUp', {
 										slot: slot,
 										panel: panel
 									});
 								} else if(moveY > 0){
+									console.log('cardSlot:moveDiagonalDown');
 									scope.$emit('cardSlot:moveDiagonalDown', {
 										slot: slot,
 										panel: panel
 									});
 								}
 							} else {
+								console.log('cardSlot:moveHorizontal');
 								scope.$emit('cardSlot:moveHorizontal', {
 									slot: slot,
 									panel: panel

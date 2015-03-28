@@ -30,18 +30,11 @@ var Panel = {
 		type: Schema.Types.ObjectId,
 		ref: 'Origin'
 	},
-	cardNumber: {
-		type: Number
-	},
-	cardSet: {
-		type: Number
-	},
 	x_coord: {
 		type: Number
 	},
 	y_coord: {
-		type: Number,
-		default: 0
+		type: Number
 	},
 	x_overlap: {
 		type: Boolean,
@@ -94,7 +87,17 @@ var DeckSchema = new Schema({
 	},
 	cardList: [
 		Panel
-	]
+	],
+	x_coord: {
+		type: Number,
+		default: 0
+	},
+	y_coord: {
+		type: Number,
+		default: 0
+	}
 });
+
+DeckSchema.set('versionKey', false);
 
 mongoose.model('Deck', DeckSchema);

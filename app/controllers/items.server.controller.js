@@ -89,18 +89,7 @@ exports.list = function(req, res) {
  * Item middleware
  */
 exports.itemByID = function(req, res, next, id) {
-	console.log(id);
-	var itemId;
-	
-	if(mongoose.Types.ObjectId.isValid(id)){
-		itemId = id;
-		console.log('valid: '+itemId);
-	} else {
-		itemId = mongoose.Types.ObjectId.fromString(id);
-		console.log('invalid: '+itemId);
-	}
-	
-	Item.findById(itemId).populate('user', 'displayName').exec(function(err, item){
+	Item.findById(id).populate('user', 'displayName').exec(function(err, item){
 		if (err) console.log(err);
 		if (err) return next(err);
 		if (! item) return next(new Error('Failed to load Item ' + id));

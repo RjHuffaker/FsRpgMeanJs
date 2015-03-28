@@ -89,18 +89,7 @@ exports.list = function(req, res) {
  * Origin middleware
  */
 exports.originByID = function(req, res, next, id) {
-	console.log(id);
-	var originId;
-	
-	if(mongoose.Types.ObjectId.isValid(id)){
-		originId = id;
-		console.log('valid: '+originId);
-	} else {
-		originId = mongoose.Types.ObjectId.fromString(id);
-		console.log('invalid: '+originId);
-	}
-	
-	Origin.findById(originId).populate('user', 'displayName').exec(function(err, origin){
+	Origin.findById(id).populate('user', 'displayName').exec(function(err, origin){
 		if (err) console.log(err);
 		if (err) return next(err);
 		if (! origin) return next(new Error('Failed to load Origin ' + id));

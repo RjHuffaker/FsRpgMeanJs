@@ -89,18 +89,7 @@ exports.list = function(req, res) {
  * Feat middleware
  */
 exports.featByID = function(req, res, next, id) {
-	console.log(id);
-	var featId;
-	
-	if(mongoose.Types.ObjectId.isValid(id)){
-		featId = id;
-		console.log('valid: '+featId);
-	} else {
-		featId = mongoose.Types.ObjectId.fromString(id);
-		console.log('invalid: '+featId);
-	}
-	
-	Feat.findById(featId).populate('user', 'displayName').exec(function(err, feat){
+	Feat.findById(id).populate('user', 'displayName').exec(function(err, feat){
 		if (err) console.log(err);
 		if (err) return next(err);
 		if (! feat) return next(new Error('Failed to load Feat ' + id));

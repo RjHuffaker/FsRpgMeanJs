@@ -456,7 +456,6 @@ angular.module('cards')
 			link: function(scope, element, attrs){
 				var _pressEvents = 'touchstart mousedown';
 				element.on(_pressEvents, function(event){
-					console.log(scope);
 					if(!scope.panel.x_overlap && !scope.panel.y_overlap){
 						event.stopPropagation();
 					}
@@ -1744,7 +1743,7 @@ angular.module('decks')
 					// remove listeners
 					if (!enable)return;
 					
-					// add listeners.
+					// add listeners
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.panel, onCardChange);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
@@ -1753,6 +1752,7 @@ angular.module('decks')
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
 					scope.$on('CardsCtrl:onDropdown', onDropdown);
+					scope.$on('BREAD:onDeckChange', onReleaseCard);
 					scope.$watch('panel.x_coord', resetPosition);
 					scope.$watch('panel.y_coord', resetPosition);
 					element.on(_pressEvents, onPress);
@@ -1964,7 +1964,7 @@ angular.module('decks')
 					var changeY = Math.abs(panel_y - slot_y);
 					
 					if(changeX === 0 && slot_y > panel_y && panel_y_overlap){
-						if(!element.hasClass('card-moving')){
+						if(!element.hasClass('card-moving')){	//Enables moving all cards within a stack
 							element.css({
 								left: (_startCol + moveX) + 'px',
 								top: (_startRow + moveY) + 'px'
@@ -1972,17 +1972,20 @@ angular.module('decks')
 						}
 					} else if(changeX > 0 || changeY > 0){
 						if(crossingEdge(mouseX, mouseY) === 'top'){
-							if(vectorX > 0 && !slot_x_overlap && !panel_x_overlap){
+							if(vectorX > 0 && !slot_y_overlap && !slot_x_overlap && !panel_x_overlap){
+								console.log('cardSlot:moveDiagonalUp');
 								scope.$emit('cardSlot:moveDiagonalUp', {
 									slot: slot,
 									panel: panel
 								});
 							} else if(changeX === 0 && !panel_y_overlap){
+								console.log('cardSlot:moveVertical');
 								scope.$emit('cardSlot:moveVertical', {
 									slot: slot,
 									panel: panel
 								});
 							} else {
+								console.log('cardSlot:moveHorizontal');
 								scope.$emit('cardSlot:moveHorizontal', {
 									slot: slot,
 									panel: panel
@@ -1990,16 +1993,19 @@ angular.module('decks')
 							}
 						} else if(crossingEdge(mouseX, mouseY) === 'bottom'){
 							if(changeX > 0 && changeX <= _x_dim){
+								console.log('cardSlot:moveDiagonalDown');
 								scope.$emit('cardSlot:moveDiagonalDown', {
 									slot: slot,
 									panel: panel
 								});
 							} else if(changeX === 0 && !panel_y_overlap){
+								console.log('cardSlot:moveVertical');
 								scope.$emit('cardSlot:moveVertical', {
 									slot: slot,
 									panel: panel
 								});
 							} else {
+								console.log('cardSlot:moveHorizontal');
 								scope.$emit('cardSlot:moveHorizontal', {
 									slot: slot,
 									panel: panel
@@ -2008,17 +2014,20 @@ angular.module('decks')
 						} else if(crossingEdge(mouseX, mouseY) === 'left' || crossingEdge(mouseX, mouseY) === 'right'){
 							if(vectorY * 2 > vectorX){
 								if(moveY < 0){
+									console.log('cardSlot:moveDiagonalUp');
 									scope.$emit('cardSlot:moveDiagonalUp', {
 										slot: slot,
 										panel: panel
 									});
 								} else if(moveY > 0){
+									console.log('cardSlot:moveDiagonalDown');
 									scope.$emit('cardSlot:moveDiagonalDown', {
 										slot: slot,
 										panel: panel
 									});
 								}
 							} else {
+								console.log('cardSlot:moveHorizontal');
 								scope.$emit('cardSlot:moveHorizontal', {
 									slot: slot,
 									panel: panel
@@ -2113,12 +2122,6 @@ angular.module('decks')
 			{ update: { method: 'PUT' } }
 		);
 		
-		var Cards = $resource(
-			'cards/:cardId',
-			{ cardId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
-		
 		var Traits = $resource(
 			'traits/:traitId',
 			{ traitId: '@_id' },
@@ -2187,21 +2190,80 @@ angular.module('decks')
 			}
 		};
 		
-		var setCardList = function(list){
-			
+		var setCardList = function(list, _loadDeck){
+			console.log(list);
+			if(_loadDeck){
+				service.resource.cardList = list;
+			}
 			for(var i = 0; i < list.length; i++){
-				list[i].x_coord = 0;
-				list[i].y_coord = 0;
-				list[i].x_overlap = false;
-				list[i].y_overlap = false;
-				list[i].dragging = false;
-				list[i].stacked = false;
-				service.resource.cardList.push(list[i]);
 				service.resource.cardList[i].x_coord = i * 15;
+				service.resource.cardList[i].y_coord = 0;
+				service.resource.cardList[i].x_overlap = false;
+				service.resource.cardList[i].y_overlap = false;
+				service.resource.cardList[i].dragging = false;
+				service.resource.cardList[i].stacked = false;
+			}
+			$rootScope.$broadcast('BREAD:onDeckChange');
+		};
+		
+		var removePanel = function(panel){
+			for(var i = 0; i < service.resource.cardList.length; i++){
+				if(service.resource.cardList[i] === panel ) {
+					service.resource.cardList.splice(i, 1);
+				}
 			}
 		};
 		
+		var shiftDeck = function(expand, panel){
+			console.log(panel);
+			var panel_x = panel.x_coord;
+			var panel_y = panel.y_coord;
+			var x_shift = expand ? 15 : -15;
+			var _number = expand ? 1 : -1;
+			var _length = service.resource.cardList.length-1;
+			
+			service.resource.deckSize = _length;
+			
+			for(var i = 0; i < _length+1; i++){
+				var slot = service.resource.cardList[i];
+				
+				if(slot.traitData){
+					slot.traitData.cardSet = _length;
+				} else if(slot.featData){
+					slot.featData.cardSet = _length;
+				} else if(slot.augmentData){
+					slot.augmentData.cardSet = _length;
+				} else if(slot.itemData){
+					slot.itemData.cardSet = _length;
+				} else if(slot.originData){
+					slot.originData.cardSet = _length;
+				}
+				console.log(panel_x);
+				console.log(slot.x_coord);
+				
+				if(panel_x <= slot.x_coord){
+					if(panel !== slot){
+						slot.x_coord += x_shift;
+						if(slot.traitData){
+							slot.traitData.cardNumber += _number;
+						} else if(slot.featData){
+							slot.featData.cardNumber += _number;
+						} else if(slot.augmentData){
+							slot.augmentData.cardNumber += _number;
+						} else if(slot.itemData){
+							slot.itemData.cardNumber += _number;
+						} else if(slot.originData){
+							slot.originData.cardNumber += _number;
+						}
+					}
+				}
+			}
+			
+			$rootScope.$broadcast('BREAD:onDeckChange');
+		};
+		
 		service.toggleCardLock = function(panel){
+			console.log(panel);
 			for(var i = 0; i < service.resource.cardList.length; i++){
 				if(panel === service.resource.cardList[i]){
 					service.resource.cardList[i].locked = !service.resource.cardList[i].locked;
@@ -2216,7 +2278,7 @@ angular.module('decks')
 			service.resource.cardList = [];
 			Aspects.query(
 				function(response){
-					setCardList(response);
+					setCardList(response, true);
 				}
 			);
 		};
@@ -2229,7 +2291,7 @@ angular.module('decks')
 					response.unshift({
 						cardRole: 'architectOptions'
 					});
-					setCardList(response);
+					setCardList(response, true);
 				}
 			);
 		};
@@ -2242,7 +2304,7 @@ angular.module('decks')
 					response.unshift({
 						cardRole: 'playerOptions'
 					});
-					setCardList(response);
+					setCardList(response, true);
 				}
 			);
 		};
@@ -2256,58 +2318,56 @@ angular.module('decks')
 			return _aspect;
 		};
 		
-		service.readCard = function(card){
-			console.log('readCard: ' + card._id);
-			console.log(card);
-			
+		service.readCard = function(panel){
 			var _card;
 			
-			if(card.cardType === 'Trait'){
+			if(panel.cardRole === 'Trait'){
 				_card = Traits.get({
-					traitId: card._id
+					traitId: panel.traitData._id
+				},
+				function(response){
+					panel.traitData = response;
 				});
-			} else if(card.cardType === 'Feat'){
+			} else if(panel.cardRole === 'Feat'){
 				_card = Feats.get({
-					featId: card._id
+					featId: panel.featData._id
+				},
+				function(response){
+					panel.featData = response;
 				});
-			} else if(card.cardType === 'Augment'){
+			} else if(panel.cardRole === 'Augment'){
 				_card = Augments.get({
-					augmentId: card._id
+					augmentId: panel.augmentData._id
+				},
+				function(response){
+					panel.augmentData = response;
 				});
-			} else if(card.cardType === 'Item'){
+			} else if(panel.cardRole === 'Item'){
 				_card = Items.get({
-					itemId: card._id
+					itemId: panel.itemData._id
+				},
+				function(response){
+					panel.itemData = response;
 				});
-			} else if(card.cardType === 'Origin'){
+			} else if(panel.cardRole === 'Origin'){
 				_card = Origins.get({
-					originId: card._id
+					originId: panel.originData._id
+				},
+				function(response){
+					panel.originData = response;
 				});
 			}
-			
-			_card.$promise.then(function(response){
-				console.log(response);
-			});
 		};
 		
 		service.readDeck = function(deck){
-			console.log('readDeck: ' + deck._id);
-			console.log(deck);
-			
 			service.resource = Decks.get({
 				deckId: deck._id
 			});
-			
-			service.resource.$promise.then(function(response){
-				console.log(response);
-			});
-			
 		};
 		
 		service.readPc = function(pc) {
 			service.resource = Pcs.get({
 				pcId: pc._id
-			}, function(response){
-				
 			});
 		};
 		
@@ -2320,62 +2380,34 @@ angular.module('decks')
 			});
 		};
 		
-		service.editCard = function(card) {
-			var _card = 0;
-			
-			if(card.cardType === 'Trait'){
-				_card = new Traits(card);
-			} else if(card.cardType === 'Feat'){
-				_card = new Feats(card);
-			} else if(card.cardType === 'Augment'){
-				_card = new Augments(card);
-			} else if(card.cardType === 'Item'){
-				_card = new Items(card);
-			} else if(card.cardType === 'Origin'){
-				_card = new Origins(card);
-			}
-			
-			if(_card){
-				_card.$update();
+		service.editCard = function(panel){
+			if(panel.cardRole === 'Trait'){
+				new Traits(panel.traitData).$update();
+			} else if(panel.cardRole === 'Feat'){
+				new Feats(panel.featData).$update();
+			} else if(panel.cardRole === 'Augment'){
+				new Augments(panel.augmentData).$update();
+			} else if(panel.cardRole === 'Item'){
+				new Items(panel.itemData).$update();
+			} else if(panel.cardRole === 'Origin'){
+				new Origins(panel.originData).$update();
 			}
 		};
 		
-		service.editDeck = function(deck) {
+		service.editDeck = function(deck, _editCards, _loadDeck) {
 			var _deck = new Decks(deck);
 			
 			_deck.$update(function(response) {
-				for(var i = 0; i < deck.cardList.length; i++){
-					service.editPanel(deck.cardList[i]);
+				if(_editCards){
+					for(var i = 0; i < deck.cardList.length; i++){
+						var panel = deck.cardList[i];
+						service.editCard(panel);
+					}
+				}
+				if(_loadDeck){
+					service.resource = response;
 				}
 			}, function(errorResponse) {
-				console.log(errorResponse);
-			});
-		};
-		
-		service.editPanel = function(panel){
-			var _card = 0;
-			
-			if(panel.cardRole === 'Trait'){
-				_card = new Traits(panel.traitData);
-			} else if(panel.cardRole === 'Feat'){
-				_card = new Feats(panel.featData);
-			} else if(panel.cardRole === 'Augment'){
-				_card = new Augments(panel.augmentData);
-			} else if(panel.cardRole === 'Item'){
-				_card = new Items(panel.itemData);
-			} else if(panel.cardRole === 'Origin'){
-				_card = new Origins(panel.originData);
-			}
-			
-			if(_card){
-				_card.$update();
-			}
-		};
-		
-		service.editDeckStructure = function(deck){
-			deck.$update(function(response){
-				
-			}, function(errorResponse){
 				console.log(errorResponse);
 			});
 		};
@@ -2400,103 +2432,66 @@ angular.module('decks')
 			});
 		};
 		
-		service.addCard = function(deck, cardType, cardNumber, saveDeck){
-			var cardData;
+		service.addCard = function(deck, cardType, cardNumber, deckShift, deckSave){
+			console.log(deck, cardType, cardNumber, deckShift, deckSave);
+			
+			var card = {
+				cardSet: deck.deckSize,
+				cardNumber: cardNumber,
+				cardType: cardType
+			};
+			
+			var panel = {
+				cardRole: cardType,
+				x_coord: cardNumber * 15,
+				y_coord: 0
+			};
 			
 			if(cardType === 'Trait'){
-				cardData = new Traits({
-					cardSet: deck.deckSize,
-					cardNumber: cardNumber,
-					cardType: cardType
-				});
-				cardData.$save(function(response){
-					deck.cardList.push({
-						traitData: response,
-						cardRole: cardType,
-						x_coord: cardNumber * 15
-					});
+				new Traits( card ).$save(function(response){
+					panel.traitData = response;
+					deck.cardList.push(panel);
 				}).then(function(response){
-					if(saveDeck){
-						deck.$update(function(response){
-							service.resource = response;
-						});
-					}
+					if(deckShift) shiftDeck(true, panel);
+				}).then(function(response){
+					if(deckSave) service.editDeck(deck, false, true);
 				});
+				
 			} else if(cardType === 'Feat'){
-				cardData = new Feats({
-					cardSet: deck.deckSize,
-					cardNumber: cardNumber,
-					cardType: cardType
-				});
-				cardData.$save(function(response){
-					deck.cardList.push({
-						featData: response,
-						cardRole: cardType,
-						x_coord: cardNumber * 15
-					});
+				new Feats( card ).$save(function(response){
+					panel.featData = response;
+					deck.cardList.push(panel);
 				}).then(function(response){
-					if(saveDeck){
-						deck.$update(function(response){
-							service.resource = response;
-						});
-					}
+					if(deckShift) shiftDeck(true, panel);
+				}).then(function(response){
+					if(deckSave) service.editDeck(deck, false, true);
 				});
 			} else if(cardType === 'Augment'){
-				cardData = new Augments({
-					cardSet: deck.deckSize,
-					cardNumber: cardNumber,
-					cardType: cardType
-				});
-				cardData.$save(function(response){
-					deck.cardList.push({
-						augmentData: response,
-						cardRole: cardType,
-						x_coord: cardNumber * 15
-					});
+				new Augments( card ).$save(function(response){
+					panel.augmentData = response;
+					deck.cardList.push(panel);
 				}).then(function(response){
-					if(saveDeck){
-						deck.$update(function(response){
-							service.resource = response;
-						});
-					}
+					if(deckShift) shiftDeck(true, panel);
+				}).then(function(response){
+					if(deckSave) service.editDeck(deck, false, true);
 				});
 			} else if(cardType === 'Item'){
-				cardData = new Items({
-					cardSet: deck.deckSize,
-					cardNumber: cardNumber,
-					cardType: cardType
-				});
-				cardData.$save(function(response){
-					deck.cardList.push({
-						itemData: response,
-						cardRole: cardType,
-						x_coord: cardNumber * 15
-					});
+				new Items( card ).$save(function(response){
+					panel.itemData = response;
+					deck.cardList.push(panel);
 				}).then(function(response){
-					if(saveDeck){
-						deck.$update(function(response){
-							service.resource = response;
-						});
-					}
+					if(deckShift) shiftDeck(true, panel);
+				}).then(function(response){
+					if(deckSave) service.editDeck(deck, false, true);
 				});
 			} else if(cardType === 'Origin'){
-				cardData = new Origins({
-					cardSet: deck.deckSize,
-					cardNumber: cardNumber,
-					cardType: cardType
-				});
-				cardData.$save(function(response){
-					deck.cardList.push({
-						originData: response,
-						cardRole: cardType,
-						x_coord: cardNumber * 15
-					});
+				new Origins( card ).$save(function(response){
+					panel.originData = response;
+					deck.cardList.push(panel);
 				}).then(function(response){
-					if(saveDeck){
-						deck.$update(function(response){
-							service.resource = response;
-						});
-					}
+					if(deckShift) shiftDeck(true, panel);
+				}).then(function(response){
+					if(deckSave) service.editDeck(deck, false, true);
 				});
 			}
 		};
@@ -2509,18 +2504,17 @@ angular.module('decks')
 				deckSize: size,
 				cardList: [{
 					cardRole: 'deckOptions',
-					x_coord: 0
+					x_coord: 0,
+					y_coord: 0
 				}]
 			});
 			
 			deck.$save(
 				function(response){
 					for(var i = 0; i < size; i++){
-						service.addCard(deck, type, i+1, (i+1 === size));
+						service.addCard(deck, type, i+1, false, (i+1 === size));
 					}
 				});
-			
-			console.log(deck);
 		};
 		
 		service.addPc = function(){
@@ -2533,7 +2527,7 @@ angular.module('decks')
 			});
 		};
 		
-		// DELETE existing Pc
+		// DELETE
 		service.deleteAspect = function(aspect){
 			if(aspect){
 				aspect.$remove(function(response){
@@ -2546,74 +2540,83 @@ angular.module('decks')
 			}
 		};
 		
-		service.deleteCard = function(card, saveDeck, deleteDeck){
-			if(card){
-				console.log(card);
-				
-				var cardData;
-				
-				if(card.data._id){
-					cardData = new Cards(card.data);
-				} else {
-					cardData = Cards.get({
-						cardId: card.data
-					});
-				}
-				
-				console.log(cardData);
-				
-				cardData.$remove(
-					function(response){
-						console.log(response);
-						if(saveDeck){
-							for(var i in service.resource.cardList){
-								if(service.resource.cardList[i] === card){
-									service.resource.cardList.splice(i, 1);
-								}
-							}
-							service.resource.$update();
-						}
-					});
-				
-				
-				for(var i in service.resource.cardList){
-					if(service.resource.cardList[i] === card){
-						service.resource.cardList.splice(i, 1);
-					}
-				}
-				
+		service.deleteCard = function(panel, _removePanel, _shiftDeck){
+			var cardData = 0;
+			var panel_x_coord = panel.x_coord;
+			
+			if(panel.cardRole === 'Trait'){
+				new Traits(panel.traitData).$remove(function(response){
+					if(_removePanel) removePanel(panel);
+				}).then(function(response){
+					if(_shiftDeck) shiftDeck(false, panel);
+				});
+			} else if(panel.cardRole === 'Feat'){
+				new Feats(panel.featData).$remove(function(response){
+					if(_removePanel) removePanel(panel);
+				}).then(function(response){
+					if(_shiftDeck) shiftDeck(false, panel);
+				});
+			} else if(panel.cardRole === 'Augment'){
+				new Augments(panel.augmentData).$remove(function(response){
+					if(_removePanel) removePanel(panel);
+				}).then(function(response){
+					if(_shiftDeck) shiftDeck(false, panel);
+				});
+			} else if(panel.cardRole === 'Item'){
+				new Items(panel.itemData).$remove(function(response){
+					if(_removePanel) removePanel(panel);
+				}).then(function(response){
+					if(_shiftDeck) shiftDeck(false, panel);
+				});
+			} else if(panel.cardRole === 'Origin'){
+				new Origins(panel.originData).$remove(function(response){
+					if(_removePanel) removePanel(panel);
+				}).then(function(response){
+					if(_shiftDeck) shiftDeck(false, panel);
+				});
 			}
 		};
 		
 		service.deleteDeck = function(deck){
-			if(deck){
-				deck.$remove(function(response){
-					for(var i in service.resource.cardList){
-						if(service.resource.cardList[i] === deck){
-							service.resource.cardList.splice(i, 1);
-						}
-					}
-					for(var ii = 0; ii < response.cardList.length; ii++){
-						if(response.cardList[ii].data){
-							var card = new Cards(response.cardList[ii].data);
-							console.log(card);
-							card.$remove();
-						}
-					}
-				});
+			console.log(deck);
+			
+			for(var i = 0; i < service.resource.cardList.length; i++){
+				if(service.resource.cardList[i] === deck ) {
+					console.log(service.resource.cardList[i]);
+				}
 			}
+			
+			deck.$remove(
+				function(response){
+					removePanel(deck);
+					setCardList(service.resource.cardList, false);
+					for(var ii = 0; ii < response.cardList.length; ii++){
+						var panel = response.cardList[ii];
+						service.deleteCard(panel, false, false);
+						if(panel.cardRole === 'Trait'){
+							new Traits(panel.traitData).$remove();
+						} else if(panel.cardRole === 'Feat'){
+							new Feats(panel.featData).$remove();
+						} else if(panel.cardRole === 'Augment'){
+							new Augments(panel.augmentData).$remove();
+						} else if(panel.cardRole === 'Item'){
+							new Items(panel.itemData).$remove();
+						} else if(panel.cardRole === 'Origin'){
+							new Origins(panel.originData).$remove();
+						}
+					}
+				}
+			);
 		};
 		
 		service.deletePc = function(pc) {
-			if(pc){
-				pc.$remove(function(response){
-					for (var i in service.resource.cardList ) {
-						if (service.resource.cardList[i] === pc ) {
-							service.resource.cardList.splice(i, 1);
-						}
+			pc.$remove(function(response){
+				for (var i in service.resource.cardList ) {
+					if (service.resource.cardList[i] === pc ) {
+						service.resource.cardList.splice(i, 1);
 					}
-				});
-			}
+				}
+			});
 		};
 		
 		return service;
@@ -2640,7 +2643,7 @@ angular.module('core').factory('CardDeck', ['BREAD', 'Campaigns', '$rootScope',
 		var dropdownOpen;
 		var moveTimer;
 		
-		var getCardList = function(cardRole){
+		var getCardList = function(){
 			return BREAD.resource.cardList;
 		};
 		
@@ -2812,13 +2815,16 @@ angular.module('core').factory('CardDeck', ['BREAD', 'Campaigns', '$rootScope',
 			var _deck = getCardList();
 			var _lowest_index = getLowestIndex(_panel.x_coord);
 			if(_panel.y_coord > 0 || (_panel.y_coord === 0 && _panel.stacked && !_panel.y_overlap)){
+				console.log('unstackCard');
 				unstackCard(_slot, _panel);
-			} else if (_panel.y_coord === 0 && _slot.y_coord === 0){
+			} else if (_panel.y_coord === 0){
+				console.log('switchHorizontal');
 				switchHorizontal(_slot, _panel);
 			}
 		};
 
 		var moveDiagonalUp = function(event, object){
+			console.log('moveDiagonalUp');
 			var _slot = object.slot;
 			var _panel = object.panel;
 			var _deck = getCardList();
@@ -2881,57 +2887,55 @@ angular.module('core').factory('CardDeck', ['BREAD', 'Campaigns', '$rootScope',
 				var panel_x_overlap = panel.x_overlap;
 				var panel_width = x_dim;
 				
-				if(slot_y === 0 && panel_y === 0){
-					if(panel_x - slot_x > 0){
-					// PANEL MOVING LEFT
-						setCardMoving(_moveSpeed);
-						
-						if(slot_x === 0 && panel_x_overlap){
-							slot_position = 0;
+				if(panel_x - slot_x > 0){
+				// PANEL MOVING LEFT
+					setCardMoving(_moveSpeed);
+					
+					if(slot_x === 0 && panel_x_overlap){
+						slot_position = 0;
+						panel_width -= x_cover;
+						_deck[slot_index].x_overlap = true;
+						_deck[panel_index].x_overlap = false;
+					} else {
+						if(panel_x_overlap){
 							panel_width -= x_cover;
-							_deck[slot_index].x_overlap = true;
-							_deck[panel_index].x_overlap = false;
-						} else {
-							if(panel_x_overlap){
-								panel_width -= x_cover;
-								slot_position -= x_cover;
-							}
-							if(slot_x_overlap){
-								slot_position += x_cover;
-							}
+							slot_position -= x_cover;
 						}
-						for(var ia = 0; ia < _deck.length; ia++){
-							if(_deck[ia].x_coord >= slot_x && _deck[ia].x_coord < panel_x){
-							// Modify position of each card in "SLOT" column and to the left of "PANEL" column
-								_deck[ia].x_coord += panel_width;
-							} else if(_deck[ia].x_coord === panel_x){
-							// Modify position of each card in "PANEL" column
-								_deck[ia].x_coord = slot_position;
-							}
+						if(slot_x_overlap){
+							slot_position += x_cover;
 						}
-					} else if(panel_x - slot_x < 0){
-					// PANEL MOVING RIGHT
-						setCardMoving(_moveSpeed);
-						if(panel_x === 0 && slot_x_overlap){
-							var first_index = getFirstIndex();
-					//		_deck[first_index].x_coord = 0;
-							_deck[first_index].x_overlap = false;
-							_deck[panel_index].x_overlap = true;
+					}
+					for(var ia = 0; ia < _deck.length; ia++){
+						if(_deck[ia].x_coord >= slot_x && _deck[ia].x_coord < panel_x){
+						// Modify position of each card in "SLOT" column and to the left of "PANEL" column
+							_deck[ia].x_coord += panel_width;
+						} else if(_deck[ia].x_coord === panel_x){
+						// Modify position of each card in "PANEL" column
+							_deck[ia].x_coord = slot_position;
+						}
+					}
+				} else if(panel_x - slot_x < 0){
+				// PANEL MOVING RIGHT
+					setCardMoving(_moveSpeed);
+					if(panel_x === 0 && slot_x_overlap){
+						var first_index = getFirstIndex();
+				//		_deck[first_index].x_coord = 0;
+						_deck[first_index].x_overlap = false;
+						_deck[panel_index].x_overlap = true;
+						panel_width -= x_cover;
+					} else if(panel_x > 0){
+						if(panel_x_overlap){
 							panel_width -= x_cover;
-						} else if(panel_x > 0){
-							if(panel_x_overlap){
-								panel_width -= x_cover;
-							}
 						}
-						
-						for(var ib = 0; ib < _deck.length; ib++){
-							if(_deck[ib].x_coord <= slot_x && _deck[ib].x_coord > panel_x){
-							// Modify position of each card in "SLOT" column
-								_deck[ib].x_coord -= panel_width;
-							} else if(_deck[ib].x_coord === panel_x){
-							// Modify position of each card in "PANEL" column
-								_deck[ib].x_coord = slot_position;
-							}
+					}
+					
+					for(var ib = 0; ib < _deck.length; ib++){
+						if(_deck[ib].x_coord <= slot_x && _deck[ib].x_coord > panel_x){
+						// Modify position of each card in "SLOT" column
+							_deck[ib].x_coord -= panel_width;
+						} else if(_deck[ib].x_coord === panel_x){
+						// Modify position of each card in "PANEL" column
+							_deck[ib].x_coord = slot_position;
 						}
 					}
 				}
@@ -3056,7 +3060,7 @@ angular.module('core').factory('CardDeck', ['BREAD', 'Campaigns', '$rootScope',
 						_deck[ia].x_coord = newColumn;
 					}
 				}
-				setColumn(newColumn - x_dim);
+				setColumn(newColumn);
 				setColumn(slot_x);
 				setColumn(panel_x);
 				$rootScope.$digest();

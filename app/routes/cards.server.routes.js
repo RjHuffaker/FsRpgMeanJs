@@ -2,20 +2,66 @@
 
 module.exports = function(app) {
 	var users = require('../../app/controllers/users');
-	var cards = require('../../app/controllers/cards');
-
-	// Cards Routes
-	app.route('/cards')
-		.post(users.requiresLogin, cards.create);
+	var traits = require('../../app/controllers/traits');
+	var feats = require('../../app/controllers/feats');
+	var augments = require('../../app/controllers/augments');
+	var items = require('../../app/controllers/items');
+	var origins = require('../../app/controllers/origins');
 	
-	app.route('/cards/:cardType')
-		.get(cards.list);
+	// Trait Routes
+	app.route('/traits')
+		.get(traits.list)
+		.post(users.requiresLogin, traits.create);
 	
-	app.route('/cards/:cardId')
-		.get(cards.read)
-		.put(users.requiresLogin, cards.hasAuthorization, cards.update)
-		.delete(users.requiresLogin, cards.hasAuthorization, cards.delete);
+	app.route('/traits/:traitId')
+		.get(traits.read)
+		.put(users.requiresLogin, traits.hasAuthorization, traits.update)
+		.delete(users.requiresLogin, traits.hasAuthorization, traits.delete);
 	
-	// Finish by binding the Card middleware
-	app.param('cardId', cards.cardByID);
+	// Feat Routes
+	app.route('/feats')
+		.get(feats.list)
+		.post(users.requiresLogin, feats.create);
+	
+	app.route('/feats/:featId')
+		.get(feats.read)
+		.put(users.requiresLogin, feats.hasAuthorization, feats.update)
+		.delete(users.requiresLogin, feats.hasAuthorization, feats.delete);
+	
+	// Augment Routes
+	app.route('/augments')
+		.get(augments.list)
+		.post(users.requiresLogin, augments.create);
+	
+	app.route('/augments/:augmentId')
+		.get(augments.read)
+		.put(users.requiresLogin, augments.hasAuthorization, augments.update)
+		.delete(users.requiresLogin, augments.hasAuthorization, augments.delete);
+	
+	// Item Routes
+	app.route('/items')
+		.get(items.list)
+		.post(users.requiresLogin, items.create);
+	
+	app.route('/items/:itemId')
+		.get(items.read)
+		.put(users.requiresLogin, items.hasAuthorization, items.update)
+		.delete(users.requiresLogin, items.hasAuthorization, items.delete);
+	
+	// Origin Routes
+	app.route('/origins')
+		.get(origins.list)
+		.post(users.requiresLogin, origins.create);
+	
+	app.route('/origins/:originId')
+		.get(origins.read)
+		.put(users.requiresLogin, origins.hasAuthorization, origins.update)
+		.delete(users.requiresLogin, origins.hasAuthorization, origins.delete);
+	
+	// Card middleware
+	app.param('traitId', traits.traitByID);
+	app.param('featId', feats.featByID);
+	app.param('augmentId', augments.augmentByID);
+	app.param('itemId', items.itemByID);
+	app.param('originId', origins.originByID);
 };

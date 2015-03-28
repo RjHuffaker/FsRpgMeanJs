@@ -18,7 +18,7 @@ exports.create = function(req, res) {
 	deck.save(function(err){
 		if (err) {
 			console.log('save error');
-			console.log(err);
+			console.log(errorHandler.getErrorMessage(err));
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
@@ -45,6 +45,8 @@ exports.update = function(req, res) {
 	
 	deck.save(function(err) {
 		if (err) {
+			console.log('save error');
+			console.log(err);
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});

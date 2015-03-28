@@ -89,18 +89,7 @@ exports.list = function(req, res) {
  * Trait middleware
  */
 exports.traitByID = function(req, res, next, id) {
-	console.log(id);
-	var traitId;
-	
-	if(mongoose.Types.ObjectId.isValid(id)){
-		traitId = id;
-		console.log('valid: '+traitId);
-	} else {
-		traitId = mongoose.Types.ObjectId.fromString(id);
-		console.log('invalid: '+traitId);
-	}
-	
-	Trait.findById(traitId).populate('user', 'displayName').exec(function(err, trait){
+	Trait.findById(id).populate('user', 'displayName').exec(function(err, trait){
 		if (err) console.log(err);
 		if (err) return next(err);
 		if (! trait) return next(new Error('Failed to load Trait ' + id));

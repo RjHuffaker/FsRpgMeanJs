@@ -1,4 +1,4 @@
-<div class="content-panel">
+<form class="content-panel" onSubmit="JavaScript:$parent.BREAD.editCard(card);" name="featureCard">
 	<table class="fill-parent">
 		<tbody>
 			<tr>
@@ -24,20 +24,20 @@
 			</tr>
 		</tbody>
 	</table>
-</div>
+</form>
 <div style="color: darkRed; position: absolute; top: 20em; left: 0; width: 2em;" class="text-center">
-	<a data-ng-click="$parent.BREAD.editCard(card);" stop-event>
+	<a data-ng-click="$parent.BREAD.editCard(panel); featureCard.$setPristine();"
+		ng-show="featureCard.$dirty" stop-event>
 		<i class="glyphicon glyphicon-ok green-icon"></i>
 	</a>
-	
-	<a data-ng-click="$parent.BREAD.toggleCardLock($parent.panel);" stop-event>
-		<i ng-hide="$parent.panel.locked" class="glyphicon glyphicon-lock grey-icon"></i>
-		<i ng-show="$parent.panel.locked" class="glyphicon glyphicon-lock blue-icon"></i>
+	<a data-ng-click="$parent.BREAD.readCard(panel); featureCard.$setPristine();"
+		ng-show="featureCard.$dirty" stop-event>
+		<i class="glyphicon glyphicon-remove red-icon"></i>
 	</a>
-		
 </div>
 <div style="color: darkRed; position: absolute; top: 20em; left: 14em; width: 1em;" class="text-center">
-	<a data-ng-click="$parent.BREAD.readCard(card);" stop-event>
-		<i class="glyphicon glyphicon-remove red-icon"></i>
+	<a data-ng-click="$parent.BREAD.toggleCardLock(panel);" stop-event>
+		<i ng-hide="$parent.panel.locked" class="glyphicon glyphicon-lock grey-icon"></i>
+		<i ng-show="$parent.panel.locked" class="glyphicon glyphicon-lock blue-icon"></i>
 	</a>
 </div>

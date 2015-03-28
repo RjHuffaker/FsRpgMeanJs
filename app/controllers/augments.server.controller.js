@@ -89,18 +89,7 @@ exports.list = function(req, res) {
  * Augment middleware
  */
 exports.augmentByID = function(req, res, next, id) {
-	console.log(id);
-	var augmentId;
-	
-	if(mongoose.Types.ObjectId.isValid(id)){
-		augmentId = id;
-		console.log('valid: '+augmentId);
-	} else {
-		augmentId = mongoose.Types.ObjectId.fromString(id);
-		console.log('invalid: '+augmentId);
-	}
-	
-	Augment.findById(augmentId).populate('user', 'displayName').exec(function(err, augment){
+	Augment.findById(id).populate('user', 'displayName').exec(function(err, augment){
 		if (err) console.log(err);
 		if (err) return next(err);
 		if (! augment) return next(new Error('Failed to load Augment ' + id));
