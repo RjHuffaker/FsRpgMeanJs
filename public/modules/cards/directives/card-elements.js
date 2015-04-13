@@ -2,6 +2,17 @@
 
 // feature-card directive
 angular.module('cards')
+	.directive('cardForm', function($rootScope){
+		return {
+			restrict: 'A',
+			require: '^form',
+			link: function(scope, element, attr){
+				scope.$on('BREAD: deckSaved', function(){
+					scope.featureCardForm.$setPristine();
+				});
+			}
+		};
+	})
 	.directive('cardLogo', ['$rootScope', function($rootScope){
 		return {
 			restrict: 'A',

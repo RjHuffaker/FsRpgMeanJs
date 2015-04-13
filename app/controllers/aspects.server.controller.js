@@ -85,6 +85,24 @@ exports.list = function(req, res) {
 };
 
 /**
+ * Query Aspects by both type and deck
+ */
+exports.query = function(req, res) {
+	console.log(req.params.deckIds);
+	Aspect.find({deck: {$in: [req.params.deckIds._id]}, 'aspectType': req.params.aspectType}).exec(function(err, aspects) {
+		console.log(err);
+		console.log(aspects);
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			res.jsonp(aspects);
+		}
+	});
+};
+
+/**
  * Aspect middleware
  */
 exports.aspectByID = function(req, res, next, id) { 

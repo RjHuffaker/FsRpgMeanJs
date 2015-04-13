@@ -1,26 +1,46 @@
 <div class="content-panel">
-	<h4>Deck Options</h4>
-	<input id="name" class="fill-width card-input" type="text"
-		 ng-model="BREAD.resource.name" stop-event/>
+	<h4 class="text-argos text-16 text-center">Deck Options</h4>
+	<input id="name" class="text-14 fill-width card-input text-center" type="text"
+		ng-model="BREAD.resource.name" stop-event/>
 	<br />
-	<input type="submit" style="width: 100%"
-		class="btn btn-lg btn-success text-center"
-		ng-click="BREAD.addCard(BREAD.resource, BREAD.resource.deckType, BREAD.resource.cardList.length, true)"
-		value="Add Card ->">
-	<br />
-	<input type="submit" style="width: 100%"
-		class="btn btn-lg btn-success text-center"
-		ng-click="BREAD.editDeck(BREAD.resource, true, false)"
-		value="Save Deck ->">
-	<br />
-	<input type="submit" style="width: 100%"
-		class="btn btn-lg btn-success text-center"
-		ng-click="BREAD.readDeck(BREAD.resource)"
-		value="Reload Deck ->">
-	<br />
-	<input type="submit" style="width: 100%"
-		class="btn btn-lg btn-success text-center"
-		ng-click="BREAD.editDeckStructure(BREAD.resource)"
-		value="Restructure Deck ->">
-	<br />
+	<div class="text-center">
+		<a class="fill-width text-argos text-16 text-center"
+			ng-click="BREAD.addCard(BREAD.resource, BREAD.resource.deckType, BREAD.resource.cardList.length, true)">
+			Add Card
+		</a>
+	</div>
+	<div class="text-center">
+		<a class="fill-width text-argos text-16"
+			ng-click="BREAD.editDeck(BREAD.resource, true, false)">
+			Save Deck
+		</a>
+	</div>
+	<div class="text-center">
+		<a class="fill-width text-argos text-16 text-center"
+			ng-click="BREAD.readDeck(BREAD.resource)">
+			Reload Deck
+		</a>
+	</div>
+	<div ng-if="BREAD.resource.deckType !== 'Aspect'" class="dropdown fill-width text-center" dropdown stop-event on-toggle="toggled(open)">
+		<a id="cardDropdown" class="dropdown-toggle fill-width text-argos text-16 text-center"
+			dropdown-toggle ng-click="dropdown" aria-expanded="true">
+			Dependencies
+		</a>
+		<div class="dropdown-menu" style="width: 14em;"
+				aria-labelledby="cardDropdown">
+				<div class="text-8">
+					<ul class="col-xs-6">
+						<li role="presentation" class="dropdown-header">Deck Dependencies</li>
+						<li role="presentation" ng-repeat="dependency in BREAD.dependencyList"
+							stop-click><label>
+							<input type="checkbox" value="dependency" 
+								ng-checked="BREAD.findDependency(dependency) > -1"
+								ng-click="BREAD.toggleDependency(dependency)" >
+							{{dependency.name}}
+						</label></li>
+						
+					</ul>
+				</div>
+		</div>
+	</div>
 </div>

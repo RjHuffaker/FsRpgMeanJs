@@ -6,6 +6,9 @@
 	<div ng-switch-when="pc2" card-pc-2 class="fill-parent"></div>
 	<div ng-switch-when="pc3" card-pc-3 class="fill-parent"></div>
 	
+	<div ng-switch-when="Aspect" feature-card
+		card="panel.aspectData" panel="panel"
+		class="card-aspect fill-parent"></div>
 	<div ng-switch-when="Trait" feature-card
 		card="panel.traitData" panel="panel"
 		class="card-trait fill-parent"></div>
@@ -23,7 +26,7 @@
 		class="card-origin fill-parent"></div>
 	
 	<div ng-switch-when="architectOptions" architect-options class="fill-parent"></div>
-	<div ng-switch-when="deckSummary" deck-summary class="fill-parent"></div>
+	<div ng-switch-when="deckSummary" deck-summary class="fill-parent {{panel.deckType}}"></div>
 	<div ng-switch-when="deckOptions" deck-options class="fill-parent"></div>
 	
 	<div ng-switch-when="narratorOptions" narrator-options class="fill-parent"></div>

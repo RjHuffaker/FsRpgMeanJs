@@ -5,6 +5,10 @@
 	<h4>
 	Pc: {{panel.name}}
 	</h4>
+	Archetype: {{panel.archetype}}
+	</br>
+	Allegiance: {{panel.allegiance}}
+	</br>
 	Race: {{panel.race}} ({{panel.sex}})
 	</br>
 	Level: {{panel.level}}
@@ -13,12 +17,14 @@
 		Created
 		<span data-ng-bind="panel.created | date:'short'"></span>
 	</small>
-	<div class="pull-right" >
-		<a class="btn btn-sm btn-primary" data-ng-click="BREAD.readPc(panel);" stop-event>
-			<i class="glyphicon glyphicon-edit"></i>
+	<div style="position: absolute; top: 19em; left: 0.5em; width: 2em;" class="text-left">
+		<a data-ng-click="BREAD.readPc(panel);" stop-event>
+			<i class="glyphicon glyphicon-edit green-icon text-14"></i>
 		</a>
-		<a class="btn btn-sm btn-danger" data-ng-click="BREAD.deletePc(panel);" stop-event>
-			<i class="glyphicon glyphicon-trash"></i>
+	</div>
+	<div style="position: absolute; top: 19em; left: 12.5em; width: 2em;" class="text-right">
+		<a data-ng-click="BREAD.deletePc(panel);" stop-event>
+			<i class="glyphicon glyphicon-trash red-icon text-14"></i>
 		</a>
 	</div>
 </div>

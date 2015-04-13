@@ -64,7 +64,7 @@ div[card-deck] {
 	border-left: 1px solid #222;
 	border-right: 2px solid #111;
 	border-bottom: 2px solid #111;
-	background-color: Tan;
+	background-color: Wheat;
 }
 
 [card-panel].ng-leave, [card-panel].ng-enter {
@@ -85,22 +85,32 @@ div[card-deck] {
 	
 }
 
-.card-trait {
-	background-color: BurlyWood !important;
+.Aspect,
+.card-aspect {
+	background-color: navajoWhite !important;
 }
 
+.Trait,
+.card-trait {
+	background-color: Moccasin !important;
+}
+
+.Feat,
 .card-feat {
 	background-color: DarkKhaki !important;
 }
 
+.Augment,
 .card-augment {
 	background-color: DarkSeaGreen !important;
 }
 
+.Item,
 .card-item  {
 	background-color: Khaki !important;
 }
 
+.Origin,
 .card-origin {
 	background-color: Beige !important;
 }

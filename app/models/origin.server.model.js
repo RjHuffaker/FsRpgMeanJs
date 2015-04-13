@@ -24,6 +24,10 @@ var OriginSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: 'User'
 	},
+	deck: {
+		type: Schema.ObjectId,
+		ref: 'Deck'
+	},
 	cardType: {
 		type: String
 	},
@@ -35,8 +39,9 @@ var OriginSchema = new Schema({
 		type: Number,
 		default: 1
 	},
-	keyword: {
-		type: String
+	aspect: {
+		type: Schema.Types.ObjectId,
+		ref: 'Aspect'
 	},
 	prerequisite: {
 		type: String

@@ -4,6 +4,8 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
+	Action = require('./action.server.model'),
+	Property = require('./property.server.model'),
 	Schema = mongoose.Schema;
 
 /**
@@ -23,6 +25,21 @@ var AspectSchema = new Schema({
 		type: Schema.ObjectId,
 		ref: 'User'
 	},
+	deck: {
+		type: Schema.ObjectId,
+		ref: 'Deck'
+	},
+	cardType: {
+		type: String
+	},
+	cardNumber: {
+		type: Number,
+		default: 1
+	},
+	cardSet: {
+		type: Number,
+		default: 1
+	},
 	aspectType: {
 		type: String
 	},
@@ -34,9 +51,16 @@ var AspectSchema = new Schema({
 	},
 	size: {
 		type: String
-	}
-	
-	
+	},
+	speed: {
+		type: Number
+	},
+	properties: [
+		Property
+	],
+	actions: [
+		Action
+	]
 });
 
 mongoose.model('Aspect', AspectSchema);

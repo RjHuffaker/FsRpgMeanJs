@@ -1,6 +1,6 @@
 <hr class="black-line">
 <div class="title-row text-8">
-	<div ng-if="card.cardType !== 'item'" class="title-block">
+	<div ng-if="card.cardType !== 'Item'" class="title-block">
 		<strong ng-if="panel.locked" class="pull-left">
 			{{card.keyword}} {{card.prerequisite}}
 		</strong>
@@ -31,7 +31,7 @@
 			</ul>
 		</div>
 	</div>
-	<div ng-if="card.cardType === 'item'" class="title-block">
+	<div ng-if="card.cardType === 'Item'" class="title-block">
 		<strong ng-if="panel.locked" class="pull-left">
 			{{card.itemSlot}}
 		</strong>
@@ -125,7 +125,7 @@
 			</div>
 		</div>
 	</div>
-	<div ng-if="card.cardType === 'item'" class="title-block">
+	<div ng-if="card.cardType === 'Item'" class="title-block">
 		<div ng-if="panel.locked" class="pull-right">
 			<strong>W:</strong>
 			{{card.weight}}

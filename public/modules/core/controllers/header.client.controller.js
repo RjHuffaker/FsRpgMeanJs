@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('core').controller('HeaderController', ['$rootScope', '$scope', 'Authentication', 'Menus',
-	function($rootScope, $scope, Authentication, Menus) {
+angular.module('core').controller('HeaderController', ['$document', '$rootScope', '$scope', 'Authentication', 'Menus',
+	function($document, $rootScope, $scope, Authentication, Menus) {
 		$scope.authentication = Authentication;
 		$scope.isCollapsed = false;
 		$scope.menu = Menus.getMenu('topbar');
@@ -10,19 +10,21 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
 			$scope.isCollapsed = !$scope.isCollapsed;
 		};
 
-		// Collapsing the menu after navigation
+		// Collapse the menu after navigation
 		$scope.$on('$stateChangeSuccess', function() {
 			$scope.isCollapsed = false;
 		});
 		
 		$scope.fetchPcs = function(){
 			$rootScope.$broadcast('fetchPcs');
+			$scope.isCollapsed = false;
 		};
 		
 		$scope.fetchDecks = function(deckType){
 			$rootScope.$broadcast('fetchDecks', {
 				deckType: deckType
 			});
+			$scope.isCollapsed = false;
 		};
 		
 	}

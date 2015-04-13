@@ -12,22 +12,22 @@
 		</strong>
 	</div>
 	<hr class="black-line">
-	<div ng-if="card.cardType !== 'item'">
+	<div ng-if="card.cardType !== 'Item' && card.cardType !== 'Aspect'">
 		<span ng-if="panel.locked" class="text-9">
 			<span>
-				{{card.keyword}}
+				{{card.aspect.name}}
 			</span>
-			<span ng-if="!card.keyword">
-				[Keyword]
+			<span ng-if="!card.aspect">
+				[Aspect]
 			</span>
 		</span>
 		<div ng-if="!panel.locked" class="dropdown" dropdown stop-event on-toggle="toggled(open)">
 			<a id="cardDropdown" class="dropdown-toggle text-9" dropdown-toggle ng-click="dropdown" aria-expanded="true">
 				<span class="text-capitalize">
-					{{card.keyword}}
+					{{card.aspect.name}}
 				</span>
-				<span ng-if="!card.keyword">
-					[Keyword]
+				<span ng-if="!card.aspect">
+					[Aspect]
 				</span>
 			</a>
 			<div class="dropdown-menu" style="width: 14em; left: -4em;"
@@ -35,26 +35,29 @@
 				<div class="text-8">
 					<ul class="col-xs-6">
 						<li role="presentation" class="dropdown-header">Archetype</li>
-						<li role="presentation" ng-repeat="archetype in dataSRVC.archetypes"><label>
-							<input type="radio" ng-model="card.keyword" value="{{archetype}}">
-							{{archetype}}
+						<li role="presentation" ng-repeat="archetype in BREAD.resource.archetypeList track by $index"><label>
+							<input type="radio" ng-checked="card.aspect.name === archetype.name"
+								ng-click="BREAD.changeAspect(card, archetype); featureCardForm.$setDirty();">
+							{{archetype.name}}
 						</label></li>
 					</ul>
 					<ul class="col-xs-6">
 						<li role="presentation" class="dropdown-header">Allegiance</li>
-						<li role="presentation" ng-repeat="allegiance in dataSRVC.allegiances" ng-if="allegiance !== 'Unaligned'"><label>
-							<input type="radio" ng-model="card.keyword" value="{{allegiance}}">
-							{{allegiance}}
+						<li role="presentation" ng-repeat="allegiance in BREAD.resource.allegianceList" ng-if="allegiance.name !== 'Unaligned'"><label>
+							<input type="radio" ng-checked="card.aspect.name === allegiance.name"
+								ng-click="BREAD.changeAspect(card, allegiance); featureCardForm.$setDirty();">
+							{{allegiance.name}}
 						</label></li>
 					</ul>
 				</div>
 				<ul class="text-8">
 					<li role="presentation" class="col-xs-12 dropdown-header">Race</li>
 					<li role="presentation" class="col-xs-6" style="padding: 0;"
-						ng-repeat="race in dataSRVC.races" ng-if="race !== 'Weolda'">
+						ng-repeat="race in BREAD.resource.raceList" ng-if="race.name !== 'Weolda'">
 						<label>
-							<input type="radio" ng-model="card.keyword" value="{{race}}">
-							{{race}}
+							<input type="radio" ng-checked="card.aspect.name === race.name"
+								ng-click="BREAD.changeAspect(card, race); featureCardForm.$setDirty();">
+							{{race.name}}
 						</label>
 					</li>
 				</ul>
@@ -62,7 +65,7 @@
 		</div>
 	</div>
 	
-	<div ng-if="card.cardType === 'item'" class="title-block text-8">
+	<div ng-if="card.cardType === 'Item'" class="title-block text-8">
 		<div class="title-block" ng-if="card.itemSlot === 'One-handed'
 				|| card.itemSlot === 'Two-handed'
 				|| card.itemSlot === 'One-handed or Paired'
@@ -104,6 +107,37 @@
 			<span ng-if="!card.itemSlot">
 				[Item Type]
 			</span>
+		</div>
+	</div>
+	
+	<div ng-if="card.cardType === 'Aspect'" class="title-block text-8">
+		<div class="title-block">
+			<span ng-if="panel.locked">
+				{{card.aspectType}}
+			</span>
+			<span ng-if="panel.locked && !card.aspectType">
+				[Aspect Type]
+			</span>
+			<div ng-if="!panel.locked" class="dropdown" dropdown stop-event on-toggle="toggled(open)">
+				<a id="cardDropdown" class="dropdown-toggle" dropdown-toggle
+					ng-click="dropdown" aria-expanded="true">
+					<span>
+						{{card.aspectType}}
+					</span>
+					<span ng-if="!card.aspectType">
+						[Aspect Type]
+					</span>
+				</a>
+				<div class="dropdown-menu" aria-labelledby="cardDropdown">
+					<ul>
+						<li role="presentation" class="dropdown-header">Aspect Type</li>
+						<li role="presentation" ng-repeat="aspectType in $parent.dataSRVC.aspectTypes"><label>
+							<input type="radio" ng-model="card.aspectType" value="{{aspectType}}">
+							{{aspectType}}
+						</label></li>
+					</ul>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

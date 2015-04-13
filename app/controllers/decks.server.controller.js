@@ -6,6 +6,8 @@
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors'),
 	Deck = mongoose.model('Deck'),
+	Aspect = mongoose.model('Aspect'),
+	Trait = mongoose.model('Trait'),
     _ = require('lodash');
 
 /**
@@ -77,8 +79,21 @@ exports.delete = function(req, res) {
  * List of Decks
  */
 exports.list = function(req, res) {
-	console.log('list');
-	Deck.find( { user: req.user._id } ).sort('-created').populate('user', 'displayName').exec(function(err, decks) {
+	console.log(req.params);
+	Deck.find().sort('-created').populate('user', 'displayName').exec(function(err, decks) {
+		if (err) {
+			return res.status(400).send({
+				message: errorHandler.getErrorMessage(err)
+			});
+		} else {
+			res.jsonp(decks);
+		}
+	});
+};
+ 
+ exports.query = function(req, res) {
+	console.log(req.params);
+	Deck.find( { deckType: req.params.deckType } ).sort('-created').populate('user', 'displayName').exec(function(err, decks) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
@@ -95,22 +110,17 @@ exports.list = function(req, res) {
 exports.deckByID = function(req, res, next, id){
 	Deck.findById(id)
 		.populate('user', 'displayName')
-		.populate('cardList.traitData')
-		.populate('cardList.featData')
-		.populate('cardList.augmentData')
-		.populate('cardList.itemData')
-		.populate('cardList.originData')
+		.populate(
+			'dependencies cardList.aspectData cardList.traitData cardList.featData cardList.augmentData cardList.itemData cardList.originData'
+		)
 		.exec(
 			function(err, deck) {
 				if (err) return next(err);
 				if (! deck) return next(new Error('Failed to load Deck ' + id));
 				
-				
 				req.deck = deck;
 				next();
 			});
-	
-	
 };
 
 /**
@@ -121,4 +131,19 @@ exports.hasAuthorization = function(req, res, next) {
 		return res.status(403).send('User is not authorized');
 	}
 	next();
+};
+
+/**
+ * 
+ **/
+
+exports.populateAspects = function(req, res, next) {
+	Deck.populate(req.deck.cardList, 
+		{path: 'traitData.aspect featData.aspect', model: 'Aspect'},
+		function(err, deck){
+			if (err) return next(err);
+			res.deck = deck;
+			next();
+		});
+	
 };

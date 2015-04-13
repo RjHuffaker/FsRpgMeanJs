@@ -2,11 +2,27 @@
 
 module.exports = function(app) {
 	var users = require('../../app/controllers/users');
+	var aspects = require('../../app/controllers/aspects');
 	var traits = require('../../app/controllers/traits');
 	var feats = require('../../app/controllers/feats');
 	var augments = require('../../app/controllers/augments');
 	var items = require('../../app/controllers/items');
 	var origins = require('../../app/controllers/origins');
+	
+	// Aspects Routes
+	app.route('/aspects')
+		.get(aspects.list);
+	
+	app.route('/aspects/:deckIds/:aspectType')
+		.get(aspects.query);
+	
+	app.route('/aspect')
+		.post(users.requiresLogin, aspects.create);
+
+	app.route('/aspect/:aspectId')
+		.get(aspects.read)
+		.put(users.requiresLogin, aspects.hasAuthorization, aspects.update)
+		.delete(users.requiresLogin, aspects.hasAuthorization, aspects.delete);
 	
 	// Trait Routes
 	app.route('/traits')
@@ -59,6 +75,7 @@ module.exports = function(app) {
 		.delete(users.requiresLogin, origins.hasAuthorization, origins.delete);
 	
 	// Card middleware
+	app.param('aspectId', aspects.aspectByID);
 	app.param('traitId', traits.traitByID);
 	app.param('featId', feats.featByID);
 	app.param('augmentId', augments.augmentByID);

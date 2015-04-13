@@ -44,7 +44,7 @@ angular.module('core')
 			};
 			
 			var fetchDecks = function(event, object){
-				BREAD.browseDecks(object.deckType);
+				BREAD.browseDecks(object.deckType, BREAD.resource);
 			};
 			
 			var initialize = function(){

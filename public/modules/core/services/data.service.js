@@ -120,6 +120,12 @@ angular.module('core').factory('DataSRVC', [
 			'1d10 CHA'
 		];
 		
+		service.aspectTypes = [
+			'Archetype',
+			'Allegiance',
+			'Race'
+		];
+		
 		service.archetypes = [
 			'General',
 			'Guardian',
