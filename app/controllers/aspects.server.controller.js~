@@ -88,7 +88,8 @@ exports.list = function(req, res) {
  * Query Aspects by both type and deck
  */
 exports.query = function(req, res) {
-	Aspect.find({deck: req.params.deckId}).exec(function(err, aspects) {
+	console.log('deckId: ' + req.params.deckId);
+	Aspect.find({'deck': req.params.deckId, 'aspectType': req.params.aspectType}).exec(function(err, aspects) {
 		console.log(err);
 		console.log(aspects);
 		if (err) {

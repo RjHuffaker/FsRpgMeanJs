@@ -81,6 +81,10 @@ div[card-deck] {
 	margin-top: 45em;
 }
 
+[card-panel].ng-enter.ng-enter-active {
+	margin-left: -90em;
+}
+
 .Aspect,
 .card-aspect {
 	background-color: navajoWhite !important;

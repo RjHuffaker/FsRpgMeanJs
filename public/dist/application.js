@@ -43,10 +43,6 @@ angular.element(document).ready(function() {
 });
 'use strict';
 
-// Use applicaion configuration module to register a new module
-ApplicationConfiguration.registerModule('aspects');
-'use strict';
-
 // Use application configuration module to register a new module
 ApplicationConfiguration.registerModule('campaigns');
 
@@ -79,110 +75,6 @@ ApplicationConfiguration.registerModule('pcs');
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('users');
 
-'use strict';
-
-//Setting up route
-angular.module('aspects').config(['$stateProvider',
-	function($stateProvider) {
-		// Aspects state routing
-		$stateProvider.
-		state('listAspects', {
-			url: '/aspects',
-			templateUrl: 'modules/aspects/views/list-aspects.client.view.html'
-		}).
-		state('createAspect', {
-			url: '/aspects/create',
-			templateUrl: 'modules/aspects/views/create-aspect.client.view.html'
-		}).
-		state('viewAspect', {
-			url: '/aspects/:aspectId',
-			templateUrl: 'modules/aspects/views/view-aspect.client.view.html'
-		}).
-		state('editAspect', {
-			url: '/aspects/:aspectId/edit',
-			templateUrl: 'modules/aspects/views/edit-aspect.client.view.html'
-		});
-	}
-]);
-'use strict';
-
-// Aspects controller
-angular.module('aspects').controller('AspectsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Aspects',
-	function($scope, $stateParams, $location, Authentication, Aspects) {
-		$scope.authentication = Authentication;
-
-		// Create new Aspect
-		$scope.create = function() {
-			// Create new Aspect object
-			var aspect = new Aspects ({
-				name: this.name
-			});
-
-			// Redirect after save
-			aspect.$save(function(response) {
-				$location.path('aspects/' + response._id);
-
-				// Clear form fields
-				$scope.name = '';
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
-
-		// Remove existing Aspect
-		$scope.remove = function(aspect) {
-			if ( aspect ) { 
-				aspect.$remove();
-
-				for (var i in $scope.aspects) {
-					if ($scope.aspects [i] === aspect) {
-						$scope.aspects.splice(i, 1);
-					}
-				}
-			} else {
-				$scope.aspect.$remove(function() {
-					$location.path('aspects');
-				});
-			}
-		};
-
-		// Update existing Aspect
-		$scope.update = function() {
-			var aspect = $scope.aspect;
-
-			aspect.$update(function() {
-				$location.path('aspects/' + aspect._id);
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
-
-		// Find a list of Aspects
-		$scope.find = function() {
-			$scope.aspects = Aspects.query();
-		};
-
-		// Find existing Aspect
-		$scope.findOne = function() {
-			$scope.aspect = Aspects.get({ 
-				aspectId: $stateParams.aspectId
-			});
-		};
-	}
-]);
-'use strict';
-
-//Aspects service used to communicate Aspects REST endpoints
-angular.module('aspects').factory('Aspects', ['$resource',
-	function($resource) {
-		return $resource('aspects/:aspectId', { aspectId: '@_id'
-		}, {
-			update: {
-				method: 'PUT'
-			}
-		});
-	}
-]);
 'use strict';
 
 angular.module('campaigns').controller('CampaignsController', ['$scope', 'Socket',
@@ -653,6 +545,120 @@ angular.module('cards')
 			templateUrl: '../modules/campaigns/views/campaign-options.html'
 		};
 	});
+'use strict';
+
+// General BREAD Factory-service.
+angular.module('cards').factory('Aspects', ['$resource',
+        function($resource){
+            return $resource(
+                'aspect/:aspectId',
+                {
+                    aspectId: '@_id'
+                },
+                {
+                    update: {
+                    method: 'PUT' },
+                    list: {
+                        url: '/aspects',
+                        method: 'GET',
+                        isArray: true
+                    },
+                    query: {
+                        url: '/aspects/:deckId',
+                        method: 'GET',
+                        isArray: true,
+                        params: {
+                            deckId: '@_id'
+                        }
+                    }
+                }
+            );
+        }]);
+'use strict';
+
+// General BREAD Factory-service.
+angular.module('cards').factory('Augments', ['$resource',
+        function($resource){
+            return $resource(
+                'augments/:augmentId',
+                {
+                    augmentId: '@_id'
+                },
+                {
+                    update: {
+                        method: 'PUT'
+                    }
+                }
+            );
+        }]);
+'use strict';
+
+// General BREAD Factory-service.
+angular.module('cards').factory('Feats', ['$resource',
+        function($resource){
+            return $resource(
+                'feats/:featId',
+                {
+                    featId: '@_id'
+                },
+                {
+                    update: {
+                        method: 'PUT'
+                    }
+                }
+            );
+        }]);
+'use strict';
+
+// General BREAD Factory-service.
+angular.module('cards').factory('Items', ['$resource',
+        function($resource){
+            return $resource(
+                'items/:itemId',
+                {
+                    itemId: '@_id'
+                },
+                {
+                    update: {
+                        method: 'PUT'
+                    }
+                }
+            );
+        }]);
+'use strict';
+
+// General BREAD Factory-service.
+angular.module('cards').factory('Origins', ['$resource',
+        function($resource){
+            return $resource(
+                'origins/:originId',
+                {
+                    originId: '@_id'
+                },
+                {
+                    update: {
+                        method: 'PUT'
+                    }
+                }
+            );
+        }]);
+'use strict';
+
+// General BREAD Factory-service.
+angular.module('cards').factory('Traits', ['$resource',
+        function($resource){
+            return $resource(
+                'traits/:traitId',
+                {
+                    traitId: '@_id'
+                },
+                {
+                    update: {
+                        method: 'PUT'
+                    }
+                }
+            );
+        }]);
 'use strict';
 
 // Factory-service for managing Trait cards.
@@ -1145,6 +1151,56 @@ coreModule
 			}
 		};
 	}]);
+'use strict';
+
+angular.module('core').factory('bread-add', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'BREAD', function($stateParams, $location, Authentication, $resource, $rootScope, BREAD){
+    
+    var service = {};
+    
+    
+    
+    return service;
+}]);
+'use strict';
+
+angular.module('core').factory('bread-browse', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'BREAD', function($stateParams, $location, Authentication, $resource, $rootScope, BREAD){
+    
+    var service = {};
+    
+    
+    
+    return service;
+}]);
+'use strict';
+
+angular.module('core').factory('bread-delete', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'BREAD', function($stateParams, $location, Authentication, $resource, $rootScope, BREAD){
+    
+    var service = {};
+    
+    
+    
+    return service;
+}]);
+'use strict';
+
+angular.module('core').factory('bread-edit', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'BREAD', function($stateParams, $location, Authentication, $resource, $rootScope, BREAD){
+    
+    var service = {};
+    
+    
+    
+    return service;
+}]);
+'use strict';
+
+angular.module('core').factory('bread-read', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'BREAD', function($stateParams, $location, Authentication, $resource, $rootScope, BREAD){
+    
+    var service = {};
+    
+    
+    
+    return service;
+}]);
 'use strict';
 
 // Factory-service for providing generic game data
@@ -2133,85 +2189,8 @@ angular.module('decks')
 
 // General BREAD Factory-service.
 angular.module('decks')
-	.factory('BREAD', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'pcsDefaults',
-			function($stateParams, $location, Authentication, $resource, $rootScope, pcsDefaults){
-		
-		var Aspects = $resource(
-			'aspect/:aspectId',
-			{ aspectId: '@_id' },
-			{
-				update: { method: 'PUT' },
-				list: {
-					url: '/aspects',
-					method: 'GET',
-					isArray: true
-				},
-				query: {
-					url: '/aspects/:deckIds/:aspectType',
-					method: 'GET',
-					isArray: true,
-					params: {
-						deckIds: 'deckIds',
-						aspectType: 'aspectType'
-					}
-				}
-			}
-		);
-		
-		var Traits = $resource(
-			'traits/:traitId',
-			{ traitId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
-		
-		var Feats = $resource(
-			'feats/:featId',
-			{ featId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
-		
-		var Augments = $resource(
-			'augments/:augmentId',
-			{ augmentId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
-		
-		var Items = $resource(
-			'items/:itemId',
-			{ itemId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
-		
-		var Origins = $resource(
-			'origins/:originId',
-			{ originId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
-		
-		var Decks = $resource(
-			'deck/:deckId',
-			{ deckId: '@_id' },
-			{
-				update: { method: 'PUT' },
-				list: {
-					url: '/decks',
-					method: 'GET',
-					isArray: true
-				},
-				query: {
-					url: '/decks/:deckType',
-					method: 'GET',
-					isArray: true,
-					params: { deckType: 'deckType' }
-				}
-			}
-		);
-		
-		var Pcs = $resource(
-			'pcs/:pcId',
-			{ pcId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
+	.factory('BREAD', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'pcsDefaults', 'Decks', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins',
+			function($stateParams, $location, Authentication, $resource, $rootScope, pcsDefaults, Decks, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
 		
 		var service = {};
 		
@@ -2233,9 +2212,7 @@ angular.module('decks')
 		};
 		
 		service.toggleDependency = function(deck){
-			console.log(service.resource);
 			var deckIndex = service.findDependency(deck);
-			console.log(deckIndex);
 			
 			if (deckIndex > -1) {
 				service.resource.dependencies.splice(deckIndex, 1);
@@ -2366,15 +2343,21 @@ angular.module('decks')
 		};
 		
 		// BROWSE
-		service.browseAspects = function(params){
-			Aspects.query(params, function(response){
-				console.log(response);
-				if(params.aspectType === 'Archetype'){
-					service.resource.archetypeList = angular.fromJson(angular.toJson(response));
-				} else if(params.aspectType === 'Allegiance'){
-					service.resource.allegianceList = angular.fromJson(angular.toJson(response));
-				} else if(params.aspectType === 'Race'){
-					service.resource.raceList = angular.fromJson(angular.toJson(response));
+		service.browseAspects = function(deck){
+			console.log(deck);
+			service.resource.archetypeList = [];
+			service.resource.allegianceList = [];
+			service.resource.raceList = [];
+			Aspects.query({deckId: deck._id}, function(response){
+				for(var i = 0; i < response.length; i++){
+					console.log(response[i]);
+					if(response[i].aspectType === 'Archetype'){
+						service.resource.archetypeList.push(response[i]);
+					} else if(response[i].aspectType === 'Allegiance'){
+						service.resource.allegianceList.push(response[i]);
+					} else if(response[i].aspectType === 'Race'){
+						service.resource.raceList.push(response[i]);
+					}
 				}
 			});
 		};
@@ -2498,28 +2481,12 @@ angular.module('decks')
 				service.resource = response;
 				console.log(response);
 				if(response.deckType !== 'Aspect'){
-					var deckIds = [];
-					
-					for(var i = 0; i < response.dependencies.length; i++){
-						deckIds.push(response.dependencies[i]._id);
-					}
 					
 					service.browseDecks({deckType: 'Aspect'}, service.dependencyList);
 					
-					service.browseAspects({
-						deckIds: deckIds,
-						aspectType: 'Archetype'
-					});
-					
-					service.browseAspects({
-						deckIds: deckIds,
-						aspectType: 'Allegiance'
-					});
-					
-					service.browseAspects({
-						deckIds: deckIds,
-						aspectType: 'Race'
-					});
+					for(var i = 0; i < response.dependencies.length; i++){
+						service.browseAspects(response.dependencies[i]);
+					}
 				}
 			});
 		};
@@ -2533,8 +2500,6 @@ angular.module('decks')
 		//EDIT
 		
 		service.editCard = function(panel){
-			
-			console.log(panel);
 			if(panel.cardRole === 'Aspect'){
 				new Aspects(panel.aspectData).$update();
 			} else if(panel.cardRole === 'Trait' && panel.traitData){
@@ -2791,6 +2756,35 @@ angular.module('decks')
 		return service;
 		
 	}]);
+
+'use strict';
+
+// General BREAD Factory-service.
+angular.module('decks').factory('Decks', ['$resource',
+        function($resource){
+            return $resource(
+                'deck/:deckId',
+                {
+                    deckId: '@_id'
+                },
+                {
+                    update: {
+                        method: 'PUT'
+                    },
+                    list: {
+                        url: '/decks',
+                        method: 'GET',
+                        isArray: true
+                    },
+                    query: {
+                        url: '/decks/:deckType',
+                        method: 'GET',
+                        isArray: true,
+                        params: { deckType: 'deckType' }
+                    }
+                }
+            );
+        }]);
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
@@ -3664,6 +3658,23 @@ angular.module('pcs')
 			}
 		};
 	}]);
+'use strict';
+
+// General BREAD Factory-service.
+angular.module('decks').factory('Pcs', ['$resource',
+        function($resource){
+            return $resource(
+                'pcs/:pcId',
+                {
+                    pcId: '@_id'
+                },
+                {
+                    update: {
+                        method: 'PUT'
+                    }
+                }
+            );
+        }]);
 'use strict';
 
 // Factory-service for managing PC card deck.

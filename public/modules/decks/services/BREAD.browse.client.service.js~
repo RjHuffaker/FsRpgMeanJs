@@ -1,0 +1,12 @@
+'use strict';
+
+// General BREAD Factory-service.
+angular.module('decks')
+	.factory('BREAD_BROWSE', ['BREAD',
+			function($stateParams, $location, Authentication, $resource, $rootScope, pcsDefaults){
+	
+	var service = {};
+	
+	return service;
+		
+	}]);

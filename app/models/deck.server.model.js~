@@ -29,8 +29,7 @@ var DeckSchema = new Schema({
 	},
 	dependencies: [
 		{
-			type: Schema.ObjectId,
-			ref: 'Deck'
+			type: String
 		}
 	],
 	deckType: {

@@ -2,8 +2,84 @@
 
 // General BREAD Factory-service.
 angular.module('decks')
-	.factory('BREAD', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'pcsDefaults', 'Decks', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins',
-			function($stateParams, $location, Authentication, $resource, $rootScope, pcsDefaults, Decks, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
+	.factory('BREAD', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'pcsDefaults',
+			function($stateParams, $location, Authentication, $resource, $rootScope, pcsDefaults){
+		
+		var Aspects = $resource(
+			'aspect/:aspectId',
+			{ aspectId: '@_id' },
+			{
+				update: { method: 'PUT' },
+				list: {
+					url: '/aspects',
+					method: 'GET',
+					isArray: true
+				},
+				query: {
+					url: '/aspects/:deckId',
+					method: 'GET',
+					isArray: true,
+					params: {
+						deckId: '@_id'
+					}
+				}
+			}
+		);
+		
+		var Traits = $resource(
+			'traits/:traitId',
+			{ traitId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Feats = $resource(
+			'feats/:featId',
+			{ featId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Augments = $resource(
+			'augments/:augmentId',
+			{ augmentId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Items = $resource(
+			'items/:itemId',
+			{ itemId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Origins = $resource(
+			'origins/:originId',
+			{ originId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
+		
+		var Decks = $resource(
+			'deck/:deckId',
+			{ deckId: '@_id' },
+			{
+				update: { method: 'PUT' },
+				list: {
+					url: '/decks',
+					method: 'GET',
+					isArray: true
+				},
+				query: {
+					url: '/decks/:deckType',
+					method: 'GET',
+					isArray: true,
+					params: { deckType: 'deckType' }
+				}
+			}
+		);
+		
+		var Pcs = $resource(
+			'pcs/:pcId',
+			{ pcId: '@_id' },
+			{ update: { method: 'PUT' } }
+		);
 		
 		var service = {};
 		
