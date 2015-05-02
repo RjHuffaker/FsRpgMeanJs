@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing PC traits
-angular.module('pcs').factory('PcsTraits', ['$resource', 'BREAD', 'CardDeck', 
-	function($resource, BREAD, CardDeck){
+angular.module('pcs').factory('PcsTraits', ['$resource', 'Bakery', 'CardDeck', 
+	function($resource, Bakery, CardDeck){
 		
 		var service = {};
 		
@@ -14,18 +14,18 @@ angular.module('pcs').factory('PcsTraits', ['$resource', 'BREAD', 'CardDeck',
 		
 		// Factor Trait Limit
 		service.factorTraitLimit = function(){
-			BREAD.resource.traitLimit = Math.floor((BREAD.resource.level || 0) / 4 + 1);
+			Bakery.resource.traitLimit = Math.floor((Bakery.resource.level || 0) / 4 + 1);
 			this.validateTraits();
 		};
 		
 		service.validateTraits = function(){
-			for(var ia = 0; ia < BREAD.resource.traitLimit; ia++){
+			for(var ia = 0; ia < Bakery.resource.traitLimit; ia++){
 				if(!this.traitAtLevel(ia * 4)){
 					this.addTrait(ia * 4);
 				}
 			}
-			for(var ic = 0; ic < BREAD.resource.cardList.length; ic++){
-				if(BREAD.resource.cardList[ic].level > BREAD.resource.level){
+			for(var ic = 0; ic < Bakery.resource.cardList.length; ic++){
+				if(Bakery.resource.cardList[ic].level > Bakery.resource.level){
 					CardDeck.removeCard(ic);
 				}
 			}
@@ -33,9 +33,9 @@ angular.module('pcs').factory('PcsTraits', ['$resource', 'BREAD', 'CardDeck',
 		
 		service.traitAtLevel = function(level){
 			var traitAtLevel = false;
-			for(var ib = 0; ib < BREAD.resource.cardList.length; ib++){
-				if(BREAD.resource.cardList[ib].cardType === 'trait'){
-					if(BREAD.resource.cardList[ib].level === level){
+			for(var ib = 0; ib < Bakery.resource.cardList.length; ib++){
+				if(Bakery.resource.cardList[ib].cardType === 'trait'){
+					if(Bakery.resource.cardList[ib].level === level){
 						traitAtLevel = true;
 					}
 				}
@@ -47,7 +47,7 @@ angular.module('pcs').factory('PcsTraits', ['$resource', 'BREAD', 'CardDeck',
 			var newTrait = {
 				name: 'Level '+level+' Trait',
 				cardType: 'trait',
-				x_coord: BREAD.resource.cardList[BREAD.lastCard()].x_coord + 15,
+				x_coord: Bakery.lastPanel(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -56,7 +56,7 @@ angular.module('pcs').factory('PcsTraits', ['$resource', 'BREAD', 'CardDeck',
 				locked: true,
 				level: level
 			};
-			BREAD.resource.cardList.push(newTrait);
+			Bakery.resource.cardList.push(newTrait);
 		};
 		
 		service.lockCard = function(card){

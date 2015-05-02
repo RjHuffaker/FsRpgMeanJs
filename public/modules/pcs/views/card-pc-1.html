@@ -6,10 +6,10 @@
 			<i class="card-icon glyphicon glyphicon-cog"></i>
 		</a>
 		<ul class="card-menu-list dropdown-menu" aria-labelledby="cardDropdown">
-			<li ng-click="savePc(BREAD.resource);"><label>
+			<li ng-click="savePc(Bakery.resource);"><label>
 				<i class="glyphicon glyphicon-ok alert-success"></i> Save Character
 			</label></li>
-			<li ng-click="savePc(BREAD.resource); exitPc();"><label>
+			<li ng-click="savePc(Bakery.resource); exitPc();"><label>
 				<i class="glyphicon glyphicon-remove alert-danger"></i> Save & Exit
 			</label></li>
 			<li ng-click="exitPc();"><label>
@@ -25,7 +25,7 @@
 				</td>
 				<td colspan="3">
 					<input id="name" class="fill-width card-input" type="text"
-						 ng-model="BREAD.resource.name" stop-event/>
+						 ng-model="Bakery.resource.name" stop-event/>
 				</td>
 			</tr>
 
@@ -35,7 +35,7 @@
 				</td>
 				<td width="30%">
 					<div id="race">
-						{{BREAD.resource.race}}
+						{{Bakery.resource.race}}
 					</div>
 				</td>
 				<td width="15%">
@@ -43,7 +43,7 @@
 				</td>
 				<td width="30%">
 					<div id="race">
-						{{BREAD.resource.sex}}
+						{{Bakery.resource.sex}}
 					</div>
 				</td>
 			</tr>
@@ -54,15 +54,15 @@
 		<tbody>
 			<tr height="15%">
 				<td width="15%">
-					<img ability="BREAD.resource.abilities[0]" stop-event
-						ng-src={{BREAD.resource.abilities[0].dice.image}} />
+					<img ability="Bakery.resource.abilities[0]" stop-event
+						ng-src={{Bakery.resource.abilities[0].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>STR</strong>ength
 				</td>
 				<td width="15%">
-					<img ability="BREAD.resource.abilities[1]" stop-event
-						ng-src={{BREAD.resource.abilities[1].dice.image}} />
+					<img ability="Bakery.resource.abilities[1]" stop-event
+						ng-src={{Bakery.resource.abilities[1].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>PHY</strong>sique
@@ -76,23 +76,23 @@
 				</td>
 				<td colspan="2" class="text-center">
 					<small>
-						{{BREAD.resource.block}}
+						{{Bakery.resource.block}}
 					</small>
 				</td>
 			</tr>
 
 			<tr height="15%">
 				<td width="15%">
-					<img ability="BREAD.resource.abilities[2]" stop-event
-						ng-src={{BREAD.resource.abilities[2].dice.image}} />
+					<img ability="Bakery.resource.abilities[2]" stop-event
+						ng-src={{Bakery.resource.abilities[2].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>FLE</strong>xibility
 				</td>
 				
 				<td width="15%">
-					<img ability="BREAD.resource.abilities[3]" stop-event
-						ng-src={{BREAD.resource.abilities[3].dice.image}} />
+					<img ability="Bakery.resource.abilities[3]" stop-event
+						ng-src={{Bakery.resource.abilities[3].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>DEX</strong>terity
@@ -106,22 +106,22 @@
 				</td>
 				<td colspan="2" class="text-center">
 					<small>
-						{{BREAD.resource.dodge}}
+						{{Bakery.resource.dodge}}
 					</small>
 				</td>
 			</tr>
 
 			<tr height="15%">
 				<td width="15%">
-					<img ability="BREAD.resource.abilities[4]" stop-event
-						ng-src={{BREAD.resource.abilities[4].dice.image}} />
+					<img ability="Bakery.resource.abilities[4]" stop-event
+						ng-src={{Bakery.resource.abilities[4].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>ACU</strong>ity
 				</td>
 				<td width="15%">
-					<img ability="BREAD.resource.abilities[5]" stop-event
-						ng-src={{BREAD.resource.abilities[5].dice.image}} />
+					<img ability="Bakery.resource.abilities[5]" stop-event
+						ng-src={{Bakery.resource.abilities[5].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>INT</strong>ellect
@@ -135,22 +135,22 @@
 				</td>
 				<td colspan="2" class="text-center">
 					<small>
-						{{BREAD.resource.alertness}}
+						{{Bakery.resource.alertness}}
 					</small>
 				</td>
 			</tr>
 
 			<tr height="15%">
 				<td width="15%">
-					<img ability="BREAD.resource.abilities[6]" stop-event
-						ng-src={{BREAD.resource.abilities[6].dice.image}} />
+					<img ability="Bakery.resource.abilities[6]" stop-event
+						ng-src={{Bakery.resource.abilities[6].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>WIS</strong>dom
 				</td>
 				<td width="15%">
-					<img ability="BREAD.resource.abilities[7]" stop-event
-						ng-src={{BREAD.resource.abilities[7].dice.image}} />
+					<img ability="Bakery.resource.abilities[7]" stop-event
+						ng-src={{Bakery.resource.abilities[7].dice.image}} />
 				</td>
 				<td width="35%" class="text-9">
 					<strong>CHA</strong>risma
@@ -164,7 +164,7 @@
 				</td>
 				<td colspan="2" class="text-center">
 					<small>
-						{{BREAD.resource.tenacity}}
+						{{Bakery.resource.tenacity}}
 					</small>
 				</td>
 			</tr>

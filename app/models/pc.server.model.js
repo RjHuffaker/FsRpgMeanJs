@@ -40,6 +40,14 @@ var PcSchema = new Schema({
 		type: String, 
 		default: 'pcSummary'
 	},
+	x_coord: {
+		type: Number,
+		default: 0
+	},
+	y_coord: {
+		type: Number,
+		default: 0
+	},
 	name: {
 		type: String,
 		default: ''

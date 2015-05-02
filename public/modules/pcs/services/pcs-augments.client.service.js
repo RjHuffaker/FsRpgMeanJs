@@ -1,24 +1,24 @@
 'use strict';
 
 // Factory-service for managing PC card deck.
-angular.module('pcs').factory('PcsAugments', ['BREAD', 'CardDeck', 
-	function(BREAD, CardDeck){
+angular.module('pcs').factory('PcsAugments', ['Bakery', 'CardDeck', 
+	function(Bakery, CardDeck){
 		var service = {};
 		
 		// Factor Augment Limit
 		service.factorAugmentLimit = function(){
-			BREAD.resource.augmentLimit = Math.round((BREAD.resource.level || 0) / 4);
+			Bakery.resource.augmentLimit = Math.round((Bakery.resource.level || 0) / 4);
 			this.validateAugments();
 		};
 		
 		service.validateAugments = function(){
-			for(var ia = 0; ia < BREAD.resource.augmentLimit; ia++){
+			for(var ia = 0; ia < Bakery.resource.augmentLimit; ia++){
 				if(!this.augmentAtLevel(ia * 4 + 2)){
 					this.addAugment(ia * 4 + 2);
 				}
 			}
-			for(var ic = 0; ic < BREAD.resource.cardList.length; ic++){
-				if(BREAD.resource.cardList[ic].level > BREAD.resource.level){
+			for(var ic = 0; ic < Bakery.resource.cardList.length; ic++){
+				if(Bakery.resource.cardList[ic].level > Bakery.resource.level){
 					CardDeck.removeCard(ic);
 				}
 			}
@@ -26,9 +26,9 @@ angular.module('pcs').factory('PcsAugments', ['BREAD', 'CardDeck',
 		
 		service.augmentAtLevel = function(level){
 			var augmentAtLevel = false;
-			for(var ib = 0; ib < BREAD.resource.cardList.length; ib++){
-				if(BREAD.resource.cardList[ib].cardType === 'augment'){
-					if(BREAD.resource.cardList[ib].level === level){
+			for(var ib = 0; ib < Bakery.resource.cardList.length; ib++){
+				if(Bakery.resource.cardList[ib].cardType === 'augment'){
+					if(Bakery.resource.cardList[ib].level === level){
 						augmentAtLevel = true;
 					}
 				}
@@ -40,7 +40,7 @@ angular.module('pcs').factory('PcsAugments', ['BREAD', 'CardDeck',
 			var newAugment = {
 				name: 'Level '+level+' Augment',
 				cardType: 'augment',
-				x_coord: BREAD.resource.cardList[BREAD.lastCard()].x_coord + 15,
+				x_coord: Bakery.resource.cardList[Bakery.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -49,7 +49,7 @@ angular.module('pcs').factory('PcsAugments', ['BREAD', 'CardDeck',
 				locked: true,
 				level: level
 			};
-			BREAD.resource.cardList.push(newAugment);
+			Bakery.resource.cardList.push(newAugment);
 		};
 		
 		return service;

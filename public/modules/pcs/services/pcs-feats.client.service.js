@@ -1,35 +1,35 @@
 'use strict';
 
 // Factory-service for managing PC card deck.
-angular.module('pcs').factory('PcsFeats', ['BREAD', 'CardDeck', 
-	function(BREAD, CardDeck){
+angular.module('pcs').factory('PcsFeats', ['Bakery', 'CardDeck', 
+	function(Bakery, CardDeck){
 		var service = {};
 		
 		// Factor Feat Limit
 		service.factorFeatLimit = function(){
-			BREAD.resource.featLimit = Math.ceil((BREAD.resource.level) / 4) || 0;
-			BREAD.resource.featDeck = BREAD.resource.level;
+			Bakery.resource.featLimit = Math.ceil((Bakery.resource.level) / 4) || 0;
+			Bakery.resource.featDeck = Bakery.resource.level;
 			this.validateFeats();
 		};
 		
 		service.validateFeats = function(){
-			for(var ia = 0; ia < BREAD.resource.featDeck; ia++){
+			for(var ia = 0; ia < Bakery.resource.featDeck; ia++){
 				if(!this.featAtLevel(ia + 1)){
 					this.addFeat(ia + 1);
 				}
 			}
-			for(var ic = 0; ic < BREAD.resource.cardList.length; ic++){
-				if(BREAD.resource.cardList[ic].level > BREAD.resource.level){
-					CardDeck.removeCard( BREAD.resource.cardList[ic] );
+			for(var ic = 0; ic < Bakery.resource.cardList.length; ic++){
+				if(Bakery.resource.cardList[ic].level > Bakery.resource.level){
+					CardDeck.removeCard( Bakery.resource.cardList[ic] );
 				}
 			}
 		};
 		
 		service.featAtLevel = function(level){
 			var featAtLevel = false;
-			for(var ib = 0; ib < BREAD.resource.cardList.length; ib++){
-				if(BREAD.resource.cardList[ib].cardType === 'feat'){
-					if(BREAD.resource.cardList[ib].level === level){
+			for(var ib = 0; ib < Bakery.resource.cardList.length; ib++){
+				if(Bakery.resource.cardList[ib].cardType === 'feat'){
+					if(Bakery.resource.cardList[ib].level === level){
 						featAtLevel = true;
 					}
 				}
@@ -41,7 +41,7 @@ angular.module('pcs').factory('PcsFeats', ['BREAD', 'CardDeck',
 			var newFeat = {
 				name: 'Level '+level+' Feat',
 				cardType: 'feat',
-				x_coord: BREAD.resource.cardList[BREAD.lastCard()].x_coord + 15,
+				x_coord: Bakery.resource.cardList[Bakery.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -50,7 +50,7 @@ angular.module('pcs').factory('PcsFeats', ['BREAD', 'CardDeck',
 				locked: true,
 				level: level
 			};
-			BREAD.resource.cardList.push(newFeat);
+			Bakery.resource.cardList.push(newFeat);
 		};
 		
 		return service;

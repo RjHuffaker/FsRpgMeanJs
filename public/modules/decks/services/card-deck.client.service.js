@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('CardDeck', ['BREAD', 'Campaigns', '$rootScope',
-	function(BREAD, Campaigns, $rootScope){
+angular.module('core').factory('CardDeck', ['Bakery', 'Campaigns', '$rootScope',
+	function(Bakery, Campaigns, $rootScope){
 		var service = {};
 		
 		service.windowHeight = 0;
@@ -20,7 +20,7 @@ angular.module('core').factory('CardDeck', ['BREAD', 'Campaigns', '$rootScope',
 		var moveTimer;
 		
 		var getCardList = function(){
-			return BREAD.resource.cardList;
+			return Bakery.resource.cardList;
 		};
 		
 		var getCardIndex = function(x_coord, y_coord){

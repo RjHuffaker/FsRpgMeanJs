@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing PC items.
-angular.module('pcs').factory('PcsItems', ['BREAD',
-	function(BREAD){
+angular.module('pcs').factory('PcsItems', ['Bakery',
+	function(Bakery){
 		var service = {};
 		
 		

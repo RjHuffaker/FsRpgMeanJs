@@ -54,15 +54,6 @@ angular.module('decks')
 			}
 		};
 		
-		var listDecks = function(){
-			Decks.query({deckType: 'Aspect'},
-				function(response){
-					console.log(response);
-					service.dependencyList = response;
-				}
-			);
-		};
-		
 		var setCardList = function(list, destination){
 			destination.cardList = list;
 			for(var i = 0; i < list.length; i++){
@@ -137,7 +128,6 @@ angular.module('decks')
 		};
 		
 		service.toggleCardLock = function(panel){
-			console.log(panel);
 			for(var i = 0; i < service.resource.cardList.length; i++){
 				if(panel === service.resource.cardList[i]){
 					service.resource.cardList[i].locked = !service.resource.cardList[i].locked;
@@ -146,8 +136,6 @@ angular.module('decks')
 		};
 		
 		service.changeAspect = function(card, aspect){
-			console.log(card.aspect);
-			console.log(aspect);
 			if(card.aspect === aspect){
 				console.log('same');
 			} else {

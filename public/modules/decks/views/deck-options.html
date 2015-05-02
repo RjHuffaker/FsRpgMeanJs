@@ -1,27 +1,27 @@
 <div class="content-panel">
 	<h4 class="text-argos text-16 text-center">Deck Options</h4>
 	<input id="name" class="text-14 fill-width card-input text-center" type="text"
-		ng-model="BREAD.resource.name" stop-event/>
+		ng-model="Bakery.resource.name" stop-event/>
 	<br />
 	<div class="text-center">
 		<a class="fill-width text-argos text-16 text-center"
-			ng-click="BREAD.addCard(BREAD.resource, BREAD.resource.deckType, BREAD.resource.cardList.length, true)">
+			ng-click="addCard(Bakery.resource, Bakery.resource.deckType, Bakery.resource.cardList.length, true)">
 			Add Card
 		</a>
 	</div>
 	<div class="text-center">
 		<a class="fill-width text-argos text-16"
-			ng-click="BREAD.editDeck(BREAD.resource, true, false)">
+			ng-click="editDeck(Bakery.resource, true, false)">
 			Save Deck
 		</a>
 	</div>
 	<div class="text-center">
 		<a class="fill-width text-argos text-16 text-center"
-			ng-click="BREAD.readDeck(BREAD.resource)">
+			ng-click="readDeck(Bakery.resource)">
 			Reload Deck
 		</a>
 	</div>
-	<div ng-if="BREAD.resource.deckType !== 'Aspect'" class="dropdown fill-width text-center" dropdown stop-event on-toggle="toggled(open)">
+	<div ng-if="Bakery.resource.deckType !== 'Aspect'" class="dropdown fill-width text-center" dropdown stop-event on-toggle="toggled(open)">
 		<a id="cardDropdown" class="dropdown-toggle fill-width text-argos text-16 text-center"
 			dropdown-toggle ng-click="dropdown" aria-expanded="true">
 			Dependencies
@@ -31,11 +31,11 @@
 				<div class="text-8">
 					<ul class="col-xs-6">
 						<li role="presentation" class="dropdown-header">Deck Dependencies</li>
-						<li role="presentation" ng-repeat="dependency in BREAD.dependencyList"
+						<li role="presentation" ng-repeat="dependency in Bakery.dependencyList"
 							stop-click><label>
 							<input type="checkbox" value="dependency" 
-								ng-checked="BREAD.findDependency(dependency) > -1"
-								ng-click="BREAD.toggleDependency(dependency)" >
+								ng-checked="Bakery.findDependency(dependency) > -1"
+								ng-click="Bakery.toggleDependency(dependency)" >
 							{{dependency.name}}
 						</label></li>
 						

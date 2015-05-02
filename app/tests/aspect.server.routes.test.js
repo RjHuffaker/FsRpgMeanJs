@@ -16,7 +16,7 @@ var credentials, user, aspect;
 /**
  * Aspect routes tests
  */
-describe('Aspect CRUD tests', function() {
+describe('Aspect BREAD tests', function() {
 	beforeEach(function(done) {
 		// Create user credentials
 		credentials = {
@@ -57,7 +57,7 @@ describe('Aspect CRUD tests', function() {
 				var userId = user.id;
 
 				// Save a new Aspect
-				agent.post('/aspects')
+				agent.post('/aspect')
 					.send(aspect)
 					.expect(200)
 					.end(function(aspectSaveErr, aspectSaveRes) {
@@ -85,40 +85,12 @@ describe('Aspect CRUD tests', function() {
 	});
 
 	it('should not be able to save Aspect instance if not logged in', function(done) {
-		agent.post('/aspects')
+		agent.post('/aspect')
 			.send(aspect)
 			.expect(401)
 			.end(function(aspectSaveErr, aspectSaveRes) {
 				// Call the assertion callback
 				done(aspectSaveErr);
-			});
-	});
-
-	it('should not be able to save Aspect instance if no name is provided', function(done) {
-		// Invalidate name field
-		aspect.name = '';
-
-		agent.post('/auth/signin')
-			.send(credentials)
-			.expect(200)
-			.end(function(signinErr, signinRes) {
-				// Handle signin error
-				if (signinErr) done(signinErr);
-
-				// Get the userId
-				var userId = user.id;
-
-				// Save a new Aspect
-				agent.post('/aspects')
-					.send(aspect)
-					.expect(400)
-					.end(function(aspectSaveErr, aspectSaveRes) {
-						// Set message assertion
-						(aspectSaveRes.body.message).should.match('Please fill Aspect name');
-						
-						// Handle Aspect save error
-						done(aspectSaveErr);
-					});
 			});
 	});
 
@@ -134,7 +106,7 @@ describe('Aspect CRUD tests', function() {
 				var userId = user.id;
 
 				// Save a new Aspect
-				agent.post('/aspects')
+				agent.post('/aspect')
 					.send(aspect)
 					.expect(200)
 					.end(function(aspectSaveErr, aspectSaveRes) {
@@ -145,7 +117,7 @@ describe('Aspect CRUD tests', function() {
 						aspect.name = 'WHY YOU GOTTA BE SO MEAN?';
 
 						// Update existing Aspect
-						agent.put('/aspects/' + aspectSaveRes.body._id)
+						agent.put('/aspect/' + aspectSaveRes.body._id)
 							.send(aspect)
 							.expect(200)
 							.end(function(aspectUpdateErr, aspectUpdateRes) {
@@ -189,7 +161,7 @@ describe('Aspect CRUD tests', function() {
 
 		// Save the Aspect
 		aspectObj.save(function() {
-			request(app).get('/aspects/' + aspectObj._id)
+			request(app).get('/aspect/' + aspectObj._id)
 				.end(function(req, res) {
 					// Set assertion
 					res.body.should.be.an.Object.with.property('name', aspect.name);
@@ -212,7 +184,7 @@ describe('Aspect CRUD tests', function() {
 				var userId = user.id;
 
 				// Save a new Aspect
-				agent.post('/aspects')
+				agent.post('/aspect')
 					.send(aspect)
 					.expect(200)
 					.end(function(aspectSaveErr, aspectSaveRes) {
@@ -220,7 +192,7 @@ describe('Aspect CRUD tests', function() {
 						if (aspectSaveErr) done(aspectSaveErr);
 
 						// Delete existing Aspect
-						agent.delete('/aspects/' + aspectSaveRes.body._id)
+						agent.delete('/aspect/' + aspectSaveRes.body._id)
 							.send(aspect)
 							.expect(200)
 							.end(function(aspectDeleteErr, aspectDeleteRes) {
@@ -247,7 +219,7 @@ describe('Aspect CRUD tests', function() {
 		// Save the Aspect
 		aspectObj.save(function() {
 			// Try deleting Aspect
-			request(app).delete('/aspects/' + aspectObj._id)
+			request(app).delete('/aspect/' + aspectObj._id)
 			.expect(401)
 			.end(function(aspectDeleteErr, aspectDeleteRes) {
 				// Set message assertion

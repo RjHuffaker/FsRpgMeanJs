@@ -35,17 +35,17 @@
 				<div class="text-8">
 					<ul class="col-xs-6">
 						<li role="presentation" class="dropdown-header">Archetype</li>
-						<li role="presentation" ng-repeat="archetype in BREAD.resource.archetypeList track by $index"><label>
+						<li role="presentation" ng-repeat="archetype in Bakery.resource.archetypeList track by $index"><label>
 							<input type="radio" ng-checked="card.aspect.name === archetype.name"
-								ng-click="BREAD.changeAspect(card, archetype); featureCardForm.$setDirty();">
+								ng-click="Bakery.changeAspect(card, archetype); featureCardForm.$setDirty();">
 							{{archetype.name}}
 						</label></li>
 					</ul>
 					<ul class="col-xs-6">
 						<li role="presentation" class="dropdown-header">Allegiance</li>
-						<li role="presentation" ng-repeat="allegiance in BREAD.resource.allegianceList" ng-if="allegiance.name !== 'Unaligned'"><label>
+						<li role="presentation" ng-repeat="allegiance in Bakery.resource.allegianceList" ng-if="allegiance.name !== 'Unaligned'"><label>
 							<input type="radio" ng-checked="card.aspect.name === allegiance.name"
-								ng-click="BREAD.changeAspect(card, allegiance); featureCardForm.$setDirty();">
+								ng-click="Bakery.changeAspect(card, allegiance); featureCardForm.$setDirty();">
 							{{allegiance.name}}
 						</label></li>
 					</ul>
@@ -53,10 +53,10 @@
 				<ul class="text-8">
 					<li role="presentation" class="col-xs-12 dropdown-header">Race</li>
 					<li role="presentation" class="col-xs-6" style="padding: 0;"
-						ng-repeat="race in BREAD.resource.raceList" ng-if="race.name !== 'Weolda'">
+						ng-repeat="race in Bakery.resource.raceList" ng-if="race.name !== 'Weolda'">
 						<label>
 							<input type="radio" ng-checked="card.aspect.name === race.name"
-								ng-click="BREAD.changeAspect(card, race); featureCardForm.$setDirty();">
+								ng-click="Bakery.changeAspect(card, race); featureCardForm.$setDirty();">
 							{{race.name}}
 						</label>
 					</li>

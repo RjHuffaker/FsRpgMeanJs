@@ -22,26 +22,26 @@
 		style="width: 14.8em; left: -.65em;">
 		<ul class="col-xs-6 text-8">
 			<li role="presentation" class="dropdown-header" stop-click>File Options</li>
-			<li ng-click="$parent.BREAD.addCard($parent.BREAD.resource, card.cardType, card.cardNumber, true, false)"><label>
+			<li ng-click="$parent.addCard($parent.Bakery.resource, card.cardType, card.cardNumber, true, false)"><label>
 				<i class="glyphicon glyphicon-chevron-left alert-primary"></i> Insert Before
 			</label></li>
-			<li ng-click="$parent.BREAD.addCard($parent.BREAD.resource, card.cardType, card.cardNumber+1, true, false)"><label>
+			<li ng-click="$parent.addCard($parent.Bakery.resource, card.cardType, card.cardNumber+1, true, false)"><label>
 				<i class="glyphicon glyphicon-chevron-right alert-primary"></i> Insert After
 			</label></li>
 			<li role="presentation" class="dropdown-header" stop-click>Edit Options</li>
-			<li data-ng-click="$parent.BREAD.toggleCardLock(panel);" ng-hide="panel.locked"><label>
+			<li data-ng-click="$parent.Bakery.toggleCardLock(panel);" ng-hide="panel.locked"><label>
 				<i class="glyphicon glyphicon-lock alert-primary"></i> Lock Card
 			</label></li>
-			<li data-ng-click="$parent.BREAD.toggleCardLock(panel);" ng-show="panel.locked"><label>
+			<li data-ng-click="$parent.Bakery.toggleCardLock(panel);" ng-show="panel.locked"><label>
 				<i class="glyphicon glyphicon-lock blue-icon alert-primary"></i> Unlock Card
 			</label></li>
-			<li ng-hide="featureCard.$pristine" data-ng-click="$parent.BREAD.editCard(panel); featureCard.$setPristine();"><label>
+			<li ng-hide="featureCard.$pristine" data-ng-click="$parent.editCard(panel); featureCard.$setPristine();"><label>
 				<i class="glyphicon glyphicon-ok alert-success"></i> Save Changes
 			</label></li>
-			<li ng-hide="featureCard.$pristine" data-ng-click="$parent.BREAD.readCard(panel); featureCard.$setPristine();"><label>
+			<li ng-hide="featureCard.$pristine" data-ng-click="$parent.readCard(panel); featureCard.$setPristine();"><label>
 				<i class="glyphicon glyphicon-remove alert-danger"></i> Cancel Changes
 			</label></li>
-			<li ng-hide="panel.locked" data-ng-click="$parent.BREAD.deleteCard(panel, true, true);"><label>
+			<li ng-hide="panel.locked" data-ng-click="$parent.deleteCard(panel);"><label>
 				<i class="glyphicon glyphicon-trash alert-warning"></i> Delete Card
 			</label></li>
 		</ul>

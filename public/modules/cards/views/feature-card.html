@@ -1,5 +1,5 @@
 <div class="content-panel" card-form ng-form="featureCardForm"
-	onSubmit="JavaScript:$parent.BREAD.editCard(card);">
+	onSubmit="JavaScript:$parent.editCard(card);">
 	<table class="fill-parent">
 		<tbody>
 			<tr>
@@ -27,17 +27,17 @@
 	</table>
 </div>
 <div style="position: absolute; top: 20em; left: 0; width: 2em;" class="text-center">
-	<a data-ng-click="$parent.BREAD.editCard(panel); featureCardForm.$setPristine();"
+	<a data-ng-click="$parent.editCard(panel); featureCardForm.$setPristine();"
 		ng-show="featureCardForm.$dirty" stop-event>
 		<i class="glyphicon glyphicon-ok green-icon"></i>
 	</a>
-	<a data-ng-click="$parent.BREAD.readCard(panel); featureCardForm.$setPristine();"
+	<a data-ng-click="$parent.readCard(panel); featureCardForm.$setPristine();"
 		ng-show="featureCardForm.$dirty" stop-event>
 		<i class="glyphicon glyphicon-remove red-icon"></i>
 	</a>
 </div>
 <div style="position: absolute; top: 20em; left: 14em; width: 1em;" class="text-center">
-	<a data-ng-click="$parent.BREAD.toggleCardLock(panel);" stop-event>
+	<a data-ng-click="$parent.Bakery.toggleCardLock(panel);" stop-event>
 		<i ng-hide="$parent.panel.locked" class="glyphicon glyphicon-lock grey-icon"></i>
 		<i ng-show="$parent.panel.locked" class="glyphicon glyphicon-lock blue-icon"></i>
 	</a>

@@ -6,17 +6,17 @@
 var should = require('should'),
 	mongoose = require('mongoose'),
 	User = mongoose.model('User'),
-	Card = mongoose.model('Card');
+	Feat = mongoose.model('Feat');
 
 /**
  * Globals
  */
-var user, card;
+var user, feat;
 
 /**
  * Unit tests
  */
-describe('Card Model Unit Tests:', function() {
+describe('Feat Model Unit Tests:', function() {
 	beforeEach(function(done) {
 		user = new User({
 			firstName: 'Full',
@@ -28,9 +28,9 @@ describe('Card Model Unit Tests:', function() {
 		});
 
 		user.save(function() { 
-			card = new Card({
-				name: 'Card Name',
-				user: user
+			feat = new Feat({
+				// Add model fields
+				// ...
 			});
 
 			done();
@@ -39,24 +39,15 @@ describe('Card Model Unit Tests:', function() {
 
 	describe('Method Save', function() {
 		it('should be able to save without problems', function(done) {
-			return card.save(function(err) {
+			return feat.save(function(err) {
 				should.not.exist(err);
-				done();
-			});
-		});
-
-		it('should be able to show an error when try to save without name', function(done) { 
-			card.name = '';
-
-			return card.save(function(err) {
-				should.exist(err);
 				done();
 			});
 		});
 	});
 
 	afterEach(function(done) { 
-		Card.remove().exec();
+		Feat.remove().exec();
 		User.remove().exec();
 
 		done();

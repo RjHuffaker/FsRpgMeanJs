@@ -593,6 +593,214 @@ angular.module('cards').factory('Augments', ['$resource',
         }]);
 'use strict';
 
+angular.module('decks').factory('CardsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery){
+    var service = {};
+    
+    var editDeck = function(deck, _loadDeck) {
+        var _deck = new Bakery.Decks(deck);
+
+        _deck.$update(function(response) {
+            if(_loadDeck){
+                Bakery.resource = response;
+            }
+        }, function(errorResponse) {
+            console.log(errorResponse);
+        });
+    };
+    
+    var getCardResource = function(cardType){
+        switch(cardType){
+            case 'Aspect':
+                return Bakery.Aspects;
+            case 'Trait':
+                return Bakery.Traits;
+            case 'Feat':
+                return Bakery.Feats;
+            case 'Augment':
+                return Bakery.Augments;
+            case 'Item':
+                return Bakery.Items;
+            case 'Origin':
+                return Bakery.Origins;
+        }
+    };
+    
+    var getNewCardResource = function(panel){
+        switch(panel.cardRole){
+            case 'Aspect':
+                return new Bakery.Aspects(panel.aspectData);
+            case 'Trait':
+                return new Bakery.Traits(panel.traitData);
+            case 'Feat':
+                return new Bakery.Feats(panel.featData);
+            case 'Augment':
+                return new Bakery.Augments(panel.augmentData);
+            case 'Item':
+                return new Bakery.Items(panel.itemData);
+            case 'Origin':
+                return new Bakery.Origins(panel.originData);
+        }
+    };
+    
+    var getCardParams = function(panel){
+        var cardId;
+        console.log(panel);
+        switch(panel.cardRole){
+            case 'Aspect':
+                cardId = panel.aspectData._id;
+                return { aspectId: cardId };
+            case 'Trait':
+                cardId = panel.traitData._id;
+                return { traitId: cardId };
+            case 'Feat':
+                cardId = panel.featData._id;
+                return { featId: cardId };
+            case 'Augment':
+                cardId = panel.augmentData._id;
+                return { augmentId: cardId };
+            case 'Item':
+                cardId = panel.itemData._id;
+                return { itemId: cardId };
+            case 'Origin':
+                cardId = panel.originData._id;
+                return { originId: cardId };
+        }
+    };
+    
+    var getPanelData = function(panel){
+        switch(panel.cardRole){
+            case 'Aspect':
+                return panel.aspectData;
+            case 'Trait':
+                return panel.traitData;
+            case 'Feat':
+                return panel.featData;
+            case 'Augment':
+                return panel.augmentData;
+            case 'Item':
+                return panel.itemData;
+            case 'Origin':
+                return panel.originData;
+            default:
+                return false;
+        }
+    };
+    
+    var setPanelData = function(panel, cardData){
+        switch(panel.cardRole){
+            case 'Aspect':
+                panel.aspectData = cardData;
+                break;
+            case 'Trait':
+                panel.traitData = cardData;
+                break;
+            case 'Feat':
+                panel.featData = cardData;
+                break;
+            case 'Augment':
+                panel.augmentData = cardData;
+                break;
+            case 'Item':
+                panel.itemData = cardData;
+                break;
+            case 'Origin':
+                panel.originData = cardData;
+                break;
+        }
+    };
+    
+    //BROWSE
+    service.browse = function(cardType, params, destination){
+        var cardParams = getCardParams(params);
+        getCardResource(cardType).query(cardParams, function(response){
+            return response;
+        });
+    };
+    
+    //READ
+    service.read = function(panel){
+        var params = getCardParams(panel);
+        console.log(params);
+        getCardResource(panel.cardRole).get(
+            params,
+        function(response){
+            console.log(response);
+            setPanelData(panel, response);
+        });
+    };
+    
+    //EDIT
+    service.edit = function(panel){
+        if(panel.cardRole === 'Aspect'){
+            getNewCardResource(panel).$update();
+        } else if(getPanelData(panel)){
+            var panelData = getPanelData(panel);
+            var cardResource = getNewCardResource(panel);
+            if(panelData.aspect) cardResource.aspect = panelData.aspect._id;
+            cardResource.$update();
+        }
+    };
+    
+    //ADD
+    service.add = function(deck, cardType, cardNumber, deckShift, deckSave){
+        var card = {
+            deck: deck._id,
+            cardSet: deck.deckSize,
+            cardNumber: cardNumber,
+            cardType: cardType
+        };
+
+        var panel = {
+            cardRole: cardType,
+            x_coord: cardNumber * 15,
+            y_coord: 0
+        };
+        
+        setPanelData(panel, card);
+        
+        var cardResource = getNewCardResource(panel);
+        
+        cardResource.$save(function(response){
+            setPanelData(panel, response);
+            deck.cardList.push(panel);
+            Bakery.setDeckSize(Bakery.resource);
+        }).then(function(response){
+            if(deckShift) Bakery.expandDeck(panel, Bakery.resource.cardList);
+        }).then(function(response){
+            if(deckSave) editDeck(deck, true);
+        });
+    };
+    
+    //DELETE
+    service.delete = function(panel, deck){
+        if(panel.cardRole === 'architectOptions') return;
+        
+        var cardResource = getNewCardResource(panel);
+        cardResource.$remove(function(response){
+                if(deck) Bakery.removePanel(panel, deck.cardList);
+            }).then(function(response){
+                if(deck) Bakery.setDeckSize(deck);
+            }).then(function(response){
+                if(deck) Bakery.collapseDeck(panel, deck.cardList);
+            }).then(function(response){
+                if(deck) editDeck(deck, false);
+        });
+    };
+    
+    return service;
+    
+}]);
+'use strict';
+
+// Factory-service for managing Trait cards.
+angular.module('cards').factory('traitService', ['Cards', 'CardDeck',
+	function(Cards, CardDeck){
+		var service = {};
+		
+		return service;
+	}]);
+'use strict';
+
 // General BREAD Factory-service.
 angular.module('cards').factory('Feats', ['$resource',
         function($resource){
@@ -661,189 +869,6 @@ angular.module('cards').factory('Traits', ['$resource',
         }]);
 'use strict';
 
-// Factory-service for managing Trait cards.
-angular.module('cards').factory('traitService', ['Cards', 'CardDeck',
-	function(Cards, CardDeck){
-		var service = {};
-		
-		return service;
-	}]);
-'use strict';
-
-// Factory-service for Browsing, Reading, Editting, Adding, and Deleting Cards.
-angular.module('cards')
-	.factory('Cards', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope',
-			function($stateParams, $location, Authentication, $resource, $rootScope){
-		
-		var Cards = $resource(
-			'cards/:cardId:cardType',
-			{ cardId: '@_id'},
-			{ update: { method: 'PUT' } }
-		);
-		
-		var service = {};
-		
-		service.cardList = [];
-		
-		service.cardType = 'trait';
-		
-		service.cardNew = false;
-		
-		service.cardSaved = false;
-		
-		var optionsPanel = {
-			cardType: service.cardType,
-			optionsPanel: true
-		};
-		
-		service.lockCard = function(card){
-			card.locked = true;
-		};
-		
-		service.unlockCard = function(card){
-			card.locked = false;
-		};
-		
-		service.setCardList = function(){
-			for(var i = 0; i < service.cardList.length; i++){
-				this.cardList[i].cardRole = 'architect';
-				this.cardList[i].locked = false;
-				this.cardList[i].x_coord = i * 15;
-				this.cardList[i].y_coord = 0;
-				this.cardList[i].dragging = false;
-				this.cardList[i].stacked = false;
-			}
-		};
-		
-		service.changeDurability = function(card, add){
-			if(add && card.durability.modifier < 4){
-				card.durability.modifier += 1;
-			} else if(!add && card.durability.modifier > 0){
-				card.durability.modifier -= 1;
-			}
-		};
-		
-		service.changeSpeed = function(card, add){
-			if(add && card.speed.modifier < 1){
-				card.speed.modifier += 1;
-			} else if(!add && card.speed.modifier > -1){
-				card.speed.modifier -= 1;
-			}
-		};
-		
-		service.changeFinesse = function(card, add){
-			if(add && card.finesse.modifier < 0){
-				card.finesse.modifier += 1;
-			} else if(!add && card.finesse.modifier > -2){
-				card.finesse.modifier -= 1;
-			}
-		};
-		
-		service.changeWeight = function(card, add){
-			if(add && card.weight < 9){
-				card.weight += 1;
-			} else if(!add && card.weight > 0){
-				card.weight -= 1;
-			}
-		};
-		
-		service.changeCost = function(card, add){
-			if(add && card.cost < 18){
-				card.cost += 1;
-			} else if(!add && card.cost > 0){
-				card.cost -= 1;
-			}
-		};
-		
-		// BROWSE cards
-		service.browseCards = function(cardType){
-			service.cardType = cardType;
-			service.cardList = Cards.query(
-				{'cardType': cardType},
-				function(response){
-					service.cardList.unshift(optionsPanel);
-					service.setCardList();
-				}
-			);
-			
-			return {cardList: service.cardList};
-		};
-		
-		// READ single Card
-		service.readCard = function(card){
-			card = Cards.get({
-				cardId: card._id
-			});
-			
-			service.unlockCard(card);
-		};
-		
-		// EDIT existing Card
-		service.editCard = function(card) {
-			card.$update(function(response) {
-				service.unlockCard(card);
-			}, function(errorResponse) {
-				console.log(errorResponse);
-			});
-		};
-		
-		// ADD a new Card
-		service.addCard = function(cardNumber){
-			var index;
-			if(cardNumber < 1){
-				index = service.cardList.length;
-			} else {
-				index = cardNumber;
-			}
-			this.card = new Cards ({
-				cardRole: 'architect',
-				cardType: service.cardType,
-				cardNumber: index,
-				dragging: false,
-				stacked: false
-			});
-			this.card.$save(function(response) {
-					for(var i in service.cardList){
-						if(service.cardList[i].cardNumber >= index){
-							service.cardList[i].cardNumber += 1;
-							service.cardList[i].x_coord += 15;
-							service.cardList[i].$update();
-						}
-					}
-					service.cardList.push(service.card);
-					service.setCardList();
-				}, function(errorResponse) {
-					console.log(errorResponse);
-				}
-			);
-		};
-		
-		// DELETE existing Card
-		service.deleteCard = function(card){
-			if(card){
-				console.log('Delete:');
-				console.log(card);
-				card.$remove();
-				for(var i in service.cardList){
-					if(service.cardList[i] === card){
-						console.log('Delete:');
-						console.log(service.cardList[i]);
-						service.cardList.splice(i, 1);
-					}
-					if (service.cardList[i] && service.cardList[i].cardNumber > card.cardNumber){
-						console.log('reordering '+service.cardList[i].cardNumber +' / '+ card.cardNumber);
-						service.cardList[i].cardNumber -= 1;
-					}
-				}
-				service.setCardList();
-				return {cardList: service.cardList};
-			}
-		};
-		
-		return service;
-	}]);
-'use strict';
-
 // Setting up route
 angular.module('core').config(['$stateProvider', '$urlRouterProvider',
 	function($stateProvider, $urlRouterProvider) {
@@ -862,15 +887,15 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
 
 // Core Controller
 angular.module('core')
-	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'BREAD', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
-		function($location, $scope, $rootScope, $window, Authentication, CardDeck, BREAD, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems) {
+	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
+		function($location, $scope, $rootScope, $window, Authentication, CardDeck, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems) {
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
 			
 			$scope.cardDeck = CardDeck;
 			
-			$scope.BREAD = BREAD;
-			
+			$scope.Bakery = Bakery;
+            
 			$scope.dataSRVC = DataSRVC;
 			
 			$scope.pcsCard1 = PcsCard1;
@@ -895,18 +920,6 @@ angular.module('core')
 			
 			var pcNew = false;
 			
-			var fetchPcs = function(){
-				BREAD.browsePcs();
-			};
-			
-			var fetchCards = function(event, object){
-				BREAD.browseCards(object.cardType);
-			};
-			
-			var fetchDecks = function(event, object){
-				BREAD.browseDecks(object.deckType, BREAD.resource);
-			};
-			
 			var initialize = function(){
 				toggleListeners(true);
 			};
@@ -915,14 +928,11 @@ angular.module('core')
 				if(!enable) return;
 				$scope.$on('$destroy', onDestroy);
 				$scope.$on('screenSize:onHeightChange', onHeightChange);
-				$scope.$on('fetchPcs', fetchPcs);
-				$scope.$on('fetchCards', fetchCards);
-				$scope.$on('fetchDecks', fetchDecks);
 				$scope.$on('ability:onPress', chooseAbility);
 				$scope.$on('pcsCard1:updateAbility', updateAbility);
 				$scope.$watch('pcsCard2.EXP', watchEXP);
-				$scope.$watch('BREAD.resource.experience', watchExperience);
-				$scope.$watch('BREAD.resource.level', watchLevel);
+				$scope.$watch('Bakery.resource.experience', watchExperience);
+				$scope.$watch('Bakery.resource.level', watchLevel);
 			};
 			
 			var onDestroy = function(){
@@ -935,30 +945,76 @@ angular.module('core')
 				$scope.$digest();
 			};
 			
-			$scope.newPc = function(){
-				BREAD.addPc();
+            //BROWSE Functions
+            $scope.browsePcs = function(){
+				PcsBread.browse();
+			};
+			
+			$scope.browseDecks = function(param){
+				DecksBread.browse(param);
+			};
+            
+            //READ Functions
+            $scope.readCard = function(card){
+				CardsBread.read(card);
+			};
+            
+            $scope.readDeck = function(deck){
+				DecksBread.read(deck);
+			};
+            
+			$scope.readPc = function(pc){
+				PcsBread.read(pc);
+				pcNew = false;
+			};
+			
+            //ADD Functions
+            $scope.addCard = function(deck, cardType, cardNumber, deckShift, deckSave){
+				CardsBread.add(deck, cardType, cardNumber, deckShift, deckSave);
+			};
+            
+            $scope.addDeck = function(type, size){
+				DecksBread.add(type, size);
+			};
+            
+            $scope.addPc = function(){
+				PcsBread.add();
 				pcNew = true;
 			};
-			
-			$scope.readPc = function(pc){
-				BREAD.readPc(pc);
+            
+            //EDIT Functions
+            $scope.editCard = function(card){
+				CardsBread.edit(card);
+			};
+            
+            $scope.editDeck = function(deck){
+				DecksBread.edit(deck);
+			};
+            
+             $scope.editPc = function(pc){
+				PcsBread.edit(pc);
 				pcNew = false;
 			};
-			
-			$scope.readDeck = function(deck){
-				BREAD.readDeck(deck);
+            
+            //DELETE Functions
+            $scope.deleteCard = function(panel){
+				CardsBread.delete(panel, Bakery.resource);
+			};
+            
+			$scope.deleteDeck = function(deck){
+				DecksBread.delete(deck, Bakery.resource);
+			};
+            
+            $scope.deletePc = function(pc){
+				PcsBread.delete(pc, Bakery.resource);
 			};
 			
-			$scope.savePc = function(pc){
-				BREAD.editPc(pc);
-				pcNew = false;
-			};
-			
+            //Misc Handler Functions
 			$scope.exitPc = function(){
 				if(pcNew){
-					BREAD.deletePc();
+					Bakery.deletePc();
 				}
-				fetchPcs();
+				$scope.browsePcs();
 			};
 			
 			$scope.hideModal = function(){
@@ -1016,15 +1072,15 @@ angular.module('core')
 			
 			//Watch for change in EXP input
 			var watchEXP = function(newValue, oldValue){
-				if(BREAD.resource && newValue !== oldValue){
+				if(Bakery.resource && newValue !== oldValue){
 					PcsCard2.EXP = parseInt(newValue);
-					BREAD.resource.experience = parseInt(newValue);
+					Bakery.resource.experience = parseInt(newValue);
 				}
 			};
 			
 			//Watch for change in experience
 			var watchExperience = function(newValue, oldValue){
-				if(BREAD.resource && newValue !== oldValue){
+				if(Bakery.resource && newValue !== oldValue){
 					PcsCard2.factorExperience();
 					if(newValue !== PcsCard2.EXP){
 						PcsCard2.EXP = newValue;
@@ -1034,7 +1090,7 @@ angular.module('core')
 			
 			//Watch for changes in level
 			var watchLevel = function(newValue, oldValue){
-				if(BREAD.resource.abilities){
+				if(Bakery.resource.abilities){
 					PcsCard2.factorHealth();
 					PcsCard2.factorStamina();
 					PcsTraits.factorTraitLimit();
@@ -1049,35 +1105,39 @@ angular.module('core')
 	]);
 'use strict';
 
-angular.module('core').controller('HeaderController', ['$document', '$rootScope', '$scope', 'Authentication', 'Menus',
-	function($document, $rootScope, $scope, Authentication, Menus) {
-		$scope.authentication = Authentication;
-		$scope.isCollapsed = false;
-		$scope.menu = Menus.getMenu('topbar');
+angular.module('core').controller('HeaderController', ['$document', '$rootScope', '$scope', 'Authentication', 'Menus', 'CardsBread', 'DecksBread', 'PcsBread', function($document, $rootScope, $scope, Authentication, Menus, CardsBread, DecksBread, PcsBread) {
+    $scope.authentication = Authentication;
+    $scope.isCollapsed = false;
+    $scope.menu = Menus.getMenu('topbar');
 
-		$scope.toggleCollapsibleMenu = function() {
-			$scope.isCollapsed = !$scope.isCollapsed;
-		};
+    $scope.toggleCollapsibleMenu = function() {
+        $scope.isCollapsed = !$scope.isCollapsed;
+    };
 
-		// Collapse the menu after navigation
-		$scope.$on('$stateChangeSuccess', function() {
-			$scope.isCollapsed = false;
-		});
-		
-		$scope.fetchPcs = function(){
-			$rootScope.$broadcast('fetchPcs');
-			$scope.isCollapsed = false;
-		};
-		
-		$scope.fetchDecks = function(deckType){
-			$rootScope.$broadcast('fetchDecks', {
-				deckType: deckType
-			});
-			$scope.isCollapsed = false;
-		};
-		
-	}
-]);
+    // Collapse the menu after navigation
+    $scope.$on('$stateChangeSuccess', function() {
+        $scope.isCollapsed = false;
+    });
+    
+    $scope.browseDecks = function(param){
+        DecksBread.browse(param);
+        $scope.isCollapsed = false;
+    };
+    
+    $scope.browseCampaigns = function(){
+        console.log('stub');
+    };
+    
+     $scope.browsePcs = function(){
+        PcsBread.browse();
+        $scope.isCollapsed = false;
+    };
+    
+    $scope.browseNpcs = function(){
+        console.log('stub');
+    };
+    
+}]);
 'use strict';
 
 angular.module('core')
@@ -1153,51 +1213,215 @@ coreModule
 	}]);
 'use strict';
 
-angular.module('core').factory('bread-add', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'BREAD', function($stateParams, $location, Authentication, $resource, $rootScope, BREAD){
+// General Bakery Factory-service.
+angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
+	var service = {};
     
-    var service = {};
+    service.Decks = Decks;
     
+    service.Pcs = Pcs;
     
+    service.Aspects = Aspects;
     
-    return service;
-}]);
-'use strict';
+    service.Traits = Traits;
+    
+    service.Feats = Feats;
+    
+    service.Augments = Augments;
+    
+    service.Items = Items;
+    
+    service.Origins = Origins;
+    
+    service.resource = {
+		cardList: []
+	};
+    
+    service.lastPanel = function(cardList){
+        if(cardList.length > 0){
+            var _index = 0;
+            var _panel = { x_coord: 0 };
+            for(var i = 0; i < cardList.length; i++){
+                if(cardList[i].x_coord > (_panel.x_coord || 0)){
+                    _index = i;
+                    _panel = cardList[i];
+                }
+            }
+            return {
+                index: _index, panel: _panel
+            };
+        } else {
+            return {
+                index: 0, panel: { x_coord: 0 }
+            };
+        }
+    };
+    
+    service.deckWidth = function(cardList){
+        var lastPanel = service.lastPanel(cardList);
+        return service.lastPanel(cardList).panel.x_coord + 15;
+    };
+    
+    service.setCardList = function(cardList){
+        for(var i = 0; i < cardList.length; i++){
+            cardList[i].x_coord = i * 15;
+            cardList[i].y_coord = 0;
+            cardList[i].x_overlap = false;
+            cardList[i].y_overlap = false;
+            cardList[i].dragging = false;
+            cardList[i].stacked = false;
+        }
+        $rootScope.$broadcast('DeckOrder:onDeckChange');
+    };
+    
+    service.removePanel = function(panel, cardList){
+        for(var i = 0; i < cardList.length; i++){
+            if(cardList[i] === panel ) {
+                cardList.splice(i, 1);
+            }
+        }
+    };
+	
+    service.shiftDeck = function(panel, expand, cardList){
+        var panel_x = panel.x_coord;
+        var panel_y = panel.y_coord;
+        var x_shift = expand ? 15 : -15;
+        var _number = expand ? 1 : -1;
+        
+        for(var i = 0; i < cardList.length; i++){
+            var slot = cardList[i];
+            if(panel_x <= slot.x_coord){
+                if(panel_y !== slot.y_coord){
+                    slot.x_coord += x_shift;
+                    if(slot.aspectData){
+                        slot.aspectData.cardNumber += _number;
+                    } else if(slot.traitData){
+                        slot.traitData.cardNumber += _number;
+                    } else if(slot.featData){
+                        slot.featData.cardNumber += _number;
+                    } else if(slot.augmentData){
+                        slot.augmentData.cardNumber += _number;
+                    } else if(slot.itemData){
+                        slot.itemData.cardNumber += _number;
+                    } else if(slot.originData){
+                        slot.originData.cardNumber += _number;
+                    }
+                }
+            }
+        }
 
-angular.module('core').factory('bread-browse', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'BREAD', function($stateParams, $location, Authentication, $resource, $rootScope, BREAD){
+        $rootScope.$broadcast('Bakery:onDeckChange');
+    };
     
-    var service = {};
+    service.expandDeck = function(panel, cardList){
+        var panel_x_coord = panel.x_coord;
+        var panel_y_coord = panel.y_coord;
+        
+        for(var i = 0; i < cardList.length; i++){
+            var slot = cardList[i];
+            if(slot !== panel && slot.x_coord >= panel_x_coord){
+                slot.x_coord += 15;
+                if(slot.aspectData){
+                    slot.aspectData.cardNumber++;
+                } else if(slot.traitData){
+                    slot.traitData.cardNumber++;
+                } else if(slot.featData){
+                    slot.featData.cardNumber++;
+                } else if(slot.augmentData){
+                    slot.augmentData.cardNumber++;
+                } else if(slot.itemData){
+                    slot.itemData.cardNumber++;
+                } else if(slot.originData){
+                    slot.originData.cardNumber++;
+                }
+            }
+        }
+        $rootScope.$broadcast('Bakery:onDeckChange');
+    };
     
+    service.collapseDeck = function(panel, cardList){
+        var panel_x_coord = panel.x_coord;
+        var panel_y_coord = panel.y_coord;
+        
+        for(var i = 0; i < cardList.length; i++){
+            var slot = cardList[i];
+            if(slot.x_coord > panel_x_coord){
+                slot.x_coord -= 15;
+                if(slot.aspectData){
+                    slot.aspectData.cardNumber--;
+                } else if(slot.traitData){
+                    slot.traitData.cardNumber--;
+                } else if(slot.featData){
+                    slot.featData.cardNumber--;
+                } else if(slot.augmentData){
+                    slot.augmentData.cardNumber--;
+                } else if(slot.itemData){
+                    slot.itemData.cardNumber--;
+                } else if(slot.originData){
+                    slot.originData.cardNumber--;
+                }
+            }
+        }
+        $rootScope.$broadcast('Bakery:onDeckChange');
+    };
     
+    service.setDeckSize = function(resource){
+        var _length = resource.cardList.length - 1;
+        resource.deckSize = _length;
+        for(var i = 0; i < resource.cardList.length; i++){
+            var panel = resource.cardList[i];
+            if(panel.aspectData){
+                panel.aspectData.cardSet = _length;
+            } else if(panel.traitData){
+                panel.traitData.cardSet = _length;
+            } else if(panel.featData){
+                panel.featData.cardSet = _length;
+            } else if(panel.augmentData){
+                panel.augmentData.cardSet = _length;
+            } else if(panel.itemData){
+                panel.itemData.cardSet = _length;
+            } else if(panel.originData){
+                panel.originData.cardSet = _length;
+            }
+        }
+    };
     
-    return service;
-}]);
-'use strict';
+    service.toggleCardLock = function(panel){
+        for(var i = 0; i < service.resource.cardList.length; i++){
+            if(panel === service.resource.cardList[i]){
+                service.resource.cardList[i].locked = !service.resource.cardList[i].locked;
+            }
+        }
+    };
+    
+    service.findDependency = function(deck){
+        var index = -1;
+        for(var i = 0; i < service.resource.dependencies.length; i++){
+            var dependency = service.resource.dependencies[i];
+            if(dependency._id === deck._id){
+                index = i;
+            }
+        }
+        return index;
+    };
 
-angular.module('core').factory('bread-delete', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'BREAD', function($stateParams, $location, Authentication, $resource, $rootScope, BREAD){
-    
-    var service = {};
-    
-    
-    
-    return service;
-}]);
-'use strict';
+    service.toggleDependency = function(deck){
+        var deckIndex = service.findDependency(deck);
 
-angular.module('core').factory('bread-edit', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'BREAD', function($stateParams, $location, Authentication, $resource, $rootScope, BREAD){
+        if (deckIndex > -1) {
+            service.resource.dependencies.splice(deckIndex, 1);
+        } else {
+            service.resource.dependencies.push(deck);
+        }
+    };
     
-    var service = {};
-    
-    
-    
-    return service;
-}]);
-'use strict';
-
-angular.module('core').factory('bread-read', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'BREAD', function($stateParams, $location, Authentication, $resource, $rootScope, BREAD){
-    
-    var service = {};
-    
-    
+    service.changeAspect = function(card, aspect){
+        if(card.aspect === aspect){
+            console.log('same');
+        } else {
+            card.aspect = aspect;
+        }
+    };
     
     return service;
 }]);
@@ -1676,7 +1900,7 @@ angular.module('core').factory('Socket', ['socketFactory',
 
 // Directive for managing card decks.
 angular.module('decks')
-	.directive('cardDeck', ['$rootScope', '$window', 'CardDeck', 'BREAD', function($rootScope, $window, CardDeck, BREAD){
+	.directive('cardDeck', ['$rootScope', '$window', 'CardDeck', 'Bakery', function($rootScope, $window, CardDeck, Bakery){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -1740,7 +1964,7 @@ angular.module('decks')
 				var onMoveCard = function(event, object){
 					
 					var deckOffset = element.offset();
-					var deckWidth = BREAD.deckWidth();
+					var deckWidth = Bakery.deckWidth(Bakery.resource.cardList);
 					var deckLeftEdge = deckOffset.left;
 					var deckRightEdge = convertEm(deckWidth + 3);
 					
@@ -1770,7 +1994,7 @@ angular.module('decks')
 
 // Directive for managing card decks.
 angular.module('decks')
-	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'BREAD', 'CardDeck', function($document, $parse, $rootScope, $window, BREAD, CardDeck){
+	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'Bakery', 'CardDeck', function($document, $parse, $rootScope, $window, Bakery, CardDeck){
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/decks/views/card-panel.html',
@@ -1828,7 +2052,7 @@ angular.module('decks')
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
 					scope.$on('CardsCtrl:onDropdown', onDropdown);
-					scope.$on('BREAD:onDeckChange', onReleaseCard);
+					scope.$on('Bakery:onDeckChange', onReleaseCard);
 					scope.$watch('panel.x_coord', resetPosition);
 					scope.$watch('panel.y_coord', resetPosition);
 					element.on(_pressEvents, onPress);
@@ -2241,15 +2465,6 @@ angular.module('decks')
 			}
 		};
 		
-		var listDecks = function(){
-			Decks.query({deckType: 'Aspect'},
-				function(response){
-					console.log(response);
-					service.dependencyList = response;
-				}
-			);
-		};
-		
 		var setCardList = function(list, destination){
 			destination.cardList = list;
 			for(var i = 0; i < list.length; i++){
@@ -2324,7 +2539,6 @@ angular.module('decks')
 		};
 		
 		service.toggleCardLock = function(panel){
-			console.log(panel);
 			for(var i = 0; i < service.resource.cardList.length; i++){
 				if(panel === service.resource.cardList[i]){
 					service.resource.cardList[i].locked = !service.resource.cardList[i].locked;
@@ -2333,8 +2547,6 @@ angular.module('decks')
 		};
 		
 		service.changeAspect = function(card, aspect){
-			console.log(card.aspect);
-			console.log(aspect);
 			if(card.aspect === aspect){
 				console.log('same');
 			} else {
@@ -2759,37 +2971,9 @@ angular.module('decks')
 
 'use strict';
 
-// General BREAD Factory-service.
-angular.module('decks').factory('Decks', ['$resource',
-        function($resource){
-            return $resource(
-                'deck/:deckId',
-                {
-                    deckId: '@_id'
-                },
-                {
-                    update: {
-                        method: 'PUT'
-                    },
-                    list: {
-                        url: '/decks',
-                        method: 'GET',
-                        isArray: true
-                    },
-                    query: {
-                        url: '/decks/:deckType',
-                        method: 'GET',
-                        isArray: true,
-                        params: { deckType: 'deckType' }
-                    }
-                }
-            );
-        }]);
-'use strict';
-
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('CardDeck', ['BREAD', 'Campaigns', '$rootScope',
-	function(BREAD, Campaigns, $rootScope){
+angular.module('core').factory('CardDeck', ['Bakery', 'Campaigns', '$rootScope',
+	function(Bakery, Campaigns, $rootScope){
 		var service = {};
 		
 		service.windowHeight = 0;
@@ -2807,7 +2991,7 @@ angular.module('core').factory('CardDeck', ['BREAD', 'Campaigns', '$rootScope',
 		var moveTimer;
 		
 		var getCardList = function(){
-			return BREAD.resource.cardList;
+			return Bakery.resource.cardList;
 		};
 		
 		var getCardIndex = function(x_coord, y_coord){
@@ -3435,6 +3619,157 @@ angular.module('core').factory('CardDeck', ['BREAD', 'Campaigns', '$rootScope',
 
 'use strict';
 
+angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'CardsBread', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CardsBread){
+    var service = {};
+    
+    var browseAspects = function(deck){
+        Bakery.resource.archetypeList = [];
+        Bakery.resource.allegianceList = [];
+        Bakery.resource.raceList = [];
+        Bakery.Aspects.query({deckId: deck._id}, function(response){
+            for(var i = 0; i < response.length; i++){
+                if(response[i].aspectType === 'Archetype'){
+                    Bakery.resource.archetypeList.push(response[i]);
+                } else if(response[i].aspectType === 'Allegiance'){
+                    Bakery.resource.allegianceList.push(response[i]);
+                } else if(response[i].aspectType === 'Race'){
+                    Bakery.resource.raceList.push(response[i]);
+                }
+            }
+        });
+    };
+    
+    var browseDependencies = function(){
+        Bakery.Decks.query({deckType: 'Aspect'}, function(response){
+            Bakery.dependencyList = response;
+        });
+    };
+    
+    //BROWSE
+    service.browse = function(param){
+        Bakery.resource = {};
+        if(param){
+            Bakery.Decks.query(param, function(response){
+                response.unshift({
+                    cardRole: 'architectOptions'
+                });
+                Bakery.resource.cardList = response;
+                Bakery.setCardList(Bakery.resource.cardList);
+            });
+        } else {
+            Bakery.Decks.list(function(response){
+                response.unshift({
+                    cardRole: 'architectOptions'
+                });
+                Bakery.resource.cardList = response;
+                Bakery.setCardList(Bakery.resource.cardList);
+            });
+        }
+    };
+    
+    //READ
+    service.read = function(deck){
+        Bakery.Decks.get({
+            deckId: deck._id
+        }, function(response){
+            Bakery.resource = response;
+            if(response.deckType !== 'Aspect'){
+                
+                browseDependencies();
+
+                for(var i = 0; i < response.dependencies.length; i++){
+                    browseAspects(response.dependencies[i]);
+                }
+            }
+        });
+    };
+    
+    //EDIT
+    service.edit = function(deck, _editCards, _loadDeck) {
+        var _deck = new Bakery.Decks(deck);
+
+        _deck.$update(function(response) {
+            if(_editCards){
+                for(var i = 0; i < deck.cardList.length; i++){
+                    var panel = deck.cardList[i];
+                    CardsBread.edit(panel);
+                }
+                $rootScope.$broadcast('BREAD: deckSaved');
+            }
+            if(_loadDeck){
+                service.resource = response;
+            }
+        }, function(errorResponse) {
+            console.log(errorResponse);
+        });
+    };
+    
+    //ADD
+    service.add = function(type, size){
+        var deck = new Bakery.Decks ({
+            name: type+' Deck',
+            deckType: type,
+            deckSize: size,
+            cardList: [{
+                cardRole: 'deckOptions',
+                x_coord: 0,
+                y_coord: 0
+            }]
+        });
+
+        deck.$save(
+            function(response){
+                for(var i = 0; i < size; i++){
+                    CardsBread.add(deck, type, i+1, false, (i+1 === size));
+                }
+                if(type !== 'Aspect'){
+                    browseDependencies();
+                }
+            });
+    };
+    
+    //DELETE
+    service.delete = function(deck, resource){
+        deck.$remove(function(response){
+            Bakery.removePanel(deck, resource.cardList);
+            Bakery.setDeckSize(resource);
+            Bakery.collapseDeck(deck, resource.cardList);
+        });
+    };
+    
+    return service;
+    
+}]);
+'use strict';
+
+// General BREAD Factory-service.
+angular.module('decks').factory('Decks', ['$resource',
+        function($resource){
+            return $resource(
+                'deck/:deckId',
+                {
+                    deckId: '@_id'
+                },
+                {
+                    update: {
+                        method: 'PUT'
+                    },
+                    list: {
+                        url: '/decks',
+                        method: 'GET',
+                        isArray: true
+                    },
+                    query: {
+                        url: '/decks/:deckType',
+                        method: 'GET',
+                        isArray: true,
+                        params: { deckType: 'deckType' }
+                    }
+                }
+            );
+        }]);
+'use strict';
+
 // Npcs controller
 angular.module('npcs').controller('NpcsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Npcs',
 	function($scope, $stateParams, $location, Authentication, Npcs ) {
@@ -3660,42 +3995,25 @@ angular.module('pcs')
 	}]);
 'use strict';
 
-// General BREAD Factory-service.
-angular.module('decks').factory('Pcs', ['$resource',
-        function($resource){
-            return $resource(
-                'pcs/:pcId',
-                {
-                    pcId: '@_id'
-                },
-                {
-                    update: {
-                        method: 'PUT'
-                    }
-                }
-            );
-        }]);
-'use strict';
-
 // Factory-service for managing PC card deck.
-angular.module('pcs').factory('PcsAugments', ['BREAD', 'CardDeck', 
-	function(BREAD, CardDeck){
+angular.module('pcs').factory('PcsAugments', ['Bakery', 'CardDeck', 
+	function(Bakery, CardDeck){
 		var service = {};
 		
 		// Factor Augment Limit
 		service.factorAugmentLimit = function(){
-			BREAD.resource.augmentLimit = Math.round((BREAD.resource.level || 0) / 4);
+			Bakery.resource.augmentLimit = Math.round((Bakery.resource.level || 0) / 4);
 			this.validateAugments();
 		};
 		
 		service.validateAugments = function(){
-			for(var ia = 0; ia < BREAD.resource.augmentLimit; ia++){
+			for(var ia = 0; ia < Bakery.resource.augmentLimit; ia++){
 				if(!this.augmentAtLevel(ia * 4 + 2)){
 					this.addAugment(ia * 4 + 2);
 				}
 			}
-			for(var ic = 0; ic < BREAD.resource.cardList.length; ic++){
-				if(BREAD.resource.cardList[ic].level > BREAD.resource.level){
+			for(var ic = 0; ic < Bakery.resource.cardList.length; ic++){
+				if(Bakery.resource.cardList[ic].level > Bakery.resource.level){
 					CardDeck.removeCard(ic);
 				}
 			}
@@ -3703,9 +4021,9 @@ angular.module('pcs').factory('PcsAugments', ['BREAD', 'CardDeck',
 		
 		service.augmentAtLevel = function(level){
 			var augmentAtLevel = false;
-			for(var ib = 0; ib < BREAD.resource.cardList.length; ib++){
-				if(BREAD.resource.cardList[ib].cardType === 'augment'){
-					if(BREAD.resource.cardList[ib].level === level){
+			for(var ib = 0; ib < Bakery.resource.cardList.length; ib++){
+				if(Bakery.resource.cardList[ib].cardType === 'augment'){
+					if(Bakery.resource.cardList[ib].level === level){
 						augmentAtLevel = true;
 					}
 				}
@@ -3717,7 +4035,7 @@ angular.module('pcs').factory('PcsAugments', ['BREAD', 'CardDeck',
 			var newAugment = {
 				name: 'Level '+level+' Augment',
 				cardType: 'augment',
-				x_coord: BREAD.resource.cardList[BREAD.lastCard()].x_coord + 15,
+				x_coord: Bakery.resource.cardList[Bakery.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -3726,16 +4044,73 @@ angular.module('pcs').factory('PcsAugments', ['BREAD', 'CardDeck',
 				locked: true,
 				level: level
 			};
-			BREAD.resource.cardList.push(newAugment);
+			Bakery.resource.cardList.push(newAugment);
 		};
 		
 		return service;
 	}]);
 'use strict';
 
+angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'pcsDefaults', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, pcsDefaults){
+    var service = {};
+    
+    //BROWSE
+    service.browse = function(){
+        Bakery.resource = {};
+        Bakery.resource.cardList = [];
+        Bakery.Pcs.query(function(response){
+            response.unshift({
+                cardRole: 'playerOptions'
+            });
+            Bakery.resource.cardList = response;
+            Bakery.setCardList(Bakery.resource.cardList);
+        });
+    };
+    
+    //READ
+    service.read = function(pc) {
+        Bakery.resource = Bakery.Pcs.get({
+            pcId: pc._id
+        });
+    };
+    
+    //EDIT
+    service.edit = function(pc) {
+        pc.$update(function(response) {
+
+        }, function(errorResponse) {
+            this.error = errorResponse.data.message;
+        });
+    };
+    
+    //ADD
+    service.add = function(){
+        var pc = new Bakery.Pcs (
+            pcsDefaults
+        );
+
+        pc.$save(function(response){
+            Bakery.resource = response;
+        });
+    };
+    
+    //DELETE
+    service.delete = function(pc, resource){
+        pc.$remove(function(response){
+            Bakery.removePanel(pc, resource.cardList);
+            Bakery.setDeckSize(resource);
+            Bakery.collapseDeck(pc, resource.cardList);
+        });
+    };
+    
+    return service;
+    
+}]);
+'use strict';
+
 // Factory-service for managing pc1 data.
-angular.module('pcs').factory('PcsCard1', ['$rootScope', 'BREAD',
-	function($rootScope, BREAD){
+angular.module('pcs').factory('PcsCard1', ['$rootScope', 'Bakery',
+	function($rootScope, Bakery){
 		var service = {};
 		
 		service.chosenDie = {};
@@ -3743,11 +4118,11 @@ angular.module('pcs').factory('PcsCard1', ['$rootScope', 'BREAD',
 		service.chosenAbility = {};
 		
 		service.chooseAbility = function(ability){
-			service.chosenAbility = BREAD.resource.abilities[ability];
+			service.chosenAbility = Bakery.resource.abilities[ability];
 		};
 		
 		$rootScope.$on('ability:onPress', function(event, object){
-			service.chosenAbility = BREAD.resource.abilities[object.ability.order];
+			service.chosenAbility = Bakery.resource.abilities[object.ability.order];
 		});
 		
 		
@@ -3758,42 +4133,42 @@ angular.module('pcs').factory('PcsCard1', ['$rootScope', 'BREAD',
 			var _ability1;
 			var _ability2;
 			
-			this.chosenDie = BREAD.resource.dicepool[dice];
+			this.chosenDie = Bakery.resource.dicepool[dice];
 			
 			this.previousDie = this.chosenAbility.dice;
 			
-			BREAD.resource.dicepool[dice] = BREAD.resource.dicepool[0];
+			Bakery.resource.dicepool[dice] = Bakery.resource.dicepool[0];
 			
 			if(this.previousDie.order > 0){
-				BREAD.resource.dicepool[this.previousDie.order] = this.previousDie;
+				Bakery.resource.dicepool[this.previousDie.order] = this.previousDie;
 			}
 			
-			BREAD.resource.abilities[this.chosenAbility.order].dice = this.chosenDie;
+			Bakery.resource.abilities[this.chosenAbility.order].dice = this.chosenDie;
 			
 			switch(this.chosenAbility.order){
 				case 0:
 				case 1:
 					_abilityPair = 1;
-					_ability1 = BREAD.resource.abilities[0];
-					_ability2 =  BREAD.resource.abilities[1];
+					_ability1 = Bakery.resource.abilities[0];
+					_ability2 =  Bakery.resource.abilities[1];
 					break;
 				case 2:
 				case 3:
 					_abilityPair = 2;
-					_ability1 = BREAD.resource.abilities[2];
-					_ability2 =  BREAD.resource.abilities[3];
+					_ability1 = Bakery.resource.abilities[2];
+					_ability2 =  Bakery.resource.abilities[3];
 					break;
 				case 4:
 				case 5:
 					_abilityPair = 3;
-					_ability1 = BREAD.resource.abilities[4];
-					_ability2 =  BREAD.resource.abilities[5];
+					_ability1 = Bakery.resource.abilities[4];
+					_ability2 =  Bakery.resource.abilities[5];
 					break;
 				case 6:
 				case 7:
 					_abilityPair = 4;
-					_ability1 = BREAD.resource.abilities[6];
-					_ability2 =  BREAD.resource.abilities[7];
+					_ability1 = Bakery.resource.abilities[6];
+					_ability2 =  Bakery.resource.abilities[7];
 					break;
 			}
 			
@@ -3806,33 +4181,33 @@ angular.module('pcs').factory('PcsCard1', ['$rootScope', 'BREAD',
 		
 		service.factorBlock = function(_str, _phy){
 			if (Number(_str.dice.sides) > Number(_phy.dice.sides)){
-				BREAD.resource.block = '2' + _str.dice.name;
+				Bakery.resource.block = '2' + _str.dice.name;
 			} else {
-				BREAD.resource.block = '2' + _phy.dice.name;
+				Bakery.resource.block = '2' + _phy.dice.name;
 			}
 		};
 		
 		service.factorDodge = function(_fle, _dex){
 			if (Number(_fle.dice.sides) > Number(_dex.dice.sides)){
-				BREAD.resource.dodge = '2' + _fle.dice.name;
+				Bakery.resource.dodge = '2' + _fle.dice.name;
 			} else {
-				BREAD.resource.dodge = '2' + _dex.dice.name;
+				Bakery.resource.dodge = '2' + _dex.dice.name;
 			}
 		};
 		
 		service.factorAlertness = function(_acu, _int){
 			if (Number(_acu.dice.sides) > Number(_int.dice.sides)){
-				BREAD.resource.alertness = '2' + _acu.dice.name;
+				Bakery.resource.alertness = '2' + _acu.dice.name;
 			} else {
-				BREAD.resource.alertness = '2' + _int.dice.name;
+				Bakery.resource.alertness = '2' + _int.dice.name;
 			}
 		};
 		
 		service.factorTenacity = function(_wis, _cha){
 			if (Number(_wis.dice.sides) > Number(_cha.dice.sides)){
-				BREAD.resource.tenacity = '2' + _wis.dice.name;
+				Bakery.resource.tenacity = '2' + _wis.dice.name;
 			} else {
-				BREAD.resource.tenacity = '2' + _cha.dice.name;
+				Bakery.resource.tenacity = '2' + _cha.dice.name;
 			}
 		};
 		
@@ -3841,51 +4216,51 @@ angular.module('pcs').factory('PcsCard1', ['$rootScope', 'BREAD',
 'use strict';
 
 // Factory-service for managing pc2 data.
-angular.module('pcs').factory('PcsCard2', ['$rootScope', 'BREAD', 'PcsTraits',
-	function($rootScope, BREAD, PcsTraits){
+angular.module('pcs').factory('PcsCard2', ['$rootScope', 'Bakery', 'PcsTraits',
+	function($rootScope, Bakery, PcsTraits){
 		var service = {};
 		
 		service.EXP = 0;
 		
-		if(BREAD.resource){
-			service.EXP = BREAD.resource.experience;
+		if(Bakery.resource){
+			service.EXP = Bakery.resource.experience;
 		}
 		
 		service.factorExperience = function(){
 			var mLevel = 0;
-			var mExperience = Number(BREAD.resource.experience);
+			var mExperience = Number(Bakery.resource.experience);
 			for (var increment = 8; increment <= mExperience; increment++){
 				mLevel++;
 				mExperience = mExperience - increment;
 			}
-			BREAD.resource.level = mLevel;
+			Bakery.resource.level = mLevel;
 		};
 		
 		service.factorHealth = function(){
-			BREAD.resource.healthLimit = 
+			Bakery.resource.healthLimit = 
 				Math.round(
-					(Number(BREAD.resource.abilities[0].dice.sides) +
-						Number(BREAD.resource.abilities[1].dice.sides)
-					) * ((BREAD.resource.level || 0)/16 + 1));
-			BREAD.resource.healthCurrent =
-				Number(BREAD.resource.healthLimit - BREAD.resource.injury);
+					(Number(Bakery.resource.abilities[0].dice.sides) +
+						Number(Bakery.resource.abilities[1].dice.sides)
+					) * ((Bakery.resource.level || 0)/16 + 1));
+			Bakery.resource.healthCurrent =
+				Number(Bakery.resource.healthLimit - Bakery.resource.injury);
 		};
 		
 		service.factorStamina = function(){
-			BREAD.resource.staminaLimit = 
+			Bakery.resource.staminaLimit = 
 				Math.round(
-					(Number(BREAD.resource.abilities[0].dice.sides) +
-						Number(BREAD.resource.abilities[1].dice.sides)
-					) * ((BREAD.resource.level || 0)/16 + 1));
-			BREAD.resource.staminaCurrent =
-				Number(BREAD.resource.healthLimit - BREAD.resource.injury);
+					(Number(Bakery.resource.abilities[0].dice.sides) +
+						Number(Bakery.resource.abilities[1].dice.sides)
+					) * ((Bakery.resource.level || 0)/16 + 1));
+			Bakery.resource.staminaCurrent =
+				Number(Bakery.resource.healthLimit - Bakery.resource.injury);
 		};
 		
 		service.factorCarryingCapacity = function(){
-			BREAD.resource.carryCurrent = 0;
-			BREAD.resource.carryLimit =
-				Number(BREAD.resource.abilities[0].dice.sides) +
-				Number(BREAD.resource.abilities[1].dice.sides);
+			Bakery.resource.carryCurrent = 0;
+			Bakery.resource.carryLimit =
+				Number(Bakery.resource.abilities[0].dice.sides) +
+				Number(Bakery.resource.abilities[1].dice.sides);
 		};
 		
 		return service;
@@ -3893,8 +4268,8 @@ angular.module('pcs').factory('PcsCard2', ['$rootScope', 'BREAD', 'PcsTraits',
 'use strict';
 
 // Factory-service for managing pc3 data.
-angular.module('pcs').factory('PcsCard3', ['$rootScope', 'BREAD',
-	function($rootScope, BREAD){
+angular.module('pcs').factory('PcsCard3', ['$rootScope', 'Bakery',
+	function($rootScope, Bakery){
 		var service = {};
 		
 		return service;
@@ -3977,35 +4352,35 @@ angular.module('pcs').factory('pcsDefaults', [function(){
 'use strict';
 
 // Factory-service for managing PC card deck.
-angular.module('pcs').factory('PcsFeats', ['BREAD', 'CardDeck', 
-	function(BREAD, CardDeck){
+angular.module('pcs').factory('PcsFeats', ['Bakery', 'CardDeck', 
+	function(Bakery, CardDeck){
 		var service = {};
 		
 		// Factor Feat Limit
 		service.factorFeatLimit = function(){
-			BREAD.resource.featLimit = Math.ceil((BREAD.resource.level) / 4) || 0;
-			BREAD.resource.featDeck = BREAD.resource.level;
+			Bakery.resource.featLimit = Math.ceil((Bakery.resource.level) / 4) || 0;
+			Bakery.resource.featDeck = Bakery.resource.level;
 			this.validateFeats();
 		};
 		
 		service.validateFeats = function(){
-			for(var ia = 0; ia < BREAD.resource.featDeck; ia++){
+			for(var ia = 0; ia < Bakery.resource.featDeck; ia++){
 				if(!this.featAtLevel(ia + 1)){
 					this.addFeat(ia + 1);
 				}
 			}
-			for(var ic = 0; ic < BREAD.resource.cardList.length; ic++){
-				if(BREAD.resource.cardList[ic].level > BREAD.resource.level){
-					CardDeck.removeCard( BREAD.resource.cardList[ic] );
+			for(var ic = 0; ic < Bakery.resource.cardList.length; ic++){
+				if(Bakery.resource.cardList[ic].level > Bakery.resource.level){
+					CardDeck.removeCard( Bakery.resource.cardList[ic] );
 				}
 			}
 		};
 		
 		service.featAtLevel = function(level){
 			var featAtLevel = false;
-			for(var ib = 0; ib < BREAD.resource.cardList.length; ib++){
-				if(BREAD.resource.cardList[ib].cardType === 'feat'){
-					if(BREAD.resource.cardList[ib].level === level){
+			for(var ib = 0; ib < Bakery.resource.cardList.length; ib++){
+				if(Bakery.resource.cardList[ib].cardType === 'feat'){
+					if(Bakery.resource.cardList[ib].level === level){
 						featAtLevel = true;
 					}
 				}
@@ -4017,7 +4392,7 @@ angular.module('pcs').factory('PcsFeats', ['BREAD', 'CardDeck',
 			var newFeat = {
 				name: 'Level '+level+' Feat',
 				cardType: 'feat',
-				x_coord: BREAD.resource.cardList[BREAD.lastCard()].x_coord + 15,
+				x_coord: Bakery.resource.cardList[Bakery.lastCard()].x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -4026,7 +4401,7 @@ angular.module('pcs').factory('PcsFeats', ['BREAD', 'CardDeck',
 				locked: true,
 				level: level
 			};
-			BREAD.resource.cardList.push(newFeat);
+			Bakery.resource.cardList.push(newFeat);
 		};
 		
 		return service;
@@ -4035,8 +4410,8 @@ angular.module('pcs').factory('PcsFeats', ['BREAD', 'CardDeck',
 'use strict';
 
 // Factory-service for managing PC items.
-angular.module('pcs').factory('PcsItems', ['BREAD',
-	function(BREAD){
+angular.module('pcs').factory('PcsItems', ['Bakery',
+	function(Bakery){
 		var service = {};
 		
 		
@@ -4046,8 +4421,8 @@ angular.module('pcs').factory('PcsItems', ['BREAD',
 'use strict';
 
 // Factory-service for managing PC traits
-angular.module('pcs').factory('PcsTraits', ['$resource', 'BREAD', 'CardDeck', 
-	function($resource, BREAD, CardDeck){
+angular.module('pcs').factory('PcsTraits', ['$resource', 'Bakery', 'CardDeck', 
+	function($resource, Bakery, CardDeck){
 		
 		var service = {};
 		
@@ -4059,18 +4434,18 @@ angular.module('pcs').factory('PcsTraits', ['$resource', 'BREAD', 'CardDeck',
 		
 		// Factor Trait Limit
 		service.factorTraitLimit = function(){
-			BREAD.resource.traitLimit = Math.floor((BREAD.resource.level || 0) / 4 + 1);
+			Bakery.resource.traitLimit = Math.floor((Bakery.resource.level || 0) / 4 + 1);
 			this.validateTraits();
 		};
 		
 		service.validateTraits = function(){
-			for(var ia = 0; ia < BREAD.resource.traitLimit; ia++){
+			for(var ia = 0; ia < Bakery.resource.traitLimit; ia++){
 				if(!this.traitAtLevel(ia * 4)){
 					this.addTrait(ia * 4);
 				}
 			}
-			for(var ic = 0; ic < BREAD.resource.cardList.length; ic++){
-				if(BREAD.resource.cardList[ic].level > BREAD.resource.level){
+			for(var ic = 0; ic < Bakery.resource.cardList.length; ic++){
+				if(Bakery.resource.cardList[ic].level > Bakery.resource.level){
 					CardDeck.removeCard(ic);
 				}
 			}
@@ -4078,9 +4453,9 @@ angular.module('pcs').factory('PcsTraits', ['$resource', 'BREAD', 'CardDeck',
 		
 		service.traitAtLevel = function(level){
 			var traitAtLevel = false;
-			for(var ib = 0; ib < BREAD.resource.cardList.length; ib++){
-				if(BREAD.resource.cardList[ib].cardType === 'trait'){
-					if(BREAD.resource.cardList[ib].level === level){
+			for(var ib = 0; ib < Bakery.resource.cardList.length; ib++){
+				if(Bakery.resource.cardList[ib].cardType === 'trait'){
+					if(Bakery.resource.cardList[ib].level === level){
 						traitAtLevel = true;
 					}
 				}
@@ -4092,7 +4467,7 @@ angular.module('pcs').factory('PcsTraits', ['$resource', 'BREAD', 'CardDeck',
 			var newTrait = {
 				name: 'Level '+level+' Trait',
 				cardType: 'trait',
-				x_coord: BREAD.resource.cardList[BREAD.lastCard()].x_coord + 15,
+				x_coord: Bakery.lastPanel(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -4101,7 +4476,7 @@ angular.module('pcs').factory('PcsTraits', ['$resource', 'BREAD', 'CardDeck',
 				locked: true,
 				level: level
 			};
-			BREAD.resource.cardList.push(newTrait);
+			Bakery.resource.cardList.push(newTrait);
 		};
 		
 		service.lockCard = function(card){
@@ -4115,6 +4490,23 @@ angular.module('pcs').factory('PcsTraits', ['$resource', 'BREAD', 'CardDeck',
 		
 		return service;
 	}]);
+'use strict';
+
+// General BREAD Factory-service.
+angular.module('decks').factory('Pcs', ['$resource',
+        function($resource){
+            return $resource(
+                'pcs/:pcId',
+                {
+                    pcId: '@_id'
+                },
+                {
+                    update: {
+                        method: 'PUT'
+                    }
+                }
+            );
+        }]);
 'use strict';
 
 // Config HTTP Error Handling

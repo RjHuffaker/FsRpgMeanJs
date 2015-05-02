@@ -2,7 +2,7 @@
 
 // Directive for managing card decks.
 angular.module('decks')
-	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'BREAD', 'CardDeck', function($document, $parse, $rootScope, $window, BREAD, CardDeck){
+	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'Bakery', 'CardDeck', function($document, $parse, $rootScope, $window, Bakery, CardDeck){
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/decks/views/card-panel.html',
@@ -60,7 +60,7 @@ angular.module('decks')
 					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
 					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
 					scope.$on('CardsCtrl:onDropdown', onDropdown);
-					scope.$on('BREAD:onDeckChange', onReleaseCard);
+					scope.$on('Bakery:onDeckChange', onReleaseCard);
 					scope.$watch('panel.x_coord', resetPosition);
 					scope.$watch('panel.y_coord', resetPosition);
 					element.on(_pressEvents, onPress);

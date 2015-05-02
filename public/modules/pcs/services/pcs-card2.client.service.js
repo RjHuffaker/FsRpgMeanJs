@@ -1,51 +1,51 @@
 'use strict';
 
 // Factory-service for managing pc2 data.
-angular.module('pcs').factory('PcsCard2', ['$rootScope', 'BREAD', 'PcsTraits',
-	function($rootScope, BREAD, PcsTraits){
+angular.module('pcs').factory('PcsCard2', ['$rootScope', 'Bakery', 'PcsTraits',
+	function($rootScope, Bakery, PcsTraits){
 		var service = {};
 		
 		service.EXP = 0;
 		
-		if(BREAD.resource){
-			service.EXP = BREAD.resource.experience;
+		if(Bakery.resource){
+			service.EXP = Bakery.resource.experience;
 		}
 		
 		service.factorExperience = function(){
 			var mLevel = 0;
-			var mExperience = Number(BREAD.resource.experience);
+			var mExperience = Number(Bakery.resource.experience);
 			for (var increment = 8; increment <= mExperience; increment++){
 				mLevel++;
 				mExperience = mExperience - increment;
 			}
-			BREAD.resource.level = mLevel;
+			Bakery.resource.level = mLevel;
 		};
 		
 		service.factorHealth = function(){
-			BREAD.resource.healthLimit = 
+			Bakery.resource.healthLimit = 
 				Math.round(
-					(Number(BREAD.resource.abilities[0].dice.sides) +
-						Number(BREAD.resource.abilities[1].dice.sides)
-					) * ((BREAD.resource.level || 0)/16 + 1));
-			BREAD.resource.healthCurrent =
-				Number(BREAD.resource.healthLimit - BREAD.resource.injury);
+					(Number(Bakery.resource.abilities[0].dice.sides) +
+						Number(Bakery.resource.abilities[1].dice.sides)
+					) * ((Bakery.resource.level || 0)/16 + 1));
+			Bakery.resource.healthCurrent =
+				Number(Bakery.resource.healthLimit - Bakery.resource.injury);
 		};
 		
 		service.factorStamina = function(){
-			BREAD.resource.staminaLimit = 
+			Bakery.resource.staminaLimit = 
 				Math.round(
-					(Number(BREAD.resource.abilities[0].dice.sides) +
-						Number(BREAD.resource.abilities[1].dice.sides)
-					) * ((BREAD.resource.level || 0)/16 + 1));
-			BREAD.resource.staminaCurrent =
-				Number(BREAD.resource.healthLimit - BREAD.resource.injury);
+					(Number(Bakery.resource.abilities[0].dice.sides) +
+						Number(Bakery.resource.abilities[1].dice.sides)
+					) * ((Bakery.resource.level || 0)/16 + 1));
+			Bakery.resource.staminaCurrent =
+				Number(Bakery.resource.healthLimit - Bakery.resource.injury);
 		};
 		
 		service.factorCarryingCapacity = function(){
-			BREAD.resource.carryCurrent = 0;
-			BREAD.resource.carryLimit =
-				Number(BREAD.resource.abilities[0].dice.sides) +
-				Number(BREAD.resource.abilities[1].dice.sides);
+			Bakery.resource.carryCurrent = 0;
+			Bakery.resource.carryLimit =
+				Number(Bakery.resource.abilities[0].dice.sides) +
+				Number(Bakery.resource.abilities[1].dice.sides);
 		};
 		
 		return service;

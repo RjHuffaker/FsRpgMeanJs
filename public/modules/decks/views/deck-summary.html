@@ -1,4 +1,5 @@
 <div class="content-panel">
+	{{panel.x_coord}} / {{panel.y_coord}}
 	<h4>
 		<span data-ng-bind="panel.name"></span>
 	</h4>
@@ -10,12 +11,12 @@
 		<span data-ng-bind="panel.created | date:'short'"></span>
 	</small>
 	<div style="position: absolute; top: 19em; left: 0.5em; width: 2em;" class="text-left">
-		<a data-ng-click="BREAD.readDeck(panel);" stop-event>
+		<a data-ng-click="readDeck(panel);" stop-event>
 			<i class="glyphicon glyphicon-edit green-icon text-14"></i>
 		</a>
 	</div>
 	<div style="position: absolute; top: 19em; left: 12.5em; width: 2em;" class="text-right">
-		<a data-ng-click="BREAD.deleteDeck(panel);" stop-event>
+		<a data-ng-click="deleteDeck(panel);" stop-event>
 			<i class="glyphicon glyphicon-trash red-icon text-14"></i>
 		</a>
 	</div>
