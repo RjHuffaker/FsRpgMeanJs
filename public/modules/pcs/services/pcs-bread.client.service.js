@@ -9,7 +9,7 @@ angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authent
         Bakery.resource.cardList = [];
         Bakery.Pcs.query(function(response){
             response.unshift({
-                cardRole: 'playerOptions'
+                panelType: 'playerOptions'
             });
             Bakery.resource.cardList = response;
             Bakery.setCardList(Bakery.resource.cardList);

@@ -155,6 +155,18 @@ angular.module('core')
 	 			});
 	 		};
 			
+			$scope.findDependency = function(dependency){
+				Bakery.findDependency(dependency, Bakery.resource);
+			};
+			
+			$scope.toggleDependency = function(dependency){
+				Bakery.toggleDependency(dependency, Bakery.resource);
+			};
+			
+			$scope.toggleCardLock = function(panel){
+				Bakery.toggleCardLock(panel, Bakery.resource.cardList);
+			};
+			
 			var chooseAbility = function(event, object){
 				$scope.modalShown = true;
 				$scope.diceBoxShown = true;

@@ -32,7 +32,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
         if(param){
             Bakery.Decks.query(param, function(response){
                 response.unshift({
-                    cardRole: 'architectOptions'
+                    panelType: 'architectOptions'
                 });
                 Bakery.resource.cardList = response;
                 Bakery.setCardList(Bakery.resource.cardList);
@@ -40,7 +40,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
         } else {
             Bakery.Decks.list(function(response){
                 response.unshift({
-                    cardRole: 'architectOptions'
+                    panelType: 'architectOptions'
                 });
                 Bakery.resource.cardList = response;
                 Bakery.setCardList(Bakery.resource.cardList);
@@ -75,7 +75,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
                     var panel = deck.cardList[i];
                     CardsBread.edit(panel);
                 }
-                $rootScope.$broadcast('BREAD: deckSaved');
+                $rootScope.$broadcast('Bakery: deckSaved');
             }
             if(_loadDeck){
                 service.resource = response;
@@ -92,7 +92,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
             deckType: type,
             deckSize: size,
             cardList: [{
-                cardRole: 'deckOptions',
+                panelType: 'deckOptions',
                 x_coord: 0,
                 y_coord: 0
             }]

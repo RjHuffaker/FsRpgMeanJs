@@ -33,7 +33,7 @@ angular.module('decks').factory('CardsBread', ['$stateParams', '$location', 'Aut
     };
     
     var getNewCardResource = function(panel){
-        switch(panel.cardRole){
+        switch(panel.panelType){
             case 'Aspect':
                 return new Bakery.Aspects(panel.aspectData);
             case 'Trait':
@@ -52,7 +52,7 @@ angular.module('decks').factory('CardsBread', ['$stateParams', '$location', 'Aut
     var getCardParams = function(panel){
         var cardId;
         console.log(panel);
-        switch(panel.cardRole){
+        switch(panel.panelType){
             case 'Aspect':
                 cardId = panel.aspectData._id;
                 return { aspectId: cardId };
@@ -75,7 +75,7 @@ angular.module('decks').factory('CardsBread', ['$stateParams', '$location', 'Aut
     };
     
     var getPanelData = function(panel){
-        switch(panel.cardRole){
+        switch(panel.panelType){
             case 'Aspect':
                 return panel.aspectData;
             case 'Trait':
@@ -94,7 +94,7 @@ angular.module('decks').factory('CardsBread', ['$stateParams', '$location', 'Aut
     };
     
     var setPanelData = function(panel, cardData){
-        switch(panel.cardRole){
+        switch(panel.panelType){
             case 'Aspect':
                 panel.aspectData = cardData;
                 break;
@@ -128,7 +128,7 @@ angular.module('decks').factory('CardsBread', ['$stateParams', '$location', 'Aut
     service.read = function(panel){
         var params = getCardParams(panel);
         console.log(params);
-        getCardResource(panel.cardRole).get(
+        getCardResource(panel.panelType).get(
             params,
         function(response){
             console.log(response);
@@ -138,7 +138,7 @@ angular.module('decks').factory('CardsBread', ['$stateParams', '$location', 'Aut
     
     //EDIT
     service.edit = function(panel){
-        if(panel.cardRole === 'Aspect'){
+        if(panel.panelType === 'Aspect'){
             getNewCardResource(panel).$update();
         } else if(getPanelData(panel)){
             var panelData = getPanelData(panel);
@@ -158,7 +158,7 @@ angular.module('decks').factory('CardsBread', ['$stateParams', '$location', 'Aut
         };
 
         var panel = {
-            cardRole: cardType,
+            panelType: cardType,
             x_coord: cardNumber * 15,
             y_coord: 0
         };
@@ -180,7 +180,7 @@ angular.module('decks').factory('CardsBread', ['$stateParams', '$location', 'Aut
     
     //DELETE
     service.delete = function(panel, deck){
-        if(panel.cardRole === 'architectOptions') return;
+        if(panel.panelType === 'architectOptions') return;
         
         var cardResource = getNewCardResource(panel);
         cardResource.$remove(function(response){

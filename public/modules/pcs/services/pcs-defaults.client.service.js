@@ -26,7 +26,7 @@ angular.module('pcs').factory('pcsDefaults', [function(){
 			],
 			cardList: [
 				{
-					cardRole: 'pc1',
+					panelType: 'pc1',
 					x_coord: 0,
 					y_coord: 0,
 					x_overlap: false,
@@ -36,7 +36,7 @@ angular.module('pcs').factory('pcsDefaults', [function(){
 					locked: true
 				},
 				{
-					cardRole: 'pc2',
+					panelType: 'pc2',
 					x_coord: 15,
 					y_coord: 0,
 					x_overlap: false,
@@ -46,7 +46,7 @@ angular.module('pcs').factory('pcsDefaults', [function(){
 					locked: true
 				},
 				{
-					cardRole: 'pc3',
+					panelType: 'pc3',
 					x_coord: 30,
 					y_coord: 0,
 					x_overlap: false,
@@ -57,7 +57,7 @@ angular.module('pcs').factory('pcsDefaults', [function(){
 				},
 				{
 					name: 'Level 0 Trait',
-					cardRole: 'featureCard',
+					panelType: 'featureCard',
 					x_coord: 45,
 					y_coord: 0,
 					x_overlap: false,

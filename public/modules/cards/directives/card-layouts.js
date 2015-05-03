@@ -38,13 +38,13 @@ angular.module('cards')
 			templateUrl: '../modules/pcs/views/card-pc-3.html'
 		};
 	})
-	.directive('featureCard', ['DataSRVC', 'BREAD', function(DataSRVC, BREAD){
+	.directive('featureCard', ['DataSRVC', 'Bakery', function(DataSRVC, Bakery){
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/cards/views/feature-card.html',
 			scope: { card: '=', panel: '=' },
 			link: function(scope, element, attrs){
-				scope.BREAD = BREAD;
+				scope.Bakery = Bakery;
 				scope.dataSRVC = DataSRVC;
 			}
 		};

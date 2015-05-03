@@ -11,7 +11,7 @@ var mongoose = require('mongoose'),
  */
 
 var PanelSchema = {
-	cardRole: {
+	panelType: {
 		type: String
 	},
 	aspectData: {

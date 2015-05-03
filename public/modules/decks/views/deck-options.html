@@ -34,8 +34,8 @@
 						<li role="presentation" ng-repeat="dependency in Bakery.dependencyList"
 							stop-click><label>
 							<input type="checkbox" value="dependency" 
-								ng-checked="Bakery.findDependency(dependency) > -1"
-								ng-click="Bakery.toggleDependency(dependency)" >
+								ng-checked="findDependency(dependency) > -1"
+								ng-click="toggleDependency(dependency)" >
 							{{dependency.name}}
 						</label></li>
 						

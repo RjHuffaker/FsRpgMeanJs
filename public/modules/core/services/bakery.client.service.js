@@ -1,6 +1,6 @@
 'use strict';
 
-// General Bakery Factory-service.
+// General BREAD Factory-service.
 angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
 	var service = {};
     
@@ -57,6 +57,7 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
             cardList[i].y_overlap = false;
             cardList[i].dragging = false;
             cardList[i].stacked = false;
+            cardList[i].locked = false;
         }
         $rootScope.$broadcast('DeckOrder:onDeckChange');
     };
@@ -67,37 +68,6 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
                 cardList.splice(i, 1);
             }
         }
-    };
-	
-    service.shiftDeck = function(panel, expand, cardList){
-        var panel_x = panel.x_coord;
-        var panel_y = panel.y_coord;
-        var x_shift = expand ? 15 : -15;
-        var _number = expand ? 1 : -1;
-        
-        for(var i = 0; i < cardList.length; i++){
-            var slot = cardList[i];
-            if(panel_x <= slot.x_coord){
-                if(panel_y !== slot.y_coord){
-                    slot.x_coord += x_shift;
-                    if(slot.aspectData){
-                        slot.aspectData.cardNumber += _number;
-                    } else if(slot.traitData){
-                        slot.traitData.cardNumber += _number;
-                    } else if(slot.featData){
-                        slot.featData.cardNumber += _number;
-                    } else if(slot.augmentData){
-                        slot.augmentData.cardNumber += _number;
-                    } else if(slot.itemData){
-                        slot.itemData.cardNumber += _number;
-                    } else if(slot.originData){
-                        slot.originData.cardNumber += _number;
-                    }
-                }
-            }
-        }
-
-        $rootScope.$broadcast('Bakery:onDeckChange');
     };
     
     service.expandDeck = function(panel, cardList){
@@ -173,18 +143,18 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
         }
     };
     
-    service.toggleCardLock = function(panel){
-        for(var i = 0; i < service.resource.cardList.length; i++){
-            if(panel === service.resource.cardList[i]){
-                service.resource.cardList[i].locked = !service.resource.cardList[i].locked;
+    service.toggleCardLock = function(panel, cardList){
+        for(var i = 0; i < cardList.length; i++){
+            if(panel === cardList[i]){
+                cardList[i].locked = !cardList[i].locked;
             }
         }
     };
     
-    service.findDependency = function(deck){
+    service.findDependency = function(deck, resource){
         var index = -1;
-        for(var i = 0; i < service.resource.dependencies.length; i++){
-            var dependency = service.resource.dependencies[i];
+        for(var i = 0; i < resource.dependencies.length; i++){
+            var dependency = resource.dependencies[i];
             if(dependency._id === deck._id){
                 index = i;
             }
@@ -192,20 +162,18 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
         return index;
     };
 
-    service.toggleDependency = function(deck){
-        var deckIndex = service.findDependency(deck);
+    service.toggleDependency = function(deck, resource){
+        var deckIndex = service.findDependency(deck, resource);
 
         if (deckIndex > -1) {
-            service.resource.dependencies.splice(deckIndex, 1);
+            resource.dependencies.splice(deckIndex, 1);
         } else {
-            service.resource.dependencies.push(deck);
+            resource.dependencies.push(deck);
         }
     };
     
     service.changeAspect = function(card, aspect){
-        if(card.aspect === aspect){
-            console.log('same');
-        } else {
+        if(card.aspect !== aspect){
             card.aspect = aspect;
         }
     };

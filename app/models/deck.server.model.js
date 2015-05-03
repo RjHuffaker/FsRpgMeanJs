@@ -23,7 +23,7 @@ var DeckSchema = new Schema({
 		type: String,
 		default: ''
 	},
-	cardRole: {
+	panelType: {
 		type: String,
 		default: 'deckSummary'
 	},

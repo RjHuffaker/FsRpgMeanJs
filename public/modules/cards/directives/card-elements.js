@@ -7,7 +7,7 @@ angular.module('cards')
 			restrict: 'A',
 			require: '^form',
 			link: function(scope, element, attr){
-				scope.$on('BREAD: deckSaved', function(){
+				scope.$on('Bakery: deckSaved', function(){
 					scope.featureCardForm.$setPristine();
 				});
 			}

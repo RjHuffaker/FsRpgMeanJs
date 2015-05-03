@@ -60,7 +60,7 @@ angular.module('pcs').factory('PcsTraits', ['$resource', 'Bakery', 'CardDeck',
 		};
 		
 		service.lockCard = function(card){
-			card.cardRole = 'player';
+			card.panelType = 'player';
 			card.locked = true;
 			card.x_coord = (card.cardNumber - 1) * 15;
 			card.y_coord = 0;
