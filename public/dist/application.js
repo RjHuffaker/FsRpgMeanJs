@@ -593,7 +593,7 @@ angular.module('cards').factory('Augments', ['$resource',
         }]);
 'use strict';
 
-angular.module('decks').factory('CardsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery){
+angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery','CorePanel', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CorePanel){
     var service = {};
     
     var editDeck = function(deck, _loadDeck) {
@@ -608,144 +608,40 @@ angular.module('decks').factory('CardsBread', ['$stateParams', '$location', 'Aut
         });
     };
     
-    var getCardResource = function(cardType){
-        switch(cardType){
-            case 'Aspect':
-                return Bakery.Aspects;
-            case 'Trait':
-                return Bakery.Traits;
-            case 'Feat':
-                return Bakery.Feats;
-            case 'Augment':
-                return Bakery.Augments;
-            case 'Item':
-                return Bakery.Items;
-            case 'Origin':
-                return Bakery.Origins;
-        }
-    };
-    
-    var getNewCardResource = function(panel){
-        switch(panel.panelType){
-            case 'Aspect':
-                return new Bakery.Aspects(panel.aspectData);
-            case 'Trait':
-                return new Bakery.Traits(panel.traitData);
-            case 'Feat':
-                return new Bakery.Feats(panel.featData);
-            case 'Augment':
-                return new Bakery.Augments(panel.augmentData);
-            case 'Item':
-                return new Bakery.Items(panel.itemData);
-            case 'Origin':
-                return new Bakery.Origins(panel.originData);
-        }
-    };
-    
-    var getCardParams = function(panel){
-        var cardId;
-        console.log(panel);
-        switch(panel.panelType){
-            case 'Aspect':
-                cardId = panel.aspectData._id;
-                return { aspectId: cardId };
-            case 'Trait':
-                cardId = panel.traitData._id;
-                return { traitId: cardId };
-            case 'Feat':
-                cardId = panel.featData._id;
-                return { featId: cardId };
-            case 'Augment':
-                cardId = panel.augmentData._id;
-                return { augmentId: cardId };
-            case 'Item':
-                cardId = panel.itemData._id;
-                return { itemId: cardId };
-            case 'Origin':
-                cardId = panel.originData._id;
-                return { originId: cardId };
-        }
-    };
-    
-    var getPanelData = function(panel){
-        switch(panel.panelType){
-            case 'Aspect':
-                return panel.aspectData;
-            case 'Trait':
-                return panel.traitData;
-            case 'Feat':
-                return panel.featData;
-            case 'Augment':
-                return panel.augmentData;
-            case 'Item':
-                return panel.itemData;
-            case 'Origin':
-                return panel.originData;
-            default:
-                return false;
-        }
-    };
-    
-    var setPanelData = function(panel, cardData){
-        switch(panel.panelType){
-            case 'Aspect':
-                panel.aspectData = cardData;
-                break;
-            case 'Trait':
-                panel.traitData = cardData;
-                break;
-            case 'Feat':
-                panel.featData = cardData;
-                break;
-            case 'Augment':
-                panel.augmentData = cardData;
-                break;
-            case 'Item':
-                panel.itemData = cardData;
-                break;
-            case 'Origin':
-                panel.originData = cardData;
-                break;
-        }
-    };
-    
     //BROWSE
     service.browse = function(cardType, params, destination){
-        var cardParams = getCardParams(params);
-        getCardResource(cardType).query(cardParams, function(response){
+        var cardParams = CorePanel.getCardParams(params);
+        Bakery.getCardResource(cardType).query(cardParams, function(response){
             return response;
         });
     };
     
     //READ
-    service.read = function(panel){
-        var params = getCardParams(panel);
-        console.log(params);
-        getCardResource(panel.panelType).get(
+    service.read = function(panel, callback){
+        var params = CorePanel.getCardParams(panel);
+        Bakery.getCardResource(panel.panelType).get(
             params,
         function(response){
-            console.log(response);
-            setPanelData(panel, response);
+            callback(panel, response);
         });
     };
     
     //EDIT
     service.edit = function(panel){
-        if(panel.panelType === 'Aspect'){
-            getNewCardResource(panel).$update();
-        } else if(getPanelData(panel)){
-            var panelData = getPanelData(panel);
-            var cardResource = getNewCardResource(panel);
+        var cardResource = Bakery.getNewCardResource(panel);
+        if(panel.panelType !== 'Aspect'){
+            var panelData = CorePanel.getPanelData(panel);
             if(panelData.aspect) cardResource.aspect = panelData.aspect._id;
-            cardResource.$update();
         }
+        cardResource.$update();
     };
     
     //ADD
     service.add = function(deck, cardType, cardNumber, deckShift, deckSave){
         var card = {
             deck: deck._id,
-            cardSet: deck.deckSize,
+            deckSize: deck.deckSize,
+            deckName: deck.name,
             cardNumber: cardNumber,
             cardType: cardType
         };
@@ -756,12 +652,12 @@ angular.module('decks').factory('CardsBread', ['$stateParams', '$location', 'Aut
             y_coord: 0
         };
         
-        setPanelData(panel, card);
+        Bakery.setPanelData(panel, card);
         
-        var cardResource = getNewCardResource(panel);
+        var cardResource = Bakery.getNewCardResource(panel);
         
         cardResource.$save(function(response){
-            setPanelData(panel, response);
+            Bakery.setPanelData(panel, response);
             deck.cardList.push(panel);
             Bakery.setDeckSize(Bakery.resource);
         }).then(function(response){
@@ -775,7 +671,7 @@ angular.module('decks').factory('CardsBread', ['$stateParams', '$location', 'Aut
     service.delete = function(panel, deck){
         if(panel.panelType === 'architectOptions') return;
         
-        var cardResource = getNewCardResource(panel);
+        var cardResource = Bakery.getNewCardResource(panel);
         cardResource.$remove(function(response){
                 if(deck) Bakery.removePanel(panel, deck.cardList);
             }).then(function(response){
@@ -790,15 +686,6 @@ angular.module('decks').factory('CardsBread', ['$stateParams', '$location', 'Aut
     return service;
     
 }]);
-'use strict';
-
-// Factory-service for managing Trait cards.
-angular.module('cards').factory('traitService', ['Cards', 'CardDeck',
-	function(Cards, CardDeck){
-		var service = {};
-		
-		return service;
-	}]);
 'use strict';
 
 // General BREAD Factory-service.
@@ -887,12 +774,12 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
 
 // Core Controller
 angular.module('core')
-	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
-		function($location, $scope, $rootScope, $window, Authentication, CardDeck, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems) {
+	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CoreDeck', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
+		function($location, $scope, $rootScope, $window, Authentication, CoreDeck, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems) {
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
 			
-			$scope.cardDeck = CardDeck;
+			$scope.coreDeck = CoreDeck;
 			
 			$scope.Bakery = Bakery;
             
@@ -956,7 +843,7 @@ angular.module('core')
             
             //READ Functions
             $scope.readCard = function(card){
-				CardsBread.read(card);
+				CardsBread.read(card, CardsBread.setPanelData);
 			};
             
             $scope.readDeck = function(deck){
@@ -1010,9 +897,9 @@ angular.module('core')
 			};
 			
             //Misc Handler Functions
-			$scope.exitPc = function(){
+			$scope.exitPc = function(pc){
 				if(pcNew){
-					Bakery.deletePc();
+					PcsBread.delete(pc, Bakery.resource);
 				}
 				$scope.browsePcs();
 			};
@@ -1152,735 +1039,9 @@ angular.module('core').controller('HeaderController', ['$document', '$rootScope'
 }]);
 'use strict';
 
-angular.module('core')
-	.directive('modalDialogWindow', function() {
-		return {
-			restrict: 'E',
-			scope: {
-				show: '='
-			},
-			transclude: true,
-			templateUrl: '../modules/core/views/modal-window.html',
-			link: function(scope, element, attrs) {
-				scope.dialogStyle = {};
-				if (attrs.width)
-					scope.dialogStyle.width = attrs.width;
-				if (attrs.height)
-					scope.dialogStyle.height = attrs.height;
-				scope.hideModal = function() {
-					scope.show = false;
-				};
-			}
-		};
-	});
-'use strict';
-
-var coreModule = angular.module('core');
-
-// Directive for monitoring screen height
-coreModule
-	.directive('screenSize', ['$rootScope', '$window', function($rootScope, $window){
-		return {
-			restrict: 'A',
-			link: function(scope, element, attrs) {
-				
-				var _window = angular.element($window);
-				
-				var _windowHeight;
-				
-				var initialize = function() {
-					toggleListeners(true);
-					setTimeout(function(){
-						onHeightChange();
-					}, 0);
-				};
-				
-				var toggleListeners = function (enable) {
-					// remove listeners
-					if (!enable)return;
-					
-					// add listeners
-					scope.$on('$destroy', onDestroy);
-					_window.on('resize', onHeightChange);
-				};
-				
-				var onDestroy = function(enable){
-					toggleListeners(false);
-				};
-				
-				var onHeightChange = function(){
-					_windowHeight = _window.height();
-					$rootScope.$broadcast('screenSize:onHeightChange', {
-						newHeight: _windowHeight
-					});
-				};
-				
-				angular.element(document).ready(function () {
-					initialize();
-				});
-				
-				initialize();
-			}
-		};
-	}]);
-'use strict';
-
-// General BREAD Factory-service.
-angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
-	var service = {};
-    
-    service.Decks = Decks;
-    
-    service.Pcs = Pcs;
-    
-    service.Aspects = Aspects;
-    
-    service.Traits = Traits;
-    
-    service.Feats = Feats;
-    
-    service.Augments = Augments;
-    
-    service.Items = Items;
-    
-    service.Origins = Origins;
-    
-    service.resource = {
-		cardList: []
-	};
-    
-    service.lastPanel = function(cardList){
-        if(cardList.length > 0){
-            var _index = 0;
-            var _panel = { x_coord: 0 };
-            for(var i = 0; i < cardList.length; i++){
-                if(cardList[i].x_coord > (_panel.x_coord || 0)){
-                    _index = i;
-                    _panel = cardList[i];
-                }
-            }
-            return {
-                index: _index, panel: _panel
-            };
-        } else {
-            return {
-                index: 0, panel: { x_coord: 0 }
-            };
-        }
-    };
-    
-    service.deckWidth = function(cardList){
-        var lastPanel = service.lastPanel(cardList);
-        return service.lastPanel(cardList).panel.x_coord + 15;
-    };
-    
-    service.setCardList = function(cardList){
-        for(var i = 0; i < cardList.length; i++){
-            cardList[i].x_coord = i * 15;
-            cardList[i].y_coord = 0;
-            cardList[i].x_overlap = false;
-            cardList[i].y_overlap = false;
-            cardList[i].dragging = false;
-            cardList[i].stacked = false;
-            cardList[i].locked = false;
-        }
-        $rootScope.$broadcast('DeckOrder:onDeckChange');
-    };
-    
-    service.removePanel = function(panel, cardList){
-        for(var i = 0; i < cardList.length; i++){
-            if(cardList[i] === panel ) {
-                cardList.splice(i, 1);
-            }
-        }
-    };
-    
-    service.expandDeck = function(panel, cardList){
-        var panel_x_coord = panel.x_coord;
-        var panel_y_coord = panel.y_coord;
-        
-        for(var i = 0; i < cardList.length; i++){
-            var slot = cardList[i];
-            if(slot !== panel && slot.x_coord >= panel_x_coord){
-                slot.x_coord += 15;
-                if(slot.aspectData){
-                    slot.aspectData.cardNumber++;
-                } else if(slot.traitData){
-                    slot.traitData.cardNumber++;
-                } else if(slot.featData){
-                    slot.featData.cardNumber++;
-                } else if(slot.augmentData){
-                    slot.augmentData.cardNumber++;
-                } else if(slot.itemData){
-                    slot.itemData.cardNumber++;
-                } else if(slot.originData){
-                    slot.originData.cardNumber++;
-                }
-            }
-        }
-        $rootScope.$broadcast('Bakery:onDeckChange');
-    };
-    
-    service.collapseDeck = function(panel, cardList){
-        var panel_x_coord = panel.x_coord;
-        var panel_y_coord = panel.y_coord;
-        
-        for(var i = 0; i < cardList.length; i++){
-            var slot = cardList[i];
-            if(slot.x_coord > panel_x_coord){
-                slot.x_coord -= 15;
-                if(slot.aspectData){
-                    slot.aspectData.cardNumber--;
-                } else if(slot.traitData){
-                    slot.traitData.cardNumber--;
-                } else if(slot.featData){
-                    slot.featData.cardNumber--;
-                } else if(slot.augmentData){
-                    slot.augmentData.cardNumber--;
-                } else if(slot.itemData){
-                    slot.itemData.cardNumber--;
-                } else if(slot.originData){
-                    slot.originData.cardNumber--;
-                }
-            }
-        }
-        $rootScope.$broadcast('Bakery:onDeckChange');
-    };
-    
-    service.setDeckSize = function(resource){
-        var _length = resource.cardList.length - 1;
-        resource.deckSize = _length;
-        for(var i = 0; i < resource.cardList.length; i++){
-            var panel = resource.cardList[i];
-            if(panel.aspectData){
-                panel.aspectData.cardSet = _length;
-            } else if(panel.traitData){
-                panel.traitData.cardSet = _length;
-            } else if(panel.featData){
-                panel.featData.cardSet = _length;
-            } else if(panel.augmentData){
-                panel.augmentData.cardSet = _length;
-            } else if(panel.itemData){
-                panel.itemData.cardSet = _length;
-            } else if(panel.originData){
-                panel.originData.cardSet = _length;
-            }
-        }
-    };
-    
-    service.toggleCardLock = function(panel, cardList){
-        for(var i = 0; i < cardList.length; i++){
-            if(panel === cardList[i]){
-                cardList[i].locked = !cardList[i].locked;
-            }
-        }
-    };
-    
-    service.findDependency = function(deck, resource){
-        var index = -1;
-        for(var i = 0; i < resource.dependencies.length; i++){
-            var dependency = resource.dependencies[i];
-            if(dependency._id === deck._id){
-                index = i;
-            }
-        }
-        return index;
-    };
-
-    service.toggleDependency = function(deck, resource){
-        var deckIndex = service.findDependency(deck, resource);
-
-        if (deckIndex > -1) {
-            resource.dependencies.splice(deckIndex, 1);
-        } else {
-            resource.dependencies.push(deck);
-        }
-    };
-    
-    service.changeAspect = function(card, aspect){
-        if(card.aspect !== aspect){
-            card.aspect = aspect;
-        }
-    };
-    
-    return service;
-}]);
-'use strict';
-
-// Factory-service for providing generic game data
-angular.module('core').factory('DataSRVC', [
-	function($rootScope){
-		var service = {};
-		
-		service.sexArray = [
-			'---',
-			'Male',
-			'Female'
-		];
-		
-		service.diceList = [
-			{order: 1, name: 'd__', sides: 0, image: 'modules/core/img/d___.png'},
-			{order: 2, name: 'd4', sides: 4, image: 'modules/core/img/d_04.png'},
-			{order: 3, name: 'd6', sides: 6, image: 'modules/core/img/d_06.png'},
-			{order: 4, name: 'd6', sides: 6, image: 'modules/core/img/d_06.png'},
-			{order: 5, name: 'd8', sides: 8, image: 'modules/core/img/d_08.png'},
-			{order: 6, name: 'd8', sides: 8, image: 'modules/core/img/d_08.png'},
-			{order: 7, name: 'd10', sides: 10, image: 'modules/core/img/d_10.png'},
-			{order: 8, name: 'd10', sides: 10, image: 'modules/core/img/d_10.png'},
-			{order: 9, name: 'd12', sides: 12, image: 'modules/core/img/d_12.png'}
-		];
-		
-		service.targetTypes = [
-			'Utility',
-			'Close',
-			'Close Area',
-			'Distant',
-			'Distant Area'
-		];
-		
-		service.closeDetails = [
-			'1/1', '1/2', '1/3', '1/4',
-			'2/1', '2/2', '2/3', '2/4',
-			'3/1', '3/2', '3/3', '3/4',
-			'4/1', '4/2', '4/3'
-		];
-		
-		service.closeAreaDetails = [
-			'2x2', '3x3', '4x4', '5x5'
-		];
-		
-		service.distantDetails = [
-			'4/1', '6/1', '8/1', '10/1',
-			'12/1', '14/1', '16/1', '18/1',
-			'20/1', '22/1', '24/1'
-		];
-		
-		service.distantAreaDetails = [
-			'8/2x2', '10/2x2', '12/2x2', '16/2x2',
-			'10/3x3', '12/3x3', '16/3x3', '20/3x3',
-			'12/4x4', '16/4x4', '20/4x4'
-		];
-		
-		service.actionKeywords = [
-			'Default',
-			'Single-use',
-			'Thrown',
-			'Reflexive',
-			'Melee',
-			'Ranged',
-			'Evocation',
-			'Invocation'
-		];
-		
-		service.actionFrequency = [
-			'Free',
-			'Count: 1',
-			'Count: 2',
-			'Count: 3',
-			'Count: 4',
-			'Count: 5',
-			'Disruptive',
-			'Responsive'
-		];
-		
-		service.dice = [
-			'1d4',
-			'1d6',
-			'1d8',
-			'1d10',
-			'1d12'
-		];
-		
-		service.abilities = [
-			'STR',
-			'PHY',
-			'FLE',
-			'DEX',
-			'ACU',
-			'INT',
-			'WIS',
-			'CHA'
-		];
-		
-		service.attackTypes = [
-			'Melee',
-			'Ranged',
-			'Evocation',
-			'Invocation'
-		];
-		
-		service.defenseTypes = [
-			'Block',
-			'Dodge',
-			'Alertness',
-			'Tenacity'
-		];
-		
-		service.prerequisites = [
-			'1d10 STR',
-			'1d10 PHY',
-			'1d10 FLE',
-			'1d10 DEX',
-			'1d10 ACU',
-			'1d10 INT',
-			'1d10 WIS',
-			'1d10 CHA'
-		];
-		
-		service.aspectTypes = [
-			'Archetype',
-			'Allegiance',
-			'Race'
-		];
-		
-		service.archetypes = [
-			'General',
-			'Guardian',
-			'Hunter',
-			'Mastermind',
-			'Champion'
-		];
-		
-		service.allegiances = [
-			'Unaligned',
-			'Nymaria',
-			'Vakhelos',
-			'Heresy',
-			'Inquisition'
-		];
-		
-		service.races = [
-			'Weolda',
-			'Algharr',
-			'Durhok',
-			'Feyal',
-			'Sylthaun'
-		];
-		
-		service.itemTypes = [
-			'Melee',
-			'Melee / Ranged',
-			'Melee / Invocation',
-			'Ranged',
-			'Ranged / Melee',
-			'Ranged / Evocation',
-			'Evocation',
-			'Evocation / Invocation',
-			'Evocation / Ranged',
-			'Invocation',
-			'Invocation / Evocation',
-			'Invocation / Melee'
-		];
-		
-		service.itemSlots = [
-			'One-handed',
-			'Two-handed',
-			'One-handed or Paired',
-			'One-handed or Two-handed',
-			'Armor',
-			'Shield',
-			'Gloves',
-			'Boots',
-			'Cloak',
-			'Amulet',
-			'Ring',
-			'Belt',
-			'Helmet',
-			'Consumable',
-			'Provision'
-		];
-		
-		return service;
-	}]);
-'use strict';
-var coreModule = angular.module('core');
-
-// Factory-service for managing card-deck, card-slot and card-panel directives.
-coreModule.factory('HomeDemo', ['$rootScope',
-	function($rootScope){
-	
-	var service = {};
-	
-	service.cards = { 
-		cardList: [
-			{
-				name: 'A Trait Card',
-				cardType: 'trait',
-				panelType: 'home',
-				x_coord: 0,
-				y_coord: 0,
-				x_overlap: false,
-				y_overlap: false,
-				dragging: false,
-				stacked: false,
-				locked: true
-			},
-			{
-				name: 'A Feat Card',
-				cardType: 'feat',
-				panelType: 'home',
-				x_coord: 15,
-				y_coord: 0,
-				x_overlap: false,
-				y_overlap: false,
-				dragging: false,
-				stacked: false,
-				locked: true
-			},
-			{
-				name: 'An Augment Card',
-				cardType: 'augment',
-				panelType: 'home',
-				x_coord: 30,
-				y_coord: 0,
-				x_overlap: false,
-				y_overlap: false,
-				dragging: false,
-				stacked: false,
-				locked: true,
-				description: {
-					show: true,
-					content: 'Truly amazing...'
-				}
-			},
-			{
-				name: 'An Item Card',
-				cardType: 'item',
-				panelType: 'home',
-				x_coord: 45,
-				y_coord: 0,
-				x_overlap: false,
-				y_overlap: false,
-				dragging: false,
-				stacked: false,
-				locked: true
-			},
-			{
-				name: 'Another Feat Card',
-				cardType: 'feat',
-				panelType: 'home',
-				x_coord: 60,
-				y_coord: 0,
-				x_overlap: false,
-				y_overlap: false,
-				dragging: false,
-				stacked: false,
-				locked: true
-			},
-			{
-				name: 'Another Item Card',
-				cardType: 'item',
-				panelType: 'home',
-				x_coord: 75,
-				y_coord: 0,
-				x_overlap: false,
-				y_overlap: true,
-				dragging: false,
-				stacked: true,
-				locked: true,
-				description: {
-					show: true,
-					content: 'This is the best one by far!!'
-				}
-			},
-			{
-				name: 'Yet Another Feat Card',
-				cardType: 'feat',
-				panelType: 'home',
-				x_coord: 75,
-				y_coord: 3,
-				x_overlap: false,
-				y_overlap: false,
-				dragging: false,
-				stacked: true,
-				locked: true
-			}
-		]
-	};
-	
-	return service;
-	
-	}]);
-'use strict';
-
-//Menu service used for managing  menus
-angular.module('core').service('Menus', [
-
-	function() {
-		// Define a set of default roles
-		this.defaultRoles = ['*'];
-
-		// Define the menus object
-		this.menus = {};
-
-		// A private function for rendering decision 
-		var shouldRender = function(user) {
-			if (user) {
-				if (!!~this.roles.indexOf('*')) {
-					return true;
-				} else {
-					for (var userRoleIndex in user.roles) {
-						for (var roleIndex in this.roles) {
-							if (this.roles[roleIndex] === user.roles[userRoleIndex]) {
-								return true;
-							}
-						}
-					}
-				}
-			} else {
-				return this.isPublic;
-			}
-
-			return false;
-		};
-
-		// Validate menu existance
-		this.validateMenuExistance = function(menuId) {
-			if (menuId && menuId.length) {
-				if (this.menus[menuId]) {
-					return true;
-				} else {
-					throw new Error('Menu does not exists');
-				}
-			} else {
-				throw new Error('MenuId was not provided');
-			}
-
-			return false;
-		};
-
-		// Get the menu object by menu id
-		this.getMenu = function(menuId) {
-			// Validate that the menu exists
-			this.validateMenuExistance(menuId);
-
-			// Return the menu object
-			return this.menus[menuId];
-		};
-
-		// Add new menu object by menu id
-		this.addMenu = function(menuId, isPublic, roles) {
-			// Create the new menu
-			this.menus[menuId] = {
-				isPublic: isPublic || false,
-				roles: roles || this.defaultRoles,
-				items: [],
-				shouldRender: shouldRender
-			};
-			// Return the menu object
-			return this.menus[menuId];
-		};
-
-		// Remove existing menu object by menu id
-		this.removeMenu = function(menuId) {
-			// Validate that the menu exists
-			this.validateMenuExistance(menuId);
-
-			// Return the menu object
-			delete this.menus[menuId];
-		};
-
-		// Add menu item object
-		this.addMenuItem = function(menuId, menuItemTitle, menuItemURL, menuItemType, menuItemUIRoute, isPublic, roles, position) {
-			// Validate that the menu exists
-			this.validateMenuExistance(menuId);
-
-			// Push new menu item
-			this.menus[menuId].items.push({
-				title: menuItemTitle,
-				link: menuItemURL,
-				menuItemType: menuItemType || 'item',
-				menuItemClass: menuItemType,
-				uiRoute: menuItemUIRoute || ('/' + menuItemURL),
-				isPublic: ((isPublic === null || typeof isPublic === 'undefined') ? this.menus[menuId].isPublic : isPublic),
-				roles: ((roles === null || typeof roles === 'undefined') ? this.menus[menuId].roles : roles),
-				position: position || 0,
-				items: [],
-				shouldRender: shouldRender
-			});
-			
-			// Return the menu object
-			return this.menus[menuId];
-		};
-
-		// Add submenu item object
-		this.addSubMenuItem = function(menuId, rootMenuItemURL, menuItemTitle, menuItemURL, menuItemUIRoute, isPublic, roles, position) {
-			// Validate that the menu exists
-			this.validateMenuExistance(menuId);
-
-			// Search for menu item
-			for (var itemIndex in this.menus[menuId].items) {
-				if (this.menus[menuId].items[itemIndex].link === rootMenuItemURL) {
-					// Push new submenu item
-					this.menus[menuId].items[itemIndex].items.push({
-						title: menuItemTitle,
-						link: menuItemURL,
-						uiRoute: menuItemUIRoute || ('/' + menuItemURL),
-						isPublic: ((isPublic === null || typeof isPublic === 'undefined') ? this.menus[menuId].items[itemIndex].isPublic : isPublic),
-						roles: ((roles === null || typeof roles === 'undefined') ? this.menus[menuId].items[itemIndex].roles : roles),
-						position: position || 0,
-						shouldRender: shouldRender
-					});
-				}
-			}
-
-			// Return the menu object
-			return this.menus[menuId];
-		};
-
-		// Remove existing menu object by menu id
-		this.removeMenuItem = function(menuId, menuItemURL) {
-			// Validate that the menu exists
-			this.validateMenuExistance(menuId);
-			// Search for menu item to remove
-			for (var itemIndex in this.menus[menuId].items) {
-				if (this.menus[menuId].items[itemIndex].link === menuItemURL) {
-					this.menus[menuId].items.splice(itemIndex, 1);
-				}
-			}
-
-			// Return the menu object
-			return this.menus[menuId];
-		};
-
-		// Remove existing menu object by menu id
-		this.removeSubMenuItem = function(menuId, submenuItemURL) {
-			// Validate that the menu exists
-			this.validateMenuExistance(menuId);
-
-			// Search for menu item to remove
-			for (var itemIndex in this.menus[menuId].items) {
-				for (var subitemIndex in this.menus[menuId].items[itemIndex].items) {
-					if (this.menus[menuId].items[itemIndex].items[subitemIndex].link === submenuItemURL) {
-						this.menus[menuId].items[itemIndex].items.splice(subitemIndex, 1);
-					}
-				}
-			}
-
-			// Return the menu object
-			return this.menus[menuId];
-		};
-
-		//Adding the topbar menu
-		this.addMenu('topbar');
-	}
-]);
-'use strict';
-
-//socket factory that provides the socket service
-angular.module('core').factory('Socket', ['socketFactory',
-    function(socketFactory) {
-		var mSocket = socketFactory({
-			ioSocket: socket
-		});
-		return mSocket;
-    }
-]);
-'use strict';
-
 // Directive for managing card decks.
-angular.module('decks')
-	.directive('cardDeck', ['$rootScope', '$window', 'CardDeck', 'Bakery', function($rootScope, $window, CardDeck, Bakery){
+angular.module('core')
+	.directive('coreDeck', ['$rootScope', '$window', 'Bakery', function($rootScope, $window, Bakery){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -1899,10 +1060,10 @@ angular.module('decks')
 					scope.$on('$destroy', onDestroy);
 					element.on('mouseleave', onMouseLeave);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
-					scope.$on('CardDeck:setDeckWidth', setDeckWidth);
-					scope.$on('cardPanel:onPressCard', onPress);
-					scope.$on('cardPanel:onReleaseCard', onRelease);
-					scope.$on('cardPanel:onMoveCard', onMoveCard);
+					scope.$on('CoreDeck:setDeckWidth', setDeckWidth);
+					scope.$on('corePanel:onPressCard', onPress);
+					scope.$on('corePanel:onReleaseCard', onRelease);
+					scope.$on('corePanel:onMoveCard', onMoveCard);
 				};
 				
 				var onDestroy = function(enable){
@@ -1949,11 +1110,11 @@ angular.module('decks')
 					var deckRightEdge = convertEm(deckWidth + 3);
 					
 					if(object.mouseX <= deckLeftEdge){
-						scope.$emit('cardDeck:unstackLeft', {
+						scope.$emit('coreDeck:unstackLeft', {
 							panel: object.panel
 						});
 					} else if(object.mouseX >= deckRightEdge){
-						scope.$emit('cardDeck:unstackRight', {
+						scope.$emit('coreDeck:unstackRight', {
 							panel: object.panel
 						});
 					}
@@ -1962,7 +1123,7 @@ angular.module('decks')
 				
 				var onMouseLeave = function(event){
 					if(pressed){
-						$rootScope.$broadcast('cardDeck:onMouseLeave');
+						$rootScope.$broadcast('coreDeck:onMouseLeave');
 					}
 				};
 				
@@ -1973,11 +1134,11 @@ angular.module('decks')
 'use strict';
 
 // Directive for managing card decks.
-angular.module('decks')
-	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'Bakery', 'CardDeck', function($document, $parse, $rootScope, $window, Bakery, CardDeck){
+angular.module('core')
+	.directive('corePanel', ['$document', '$parse', '$rootScope', '$window', 'Bakery', 'CoreDeck', function($document, $parse, $rootScope, $window, Bakery, CoreDeck){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/decks/views/card-panel.html',
+			templateUrl: '../modules/core/views/core-panel.html',
 			link: function(scope, element, attrs){
 				
 				Array.min = function(array){
@@ -2027,10 +1188,10 @@ angular.module('decks')
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.panel, onCardChange);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
-					scope.$on('cardPanel:onPressCard', onPressCard);
-					scope.$on('cardPanel:onMoveCard', onMoveCard);
-					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
-					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
+					scope.$on('corePanel:onPressCard', onPressCard);
+					scope.$on('corePanel:onMoveCard', onMoveCard);
+					scope.$on('corePanel:onReleaseCard', onReleaseCard);
+					scope.$on('coreDeck:onMouseLeave', onMouseLeave);
 					scope.$on('CardsCtrl:onDropdown', onDropdown);
 					scope.$on('Bakery:onDeckChange', onReleaseCard);
 					scope.$watch('panel.x_coord', resetPosition);
@@ -2151,7 +1312,7 @@ angular.module('decks')
 					
 					element.removeClass('card-moving');
 					
-					$rootScope.$broadcast('cardPanel:onPressCard', {
+					$rootScope.$broadcast('corePanel:onPressCard', {
 						startX: _startX,
 						startY: _startY,
 						panel: _panel
@@ -2205,7 +1366,7 @@ angular.module('decks')
 						top: _moveY + _startRow + 'px'
 					});
 					
-					$rootScope.$broadcast('cardPanel:onMoveCard', {
+					$rootScope.$broadcast('corePanel:onMoveCard', {
 						mouseX: _mouseX,
 						mouseY: _mouseY,
 						moveX: _moveX,
@@ -2322,11 +1483,11 @@ angular.module('decks')
 				var onRelease = function(){
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
-					$rootScope.$broadcast('cardPanel:onReleaseCard', {
+					$rootScope.$broadcast('corePanel:onReleaseCard', {
 						panel: _panel
 					});
 					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
-						$rootScope.$broadcast('cardPanel:toggleOverlap', {
+						$rootScope.$broadcast('corePanel:toggleOverlap', {
 							panel: _panel
 						});
 					}
@@ -2350,7 +1511,7 @@ angular.module('decks')
 				var onMouseLeave = function(){
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
-					$rootScope.$broadcast('cardPanel:onReleaseCard', {
+					$rootScope.$broadcast('corePanel:onReleaseCard', {
 						panel: _panel
 					});
 				};
@@ -2391,8 +1552,269 @@ angular.module('decks')
 	}]);
 'use strict';
 
+angular.module('core')
+	.directive('modalDialogWindow', function() {
+		return {
+			restrict: 'E',
+			scope: {
+				show: '='
+			},
+			transclude: true,
+			templateUrl: '../modules/core/views/modal-window.html',
+			link: function(scope, element, attrs) {
+				scope.dialogStyle = {};
+				if (attrs.width)
+					scope.dialogStyle.width = attrs.width;
+				if (attrs.height)
+					scope.dialogStyle.height = attrs.height;
+				scope.hideModal = function() {
+					scope.show = false;
+				};
+			}
+		};
+	});
+'use strict';
+
+var coreModule = angular.module('core');
+
+// Directive for monitoring screen height
+coreModule
+	.directive('screenSize', ['$rootScope', '$window', function($rootScope, $window){
+		return {
+			restrict: 'A',
+			link: function(scope, element, attrs) {
+				
+				var _window = angular.element($window);
+				
+				var _windowHeight;
+				
+				var initialize = function() {
+					toggleListeners(true);
+					setTimeout(function(){
+						onHeightChange();
+					}, 0);
+				};
+				
+				var toggleListeners = function (enable) {
+					// remove listeners
+					if (!enable)return;
+					
+					// add listeners
+					scope.$on('$destroy', onDestroy);
+					_window.on('resize', onHeightChange);
+				};
+				
+				var onDestroy = function(enable){
+					toggleListeners(false);
+				};
+				
+				var onHeightChange = function(){
+					_windowHeight = _window.height();
+					$rootScope.$broadcast('screenSize:onHeightChange', {
+						newHeight: _windowHeight
+					});
+				};
+				
+				angular.element(document).ready(function () {
+					initialize();
+				});
+				
+				initialize();
+			}
+		};
+	}]);
+'use strict';
+
+// General BREAD Factory-service.
+angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'CorePanel', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, CorePanel, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
+	var service = {};
+    
+    service.Decks = Decks;
+    
+    service.Pcs = Pcs;
+    
+    service.Aspects = Aspects;
+    
+    service.Traits = Traits;
+    
+    service.Feats = Feats;
+    
+    service.Augments = Augments;
+    
+    service.Items = Items;
+    
+    service.Origins = Origins;
+    
+    service.resource = {
+		cardList: []
+	};
+    
+    service.getCardResource = function(cardType){
+        switch(cardType){
+            case 'Aspect':
+                return service.Aspects;
+            case 'Trait':
+                return service.Traits;
+            case 'Feat':
+                return service.Feats;
+            case 'Augment':
+                return service.Augments;
+            case 'Item':
+                return service.Items;
+            case 'Origin':
+                return service.Origins;
+            default:
+                return false;
+        }
+    };
+    
+    service.getNewCardResource = function(panel){
+        switch(panel.panelType){
+            case 'Aspect':
+                return new service.Aspects(panel.aspectData);
+            case 'Trait':
+                return new service.Traits(panel.traitData);
+            case 'Feat':
+                return new service.Feats(panel.featData);
+            case 'Augment':
+                return new service.Augments(panel.augmentData);
+            case 'Item':
+                return new service.Items(panel.itemData);
+            case 'Origin':
+                return new service.Origins(panel.originData);
+            default:
+                return false;
+        }
+    };
+    
+    service.lastPanel = function(cardList){
+        if(cardList.length > 0){
+            var _index = 0;
+            var _panel = { x_coord: 0 };
+            for(var i = 0; i < cardList.length; i++){
+                if(cardList[i].x_coord > (_panel.x_coord || 0)){
+                    _index = i;
+                    _panel = cardList[i];
+                }
+            }
+            return {
+                index: _index, panel: _panel
+            };
+        } else {
+            return {
+                index: 0, panel: { x_coord: 0 }
+            };
+        }
+    };
+    
+    service.deckWidth = function(cardList){
+        var lastPanel = service.lastPanel(cardList);
+        return service.lastPanel(cardList).panel.x_coord + 15;
+    };
+    
+    service.setCardList = function(cardList){
+        for(var i = 0; i < cardList.length; i++){
+            cardList[i].x_coord = i * 15;
+            cardList[i].y_coord = 0;
+            cardList[i].x_overlap = false;
+            cardList[i].y_overlap = false;
+            cardList[i].dragging = false;
+            cardList[i].stacked = false;
+            cardList[i].locked = false;
+        }
+        $rootScope.$broadcast('DeckOrder:onDeckChange');
+    };
+    
+    service.removePanel = function(panel, cardList){
+        for(var i = 0; i < cardList.length; i++){
+            if(cardList[i] === panel ) {
+                cardList.splice(i, 1);
+            }
+        }
+    };
+    
+    service.expandDeck = function(panel, cardList){
+        var panel_x_coord = panel.x_coord;
+        var panel_y_coord = panel.y_coord;
+        
+        for(var i = 0; i < cardList.length; i++){
+            var slot = cardList[i];
+            
+            var slotData = CorePanel.getPanelData(slot);
+            if(slot !== panel && slot.x_coord >= panel_x_coord){
+                slot.x_coord += 15;
+                slotData.cardNumber++;
+            }
+        }
+        $rootScope.$broadcast('Bakery:onDeckChange');
+    };
+    
+    service.collapseDeck = function(panel, cardList){
+        var panel_x_coord = panel.x_coord;
+        var panel_y_coord = panel.y_coord;
+        
+        for(var i = 0; i < cardList.length; i++){
+            var slot = cardList[i];
+            var slotData = CorePanel.getPanelData(slot);
+            if(slot.x_coord > panel_x_coord){
+                slot.x_coord -= 15;
+                slotData.cardNumber--;
+            }
+        }
+        $rootScope.$broadcast('Bakery:onDeckChange');
+    };
+    
+    service.setDeckSize = function(resource){
+        var _length = resource.cardList.length - 1;
+        resource.deckSize = _length;
+        for(var i = 0; i < resource.cardList.length; i++){
+            var panel = resource.cardList[i];
+            var panelData = CorePanel.getPanelData(panel);
+            panelData.deckSize = _length;
+        }
+    };
+    
+    service.toggleCardLock = function(panel, cardList){
+        for(var i = 0; i < cardList.length; i++){
+            if(panel === cardList[i]){
+                cardList[i].locked = !cardList[i].locked;
+            }
+        }
+    };
+    
+    service.findDependency = function(deck, resource){
+        var index = -1;
+        for(var i = 0; i < resource.dependencies.length; i++){
+            var dependency = resource.dependencies[i];
+            if(dependency._id === deck._id){
+                index = i;
+            }
+        }
+        return index;
+    };
+
+    service.toggleDependency = function(deck, resource){
+        var deckIndex = service.findDependency(deck, resource);
+
+        if (deckIndex > -1) {
+            resource.dependencies.splice(deckIndex, 1);
+        } else {
+            resource.dependencies.push(deck);
+        }
+    };
+    
+    service.changeAspect = function(card, aspect){
+        if(card.aspect !== aspect){
+            card.aspect = aspect;
+        }
+    };
+    
+    return service;
+}]);
+'use strict';
+
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('CardDeck', ['Bakery', 'Campaigns', '$rootScope',
+angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
 	function(Bakery, Campaigns, $rootScope){
 		var service = {};
 		
@@ -2449,7 +1871,7 @@ angular.module('core').factory('CardDeck', ['Bakery', 'Campaigns', '$rootScope',
 		var setDeckWidth = function(){
 			var _deck = getCardList();
 			var _deckWidth = _deck[service.getLastIndex()].x_coord + x_dim;
-			$rootScope.$broadcast('CardDeck:setDeckWidth', {
+			$rootScope.$broadcast('CoreDeck:setDeckWidth', {
 				deckWidth: _deckWidth
 			});
 		};
@@ -2511,17 +1933,17 @@ angular.module('core').factory('CardDeck', ['Bakery', 'Campaigns', '$rootScope',
 			if(!enable) return;
 			$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 			
-			$rootScope.$on('cardPanel:onPressCard', onPressCard);
-			$rootScope.$on('cardPanel:onReleaseCard', onReleaseCard);
-			$rootScope.$on('cardPanel:toggleOverlap', toggleOverlap);
+			$rootScope.$on('corePanel:onPressCard', onPressCard);
+			$rootScope.$on('corePanel:onReleaseCard', onReleaseCard);
+			$rootScope.$on('corePanel:toggleOverlap', toggleOverlap);
 			
 			$rootScope.$on('cardSlot:moveHorizontal', moveHorizontal);
 			$rootScope.$on('cardSlot:moveDiagonalUp', moveDiagonalUp);
 			$rootScope.$on('cardSlot:moveDiagonalDown', moveDiagonalDown);
 			$rootScope.$on('cardSlot:moveVertical', moveVertical);
 			
-			$rootScope.$on('cardDeck:unstackLeft', unstackLeft);
-			$rootScope.$on('cardDeck:unstackRight', unstackRight);
+			$rootScope.$on('coreDeck:unstackLeft', unstackLeft);
+			$rootScope.$on('coreDeck:unstackRight', unstackRight);
 		};
 		
 		var onHeightChange = function(event, object){
@@ -3039,6 +2461,805 @@ angular.module('core').factory('CardDeck', ['Bakery', 'Campaigns', '$rootScope',
 
 'use strict';
 
+angular.module('core').factory('CorePanel', ['$resource', function($resource) {
+    
+    var service = {};
+    
+    service.getPanelData = function(panel){
+        switch(panel.panelType){
+            case 'Aspect':
+                return panel.aspectData;
+            case 'Trait':
+                return panel.traitData;
+            case 'Feat':
+                return panel.featData;
+            case 'Augment':
+                return panel.augmentData;
+            case 'Item':
+                return panel.itemData;
+            case 'Origin':
+                return panel.originData;
+            default:
+                return false;
+        }
+    };
+    
+    service.setPanelData = function(panel, cardData){
+        switch(panel.panelType){
+            case 'Aspect':
+                panel.aspectData = cardData;
+                break;
+            case 'Trait':
+                panel.traitData = cardData;
+                break;
+            case 'Feat':
+                panel.featData = cardData;
+                break;
+            case 'Augment':
+                panel.augmentData = cardData;
+                break;
+            case 'Item':
+                panel.itemData = cardData;
+                break;
+            case 'Origin':
+                panel.originData = cardData;
+                break;
+            default:
+                return false;
+        }
+    };
+    
+    service.getCardParams = function(panel){
+        var cardId;
+        switch(panel.panelType){
+            case 'Aspect':
+                cardId = panel.aspectData._id;
+                return { aspectId: panel.aspectData._id };
+            case 'Trait':
+                cardId = panel.traitData._id;
+                return { traitId: panel.traitData._id };
+            case 'Feat':
+                cardId = panel.featData._id;
+                return { featId: panel.featData._id };
+            case 'Augment':
+                cardId = panel.augmentData._id;
+                return { augmentId: panel.augmentData._id };
+            case 'Item':
+                cardId = panel.itemData._id;
+                return { itemId: panel.itemData._id };
+            case 'Origin':
+                cardId = panel.originData._id;
+                return { originId: panel.originData._id };
+            default:
+                return false;
+        }
+    };
+    
+    return service;
+    
+}]);
+'use strict';
+
+// Factory-service for providing generic game data
+angular.module('core').factory('DataSRVC', [
+	function($rootScope){
+		var service = {};
+		
+		service.sexArray = [
+			'---',
+			'Male',
+			'Female'
+		];
+		
+		service.diceList = [
+			{order: 1, name: 'd__', sides: 0, image: 'modules/core/img/d___.png'},
+			{order: 2, name: 'd4', sides: 4, image: 'modules/core/img/d_04.png'},
+			{order: 3, name: 'd6', sides: 6, image: 'modules/core/img/d_06.png'},
+			{order: 4, name: 'd6', sides: 6, image: 'modules/core/img/d_06.png'},
+			{order: 5, name: 'd8', sides: 8, image: 'modules/core/img/d_08.png'},
+			{order: 6, name: 'd8', sides: 8, image: 'modules/core/img/d_08.png'},
+			{order: 7, name: 'd10', sides: 10, image: 'modules/core/img/d_10.png'},
+			{order: 8, name: 'd10', sides: 10, image: 'modules/core/img/d_10.png'},
+			{order: 9, name: 'd12', sides: 12, image: 'modules/core/img/d_12.png'}
+		];
+		
+		service.targetTypes = [
+			'Utility',
+			'Close',
+			'Close Area',
+			'Distant',
+			'Distant Area'
+		];
+		
+		service.closeDetails = [
+			'1/1', '1/2', '1/3', '1/4',
+			'2/1', '2/2', '2/3', '2/4',
+			'3/1', '3/2', '3/3', '3/4',
+			'4/1', '4/2', '4/3'
+		];
+		
+		service.closeAreaDetails = [
+			'2x2', '3x3', '4x4', '5x5'
+		];
+		
+		service.distantDetails = [
+			'4/1', '6/1', '8/1', '10/1',
+			'12/1', '14/1', '16/1', '18/1',
+			'20/1', '22/1', '24/1'
+		];
+		
+		service.distantAreaDetails = [
+			'8/2x2', '10/2x2', '12/2x2', '16/2x2',
+			'10/3x3', '12/3x3', '16/3x3', '20/3x3',
+			'12/4x4', '16/4x4', '20/4x4'
+		];
+		
+		service.actionKeywords = [
+			'Default',
+			'Single-use',
+			'Thrown',
+			'Reflexive',
+			'Melee',
+			'Ranged',
+			'Evocation',
+			'Invocation'
+		];
+		
+		service.actionFrequency = [
+			'Free',
+			'Count: 1',
+			'Count: 2',
+			'Count: 3',
+			'Count: 4',
+			'Count: 5',
+			'Disruptive',
+			'Responsive'
+		];
+		
+		service.dice = [
+			'1d4',
+			'1d6',
+			'1d8',
+			'1d10',
+			'1d12'
+		];
+		
+		service.abilities = [
+			'STR',
+			'PHY',
+			'FLE',
+			'DEX',
+			'ACU',
+			'INT',
+			'WIS',
+			'CHA'
+		];
+		
+		service.attackTypes = [
+			'Melee',
+			'Ranged',
+			'Evocation',
+			'Invocation'
+		];
+		
+		service.defenseTypes = [
+			'Block',
+			'Dodge',
+			'Alertness',
+			'Tenacity'
+		];
+		
+		service.prerequisites = [
+			'1d10 STR',
+			'1d10 PHY',
+			'1d10 FLE',
+			'1d10 DEX',
+			'1d10 ACU',
+			'1d10 INT',
+			'1d10 WIS',
+			'1d10 CHA'
+		];
+		
+		service.itemTypes = [
+			'Melee',
+			'Melee / Ranged',
+			'Melee / Invocation',
+			'Ranged',
+			'Ranged / Melee',
+			'Ranged / Evocation',
+			'Evocation',
+			'Evocation / Invocation',
+			'Evocation / Ranged',
+			'Invocation',
+			'Invocation / Evocation',
+			'Invocation / Melee'
+		];
+		
+		service.itemSlots = [
+			'One-handed',
+			'Two-handed',
+			'One-handed or Paired',
+			'One-handed or Two-handed',
+			'Armor',
+			'Shield',
+			'Gloves',
+			'Boots',
+			'Cloak',
+			'Amulet',
+			'Ring',
+			'Belt',
+			'Helmet',
+			'Consumable',
+			'Provision'
+		];
+		
+		return service;
+	}]);
+'use strict';
+
+//Menu service used for managing  menus
+angular.module('core').service('Menus', [
+
+	function() {
+		// Define a set of default roles
+		this.defaultRoles = ['*'];
+
+		// Define the menus object
+		this.menus = {};
+
+		// A private function for rendering decision 
+		var shouldRender = function(user) {
+			if (user) {
+				if (!!~this.roles.indexOf('*')) {
+					return true;
+				} else {
+					for (var userRoleIndex in user.roles) {
+						for (var roleIndex in this.roles) {
+							if (this.roles[roleIndex] === user.roles[userRoleIndex]) {
+								return true;
+							}
+						}
+					}
+				}
+			} else {
+				return this.isPublic;
+			}
+
+			return false;
+		};
+
+		// Validate menu existance
+		this.validateMenuExistance = function(menuId) {
+			if (menuId && menuId.length) {
+				if (this.menus[menuId]) {
+					return true;
+				} else {
+					throw new Error('Menu does not exists');
+				}
+			} else {
+				throw new Error('MenuId was not provided');
+			}
+
+			return false;
+		};
+
+		// Get the menu object by menu id
+		this.getMenu = function(menuId) {
+			// Validate that the menu exists
+			this.validateMenuExistance(menuId);
+
+			// Return the menu object
+			return this.menus[menuId];
+		};
+
+		// Add new menu object by menu id
+		this.addMenu = function(menuId, isPublic, roles) {
+			// Create the new menu
+			this.menus[menuId] = {
+				isPublic: isPublic || false,
+				roles: roles || this.defaultRoles,
+				items: [],
+				shouldRender: shouldRender
+			};
+			// Return the menu object
+			return this.menus[menuId];
+		};
+
+		// Remove existing menu object by menu id
+		this.removeMenu = function(menuId) {
+			// Validate that the menu exists
+			this.validateMenuExistance(menuId);
+
+			// Return the menu object
+			delete this.menus[menuId];
+		};
+
+		// Add menu item object
+		this.addMenuItem = function(menuId, menuItemTitle, menuItemURL, menuItemType, menuItemUIRoute, isPublic, roles, position) {
+			// Validate that the menu exists
+			this.validateMenuExistance(menuId);
+
+			// Push new menu item
+			this.menus[menuId].items.push({
+				title: menuItemTitle,
+				link: menuItemURL,
+				menuItemType: menuItemType || 'item',
+				menuItemClass: menuItemType,
+				uiRoute: menuItemUIRoute || ('/' + menuItemURL),
+				isPublic: ((isPublic === null || typeof isPublic === 'undefined') ? this.menus[menuId].isPublic : isPublic),
+				roles: ((roles === null || typeof roles === 'undefined') ? this.menus[menuId].roles : roles),
+				position: position || 0,
+				items: [],
+				shouldRender: shouldRender
+			});
+			
+			// Return the menu object
+			return this.menus[menuId];
+		};
+
+		// Add submenu item object
+		this.addSubMenuItem = function(menuId, rootMenuItemURL, menuItemTitle, menuItemURL, menuItemUIRoute, isPublic, roles, position) {
+			// Validate that the menu exists
+			this.validateMenuExistance(menuId);
+
+			// Search for menu item
+			for (var itemIndex in this.menus[menuId].items) {
+				if (this.menus[menuId].items[itemIndex].link === rootMenuItemURL) {
+					// Push new submenu item
+					this.menus[menuId].items[itemIndex].items.push({
+						title: menuItemTitle,
+						link: menuItemURL,
+						uiRoute: menuItemUIRoute || ('/' + menuItemURL),
+						isPublic: ((isPublic === null || typeof isPublic === 'undefined') ? this.menus[menuId].items[itemIndex].isPublic : isPublic),
+						roles: ((roles === null || typeof roles === 'undefined') ? this.menus[menuId].items[itemIndex].roles : roles),
+						position: position || 0,
+						shouldRender: shouldRender
+					});
+				}
+			}
+
+			// Return the menu object
+			return this.menus[menuId];
+		};
+
+		// Remove existing menu object by menu id
+		this.removeMenuItem = function(menuId, menuItemURL) {
+			// Validate that the menu exists
+			this.validateMenuExistance(menuId);
+			// Search for menu item to remove
+			for (var itemIndex in this.menus[menuId].items) {
+				if (this.menus[menuId].items[itemIndex].link === menuItemURL) {
+					this.menus[menuId].items.splice(itemIndex, 1);
+				}
+			}
+
+			// Return the menu object
+			return this.menus[menuId];
+		};
+
+		// Remove existing menu object by menu id
+		this.removeSubMenuItem = function(menuId, submenuItemURL) {
+			// Validate that the menu exists
+			this.validateMenuExistance(menuId);
+
+			// Search for menu item to remove
+			for (var itemIndex in this.menus[menuId].items) {
+				for (var subitemIndex in this.menus[menuId].items[itemIndex].items) {
+					if (this.menus[menuId].items[itemIndex].items[subitemIndex].link === submenuItemURL) {
+						this.menus[menuId].items[itemIndex].items.splice(subitemIndex, 1);
+					}
+				}
+			}
+
+			// Return the menu object
+			return this.menus[menuId];
+		};
+
+		//Adding the topbar menu
+		this.addMenu('topbar');
+	}
+]);
+'use strict';
+
+angular.module('core').factory('mockDataBuilder', function() {
+    var service = {};
+    
+    service.newMockData = function(){
+        var mockData = {};
+        
+        mockData.aspect_1 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the First',
+                cardType: 'Aspect',
+                cardNumber: 1
+            }
+        };
+        
+        mockData.aspect_2 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the Second',
+                cardType: 'Aspect',
+                cardNumber: 2
+            }
+        };
+        
+        mockData.aspect_3 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the Third',
+                cardType: 'Aspect',
+                cardNumber: 3
+            }
+        };
+        
+        mockData.aspect_4 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the Fourth',
+                cardType: 'Aspect',
+                cardNumber: 4
+            }
+        };
+        
+        mockData.aspect_5 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the Fifth',
+                cardType: 'Aspect',
+                cardNumber: 5
+            }
+        };
+        
+        mockData.aspect_6 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the Sixth',
+                cardType: 'Aspect',
+                cardNumber: 6
+            }
+        };
+        
+        mockData.aspect_7 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the Seventh',
+                cardType: 'Aspect',
+                cardNumber: 7
+            }
+        };
+        
+        mockData.aspect_8 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the Eighth',
+                cardType: 'Aspect',
+                cardNumber: 8
+            }
+        };
+        
+        mockData.aspectDeck = {
+            _id: 'aspectDeck_id',
+            dependencies: [],
+            cardList: [ 
+                mockData.aspect_1, mockData.aspect_2,
+                mockData.aspect_3, mockData.aspect_4,
+                mockData.aspect_5, mockData.aspect_6,
+                mockData.aspect_7, mockData.aspect_8
+            ]
+        };
+        
+        mockData.trait_1 = {
+            panelType: 'Trait',
+            traitData: {
+                name: 'Trait the First',
+                cardType: 'Trait',
+                cardNumber: 1
+            }
+        };
+        
+        mockData.trait_2 = {
+            panelType: 'Trait',
+            traitData: {
+                name: 'Trait the Second',
+                cardType: 'Trait',
+                cardNumber: 2
+            }
+        };
+        
+        mockData.trait_3 = {
+            panelType: 'Trait',
+            traitData: {
+                name: 'Trait the Third',
+                cardType: 'Trait',
+                cardNumber: 3
+            }
+        };
+        
+        mockData.trait_4 = {
+            panelType: 'Trait',
+            traitData: {
+                name: 'Trait the Fourth',
+                cardType: 'Trait',
+                cardNumber: 4
+            }
+        };
+        
+        mockData.traitDeck = {
+            _id: 'traitDeck_id',
+            dependencies: [
+                { _id: 'aspectDeck_id' }
+            ],
+            cardList: [
+                mockData.trait_1, mockData.trait_2,
+                mockData.trait_3, mockData.trait_4
+            ]
+        };
+        
+        mockData.feat_1 = {
+            panelType: 'Feat',
+            featData: {
+                name: 'Feat the First',
+                cardType: 'Feat',
+                cardNumber: 1
+            }
+        };
+        
+        mockData.feat_2 = {
+            panelType: 'Feat',
+            featData: {
+                name: 'Feat the Second',
+                cardType: 'Feat',
+                cardNumber: 2
+            }
+        };
+        
+        mockData.feat_3 = {
+            panelType: 'Feat',
+            featData: {
+                name: 'Feat the Third',
+                cardType: 'Feat',
+                cardNumber: 3
+            }
+        };
+        
+        mockData.feat_4 = {
+            panelType: 'Feat',
+            featData: {
+                name: 'Feat the Fourth',
+                cardType: 'Feat',
+                cardNumber: 4
+            }
+        };
+        
+        mockData.featDeck = {
+            _id: 'featDeck_id',
+            dependencies: [],
+            cardList: [
+                mockData.feat_1, mockData.feat_2,
+                mockData.feat_3, mockData.feat_4
+            ]
+        };
+        
+        
+        
+        return mockData;
+    };
+    
+    
+    
+    return service;
+});
+'use strict';
+
+//socket factory that provides the socket service
+angular.module('core').factory('Socket', ['socketFactory',
+    function(socketFactory) {
+		var mSocket = socketFactory({
+			ioSocket: socket
+		});
+		return mSocket;
+    }
+]);
+'use strict';
+
+angular.module('core').factory('mockDataBuilder', function() {
+    var service = {};
+    
+    service.newMockData = function(){
+        var mockData = {};
+        
+        mockData.aspect_1 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the First',
+                cardType: 'Aspect',
+                cardNumber: 1
+            }
+        };
+        
+        mockData.aspect_2 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the Second',
+                cardType: 'Aspect',
+                cardNumber: 2
+            }
+        };
+        
+        mockData.aspect_3 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the Third',
+                cardType: 'Aspect',
+                cardNumber: 3
+            }
+        };
+        
+        mockData.aspect_4 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the Fourth',
+                cardType: 'Aspect',
+                cardNumber: 4
+            }
+        };
+        
+        mockData.aspect_5 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the Fifth',
+                cardType: 'Aspect',
+                cardNumber: 5
+            }
+        };
+        
+        mockData.aspect_6 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the Sixth',
+                cardType: 'Aspect',
+                cardNumber: 6
+            }
+        };
+        
+        mockData.aspect_7 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the Seventh',
+                cardType: 'Aspect',
+                cardNumber: 7
+            }
+        };
+        
+        mockData.aspect_8 = {
+            panelType: 'Aspect',
+            aspectData: {
+                name: 'Aspect the Eighth',
+                cardType: 'Aspect',
+                cardNumber: 8
+            }
+        };
+        
+        mockData.aspectDeck = {
+            _id: 'aspectDeck_id',
+            dependencies: [],
+            cardList: [ 
+                mockData.aspect_1, mockData.aspect_2,
+                mockData.aspect_3, mockData.aspect_4,
+                mockData.aspect_5, mockData.aspect_6,
+                mockData.aspect_7, mockData.aspect_8
+            ]
+        };
+        
+        
+        
+        mockData.trait_1 = {
+            panelType: 'Trait',
+            traitData: {
+                name: 'Trait the First',
+                cardType: 'Trait',
+                cardNumber: 1
+            }
+        };
+        
+        mockData.trait_2 = {
+            panelType: 'Trait',
+            traitData: {
+                name: 'Trait the Second',
+                cardType: 'Trait',
+                cardNumber: 2
+            }
+        };
+        
+        mockData.trait_3 = {
+            panelType: 'Trait',
+            traitData: {
+                name: 'Trait the Third',
+                cardType: 'Trait',
+                cardNumber: 3
+            }
+        };
+        
+        mockData.trait_4 = {
+            panelType: 'Trait',
+            traitData: {
+                name: 'Trait the Fourth',
+                cardType: 'Trait',
+                cardNumber: 4
+            }
+        };
+        
+        mockData.traitDeck = {
+            _id: 'traitDeck_id',
+            dependencies: [
+                { _id: 'aspectDeck_id' }
+            ],
+            cardList: [
+                mockData.trait_1, mockData.trait_2,
+                mockData.trait_3, mockData.trait_4
+            ]
+        };
+        
+        
+        
+        mockData.feat_1 = {
+            panelType: 'Feat',
+            featData: {
+                name: 'Feat the First',
+                cardType: 'Feat',
+                cardNumber: 1
+            }
+        };
+        
+        mockData.feat_2 = {
+            panelType: 'Feat',
+            featData: {
+                name: 'Feat the Second',
+                cardType: 'Feat',
+                cardNumber: 2
+            }
+        };
+        
+        mockData.feat_3 = {
+            panelType: 'Feat',
+            featData: {
+                name: 'Feat the Third',
+                cardType: 'Feat',
+                cardNumber: 3
+            }
+        };
+        
+        mockData.feat_4 = {
+            panelType: 'Feat',
+            featData: {
+                name: 'Feat the Fourth',
+                cardType: 'Feat',
+                cardNumber: 4
+            }
+        };
+        
+        mockData.featDeck = {
+            _id: 'featDeck_id',
+            dependencies: [],
+            cardList: [
+                mockData.feat_1, mockData.feat_2,
+                mockData.feat_3, mockData.feat_4
+            ]
+        };
+        
+        
+        
+        return mockData;
+    };
+    
+    
+    
+    return service;
+});
+'use strict';
+
 angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'CardsBread', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CardsBread){
     var service = {};
     
@@ -3061,7 +3282,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
     
     var browseDependencies = function(){
         Bakery.Decks.query({deckType: 'Aspect'}, function(response){
-            Bakery.dependencyList = response;
+            Bakery.dependencyDecks = response;
         });
     };
     
@@ -3275,7 +3496,7 @@ angular.module('npcs').factory('Npcs', ['$resource',
 
 // Directive for managing ability dice
 angular.module('pcs')
-	.directive('diceBox', ['$window', 'CardDeck', function($window, CardDeck) {
+	.directive('diceBox', ['$window', function($window) {
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/pcs/views/dice-box.html',
@@ -3327,7 +3548,7 @@ angular.module('pcs')
 			}
 		};
 	}])
-	.directive('ability', ['$parse', '$rootScope', '$window', 'CardDeck', 'PcsCard1', function($parse, $rootScope, $window, CardDeck, PcsCard1){
+	.directive('ability', ['$parse', '$rootScope', '$window', 'PcsCard1', function($parse, $rootScope, $window, PcsCard1){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -3404,7 +3625,7 @@ angular.module('pcs')
 
 // Directive for managing modal deck
 angular.module('pcs')
-	.directive('modalDeck', ['$window', 'CardDeck', function($window, CardDeck) {
+	.directive('modalDeck', ['$window', function($window) {
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/pcs/views/modal-deck.html',
@@ -3416,8 +3637,8 @@ angular.module('pcs')
 'use strict';
 
 // Factory-service for managing PC card deck.
-angular.module('pcs').factory('PcsAugments', ['Bakery', 'CardDeck', 
-	function(Bakery, CardDeck){
+angular.module('pcs').factory('PcsAugments', ['Bakery', 
+	function(Bakery){
 		var service = {};
 		
 		// Factor Augment Limit
@@ -3434,7 +3655,7 @@ angular.module('pcs').factory('PcsAugments', ['Bakery', 'CardDeck',
 			}
 			for(var ic = 0; ic < Bakery.resource.cardList.length; ic++){
 				if(Bakery.resource.cardList[ic].level > Bakery.resource.level){
-					CardDeck.removeCard(ic);
+					console.log('TODO: remove card');
 				}
 			}
 		};
@@ -3772,8 +3993,8 @@ angular.module('pcs').factory('pcsDefaults', [function(){
 'use strict';
 
 // Factory-service for managing PC card deck.
-angular.module('pcs').factory('PcsFeats', ['Bakery', 'CardDeck', 
-	function(Bakery, CardDeck){
+angular.module('pcs').factory('PcsFeats', ['Bakery',
+	function(Bakery){
 		var service = {};
 		
 		// Factor Feat Limit
@@ -3791,7 +4012,7 @@ angular.module('pcs').factory('PcsFeats', ['Bakery', 'CardDeck',
 			}
 			for(var ic = 0; ic < Bakery.resource.cardList.length; ic++){
 				if(Bakery.resource.cardList[ic].level > Bakery.resource.level){
-					CardDeck.removeCard( Bakery.resource.cardList[ic] );
+					console.log('TODO: remove card');
 				}
 			}
 		};
@@ -3838,11 +4059,13 @@ angular.module('pcs').factory('PcsItems', ['Bakery',
 		
 		return service;
 	}]);
+
+
 'use strict';
 
 // Factory-service for managing PC traits
-angular.module('pcs').factory('PcsTraits', ['$resource', 'Bakery', 'CardDeck', 
-	function($resource, Bakery, CardDeck){
+angular.module('pcs').factory('PcsTraits', ['$resource', 'Bakery', 
+	function($resource, Bakery){
 		
 		var service = {};
 		
@@ -3866,7 +4089,7 @@ angular.module('pcs').factory('PcsTraits', ['$resource', 'Bakery', 'CardDeck',
 			}
 			for(var ic = 0; ic < Bakery.resource.cardList.length; ic++){
 				if(Bakery.resource.cardList[ic].level > Bakery.resource.level){
-					CardDeck.removeCard(ic);
+					console.log('TODO: remove card');
 				}
 			}
 		};

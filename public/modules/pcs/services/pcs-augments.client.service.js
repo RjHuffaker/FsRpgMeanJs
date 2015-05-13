@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing PC card deck.
-angular.module('pcs').factory('PcsAugments', ['Bakery', 'CardDeck', 
-	function(Bakery, CardDeck){
+angular.module('pcs').factory('PcsAugments', ['Bakery', 
+	function(Bakery){
 		var service = {};
 		
 		// Factor Augment Limit
@@ -19,7 +19,7 @@ angular.module('pcs').factory('PcsAugments', ['Bakery', 'CardDeck',
 			}
 			for(var ic = 0; ic < Bakery.resource.cardList.length; ic++){
 				if(Bakery.resource.cardList[ic].level > Bakery.resource.level){
-					CardDeck.removeCard(ic);
+					console.log('TODO: remove card');
 				}
 			}
 		};

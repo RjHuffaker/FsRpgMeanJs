@@ -1,7 +1,7 @@
 'use strict';
 
 // General BREAD Factory-service.
-angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
+angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'CorePanel', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, CorePanel, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
 	var service = {};
     
     service.Decks = Decks;
@@ -23,6 +23,44 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
     service.resource = {
 		cardList: []
 	};
+    
+    service.getCardResource = function(cardType){
+        switch(cardType){
+            case 'Aspect':
+                return service.Aspects;
+            case 'Trait':
+                return service.Traits;
+            case 'Feat':
+                return service.Feats;
+            case 'Augment':
+                return service.Augments;
+            case 'Item':
+                return service.Items;
+            case 'Origin':
+                return service.Origins;
+            default:
+                return false;
+        }
+    };
+    
+    service.getNewCardResource = function(panel){
+        switch(panel.panelType){
+            case 'Aspect':
+                return new service.Aspects(panel.aspectData);
+            case 'Trait':
+                return new service.Traits(panel.traitData);
+            case 'Feat':
+                return new service.Feats(panel.featData);
+            case 'Augment':
+                return new service.Augments(panel.augmentData);
+            case 'Item':
+                return new service.Items(panel.itemData);
+            case 'Origin':
+                return new service.Origins(panel.originData);
+            default:
+                return false;
+        }
+    };
     
     service.lastPanel = function(cardList){
         if(cardList.length > 0){
@@ -76,21 +114,11 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
         
         for(var i = 0; i < cardList.length; i++){
             var slot = cardList[i];
+            
+            var slotData = CorePanel.getPanelData(slot);
             if(slot !== panel && slot.x_coord >= panel_x_coord){
                 slot.x_coord += 15;
-                if(slot.aspectData){
-                    slot.aspectData.cardNumber++;
-                } else if(slot.traitData){
-                    slot.traitData.cardNumber++;
-                } else if(slot.featData){
-                    slot.featData.cardNumber++;
-                } else if(slot.augmentData){
-                    slot.augmentData.cardNumber++;
-                } else if(slot.itemData){
-                    slot.itemData.cardNumber++;
-                } else if(slot.originData){
-                    slot.originData.cardNumber++;
-                }
+                slotData.cardNumber++;
             }
         }
         $rootScope.$broadcast('Bakery:onDeckChange');
@@ -102,21 +130,10 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
         
         for(var i = 0; i < cardList.length; i++){
             var slot = cardList[i];
+            var slotData = CorePanel.getPanelData(slot);
             if(slot.x_coord > panel_x_coord){
                 slot.x_coord -= 15;
-                if(slot.aspectData){
-                    slot.aspectData.cardNumber--;
-                } else if(slot.traitData){
-                    slot.traitData.cardNumber--;
-                } else if(slot.featData){
-                    slot.featData.cardNumber--;
-                } else if(slot.augmentData){
-                    slot.augmentData.cardNumber--;
-                } else if(slot.itemData){
-                    slot.itemData.cardNumber--;
-                } else if(slot.originData){
-                    slot.originData.cardNumber--;
-                }
+                slotData.cardNumber--;
             }
         }
         $rootScope.$broadcast('Bakery:onDeckChange');
@@ -127,19 +144,8 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
         resource.deckSize = _length;
         for(var i = 0; i < resource.cardList.length; i++){
             var panel = resource.cardList[i];
-            if(panel.aspectData){
-                panel.aspectData.cardSet = _length;
-            } else if(panel.traitData){
-                panel.traitData.cardSet = _length;
-            } else if(panel.featData){
-                panel.featData.cardSet = _length;
-            } else if(panel.augmentData){
-                panel.augmentData.cardSet = _length;
-            } else if(panel.itemData){
-                panel.itemData.cardSet = _length;
-            } else if(panel.originData){
-                panel.originData.cardSet = _length;
-            }
+            var panelData = CorePanel.getPanelData(panel);
+            panelData.deckSize = _length;
         }
     };
     

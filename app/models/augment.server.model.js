@@ -28,16 +28,17 @@ var AugmentSchema = new Schema({
 		type: Schema.ObjectId,
 		ref: 'Deck'
 	},
+	deckSize: {
+		type: Number
+	},
+	deckName: {
+		type: String
+	},
 	cardType: {
 		type: String
 	},
 	cardNumber: {
-		type: Number,
-		default: 1
-	},
-	cardSet: {
-		type: Number,
-		default: 1
+		type: Number
 	},
 	aspect: {
 		type: Schema.Types.ObjectId,

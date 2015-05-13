@@ -2,12 +2,12 @@
 
 // Core Controller
 angular.module('core')
-	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CardDeck', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
-		function($location, $scope, $rootScope, $window, Authentication, CardDeck, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems) {
+	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CoreDeck', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
+		function($location, $scope, $rootScope, $window, Authentication, CoreDeck, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems) {
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
 			
-			$scope.cardDeck = CardDeck;
+			$scope.coreDeck = CoreDeck;
 			
 			$scope.Bakery = Bakery;
             
@@ -71,7 +71,7 @@ angular.module('core')
             
             //READ Functions
             $scope.readCard = function(card){
-				CardsBread.read(card);
+				CardsBread.read(card, CardsBread.setPanelData);
 			};
             
             $scope.readDeck = function(deck){
@@ -125,9 +125,9 @@ angular.module('core')
 			};
 			
             //Misc Handler Functions
-			$scope.exitPc = function(){
+			$scope.exitPc = function(pc){
 				if(pcNew){
-					Bakery.deletePc();
+					PcsBread.delete(pc, Bakery.resource);
 				}
 				$scope.browsePcs();
 			};

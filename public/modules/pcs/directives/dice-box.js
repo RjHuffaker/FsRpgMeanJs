@@ -2,7 +2,7 @@
 
 // Directive for managing ability dice
 angular.module('pcs')
-	.directive('diceBox', ['$window', 'CardDeck', function($window, CardDeck) {
+	.directive('diceBox', ['$window', function($window) {
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/pcs/views/dice-box.html',
@@ -54,7 +54,7 @@ angular.module('pcs')
 			}
 		};
 	}])
-	.directive('ability', ['$parse', '$rootScope', '$window', 'CardDeck', 'PcsCard1', function($parse, $rootScope, $window, CardDeck, PcsCard1){
+	.directive('ability', ['$parse', '$rootScope', '$window', 'PcsCard1', function($parse, $rootScope, $window, PcsCard1){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {

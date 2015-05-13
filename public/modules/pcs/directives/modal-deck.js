@@ -2,7 +2,7 @@
 
 // Directive for managing modal deck
 angular.module('pcs')
-	.directive('modalDeck', ['$window', 'CardDeck', function($window, CardDeck) {
+	.directive('modalDeck', ['$window', function($window) {
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/pcs/views/modal-deck.html',

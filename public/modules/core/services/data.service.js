@@ -120,36 +120,6 @@ angular.module('core').factory('DataSRVC', [
 			'1d10 CHA'
 		];
 		
-		service.aspectTypes = [
-			'Archetype',
-			'Allegiance',
-			'Race'
-		];
-		
-		service.archetypes = [
-			'General',
-			'Guardian',
-			'Hunter',
-			'Mastermind',
-			'Champion'
-		];
-		
-		service.allegiances = [
-			'Unaligned',
-			'Nymaria',
-			'Vakhelos',
-			'Heresy',
-			'Inquisition'
-		];
-		
-		service.races = [
-			'Weolda',
-			'Algharr',
-			'Durhok',
-			'Feyal',
-			'Sylthaun'
-		];
-		
 		service.itemTypes = [
 			'Melee',
 			'Melee / Ranged',

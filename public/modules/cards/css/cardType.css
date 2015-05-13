@@ -1,0 +1,33 @@
+.Aspect,
+.card-aspect {
+    background-color: navajoWhite !important;
+}
+
+.Trait,
+.card-trait {
+    background-color: Moccasin !important;
+}
+
+.Feat,
+.card-feat {
+    background-color: DarkKhaki !important;
+}
+
+.Augment,
+.card-augment {
+    background-color: DarkSeaGreen !important;
+}
+
+.Item,
+.card-item  {
+    background-color: Khaki !important;
+}
+
+.Origin,
+.card-origin {
+    background-color: Beige !important;
+}
+
+.card-note {
+    background-color: CornSilk !important;
+}

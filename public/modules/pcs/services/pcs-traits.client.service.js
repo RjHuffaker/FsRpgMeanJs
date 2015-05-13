@@ -1,8 +1,10 @@
+
+
 'use strict';
 
 // Factory-service for managing PC traits
-angular.module('pcs').factory('PcsTraits', ['$resource', 'Bakery', 'CardDeck', 
-	function($resource, Bakery, CardDeck){
+angular.module('pcs').factory('PcsTraits', ['$resource', 'Bakery', 
+	function($resource, Bakery){
 		
 		var service = {};
 		
@@ -26,7 +28,7 @@ angular.module('pcs').factory('PcsTraits', ['$resource', 'Bakery', 'CardDeck',
 			}
 			for(var ic = 0; ic < Bakery.resource.cardList.length; ic++){
 				if(Bakery.resource.cardList[ic].level > Bakery.resource.level){
-					CardDeck.removeCard(ic);
+					console.log('TODO: remove card');
 				}
 			}
 		};

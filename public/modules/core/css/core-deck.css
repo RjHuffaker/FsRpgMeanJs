@@ -1,0 +1,21 @@
+[core-deck] {
+	position: absolute;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+div[core-deck] {
+	white-space: nowrap;
+	margin-left: 3em;
+	-webkit-transition: .75s ease-in-out width;
+	-moz-transition: .75s ease-in-out width;
+	-o-transition: .75s ease-in-out width;
+	-ms-transition: .75s ease-in-out width;
+	transition: .75s ease-in-out width;
+}
+
+[core-deck] > ul{
+	list-style: none;
+}

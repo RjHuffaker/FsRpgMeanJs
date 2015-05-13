@@ -1,8 +1,8 @@
 'use strict';
 
 // Directive for managing card decks.
-angular.module('decks')
-	.directive('cardDeck', ['$rootScope', '$window', 'CardDeck', 'Bakery', function($rootScope, $window, CardDeck, Bakery){
+angular.module('core')
+	.directive('coreDeck', ['$rootScope', '$window', 'Bakery', function($rootScope, $window, Bakery){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -21,10 +21,10 @@ angular.module('decks')
 					scope.$on('$destroy', onDestroy);
 					element.on('mouseleave', onMouseLeave);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
-					scope.$on('CardDeck:setDeckWidth', setDeckWidth);
-					scope.$on('cardPanel:onPressCard', onPress);
-					scope.$on('cardPanel:onReleaseCard', onRelease);
-					scope.$on('cardPanel:onMoveCard', onMoveCard);
+					scope.$on('CoreDeck:setDeckWidth', setDeckWidth);
+					scope.$on('corePanel:onPressCard', onPress);
+					scope.$on('corePanel:onReleaseCard', onRelease);
+					scope.$on('corePanel:onMoveCard', onMoveCard);
 				};
 				
 				var onDestroy = function(enable){
@@ -71,11 +71,11 @@ angular.module('decks')
 					var deckRightEdge = convertEm(deckWidth + 3);
 					
 					if(object.mouseX <= deckLeftEdge){
-						scope.$emit('cardDeck:unstackLeft', {
+						scope.$emit('coreDeck:unstackLeft', {
 							panel: object.panel
 						});
 					} else if(object.mouseX >= deckRightEdge){
-						scope.$emit('cardDeck:unstackRight', {
+						scope.$emit('coreDeck:unstackRight', {
 							panel: object.panel
 						});
 					}
@@ -84,7 +84,7 @@ angular.module('decks')
 				
 				var onMouseLeave = function(event){
 					if(pressed){
-						$rootScope.$broadcast('cardDeck:onMouseLeave');
+						$rootScope.$broadcast('coreDeck:onMouseLeave');
 					}
 				};
 				

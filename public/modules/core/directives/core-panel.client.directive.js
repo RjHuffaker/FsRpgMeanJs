@@ -1,11 +1,11 @@
 'use strict';
 
 // Directive for managing card decks.
-angular.module('decks')
-	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'Bakery', 'CardDeck', function($document, $parse, $rootScope, $window, Bakery, CardDeck){
+angular.module('core')
+	.directive('corePanel', ['$document', '$parse', '$rootScope', '$window', 'Bakery', 'CoreDeck', function($document, $parse, $rootScope, $window, Bakery, CoreDeck){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/decks/views/card-panel.html',
+			templateUrl: '../modules/core/views/core-panel.html',
 			link: function(scope, element, attrs){
 				
 				Array.min = function(array){
@@ -55,10 +55,10 @@ angular.module('decks')
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.panel, onCardChange);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
-					scope.$on('cardPanel:onPressCard', onPressCard);
-					scope.$on('cardPanel:onMoveCard', onMoveCard);
-					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
-					scope.$on('cardDeck:onMouseLeave', onMouseLeave);
+					scope.$on('corePanel:onPressCard', onPressCard);
+					scope.$on('corePanel:onMoveCard', onMoveCard);
+					scope.$on('corePanel:onReleaseCard', onReleaseCard);
+					scope.$on('coreDeck:onMouseLeave', onMouseLeave);
 					scope.$on('CardsCtrl:onDropdown', onDropdown);
 					scope.$on('Bakery:onDeckChange', onReleaseCard);
 					scope.$watch('panel.x_coord', resetPosition);
@@ -179,7 +179,7 @@ angular.module('decks')
 					
 					element.removeClass('card-moving');
 					
-					$rootScope.$broadcast('cardPanel:onPressCard', {
+					$rootScope.$broadcast('corePanel:onPressCard', {
 						startX: _startX,
 						startY: _startY,
 						panel: _panel
@@ -233,7 +233,7 @@ angular.module('decks')
 						top: _moveY + _startRow + 'px'
 					});
 					
-					$rootScope.$broadcast('cardPanel:onMoveCard', {
+					$rootScope.$broadcast('corePanel:onMoveCard', {
 						mouseX: _mouseX,
 						mouseY: _mouseY,
 						moveX: _moveX,
@@ -350,11 +350,11 @@ angular.module('decks')
 				var onRelease = function(){
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
-					$rootScope.$broadcast('cardPanel:onReleaseCard', {
+					$rootScope.$broadcast('corePanel:onReleaseCard', {
 						panel: _panel
 					});
 					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
-						$rootScope.$broadcast('cardPanel:toggleOverlap', {
+						$rootScope.$broadcast('corePanel:toggleOverlap', {
 							panel: _panel
 						});
 					}
@@ -378,7 +378,7 @@ angular.module('decks')
 				var onMouseLeave = function(){
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
-					$rootScope.$broadcast('cardPanel:onReleaseCard', {
+					$rootScope.$broadcast('corePanel:onReleaseCard', {
 						panel: _panel
 					});
 				};

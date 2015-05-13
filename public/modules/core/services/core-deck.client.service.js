@@ -1,7 +1,7 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('CardDeck', ['Bakery', 'Campaigns', '$rootScope',
+angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
 	function(Bakery, Campaigns, $rootScope){
 		var service = {};
 		
@@ -58,7 +58,7 @@ angular.module('core').factory('CardDeck', ['Bakery', 'Campaigns', '$rootScope',
 		var setDeckWidth = function(){
 			var _deck = getCardList();
 			var _deckWidth = _deck[service.getLastIndex()].x_coord + x_dim;
-			$rootScope.$broadcast('CardDeck:setDeckWidth', {
+			$rootScope.$broadcast('CoreDeck:setDeckWidth', {
 				deckWidth: _deckWidth
 			});
 		};
@@ -120,17 +120,17 @@ angular.module('core').factory('CardDeck', ['Bakery', 'Campaigns', '$rootScope',
 			if(!enable) return;
 			$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 			
-			$rootScope.$on('cardPanel:onPressCard', onPressCard);
-			$rootScope.$on('cardPanel:onReleaseCard', onReleaseCard);
-			$rootScope.$on('cardPanel:toggleOverlap', toggleOverlap);
+			$rootScope.$on('corePanel:onPressCard', onPressCard);
+			$rootScope.$on('corePanel:onReleaseCard', onReleaseCard);
+			$rootScope.$on('corePanel:toggleOverlap', toggleOverlap);
 			
 			$rootScope.$on('cardSlot:moveHorizontal', moveHorizontal);
 			$rootScope.$on('cardSlot:moveDiagonalUp', moveDiagonalUp);
 			$rootScope.$on('cardSlot:moveDiagonalDown', moveDiagonalDown);
 			$rootScope.$on('cardSlot:moveVertical', moveVertical);
 			
-			$rootScope.$on('cardDeck:unstackLeft', unstackLeft);
-			$rootScope.$on('cardDeck:unstackRight', unstackRight);
+			$rootScope.$on('coreDeck:unstackLeft', unstackLeft);
+			$rootScope.$on('coreDeck:unstackRight', unstackRight);
 		};
 		
 		var onHeightChange = function(event, object){

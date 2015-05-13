@@ -22,7 +22,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
     
     var browseDependencies = function(){
         Bakery.Decks.query({deckType: 'Aspect'}, function(response){
-            Bakery.dependencyList = response;
+            Bakery.dependencyDecks = response;
         });
     };
     

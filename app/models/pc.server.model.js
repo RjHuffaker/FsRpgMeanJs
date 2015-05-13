@@ -36,7 +36,7 @@ var PcSchema = new Schema({
 		type: Date,
 		default: Date.now
 	},
-	cardRole: {
+	panelType: {
 		type: String, 
 		default: 'pcSummary'
 	},
