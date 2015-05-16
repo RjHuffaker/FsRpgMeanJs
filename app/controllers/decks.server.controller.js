@@ -80,7 +80,11 @@ exports.delete = function(req, res) {
  */
 exports.list = function(req, res) {
 	console.log(req.params);
-	Deck.find().sort('-created').populate('user', 'displayName').exec(function(err, decks) {
+	Deck.find()
+		.sort('-created')
+		.populate('user', 'displayName')
+		.populate('dependencies', 'name')
+		.exec(function(err, decks) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
@@ -93,7 +97,11 @@ exports.list = function(req, res) {
  
  exports.query = function(req, res) {
 	console.log(req.params);
-	Deck.find( { deckType: req.params.deckType } ).sort('-created').populate('user', 'displayName').exec(function(err, decks) {
+	Deck.find( { deckType: req.params.deckType } )
+		.sort('-created')
+		.populate('user', 'displayName')
+		.populate('dependencies', 'name')
+		.exec(function(err, decks) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)

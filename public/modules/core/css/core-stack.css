@@ -1,6 +1,5 @@
 .deck-panel {
-	overflow-x: auto;
-	overflow-y: auto;
+	overflow: scroll;
 	position: fixed;
 	left: 0;
 	width: 100%;

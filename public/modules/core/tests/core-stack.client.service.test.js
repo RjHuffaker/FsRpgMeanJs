@@ -19,18 +19,6 @@
             mockData = mockDataBuilder.newMockData();
         });
         
-        it('getPanel(cardList, x_coord, y_coord) should retrieve the panel at the specified index', function(){
-            CoreStack.setCardList(mockData.aspectDeck.cardList);
-            var panel_1 = CoreStack.getPanel(mockData.aspectDeck.cardList, 0, 0).panel;
-            var index_1 = CoreStack.getPanel(mockData.aspectDeck.cardList, 0, 0).index;
-            var panel_2 = CoreStack.getPanel(mockData.aspectDeck.cardList, 60, 0).panel;
-            var index_2 = CoreStack.getPanel(mockData.aspectDeck.cardList, 60, 0).index;
-            expect(panel_1.aspectData.name).toEqual('Aspect the First');
-            expect(index_1).toEqual(0);
-            expect(panel_2.aspectData.name).toEqual('Aspect the Fifth');
-            expect(index_2).toEqual(4);
-        });
-        
         it('getLastPanel(cardList) should retrieve the last panel and index from the cardList', function(){
             CoreStack.setCardList(mockData.aspectDeck.cardList);
             CoreStack.setCardList(mockData.traitDeck.cardList);
@@ -47,13 +35,6 @@
             expect(panel_1.featData.name).toEqual('Feat the First');
             expect(panel_2.featData.name).toEqual('Feat the Third');
             expect(panel_3.featData.name).toEqual('Feat the Sixth');
-        });
-        
-        it('removePanel(cardList, panel) should remove panel from cardList', function(){
-            CoreStack.removePanel(mockData.traitDeck.cardList, mockData.trait_1);
-            for(var i = 0; i < mockData.traitDeck.cardList.length; i++){
-                expect(mockData.traitDeck.cardList[i]).not.toEqual(mockData.trait_1);
-            }
         });
         
         it('getDeckWidth(cardList) should return the overall width of the cardList, or 15 if empty', function(){

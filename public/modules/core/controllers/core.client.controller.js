@@ -153,11 +153,14 @@ angular.module('core')
 	 		};
 			
 			$scope.findDependency = function(dependency){
-				Bakery.findDependency(dependency, Bakery.resource);
+				return Bakery.findDependency(dependency, Bakery.resource);
 			};
 			
 			$scope.toggleDependency = function(dependency){
 				Bakery.toggleDependency(dependency, Bakery.resource);
+				for(var i = 0; i < Bakery.resource.dependencies.length; i++){
+		            DecksBread.browseAspects(Bakery.resource.dependencies[i]);
+		        }
 			};
 			
 			$scope.toggleCardLock = function(panel){

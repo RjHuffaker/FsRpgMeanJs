@@ -32,7 +32,7 @@ angular.module('core')
 				};
 				
 				var onHeightChange = function(event, object){
-					var windowHeight = object.newHeight;
+					var windowHeight = object.newHeight-50;
 					element.css({
 						'height': windowHeight+'px'
 					});

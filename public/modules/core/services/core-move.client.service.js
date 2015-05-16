@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('CoreMove', ['$rootScope', 'Bakery', 'CoreStack', 'Campaigns',
-	function($rootScope, Bakery, CoreStack, Campaigns){
+angular.module('core').factory('CoreMove', ['$rootScope', 'Bakery', 'CorePanel', 'CoreStack', 'Campaigns',
+	function($rootScope, Bakery, CorePanel, CoreStack, Campaigns){
 		var service = {};
 		
 		service.windowHeight = 0;
@@ -141,7 +141,7 @@ angular.module('core').factory('CoreMove', ['$rootScope', 'Bakery', 'CoreStack',
 			var _deck = getCardList();
 			var panel_x = panel.x_coord;
 			var panel_y = panel.y_coord;
-			var panel_index = getCardIndex(panel_x, panel_y);
+			var panel_index = CorePanel.getPanel(_deck, panel_x, panel_y).index;
 			
 			cardMoved = false;
 			if(_deck[panel_index].y_overlap){
@@ -241,13 +241,13 @@ angular.module('core').factory('CoreMove', ['$rootScope', 'Bakery', 'CoreStack',
 				
 				var slot_x = slot.x_coord;
 				var slot_y = slot.y_coord;
-				var slot_index = CoreStack.getPanel(_deck, slot_x, slot_y).index;
+				var slot_index = CorePanel.getPanel(_deck, slot_x, slot_y).index;
 				var slot_x_overlap = slot.x_overlap;
 				var slot_position = slot_x;
 				
 				var panel_x = panel.x_coord;
 				var panel_y = panel.y_coord;
-				var panel_index = CoreStack.getPanel(_deck, panel_x, panel_y).index;
+				var panel_index = CorePanel.getPanel(_deck, panel_x, panel_y).index;
 				var panel_x_overlap = panel.x_overlap;
 				var panel_width = x_dim;
 				

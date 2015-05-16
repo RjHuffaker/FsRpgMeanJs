@@ -1,22 +1,45 @@
 <div class="content-panel">
-	<h4>
-		<span data-ng-bind="panel.name"></span>
-	</h4>
-	<h5>
-		<span data-ng-bind="panel.deckType"></span> Deck (<span data-ng-bind="panel.deckSize"></span>)
-	</h5>
-	<small class="list-group-item-text text-muted">
-		Created
-		<span data-ng-bind="panel.created | date:'short'"></span>
-	</small>
-	<div style="position: absolute; top: 19em; left: 0.5em; width: 2em;" class="text-left">
-		<a data-ng-click="readDeck(panel);" stop-event>
-			<i class="glyphicon glyphicon-edit green-icon text-14"></i>
-		</a>
-	</div>
-	<div style="position: absolute; top: 19em; left: 12.5em; width: 2em;" class="text-right">
-		<a data-ng-click="deleteDeck(panel);" stop-event>
-			<i class="glyphicon glyphicon-trash red-icon text-14"></i>
-		</a>
-	</div>
+	<table class="fill-parent">
+		<tbody>
+			<tr>
+				<td style="vertical-align: top;">
+					<h4 class="text-10">
+						<span data-ng-bind="panel.name"></span>
+					</h4>
+					<h5 class="text-9">
+						<span data-ng-bind="panel.deckType"></span> Deck (<span data-ng-bind="panel.deckSize"></span>)
+					</h5>
+					<br/>
+					<span class="text-9 text-bold">Dependencies:</span>
+					<ul class="card-list text-9">
+						<li ng-repeat="deck in panel.dependencies" class="row">
+							<div class="col-xs-1 text-center"><strong> &#9679 </strong></div>
+							<div class="col-xs-11">
+								{{deck.name}}
+							</div>
+						</li>
+					</ul>
+					<br/>
+					<span class="list-group-item-text text-9 text-muted">
+						Created
+						<span data-ng-bind="panel.created | date:'short'"></span>
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" style="vertical-align: bottom;">
+					<div style="position: absolute; top: 19em; left: 0.5em; width: 2em;" class="text-left">
+						<a data-ng-click="readDeck(panel);" stop-event>
+							<i class="glyphicon glyphicon-edit green-icon text-14"></i>
+						</a>
+					</div>
+					<div style="position: absolute; top: 19em; left: 12.5em; width: 2em;" class="text-right">
+						<a data-ng-click="deleteDeck(panel);" stop-event>
+							<i class="glyphicon glyphicon-trash red-icon text-14"></i>
+						</a>
+					</div>
+				 </td>
+			</tr>
+		</tbody>
+	</table>
 </div>

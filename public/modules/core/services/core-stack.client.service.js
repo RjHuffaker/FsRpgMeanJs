@@ -5,20 +5,6 @@ angular.module('core').factory('CoreStack', ['$rootScope', function($rootScope) 
     
     var service = {};
     
-    service.getPanel = function(cardList, x_coord, y_coord){
-        if(cardList.length > 0){
-            var _index = 0;
-            var _panel = { x_coord: 0 };
-            for(var i = 0; i < cardList.length; i++){
-                if(cardList[i].x_coord === x_coord && cardList[i].y_coord === y_coord){
-                    return{
-                        index: i, panel: cardList[i]
-                    };
-                }
-            }
-        }
-    };
-    
     service.getLastPanel = function(cardList){
         var _index = 0;
         var _panel = { x_coord: 0 };
@@ -51,14 +37,6 @@ angular.module('core').factory('CoreStack', ['$rootScope', function($rootScope) 
         return {
             index: _index, panel: _panel
         };
-    };
-    
-    service.removePanel = function(cardList, panel){
-        for(var i = 0; i < cardList.length; i++){
-            if(cardList[i] === panel ) {
-                cardList.splice(i, 1);
-            }
-        }
     };
     
     service.getDeckWidth = function(cardList){

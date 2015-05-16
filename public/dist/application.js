@@ -673,7 +673,7 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
         
         var cardResource = Bakery.getNewCardResource(panel);
         cardResource.$remove(function(response){
-                if(deck) CoreStack.removePanel(panel, deck.cardList);
+                if(deck) CorePanel.removePanel(deck.cardList, panel);
             }).then(function(response){
                 if(deck) Bakery.setDeckSize(deck);
             }).then(function(response){
@@ -925,11 +925,14 @@ angular.module('core')
 	 		};
 			
 			$scope.findDependency = function(dependency){
-				Bakery.findDependency(dependency, Bakery.resource);
+				return Bakery.findDependency(dependency, Bakery.resource);
 			};
 			
 			$scope.toggleDependency = function(dependency){
 				Bakery.toggleDependency(dependency, Bakery.resource);
+				for(var i = 0; i < Bakery.resource.dependencies.length; i++){
+		            DecksBread.browseAspects(Bakery.resource.dependencies[i]);
+		        }
 			};
 			
 			$scope.toggleCardLock = function(panel){
@@ -1487,7 +1490,7 @@ angular.module('core')
 				};
 				
 				var onHeightChange = function(event, object){
-					var windowHeight = object.newHeight;
+					var windowHeight = object.newHeight-50;
 					element.css({
 						'height': windowHeight+'px'
 					});
@@ -1768,8 +1771,8 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('CoreMove', ['$rootScope', 'Bakery', 'CoreStack', 'Campaigns',
-	function($rootScope, Bakery, CoreStack, Campaigns){
+angular.module('core').factory('CoreMove', ['$rootScope', 'Bakery', 'CorePanel', 'CoreStack', 'Campaigns',
+	function($rootScope, Bakery, CorePanel, CoreStack, Campaigns){
 		var service = {};
 		
 		service.windowHeight = 0;
@@ -1908,7 +1911,7 @@ angular.module('core').factory('CoreMove', ['$rootScope', 'Bakery', 'CoreStack',
 			var _deck = getCardList();
 			var panel_x = panel.x_coord;
 			var panel_y = panel.y_coord;
-			var panel_index = getCardIndex(panel_x, panel_y);
+			var panel_index = CorePanel.getPanel(_deck, panel_x, panel_y).index;
 			
 			cardMoved = false;
 			if(_deck[panel_index].y_overlap){
@@ -2008,13 +2011,13 @@ angular.module('core').factory('CoreMove', ['$rootScope', 'Bakery', 'CoreStack',
 				
 				var slot_x = slot.x_coord;
 				var slot_y = slot.y_coord;
-				var slot_index = CoreStack.getPanel(_deck, slot_x, slot_y).index;
+				var slot_index = CorePanel.getPanel(_deck, slot_x, slot_y).index;
 				var slot_x_overlap = slot.x_overlap;
 				var slot_position = slot_x;
 				
 				var panel_x = panel.x_coord;
 				var panel_y = panel.y_coord;
-				var panel_index = CoreStack.getPanel(_deck, panel_x, panel_y).index;
+				var panel_index = CorePanel.getPanel(_deck, panel_x, panel_y).index;
 				var panel_x_overlap = panel.x_overlap;
 				var panel_width = x_dim;
 				
@@ -2408,6 +2411,28 @@ angular.module('core').factory('CorePanel', ['$resource', function($resource) {
     
     var service = {};
     
+    service.getPanel = function(cardList, x_coord, y_coord){
+        if(cardList.length > 0){
+            var _index = 0;
+            var _panel = { x_coord: 0 };
+            for(var i = 0; i < cardList.length; i++){
+                if(cardList[i].x_coord === x_coord && cardList[i].y_coord === y_coord){
+                    return{
+                        index: i, panel: cardList[i]
+                    };
+                }
+            }
+        }
+    };
+    
+    service.removePanel = function(cardList, panel){
+        for(var i = 0; i < cardList.length; i++){
+            if(cardList[i] === panel ) {
+                cardList.splice(i, 1);
+            }
+        }
+    };
+    
     service.getPanelData = function(panel){
         switch(panel.panelType){
             case 'Aspect':
@@ -2488,20 +2513,6 @@ angular.module('core').factory('CoreStack', ['$rootScope', function($rootScope) 
     
     var service = {};
     
-    service.getPanel = function(cardList, x_coord, y_coord){
-        if(cardList.length > 0){
-            var _index = 0;
-            var _panel = { x_coord: 0 };
-            for(var i = 0; i < cardList.length; i++){
-                if(cardList[i].x_coord === x_coord && cardList[i].y_coord === y_coord){
-                    return{
-                        index: i, panel: cardList[i]
-                    };
-                }
-            }
-        }
-    };
-    
     service.getLastPanel = function(cardList){
         var _index = 0;
         var _panel = { x_coord: 0 };
@@ -2534,14 +2545,6 @@ angular.module('core').factory('CoreStack', ['$rootScope', function($rootScope) 
         return {
             index: _index, panel: _panel
         };
-    };
-    
-    service.removePanel = function(cardList, panel){
-        for(var i = 0; i < cardList.length; i++){
-            if(cardList[i] === panel ) {
-                cardList.splice(i, 1);
-            }
-        }
     };
     
     service.getDeckWidth = function(cardList){
@@ -3227,7 +3230,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
     
     var service = {};
     
-    var browseAspects = function(deck){
+    service.browseAspects = function(deck){
         Bakery.resource.archetypeList = [];
         Bakery.resource.allegianceList = [];
         Bakery.resource.raceList = [];
@@ -3244,7 +3247,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
         });
     };
     
-    var browseDependencies = function(){
+    service.browseDependencies = function(){
         Bakery.Decks.query({deckType: 'Aspect'}, function(response){
             Bakery.dependencyDecks = response;
         });
@@ -3280,10 +3283,10 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
             Bakery.resource = response;
             if(response.deckType !== 'Aspect'){
                 
-                browseDependencies();
+                service.browseDependencies();
 
                 for(var i = 0; i < response.dependencies.length; i++){
-                    browseAspects(response.dependencies[i]);
+                    service.browseAspects(response.dependencies[i]);
                 }
             }
         });
@@ -3328,7 +3331,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
                     CardsBread.add(deck, type, i+1, false, (i+1 === size));
                 }
                 if(type !== 'Aspect'){
-                    browseDependencies();
+                    service.browseDependencies();
                 }
             });
     };
@@ -3336,7 +3339,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
     //DELETE
     service.delete = function(deck, resource){
         deck.$remove(function(response){
-            CoreStack.removePanel(resource.cardList, deck);
+            CorePanel.removePanel(resource.cardList, deck);
             Bakery.setDeckSize(resource);
             Bakery.collapseDeck(deck, resource.cardList);
         });

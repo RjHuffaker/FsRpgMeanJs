@@ -80,7 +80,7 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
         
         var cardResource = Bakery.getNewCardResource(panel);
         cardResource.$remove(function(response){
-                if(deck) CoreStack.removePanel(panel, deck.cardList);
+                if(deck) CorePanel.removePanel(deck.cardList, panel);
             }).then(function(response){
                 if(deck) Bakery.setDeckSize(deck);
             }).then(function(response){

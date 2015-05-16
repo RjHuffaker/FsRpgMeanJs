@@ -4,7 +4,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
     
     var service = {};
     
-    var browseAspects = function(deck){
+    service.browseAspects = function(deck){
         Bakery.resource.archetypeList = [];
         Bakery.resource.allegianceList = [];
         Bakery.resource.raceList = [];
@@ -21,7 +21,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
         });
     };
     
-    var browseDependencies = function(){
+    service.browseDependencies = function(){
         Bakery.Decks.query({deckType: 'Aspect'}, function(response){
             Bakery.dependencyDecks = response;
         });
@@ -57,10 +57,10 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
             Bakery.resource = response;
             if(response.deckType !== 'Aspect'){
                 
-                browseDependencies();
+                service.browseDependencies();
 
                 for(var i = 0; i < response.dependencies.length; i++){
-                    browseAspects(response.dependencies[i]);
+                    service.browseAspects(response.dependencies[i]);
                 }
             }
         });
@@ -105,7 +105,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
                     CardsBread.add(deck, type, i+1, false, (i+1 === size));
                 }
                 if(type !== 'Aspect'){
-                    browseDependencies();
+                    service.browseDependencies();
                 }
             });
     };
@@ -113,7 +113,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
     //DELETE
     service.delete = function(deck, resource){
         deck.$remove(function(response){
-            CoreStack.removePanel(resource.cardList, deck);
+            CorePanel.removePanel(resource.cardList, deck);
             Bakery.setDeckSize(resource);
             Bakery.collapseDeck(deck, resource.cardList);
         });
