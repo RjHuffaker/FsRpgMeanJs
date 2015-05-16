@@ -138,6 +138,8 @@ angular.module('core').factory('mockDataBuilder', function() {
         
         mockData.feat_1 = {
             panelType: 'Feat',
+            x_coord: 0,
+            y_coord: 0,
             featData: {
                 name: 'Feat the First',
                 cardType: 'Feat',
@@ -147,6 +149,8 @@ angular.module('core').factory('mockDataBuilder', function() {
         
         mockData.feat_2 = {
             panelType: 'Feat',
+            x_coord: 15,
+            y_coord: 0,
             featData: {
                 name: 'Feat the Second',
                 cardType: 'Feat',
@@ -156,6 +160,8 @@ angular.module('core').factory('mockDataBuilder', function() {
         
         mockData.feat_3 = {
             panelType: 'Feat',
+            x_coord: 15,
+            y_coord: 21,
             featData: {
                 name: 'Feat the Third',
                 cardType: 'Feat',
@@ -165,10 +171,80 @@ angular.module('core').factory('mockDataBuilder', function() {
         
         mockData.feat_4 = {
             panelType: 'Feat',
+            x_coord: 30,
+            y_coord: 21,
             featData: {
                 name: 'Feat the Fourth',
                 cardType: 'Feat',
                 cardNumber: 4
+            }
+        };
+        
+        mockData.feat_5 = {
+            panelType: 'Feat',
+            x_coord: 30,
+            y_coord: 0,
+            featData: {
+                name: 'Feat the Fifth',
+                cardType: 'Feat',
+                cardNumber: 5
+            }
+        };
+        
+        mockData.feat_6 = {
+            panelType: 'Feat',
+            x_coord: 30,
+            y_coord: 42,
+            featData: {
+                name: 'Feat the Sixth',
+                cardType: 'Feat',
+                cardNumber: 6
+            }
+        };
+        
+        
+        
+        mockData.feat_7 = {
+            panelType: 'Feat',
+            x_coord: 45,
+            y_coord: 0,
+            featData: {
+                name: 'Feat the Seventh',
+                cardType: 'Feat',
+                cardNumber: 7
+            }
+        };
+        
+        mockData.feat_8 = {
+            panelType: 'Feat',
+            x_coord: 45,
+            y_coord: 3,
+            featData: {
+                name: 'Feat the Eighth',
+                cardType: 'Feat',
+                cardNumber: 8
+            }
+        };
+        
+        mockData.feat_9 = {
+            panelType: 'Feat',
+            x_coord: 45,
+            y_coord: 24,
+            featData: {
+                name: 'Feat the Ninth',
+                cardType: 'Feat',
+                cardNumber: 9
+            }
+        };
+        
+        mockData.feat_10 = {
+            panelType: 'Feat',
+            x_coord: 45,
+            y_coord: 27,
+            featData: {
+                name: 'Feat the Tenth',
+                cardType: 'Feat',
+                cardNumber: 10
             }
         };
         
@@ -177,11 +253,12 @@ angular.module('core').factory('mockDataBuilder', function() {
             dependencies: [],
             cardList: [
                 mockData.feat_1, mockData.feat_2,
-                mockData.feat_3, mockData.feat_4
+                mockData.feat_3, mockData.feat_4,
+                mockData.feat_5, mockData.feat_6,
+                mockData.feat_7, mockData.feat_8,
+                mockData.feat_9, mockData.feat_10
             ]
         };
-        
-        
         
         return mockData;
     };

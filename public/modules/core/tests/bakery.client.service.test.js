@@ -5,11 +5,15 @@
 		
 		beforeEach(module(ApplicationConfiguration.applicationModuleName));
 
-		var Bakery, CorePanel, mockDataBuilder, mockData;
+		var Bakery, CoreStack, CorePanel, mockDataBuilder, mockData;
 		
 		beforeEach(inject(['Bakery', function (_Bakery_) {
 			Bakery = _Bakery_;
 		}]));
+		
+		beforeEach(inject(['CoreStack', function (_CoreStack_) {
+            CoreStack = _CoreStack_;
+        }]));
 		
 		beforeEach(inject(['CorePanel', function (_CorePanel_) {
             CorePanel = _CorePanel_;
@@ -42,47 +46,8 @@
             }
         });
 		
-		it('Bakery.lastCard(cardList) should retrieve the last panel and index from the cardList, or 0 if empty', function(){
-			Bakery.setCardList(mockData.aspectDeck.cardList);
-			Bakery.setCardList(mockData.traitDeck.cardList);
-			var lastCard_1 = Bakery.lastPanel(mockData.aspectDeck.cardList);
-			var lastCard_2 = Bakery.lastPanel(mockData.traitDeck.cardList);
-			expect(lastCard_1.index).toEqual(7);
-			expect(lastCard_2.index).toEqual(3);
-		});
-
-		it('Bakery.deckWidth(cardList) should return the overall width of the cardList, or 15 if empty', function(){
-			Bakery.setCardList(mockData.aspectDeck.cardList);
-			Bakery.setCardList(mockData.traitDeck.cardList);
-			var deckWidth_1 = Bakery.deckWidth(mockData.aspectDeck.cardList);
-			var deckWidth_2 = Bakery.deckWidth(mockData.traitDeck.cardList);
-			expect(deckWidth_1).toEqual(120);
-			expect(deckWidth_2).toEqual(60);
-		});
-
-		it('Bakery.setCardList(cardList) should add default variables to each element in cardList', function(){
-			Bakery.setCardList(mockData.traitDeck.cardList);
-			for(var i = 0; i < mockData.traitDeck.cardList.length; i++){
-				var _panel = mockData.traitDeck.cardList[i];
-				expect(_panel.x_coord).toEqual(i * 15);
-				expect(_panel.y_coord).toEqual(0);
-				expect(_panel.x_overlap).toBe(false);
-				expect(_panel.y_overlap).toBe(false);
-				expect(_panel.dragging).toBe(false);
-				expect(_panel.stacked).toBe(false);
-				expect(_panel.locked).toBe(false);
-			}
-		});
-		
-		it('Bakery.removePanel(panel, cardList) should remove panel from cardList', function(){
-			Bakery.removePanel(mockData.trait_1, mockData.traitDeck.cardList);
-			for(var i = 0; i < mockData.traitDeck.cardList.length; i++){
-				expect(mockData.traitDeck.cardList[i]).not.toEqual(mockData.trait_1);
-			}
-		});
-		
 		it('Bakery.expandDeck(panel, cardList) should add 15 to the x_coord of each element with the same x_coord or greater', function(){
-			Bakery.setCardList(mockData.traitDeck.cardList);
+			CoreStack.setCardList(mockData.traitDeck.cardList);
 			
 			Bakery.expandDeck(mockData.trait_1, mockData.traitDeck.cardList);
 			expect(mockData.traitDeck.cardList[0].x_coord).toEqual(0);
@@ -93,7 +58,7 @@
 		});
 		
 		it('Bakery.collapseDeck(panel, cardList) should subtract 15 from the x_coord of each element of a higher x_coord', function(){
-			Bakery.setCardList(mockData.traitDeck.cardList);
+			CoreStack.setCardList(mockData.traitDeck.cardList);
 			
 			Bakery.collapseDeck(mockData.trait_1, mockData.traitDeck.cardList);
 			expect(mockData.traitDeck.cardList[0].x_coord).toEqual(0);
@@ -104,14 +69,14 @@
 		});
 		
 		it('Bakery.setDeckSize() should iterate through resource.cardList and set resource.deckSize as well as the deckSize variable of each card', function(){
-			Bakery.setCardList(mockData.traitDeck.cardList);
+			CoreStack.setCardList(mockData.traitDeck.cardList);
 			Bakery.setDeckSize(mockData.traitDeck);
 			var _length = mockData.traitDeck.cardList.length - 1;
 			expect(mockData.traitDeck.deckSize).toEqual(_length);
 		});
 		
 		it('Bakery.toggleCardLock(panel, cardList) should toggle the panel.locked boolean in the cardList', function(){
-			Bakery.setCardList(mockData.traitDeck.cardList);
+			CoreStack.setCardList(mockData.traitDeck.cardList);
 			
 			Bakery.toggleCardLock(mockData.trait_1, mockData.traitDeck.cardList);
 			expect(mockData.traitDeck.cardList[0].locked).toBe(true);

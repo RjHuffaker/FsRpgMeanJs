@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery','CorePanel', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CorePanel){
+angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'CoreStack', 'CorePanel', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CoreStack, CorePanel){
     var service = {};
     
     var editDeck = function(deck, _loadDeck) {
@@ -59,12 +59,12 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
             y_coord: 0
         };
         
-        Bakery.setPanelData(panel, card);
+        CorePanel.setPanelData(panel, card);
         
         var cardResource = Bakery.getNewCardResource(panel);
         
         cardResource.$save(function(response){
-            Bakery.setPanelData(panel, response);
+            CorePanel.setPanelData(panel, response);
             deck.cardList.push(panel);
             Bakery.setDeckSize(Bakery.resource);
         }).then(function(response){
@@ -80,7 +80,7 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
         
         var cardResource = Bakery.getNewCardResource(panel);
         cardResource.$remove(function(response){
-                if(deck) Bakery.removePanel(panel, deck.cardList);
+                if(deck) CoreStack.removePanel(panel, deck.cardList);
             }).then(function(response){
                 if(deck) Bakery.setDeckSize(deck);
             }).then(function(response){

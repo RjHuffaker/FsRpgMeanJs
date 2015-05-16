@@ -1,20 +1,9 @@
-.deck-panel {
-	overflow-x: auto;
-	overflow-y: auto;
-	position: fixed;
-	left: 0;
-	width: 100%;
-}
-
 [core-panel] {
 	position: absolute;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-}
-
-[core-panel] {
 	padding: .1em;
 	margin-top: 3em;
 	height: 21em;
@@ -23,7 +12,6 @@
 	cursor: -webkit-grab;
 	cursor: -moz-grab;
 	cursor: grab;
-	
 }
 
 [core-panel].card-moving {

@@ -1,4 +1,12 @@
-[core-deck] {
+.deck-panel {
+	overflow-x: auto;
+	overflow-y: auto;
+	position: fixed;
+	left: 0;
+	width: 100%;
+}
+
+[core-stack] {
 	position: absolute;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -6,7 +14,7 @@
 	user-select: none;
 }
 
-div[core-deck] {
+div[core-stack] {
 	white-space: nowrap;
 	margin-left: 3em;
 	-webkit-transition: .75s ease-in-out width;
@@ -16,6 +24,6 @@ div[core-deck] {
 	transition: .75s ease-in-out width;
 }
 
-[core-deck] > ul{
+[core-stack] > ul{
 	list-style: none;
 }

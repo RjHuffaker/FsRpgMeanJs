@@ -593,7 +593,7 @@ angular.module('cards').factory('Augments', ['$resource',
         }]);
 'use strict';
 
-angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery','CorePanel', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CorePanel){
+angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'CoreStack', 'CorePanel', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CoreStack, CorePanel){
     var service = {};
     
     var editDeck = function(deck, _loadDeck) {
@@ -652,12 +652,12 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
             y_coord: 0
         };
         
-        Bakery.setPanelData(panel, card);
+        CorePanel.setPanelData(panel, card);
         
         var cardResource = Bakery.getNewCardResource(panel);
         
         cardResource.$save(function(response){
-            Bakery.setPanelData(panel, response);
+            CorePanel.setPanelData(panel, response);
             deck.cardList.push(panel);
             Bakery.setDeckSize(Bakery.resource);
         }).then(function(response){
@@ -673,7 +673,7 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
         
         var cardResource = Bakery.getNewCardResource(panel);
         cardResource.$remove(function(response){
-                if(deck) Bakery.removePanel(panel, deck.cardList);
+                if(deck) CoreStack.removePanel(panel, deck.cardList);
             }).then(function(response){
                 if(deck) Bakery.setDeckSize(deck);
             }).then(function(response){
@@ -774,12 +774,10 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
 
 // Core Controller
 angular.module('core')
-	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'CoreDeck', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
-		function($location, $scope, $rootScope, $window, Authentication, CoreDeck, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems) {
+	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
+		function($location, $scope, $rootScope, $window, Authentication, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems) {
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
-			
-			$scope.coreDeck = CoreDeck;
 			
 			$scope.Bakery = Bakery;
             
@@ -828,7 +826,6 @@ angular.module('core')
 			
 			var onHeightChange = function(event, object){
 				$scope.windowHeight = object.newHeight;
-				$scope.windowScale = object.newScale;
 				$scope.$digest();
 			};
 			
@@ -1041,101 +1038,7 @@ angular.module('core').controller('HeaderController', ['$document', '$rootScope'
 
 // Directive for managing card decks.
 angular.module('core')
-	.directive('coreDeck', ['$rootScope', '$window', 'Bakery', function($rootScope, $window, Bakery){
-		return {
-			restrict: 'A',
-			link: function(scope, element, attrs) {
-				
-				var pressed = false;
-				
-				var initialize = function(){
-					toggleListeners(true);
-				};
-				
-				var toggleListeners = function (enable) {
-					// remove listeners
-					if (!enable)return;
-					
-					// add listeners
-					scope.$on('$destroy', onDestroy);
-					element.on('mouseleave', onMouseLeave);
-					scope.$on('screenSize:onHeightChange', onHeightChange);
-					scope.$on('CoreDeck:setDeckWidth', setDeckWidth);
-					scope.$on('corePanel:onPressCard', onPress);
-					scope.$on('corePanel:onReleaseCard', onRelease);
-					scope.$on('corePanel:onMoveCard', onMoveCard);
-				};
-				
-				var onDestroy = function(enable){
-					toggleListeners(false);
-				};
-				
-				var onHeightChange = function(event, object){
-					var windowHeight = object.newHeight;
-					element.css({
-						'height': windowHeight+'px'
-					});
-				};
-				
-				var setDeckWidth = function(event, object){
-					var deckWidth = object.deckWidth + 3;
-					element.css({
-						'width': deckWidth+'em'
-					});
-				};
-				
-				var getElementFontSize = function(){
-					return parseFloat(
-						$window.getComputedStyle(element[0], null).getPropertyValue('font-size')
-					);
-				};
-				
-				var convertEm = function(value) {
-					return value * getElementFontSize();
-				};
-				
-				var onPress = function(){
-					pressed = true;
-				};
-				
-				var onRelease = function(){
-					pressed = false;
-				};
-				
-				var onMoveCard = function(event, object){
-					
-					var deckOffset = element.offset();
-					var deckWidth = Bakery.deckWidth(Bakery.resource.cardList);
-					var deckLeftEdge = deckOffset.left;
-					var deckRightEdge = convertEm(deckWidth + 3);
-					
-					if(object.mouseX <= deckLeftEdge){
-						scope.$emit('coreDeck:unstackLeft', {
-							panel: object.panel
-						});
-					} else if(object.mouseX >= deckRightEdge){
-						scope.$emit('coreDeck:unstackRight', {
-							panel: object.panel
-						});
-					}
-					
-				};
-				
-				var onMouseLeave = function(event){
-					if(pressed){
-						$rootScope.$broadcast('coreDeck:onMouseLeave');
-					}
-				};
-				
-				initialize();
-			}
-		};
-	}]);
-'use strict';
-
-// Directive for managing card decks.
-angular.module('core')
-	.directive('corePanel', ['$document', '$parse', '$rootScope', '$window', 'Bakery', 'CoreDeck', function($document, $parse, $rootScope, $window, Bakery, CoreDeck){
+	.directive('corePanel', ['$document', '$parse', '$rootScope', '$window', 'Bakery', 'CoreMove', function($document, $parse, $rootScope, $window, Bakery, CoreMove){
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/core/views/core-panel.html',
@@ -1191,7 +1094,7 @@ angular.module('core')
 					scope.$on('corePanel:onPressCard', onPressCard);
 					scope.$on('corePanel:onMoveCard', onMoveCard);
 					scope.$on('corePanel:onReleaseCard', onReleaseCard);
-					scope.$on('coreDeck:onMouseLeave', onMouseLeave);
+					scope.$on('coreStack:onMouseLeave', onMouseLeave);
 					scope.$on('CardsCtrl:onDropdown', onDropdown);
 					scope.$on('Bakery:onDeckChange', onReleaseCard);
 					scope.$watch('panel.x_coord', resetPosition);
@@ -1414,40 +1317,40 @@ angular.module('core')
 					} else if(changeX > 0 || changeY > 0){
 						if(crossingEdge(mouseX, mouseY) === 'top'){
 							if(vectorX > 0 && !slot_y_overlap && !slot_x_overlap && !panel_x_overlap){
-								console.log('cardSlot:moveDiagonalUp');
-								scope.$emit('cardSlot:moveDiagonalUp', {
+								console.log('corePanel:moveDiagonalUp');
+								scope.$emit('corePanel:moveDiagonalUp', {
 									slot: slot,
 									panel: panel
 								});
 							} else if(changeX === 0 && !panel_y_overlap){
-								console.log('cardSlot:moveVertical');
-								scope.$emit('cardSlot:moveVertical', {
+								console.log('corePanel:moveVertical');
+								scope.$emit('corePanel:moveVertical', {
 									slot: slot,
 									panel: panel
 								});
 							} else {
-								console.log('cardSlot:moveHorizontal');
-								scope.$emit('cardSlot:moveHorizontal', {
+								console.log('corePanel:moveHorizontal');
+								scope.$emit('corePanel:moveHorizontal', {
 									slot: slot,
 									panel: panel
 								});
 							}
 						} else if(crossingEdge(mouseX, mouseY) === 'bottom'){
 							if(changeX > 0 && changeX <= _x_dim){
-								console.log('cardSlot:moveDiagonalDown');
-								scope.$emit('cardSlot:moveDiagonalDown', {
+								console.log('corePanel:moveDiagonalDown');
+								scope.$emit('corePanel:moveDiagonalDown', {
 									slot: slot,
 									panel: panel
 								});
 							} else if(changeX === 0 && !panel_y_overlap){
-								console.log('cardSlot:moveVertical');
-								scope.$emit('cardSlot:moveVertical', {
+								console.log('corePanel:moveVertical');
+								scope.$emit('corePanel:moveVertical', {
 									slot: slot,
 									panel: panel
 								});
 							} else {
-								console.log('cardSlot:moveHorizontal');
-								scope.$emit('cardSlot:moveHorizontal', {
+								console.log('corePanel:moveHorizontal');
+								scope.$emit('corePanel:moveHorizontal', {
 									slot: slot,
 									panel: panel
 								});
@@ -1455,21 +1358,21 @@ angular.module('core')
 						} else if(crossingEdge(mouseX, mouseY) === 'left' || crossingEdge(mouseX, mouseY) === 'right'){
 							if(vectorY * 2 > vectorX){
 								if(moveY < 0){
-									console.log('cardSlot:moveDiagonalUp');
-									scope.$emit('cardSlot:moveDiagonalUp', {
+									console.log('corePanel:moveDiagonalUp');
+									scope.$emit('corePanel:moveDiagonalUp', {
 										slot: slot,
 										panel: panel
 									});
 								} else if(moveY > 0){
-									console.log('cardSlot:moveDiagonalDown');
-									scope.$emit('cardSlot:moveDiagonalDown', {
+									console.log('corePanel:moveDiagonalDown');
+									scope.$emit('corePanel:moveDiagonalDown', {
 										slot: slot,
 										panel: panel
 									});
 								}
 							} else {
-								console.log('cardSlot:moveHorizontal');
-								scope.$emit('cardSlot:moveHorizontal', {
+								console.log('corePanel:moveHorizontal');
+								scope.$emit('corePanel:moveHorizontal', {
 									slot: slot,
 									panel: panel
 								});
@@ -1552,6 +1455,100 @@ angular.module('core')
 	}]);
 'use strict';
 
+// Directive for managing card decks.
+angular.module('core')
+	.directive('coreStack', ['$rootScope', '$window', 'Bakery', 'CoreStack', 'CoreMove', function($rootScope, $window, Bakery, CoreStack, CoreMove){
+		return {
+			restrict: 'A',
+			link: function(scope, element, attrs) {
+				
+				var pressed = false;
+				
+				var initialize = function(){
+					toggleListeners(true);
+				};
+				
+				var toggleListeners = function (enable) {
+					// remove listeners
+					if (!enable)return;
+					
+					// add listeners
+					scope.$on('$destroy', onDestroy);
+					element.on('mouseleave', onMouseLeave);
+					scope.$on('screenSize:onHeightChange', onHeightChange);
+					scope.$on('CoreStack:setDeckWidth', setDeckWidth);
+					scope.$on('corePanel:onPressCard', onPress);
+					scope.$on('corePanel:onReleaseCard', onRelease);
+					scope.$on('corePanel:onMoveCard', onMoveCard);
+				};
+				
+				var onDestroy = function(enable){
+					toggleListeners(false);
+				};
+				
+				var onHeightChange = function(event, object){
+					var windowHeight = object.newHeight;
+					element.css({
+						'height': windowHeight+'px'
+					});
+				};
+				
+				var setDeckWidth = function(){
+					var deckWidth = CoreStack.getDeckWidth(Bakery.resource.cardList);
+					element.css({
+						'width': deckWidth+'em'
+					});
+				};
+				
+				var getElementFontSize = function(){
+					return parseFloat(
+						$window.getComputedStyle(element[0], null).getPropertyValue('font-size')
+					);
+				};
+				
+				var convertEm = function(value) {
+					return value * getElementFontSize();
+				};
+				
+				var onPress = function(){
+					pressed = true;
+				};
+				
+				var onRelease = function(){
+					pressed = false;
+				};
+				
+				var onMoveCard = function(event, object){
+					
+					var deckOffset = element.offset();
+					var deckWidth = CoreStack.getDeckWidth(Bakery.resource.cardList);
+					var deckLeftEdge = deckOffset.left;
+					var deckRightEdge = convertEm(deckWidth + 3);
+					
+					if(object.mouseX <= deckLeftEdge){
+						scope.$emit('coreStack:unstackLeft', {
+							panel: object.panel
+						});
+					} else if(object.mouseX >= deckRightEdge){
+						scope.$emit('coreStack:unstackRight', {
+							panel: object.panel
+						});
+					}
+					
+				};
+				
+				var onMouseLeave = function(event){
+					if(pressed){
+						$rootScope.$broadcast('coreStack:onMouseLeave');
+					}
+				};
+				
+				initialize();
+			}
+		};
+	}]);
+'use strict';
+
 angular.module('core')
 	.directive('modalDialogWindow', function() {
 		return {
@@ -1626,7 +1623,7 @@ coreModule
 'use strict';
 
 // General BREAD Factory-service.
-angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'CorePanel', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, CorePanel, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
+angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'CoreStack', 'CorePanel', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, CoreStack, CorePanel, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
 	var service = {};
     
     service.Decks = Decks;
@@ -1687,51 +1684,8 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
         }
     };
     
-    service.lastPanel = function(cardList){
-        if(cardList.length > 0){
-            var _index = 0;
-            var _panel = { x_coord: 0 };
-            for(var i = 0; i < cardList.length; i++){
-                if(cardList[i].x_coord > (_panel.x_coord || 0)){
-                    _index = i;
-                    _panel = cardList[i];
-                }
-            }
-            return {
-                index: _index, panel: _panel
-            };
-        } else {
-            return {
-                index: 0, panel: { x_coord: 0 }
-            };
-        }
-    };
     
-    service.deckWidth = function(cardList){
-        var lastPanel = service.lastPanel(cardList);
-        return service.lastPanel(cardList).panel.x_coord + 15;
-    };
     
-    service.setCardList = function(cardList){
-        for(var i = 0; i < cardList.length; i++){
-            cardList[i].x_coord = i * 15;
-            cardList[i].y_coord = 0;
-            cardList[i].x_overlap = false;
-            cardList[i].y_overlap = false;
-            cardList[i].dragging = false;
-            cardList[i].stacked = false;
-            cardList[i].locked = false;
-        }
-        $rootScope.$broadcast('DeckOrder:onDeckChange');
-    };
-    
-    service.removePanel = function(panel, cardList){
-        for(var i = 0; i < cardList.length; i++){
-            if(cardList[i] === panel ) {
-                cardList.splice(i, 1);
-            }
-        }
-    };
     
     service.expandDeck = function(panel, cardList){
         var panel_x_coord = panel.x_coord;
@@ -1814,8 +1768,8 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
-	function(Bakery, Campaigns, $rootScope){
+angular.module('core').factory('CoreMove', ['$rootScope', 'Bakery', 'CoreStack', 'Campaigns',
+	function($rootScope, Bakery, CoreStack, Campaigns){
 		var service = {};
 		
 		service.windowHeight = 0;
@@ -1861,19 +1815,6 @@ angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
 				}
 			}
 			return _last;
-		};
-		
-		service.getDeckWidth = function(){
-			var _deck = getCardList();
-			return _deck[service.getLastIndex()].x_coord + x_dim;
-		};
-		
-		var setDeckWidth = function(){
-			var _deck = getCardList();
-			var _deckWidth = _deck[service.getLastIndex()].x_coord + x_dim;
-			$rootScope.$broadcast('CoreDeck:setDeckWidth', {
-				deckWidth: _deckWidth
-			});
 		};
 		
 		var getLastIndex = function(){
@@ -1937,13 +1878,13 @@ angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
 			$rootScope.$on('corePanel:onReleaseCard', onReleaseCard);
 			$rootScope.$on('corePanel:toggleOverlap', toggleOverlap);
 			
-			$rootScope.$on('cardSlot:moveHorizontal', moveHorizontal);
-			$rootScope.$on('cardSlot:moveDiagonalUp', moveDiagonalUp);
-			$rootScope.$on('cardSlot:moveDiagonalDown', moveDiagonalDown);
-			$rootScope.$on('cardSlot:moveVertical', moveVertical);
+			$rootScope.$on('corePanel:moveHorizontal', moveHorizontal);
+			$rootScope.$on('corePanel:moveDiagonalUp', moveDiagonalUp);
+			$rootScope.$on('corePanel:moveDiagonalDown', moveDiagonalDown);
+			$rootScope.$on('corePanel:moveVertical', moveVertical);
 			
-			$rootScope.$on('coreDeck:unstackLeft', unstackLeft);
-			$rootScope.$on('coreDeck:unstackRight', unstackRight);
+			$rootScope.$on('coreStack:unstackLeft', unstackLeft);
+			$rootScope.$on('coreStack:unstackRight', unstackRight);
 		};
 		
 		var onHeightChange = function(event, object){
@@ -1957,7 +1898,7 @@ angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
 			cardMoved = true;
 			moveTimer = setTimeout(function(){
 				cardMoving = false;
-				setDeckWidth();
+				CoreStack.setDeckWidth(Bakery.resource.cardList);
 			}, interval);
 		};
 		
@@ -2013,7 +1954,6 @@ angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
 		};
 
 		var moveDiagonalUp = function(event, object){
-			console.log('moveDiagonalUp');
 			var _slot = object.slot;
 			var _panel = object.panel;
 			var _deck = getCardList();
@@ -2054,25 +1994,27 @@ angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
 			if(object.panel.y_coord > 0){
 				var _panel = object.panel;
 				var _deck = getCardList();
-				var unstack_coord = _deck[getLastIndex()].x_coord + x_dim;
+				var _last = CoreStack.getLastPanel(_deck);
+				var unstack_coord = _last.panel.x_coord + x_dim;
 				unstackCard({x_coord: unstack_coord}, _panel);
 			}
 		};
 		
 		// Swap card order along horizontal axis
 		var switchHorizontal = function(slot, panel){
+			console.log('switchHorizontal');
 			if(!cardMoving){
 				var _deck = getCardList();
 				
 				var slot_x = slot.x_coord;
 				var slot_y = slot.y_coord;
-				var slot_index = getCardIndex(slot_x, slot_y);
+				var slot_index = CoreStack.getPanel(_deck, slot_x, slot_y).index;
 				var slot_x_overlap = slot.x_overlap;
 				var slot_position = slot_x;
 				
 				var panel_x = panel.x_coord;
 				var panel_y = panel.y_coord;
-				var panel_index = getCardIndex(panel_x, panel_y);
+				var panel_index = CoreStack.getPanel(_deck, panel_x, panel_y).index;
 				var panel_x_overlap = panel.x_overlap;
 				var panel_width = x_dim;
 				
@@ -2461,6 +2403,7 @@ angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
 
 'use strict';
 
+// Panel helper-functions
 angular.module('core').factory('CorePanel', ['$resource', function($resource) {
     
     var service = {};
@@ -2534,6 +2477,145 @@ angular.module('core').factory('CorePanel', ['$resource', function($resource) {
                 return false;
         }
     };
+    
+    return service;
+    
+}]);
+'use strict';
+
+// Stack helper-functions
+angular.module('core').factory('CoreStack', ['$rootScope', function($rootScope) {
+    
+    var service = {};
+    
+    service.getPanel = function(cardList, x_coord, y_coord){
+        if(cardList.length > 0){
+            var _index = 0;
+            var _panel = { x_coord: 0 };
+            for(var i = 0; i < cardList.length; i++){
+                if(cardList[i].x_coord === x_coord && cardList[i].y_coord === y_coord){
+                    return{
+                        index: i, panel: cardList[i]
+                    };
+                }
+            }
+        }
+    };
+    
+    service.getLastPanel = function(cardList){
+        var _index = 0;
+        var _panel = { x_coord: 0 };
+        if(cardList.length > 0){
+            for(var i = 0; i < cardList.length; i++){
+                if(cardList[i].x_coord > (_panel.x_coord || -1)){
+                    _index = i;
+                    _panel = cardList[i];
+                }
+            }
+        }
+        return {
+            index: _index, panel: _panel
+        };  
+    };
+    
+    service.getLowestPanel = function(cardList, x_coord){
+        var _index = 0;
+        var _panel = { y_coord: 0 };
+        if(cardList.length > 0){
+            for(var i = 0; i < cardList.length; i++){
+                if(cardList[i].x_coord === x_coord){
+                    if(cardList[i].y_coord > (_panel.y_coord || -1)){
+                        _index = i;
+                        _panel = cardList[i];
+                    }
+                }
+            }
+        }
+        return {
+            index: _index, panel: _panel
+        };
+    };
+    
+    service.removePanel = function(cardList, panel){
+        for(var i = 0; i < cardList.length; i++){
+            if(cardList[i] === panel ) {
+                cardList.splice(i, 1);
+            }
+        }
+    };
+    
+    service.getDeckWidth = function(cardList){
+        var lastPanel = service.getLastPanel(cardList);
+        return lastPanel.panel.x_coord + 15;
+    };
+    
+    service.setDeckWidth = function(cardList){
+        var _deckWidth = service.getDeckWidth(cardList);
+        $rootScope.$broadcast('CoreStack:setDeckWidth', {
+            deckWidth: _deckWidth
+        });
+    };
+    
+    service.setCardList = function(cardList){
+        for(var i = 0; i < cardList.length; i++){
+            cardList[i].x_coord = i * 15;
+            cardList[i].y_coord = 0;
+            cardList[i].x_overlap = false;
+            cardList[i].y_overlap = false;
+            cardList[i].dragging = false;
+            cardList[i].stacked = false;
+            cardList[i].locked = false;
+        }
+        $rootScope.$broadcast('DeckOrder:onDeckChange');
+    };
+    
+    service.getColumnArray = function(cardList, x_coord){
+        var _column = [];
+        for(var i =0; i < cardList.length; i++){
+            if(cardList[i].x_coord === x_coord){
+                _column.push(i);
+            }
+        }
+        return _column;
+    };
+    
+    service.setColumnStacked = function(cardList, x_coord){
+        var _lowest = service.getLowestPanel(cardList, x_coord);
+        if(_lowest.panel.y_coord > 0){
+            var _column = service.getColumnArray(cardList, x_coord);
+            for(var i = 0; i < _column.length; i++){
+                cardList[_column[i]].stacked = true;
+            }
+        } else {
+            cardList[_lowest.index].stacked = false;
+        }
+    };
+    
+    service.setColumnOverlap = function(cardList, x_coord){
+        var _lowest = service.getLowestPanel(cardList, x_coord);
+        if(_lowest.panel.y_coord > 0){
+            var _column = service.getColumnArray(cardList, x_coord);
+            _column.sort(function(a, b){
+                return cardList[a].y_coord - cardList[b].y_coord;
+            });
+            for(var i = 0; i < _column.length; i++){
+                if(_column[i] === _lowest.index){
+                    cardList[_column[i]].y_overlap = false;
+                } else {
+                    var _panel = cardList[_column[i]];
+                    var _next = cardList[_column[i+1]];
+                    if(_next.y_coord - _panel.y_coord === 3){
+                        _panel.y_overlap = true;
+                    } else if(_next.y_coord - _panel.y_coord === 21){
+                        _panel.y_overlap = false;
+                    }
+                }
+            }
+        } else {
+            cardList[_lowest.index].y_overlap = false;
+        }
+    };
+    
     
     return service;
     
@@ -2999,6 +3081,8 @@ angular.module('core').factory('mockDataBuilder', function() {
         
         mockData.feat_1 = {
             panelType: 'Feat',
+            x_coord: 0,
+            y_coord: 0,
             featData: {
                 name: 'Feat the First',
                 cardType: 'Feat',
@@ -3008,6 +3092,8 @@ angular.module('core').factory('mockDataBuilder', function() {
         
         mockData.feat_2 = {
             panelType: 'Feat',
+            x_coord: 15,
+            y_coord: 0,
             featData: {
                 name: 'Feat the Second',
                 cardType: 'Feat',
@@ -3017,6 +3103,8 @@ angular.module('core').factory('mockDataBuilder', function() {
         
         mockData.feat_3 = {
             panelType: 'Feat',
+            x_coord: 15,
+            y_coord: 21,
             featData: {
                 name: 'Feat the Third',
                 cardType: 'Feat',
@@ -3026,10 +3114,80 @@ angular.module('core').factory('mockDataBuilder', function() {
         
         mockData.feat_4 = {
             panelType: 'Feat',
+            x_coord: 30,
+            y_coord: 21,
             featData: {
                 name: 'Feat the Fourth',
                 cardType: 'Feat',
                 cardNumber: 4
+            }
+        };
+        
+        mockData.feat_5 = {
+            panelType: 'Feat',
+            x_coord: 30,
+            y_coord: 0,
+            featData: {
+                name: 'Feat the Fifth',
+                cardType: 'Feat',
+                cardNumber: 5
+            }
+        };
+        
+        mockData.feat_6 = {
+            panelType: 'Feat',
+            x_coord: 30,
+            y_coord: 42,
+            featData: {
+                name: 'Feat the Sixth',
+                cardType: 'Feat',
+                cardNumber: 6
+            }
+        };
+        
+        
+        
+        mockData.feat_7 = {
+            panelType: 'Feat',
+            x_coord: 45,
+            y_coord: 0,
+            featData: {
+                name: 'Feat the Seventh',
+                cardType: 'Feat',
+                cardNumber: 7
+            }
+        };
+        
+        mockData.feat_8 = {
+            panelType: 'Feat',
+            x_coord: 45,
+            y_coord: 3,
+            featData: {
+                name: 'Feat the Eighth',
+                cardType: 'Feat',
+                cardNumber: 8
+            }
+        };
+        
+        mockData.feat_9 = {
+            panelType: 'Feat',
+            x_coord: 45,
+            y_coord: 24,
+            featData: {
+                name: 'Feat the Ninth',
+                cardType: 'Feat',
+                cardNumber: 9
+            }
+        };
+        
+        mockData.feat_10 = {
+            panelType: 'Feat',
+            x_coord: 45,
+            y_coord: 27,
+            featData: {
+                name: 'Feat the Tenth',
+                cardType: 'Feat',
+                cardNumber: 10
             }
         };
         
@@ -3038,11 +3196,12 @@ angular.module('core').factory('mockDataBuilder', function() {
             dependencies: [],
             cardList: [
                 mockData.feat_1, mockData.feat_2,
-                mockData.feat_3, mockData.feat_4
+                mockData.feat_3, mockData.feat_4,
+                mockData.feat_5, mockData.feat_6,
+                mockData.feat_7, mockData.feat_8,
+                mockData.feat_9, mockData.feat_10
             ]
         };
-        
-        
         
         return mockData;
     };
@@ -3064,203 +3223,8 @@ angular.module('core').factory('Socket', ['socketFactory',
 ]);
 'use strict';
 
-angular.module('core').factory('mockDataBuilder', function() {
-    var service = {};
+angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'CoreStack', 'CorePanel', 'CardsBread', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CoreStack, CorePanel, CardsBread){
     
-    service.newMockData = function(){
-        var mockData = {};
-        
-        mockData.aspect_1 = {
-            panelType: 'Aspect',
-            aspectData: {
-                name: 'Aspect the First',
-                cardType: 'Aspect',
-                cardNumber: 1
-            }
-        };
-        
-        mockData.aspect_2 = {
-            panelType: 'Aspect',
-            aspectData: {
-                name: 'Aspect the Second',
-                cardType: 'Aspect',
-                cardNumber: 2
-            }
-        };
-        
-        mockData.aspect_3 = {
-            panelType: 'Aspect',
-            aspectData: {
-                name: 'Aspect the Third',
-                cardType: 'Aspect',
-                cardNumber: 3
-            }
-        };
-        
-        mockData.aspect_4 = {
-            panelType: 'Aspect',
-            aspectData: {
-                name: 'Aspect the Fourth',
-                cardType: 'Aspect',
-                cardNumber: 4
-            }
-        };
-        
-        mockData.aspect_5 = {
-            panelType: 'Aspect',
-            aspectData: {
-                name: 'Aspect the Fifth',
-                cardType: 'Aspect',
-                cardNumber: 5
-            }
-        };
-        
-        mockData.aspect_6 = {
-            panelType: 'Aspect',
-            aspectData: {
-                name: 'Aspect the Sixth',
-                cardType: 'Aspect',
-                cardNumber: 6
-            }
-        };
-        
-        mockData.aspect_7 = {
-            panelType: 'Aspect',
-            aspectData: {
-                name: 'Aspect the Seventh',
-                cardType: 'Aspect',
-                cardNumber: 7
-            }
-        };
-        
-        mockData.aspect_8 = {
-            panelType: 'Aspect',
-            aspectData: {
-                name: 'Aspect the Eighth',
-                cardType: 'Aspect',
-                cardNumber: 8
-            }
-        };
-        
-        mockData.aspectDeck = {
-            _id: 'aspectDeck_id',
-            dependencies: [],
-            cardList: [ 
-                mockData.aspect_1, mockData.aspect_2,
-                mockData.aspect_3, mockData.aspect_4,
-                mockData.aspect_5, mockData.aspect_6,
-                mockData.aspect_7, mockData.aspect_8
-            ]
-        };
-        
-        
-        
-        mockData.trait_1 = {
-            panelType: 'Trait',
-            traitData: {
-                name: 'Trait the First',
-                cardType: 'Trait',
-                cardNumber: 1
-            }
-        };
-        
-        mockData.trait_2 = {
-            panelType: 'Trait',
-            traitData: {
-                name: 'Trait the Second',
-                cardType: 'Trait',
-                cardNumber: 2
-            }
-        };
-        
-        mockData.trait_3 = {
-            panelType: 'Trait',
-            traitData: {
-                name: 'Trait the Third',
-                cardType: 'Trait',
-                cardNumber: 3
-            }
-        };
-        
-        mockData.trait_4 = {
-            panelType: 'Trait',
-            traitData: {
-                name: 'Trait the Fourth',
-                cardType: 'Trait',
-                cardNumber: 4
-            }
-        };
-        
-        mockData.traitDeck = {
-            _id: 'traitDeck_id',
-            dependencies: [
-                { _id: 'aspectDeck_id' }
-            ],
-            cardList: [
-                mockData.trait_1, mockData.trait_2,
-                mockData.trait_3, mockData.trait_4
-            ]
-        };
-        
-        
-        
-        mockData.feat_1 = {
-            panelType: 'Feat',
-            featData: {
-                name: 'Feat the First',
-                cardType: 'Feat',
-                cardNumber: 1
-            }
-        };
-        
-        mockData.feat_2 = {
-            panelType: 'Feat',
-            featData: {
-                name: 'Feat the Second',
-                cardType: 'Feat',
-                cardNumber: 2
-            }
-        };
-        
-        mockData.feat_3 = {
-            panelType: 'Feat',
-            featData: {
-                name: 'Feat the Third',
-                cardType: 'Feat',
-                cardNumber: 3
-            }
-        };
-        
-        mockData.feat_4 = {
-            panelType: 'Feat',
-            featData: {
-                name: 'Feat the Fourth',
-                cardType: 'Feat',
-                cardNumber: 4
-            }
-        };
-        
-        mockData.featDeck = {
-            _id: 'featDeck_id',
-            dependencies: [],
-            cardList: [
-                mockData.feat_1, mockData.feat_2,
-                mockData.feat_3, mockData.feat_4
-            ]
-        };
-        
-        
-        
-        return mockData;
-    };
-    
-    
-    
-    return service;
-});
-'use strict';
-
-angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'CardsBread', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CardsBread){
     var service = {};
     
     var browseAspects = function(deck){
@@ -3295,7 +3259,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
                     panelType: 'architectOptions'
                 });
                 Bakery.resource.cardList = response;
-                Bakery.setCardList(Bakery.resource.cardList);
+                CoreStack.setCardList(Bakery.resource.cardList);
             });
         } else {
             Bakery.Decks.list(function(response){
@@ -3303,7 +3267,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
                     panelType: 'architectOptions'
                 });
                 Bakery.resource.cardList = response;
-                Bakery.setCardList(Bakery.resource.cardList);
+                CoreStack.setCardList(Bakery.resource.cardList);
             });
         }
     };
@@ -3372,7 +3336,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
     //DELETE
     service.delete = function(deck, resource){
         deck.$remove(function(response){
-            Bakery.removePanel(deck, resource.cardList);
+            CoreStack.removePanel(resource.cardList, deck);
             Bakery.setDeckSize(resource);
             Bakery.collapseDeck(deck, resource.cardList);
         });

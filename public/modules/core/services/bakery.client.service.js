@@ -1,7 +1,7 @@
 'use strict';
 
 // General BREAD Factory-service.
-angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'CorePanel', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, CorePanel, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
+angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'CoreStack', 'CorePanel', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, CoreStack, CorePanel, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
 	var service = {};
     
     service.Decks = Decks;
@@ -62,51 +62,8 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
         }
     };
     
-    service.lastPanel = function(cardList){
-        if(cardList.length > 0){
-            var _index = 0;
-            var _panel = { x_coord: 0 };
-            for(var i = 0; i < cardList.length; i++){
-                if(cardList[i].x_coord > (_panel.x_coord || 0)){
-                    _index = i;
-                    _panel = cardList[i];
-                }
-            }
-            return {
-                index: _index, panel: _panel
-            };
-        } else {
-            return {
-                index: 0, panel: { x_coord: 0 }
-            };
-        }
-    };
     
-    service.deckWidth = function(cardList){
-        var lastPanel = service.lastPanel(cardList);
-        return service.lastPanel(cardList).panel.x_coord + 15;
-    };
     
-    service.setCardList = function(cardList){
-        for(var i = 0; i < cardList.length; i++){
-            cardList[i].x_coord = i * 15;
-            cardList[i].y_coord = 0;
-            cardList[i].x_overlap = false;
-            cardList[i].y_overlap = false;
-            cardList[i].dragging = false;
-            cardList[i].stacked = false;
-            cardList[i].locked = false;
-        }
-        $rootScope.$broadcast('DeckOrder:onDeckChange');
-    };
-    
-    service.removePanel = function(panel, cardList){
-        for(var i = 0; i < cardList.length; i++){
-            if(cardList[i] === panel ) {
-                cardList.splice(i, 1);
-            }
-        }
-    };
     
     service.expandDeck = function(panel, cardList){
         var panel_x_coord = panel.x_coord;

@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'CardsBread', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CardsBread){
+angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'CoreStack', 'CorePanel', 'CardsBread', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CoreStack, CorePanel, CardsBread){
+    
     var service = {};
     
     var browseAspects = function(deck){
@@ -35,7 +36,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
                     panelType: 'architectOptions'
                 });
                 Bakery.resource.cardList = response;
-                Bakery.setCardList(Bakery.resource.cardList);
+                CoreStack.setCardList(Bakery.resource.cardList);
             });
         } else {
             Bakery.Decks.list(function(response){
@@ -43,7 +44,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
                     panelType: 'architectOptions'
                 });
                 Bakery.resource.cardList = response;
-                Bakery.setCardList(Bakery.resource.cardList);
+                CoreStack.setCardList(Bakery.resource.cardList);
             });
         }
     };
@@ -112,7 +113,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
     //DELETE
     service.delete = function(deck, resource){
         deck.$remove(function(response){
-            Bakery.removePanel(deck, resource.cardList);
+            CoreStack.removePanel(resource.cardList, deck);
             Bakery.setDeckSize(resource);
             Bakery.collapseDeck(deck, resource.cardList);
         });

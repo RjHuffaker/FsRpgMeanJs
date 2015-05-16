@@ -2,7 +2,7 @@
 
 // Directive for managing card decks.
 angular.module('core')
-	.directive('coreDeck', ['$rootScope', '$window', 'Bakery', function($rootScope, $window, Bakery){
+	.directive('coreStack', ['$rootScope', '$window', 'Bakery', 'CoreStack', 'CoreMove', function($rootScope, $window, Bakery, CoreStack, CoreMove){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -21,7 +21,7 @@ angular.module('core')
 					scope.$on('$destroy', onDestroy);
 					element.on('mouseleave', onMouseLeave);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
-					scope.$on('CoreDeck:setDeckWidth', setDeckWidth);
+					scope.$on('CoreStack:setDeckWidth', setDeckWidth);
 					scope.$on('corePanel:onPressCard', onPress);
 					scope.$on('corePanel:onReleaseCard', onRelease);
 					scope.$on('corePanel:onMoveCard', onMoveCard);
@@ -38,8 +38,8 @@ angular.module('core')
 					});
 				};
 				
-				var setDeckWidth = function(event, object){
-					var deckWidth = object.deckWidth + 3;
+				var setDeckWidth = function(){
+					var deckWidth = CoreStack.getDeckWidth(Bakery.resource.cardList);
 					element.css({
 						'width': deckWidth+'em'
 					});
@@ -66,16 +66,16 @@ angular.module('core')
 				var onMoveCard = function(event, object){
 					
 					var deckOffset = element.offset();
-					var deckWidth = Bakery.deckWidth(Bakery.resource.cardList);
+					var deckWidth = CoreStack.getDeckWidth(Bakery.resource.cardList);
 					var deckLeftEdge = deckOffset.left;
 					var deckRightEdge = convertEm(deckWidth + 3);
 					
 					if(object.mouseX <= deckLeftEdge){
-						scope.$emit('coreDeck:unstackLeft', {
+						scope.$emit('coreStack:unstackLeft', {
 							panel: object.panel
 						});
 					} else if(object.mouseX >= deckRightEdge){
-						scope.$emit('coreDeck:unstackRight', {
+						scope.$emit('coreStack:unstackRight', {
 							panel: object.panel
 						});
 					}
@@ -84,7 +84,7 @@ angular.module('core')
 				
 				var onMouseLeave = function(event){
 					if(pressed){
-						$rootScope.$broadcast('coreDeck:onMouseLeave');
+						$rootScope.$broadcast('coreStack:onMouseLeave');
 					}
 				};
 				

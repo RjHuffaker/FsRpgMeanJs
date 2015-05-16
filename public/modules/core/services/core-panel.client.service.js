@@ -1,5 +1,6 @@
 'use strict';
 
+// Panel helper-functions
 angular.module('core').factory('CorePanel', ['$resource', function($resource) {
     
     var service = {};

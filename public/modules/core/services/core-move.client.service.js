@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
-	function(Bakery, Campaigns, $rootScope){
+angular.module('core').factory('CoreMove', ['$rootScope', 'Bakery', 'CoreStack', 'Campaigns',
+	function($rootScope, Bakery, CoreStack, Campaigns){
 		var service = {};
 		
 		service.windowHeight = 0;
@@ -48,19 +48,6 @@ angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
 				}
 			}
 			return _last;
-		};
-		
-		service.getDeckWidth = function(){
-			var _deck = getCardList();
-			return _deck[service.getLastIndex()].x_coord + x_dim;
-		};
-		
-		var setDeckWidth = function(){
-			var _deck = getCardList();
-			var _deckWidth = _deck[service.getLastIndex()].x_coord + x_dim;
-			$rootScope.$broadcast('CoreDeck:setDeckWidth', {
-				deckWidth: _deckWidth
-			});
 		};
 		
 		var getLastIndex = function(){
@@ -124,13 +111,13 @@ angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
 			$rootScope.$on('corePanel:onReleaseCard', onReleaseCard);
 			$rootScope.$on('corePanel:toggleOverlap', toggleOverlap);
 			
-			$rootScope.$on('cardSlot:moveHorizontal', moveHorizontal);
-			$rootScope.$on('cardSlot:moveDiagonalUp', moveDiagonalUp);
-			$rootScope.$on('cardSlot:moveDiagonalDown', moveDiagonalDown);
-			$rootScope.$on('cardSlot:moveVertical', moveVertical);
+			$rootScope.$on('corePanel:moveHorizontal', moveHorizontal);
+			$rootScope.$on('corePanel:moveDiagonalUp', moveDiagonalUp);
+			$rootScope.$on('corePanel:moveDiagonalDown', moveDiagonalDown);
+			$rootScope.$on('corePanel:moveVertical', moveVertical);
 			
-			$rootScope.$on('coreDeck:unstackLeft', unstackLeft);
-			$rootScope.$on('coreDeck:unstackRight', unstackRight);
+			$rootScope.$on('coreStack:unstackLeft', unstackLeft);
+			$rootScope.$on('coreStack:unstackRight', unstackRight);
 		};
 		
 		var onHeightChange = function(event, object){
@@ -144,7 +131,7 @@ angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
 			cardMoved = true;
 			moveTimer = setTimeout(function(){
 				cardMoving = false;
-				setDeckWidth();
+				CoreStack.setDeckWidth(Bakery.resource.cardList);
 			}, interval);
 		};
 		
@@ -200,7 +187,6 @@ angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
 		};
 
 		var moveDiagonalUp = function(event, object){
-			console.log('moveDiagonalUp');
 			var _slot = object.slot;
 			var _panel = object.panel;
 			var _deck = getCardList();
@@ -241,25 +227,27 @@ angular.module('core').factory('CoreDeck', ['Bakery', 'Campaigns', '$rootScope',
 			if(object.panel.y_coord > 0){
 				var _panel = object.panel;
 				var _deck = getCardList();
-				var unstack_coord = _deck[getLastIndex()].x_coord + x_dim;
+				var _last = CoreStack.getLastPanel(_deck);
+				var unstack_coord = _last.panel.x_coord + x_dim;
 				unstackCard({x_coord: unstack_coord}, _panel);
 			}
 		};
 		
 		// Swap card order along horizontal axis
 		var switchHorizontal = function(slot, panel){
+			console.log('switchHorizontal');
 			if(!cardMoving){
 				var _deck = getCardList();
 				
 				var slot_x = slot.x_coord;
 				var slot_y = slot.y_coord;
-				var slot_index = getCardIndex(slot_x, slot_y);
+				var slot_index = CoreStack.getPanel(_deck, slot_x, slot_y).index;
 				var slot_x_overlap = slot.x_overlap;
 				var slot_position = slot_x;
 				
 				var panel_x = panel.x_coord;
 				var panel_y = panel.y_coord;
-				var panel_index = getCardIndex(panel_x, panel_y);
+				var panel_index = CoreStack.getPanel(_deck, panel_x, panel_y).index;
 				var panel_x_overlap = panel.x_overlap;
 				var panel_width = x_dim;
 				
