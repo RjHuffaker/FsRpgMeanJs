@@ -1931,7 +1931,7 @@ angular.module('core').factory('CoreMove', ['$rootScope', 'Bakery', 'CorePanel',
 		var onReleaseCard = function(event, object){
 			var panel = object.panel;
 			var _deck = getCardList();
-			var panel_index = getCardIndex(panel.x_coord, panel.y_coord);
+			var panel_index = CorePanel.getPanel(panel.x_coord, panel.y_coord).index;
 			
 			cardMoved = false;
 			
