@@ -11,8 +11,8 @@
             CoreMove = _CoreMove_;
         }]));
         
-        it('CoreMove should not be undefined', function(){
-            expect(CoreMove).not.toBeUndefined();
+        it('CoreMove should be defined', function(){
+            expect(CoreMove).not.toBeDefined();
         });
         
     });

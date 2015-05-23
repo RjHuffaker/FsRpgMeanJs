@@ -1,16 +1,16 @@
 'use strict';
 
 // Panel helper-functions
-angular.module('core').factory('CorePanel', ['$resource', function($resource) {
+angular.module('core').factory('CorePanel', ['$rootScope', '$resource', function($rootScope, $resource) {
     
     var service = {};
     
     service.getPanel = function(cardList, x_coord, y_coord){
-        if(cardList.length > 0){
+        if (cardList.length > 0){
             var _index = 0;
             var _panel = { x_coord: 0 };
             for(var i = 0; i < cardList.length; i++){
-                if(cardList[i].x_coord === x_coord && cardList[i].y_coord === y_coord){
+                if (cardList[i].x_coord === x_coord && cardList[i].y_coord === y_coord){
                     return{
                         index: i, panel: cardList[i]
                     };
@@ -21,7 +21,7 @@ angular.module('core').factory('CorePanel', ['$resource', function($resource) {
     
     service.removePanel = function(cardList, panel){
         for(var i = 0; i < cardList.length; i++){
-            if(cardList[i] === panel ) {
+            if (cardList[i] === panel ) {
                 cardList.splice(i, 1);
             }
         }
@@ -94,6 +94,47 @@ angular.module('core').factory('CorePanel', ['$resource', function($resource) {
                 return { originId: panel.originData._id };
             default:
                 return false;
+        }
+    };
+    
+    service.expandDeck = function(panel, cardList){
+        var panel_x_coord = panel.x_coord;
+        var panel_y_coord = panel.y_coord;
+        
+        for(var i = 0; i < cardList.length; i++){
+            var slot = cardList[i];
+            
+            var slotData = service.getPanelData(slot);
+            if (slot !== panel && slot.x_coord >= panel_x_coord){
+                slot.x_coord += 15;
+                slotData.cardNumber++;
+            }
+        }
+        $rootScope.$broadcast('Bakery:onDeckChange');
+    };
+    
+    service.collapseDeck = function(panel, cardList){
+        var panel_x_coord = panel.x_coord;
+        var panel_y_coord = panel.y_coord;
+        
+        for(var i = 0; i < cardList.length; i++){
+            var slot = cardList[i];
+            var slotData = service.getPanelData(slot);
+            if (slot.x_coord > panel_x_coord){
+                slot.x_coord -= 15;
+                slotData.cardNumber--;
+            }
+        }
+        $rootScope.$broadcast('Bakery:onDeckChange');
+    };
+    
+    service.setDeckSize = function(resource){
+        var _length = resource.cardList.length - 1;
+        resource.deckSize = _length;
+        for(var i = 0; i < resource.cardList.length; i++){
+            var panel = resource.cardList[i];
+            var panelData = service.getPanelData(panel);
+            panelData.deckSize = _length;
         }
     };
     

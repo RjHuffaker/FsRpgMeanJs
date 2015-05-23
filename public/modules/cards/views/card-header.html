@@ -37,7 +37,7 @@
 						<li role="presentation" class="dropdown-header">Archetype</li>
 						<li role="presentation" ng-repeat="archetype in Bakery.resource.archetypeList track by $index"><label>
 							<input type="radio" ng-checked="card.aspect.name === archetype.name"
-								ng-click="Bakery.changeAspect(card, archetype); featureCardForm.$setDirty();">
+								ng-click="Architect.changeAspect(card, archetype); featureCardForm.$setDirty();">
 							{{archetype.name}}
 						</label></li>
 					</ul>
@@ -45,7 +45,7 @@
 						<li role="presentation" class="dropdown-header">Allegiance</li>
 						<li role="presentation" ng-repeat="allegiance in Bakery.resource.allegianceList" ng-if="allegiance.name !== 'Unaligned'"><label>
 							<input type="radio" ng-checked="card.aspect.name === allegiance.name"
-								ng-click="Bakery.changeAspect(card, allegiance); featureCardForm.$setDirty();">
+								ng-click="Architect.changeAspect(card, allegiance); featureCardForm.$setDirty();">
 							{{allegiance.name}}
 						</label></li>
 					</ul>
@@ -56,7 +56,7 @@
 						ng-repeat="race in Bakery.resource.raceList" ng-if="race.name !== 'Weolda'">
 						<label>
 							<input type="radio" ng-checked="card.aspect.name === race.name"
-								ng-click="Bakery.changeAspect(card, race); featureCardForm.$setDirty();">
+								ng-click="Architect.changeAspect(card, race); featureCardForm.$setDirty();">
 							{{race.name}}
 						</label>
 					</li>

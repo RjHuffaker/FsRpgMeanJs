@@ -63,5 +63,35 @@
             }
         });
         
+        it('expandDeck(panel, cardList) should add 15 to the x_coord of each element with the same x_coord or greater', function(){
+            CoreStack.setCardList(mockData.traitDeck.cardList);
+            
+            CorePanel.expandDeck(mockData.trait_1, mockData.traitDeck.cardList);
+            expect(mockData.traitDeck.cardList[0].x_coord).toEqual(0);
+            
+            for(var i = 1; i < mockData.traitDeck.cardList.length; i++){
+                expect(mockData.traitDeck.cardList[i].x_coord).toEqual((i+1) * 15);
+            }
+        });
+        
+        it('collapseDeck(panel, cardList) should subtract 15 from the x_coord of each element of a higher x_coord', function(){
+            CoreStack.setCardList(mockData.traitDeck.cardList);
+            
+            CorePanel.collapseDeck(mockData.trait_1, mockData.traitDeck.cardList);
+            expect(mockData.traitDeck.cardList[0].x_coord).toEqual(0);
+            
+            for(var i = 1; i < mockData.traitDeck.cardList.length; i++){
+                expect(mockData.traitDeck.cardList[i].x_coord).toEqual((i-1) * 15);
+            }
+        });
+        
+        it('setDeckSize() should iterate through resource.cardList and set resource.deckSize as well as the deckSize variable of each card', function(){
+            CoreStack.setCardList(mockData.traitDeck.cardList);
+            CorePanel.setDeckSize(mockData.traitDeck);
+            var _length = mockData.traitDeck.cardList.length - 1;
+            expect(mockData.traitDeck.deckSize).toEqual(_length);
+        });
+        
+        
     });
 })();

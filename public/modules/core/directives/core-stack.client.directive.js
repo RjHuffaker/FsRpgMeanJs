@@ -71,13 +71,9 @@ angular.module('core')
 					var deckRightEdge = convertEm(deckWidth + 3);
 					
 					if(object.mouseX <= deckLeftEdge){
-						scope.$emit('coreStack:unstackLeft', {
-							panel: object.panel
-						});
+						CoreMove.unstackLeft(object.panel);
 					} else if(object.mouseX >= deckRightEdge){
-						scope.$emit('coreStack:unstackRight', {
-							panel: object.panel
-						});
+						CoreMove.unstackRight(object.panel);
 					}
 					
 				};

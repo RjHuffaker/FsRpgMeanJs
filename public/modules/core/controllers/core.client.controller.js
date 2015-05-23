@@ -2,8 +2,9 @@
 
 // Core Controller
 angular.module('core')
-	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems',
-		function($location, $scope, $rootScope, $window, Authentication, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems) {
+	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'Architect', 'Player',
+		function($location, $scope, $rootScope, $window, Authentication, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems, Architect, Player) {
+			
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
 			
@@ -25,6 +26,10 @@ angular.module('core')
 			
 			$scope.pcsItems = PcsItems;
 			
+			$scope.Architect = Architect;
+			
+			$scope.Player = Player;
+			
 			$scope.modalShown = false;
 			
 			$scope.diceBoxShown = false;
@@ -38,7 +43,7 @@ angular.module('core')
 			};
 			
 			var toggleListeners = function(enable){
-				if(!enable) return;
+				if (!enable) return;
 				$scope.$on('$destroy', onDestroy);
 				$scope.$on('screenSize:onHeightChange', onHeightChange);
 				$scope.$on('ability:onPress', chooseAbility);
@@ -152,20 +157,6 @@ angular.module('core')
 	 			});
 	 		};
 			
-			$scope.findDependency = function(dependency){
-				return Bakery.findDependency(dependency, Bakery.resource);
-			};
-			
-			$scope.toggleDependency = function(dependency){
-				Bakery.toggleDependency(dependency, Bakery.resource);
-				for(var i = 0; i < Bakery.resource.dependencies.length; i++){
-		            DecksBread.browseAspects(Bakery.resource.dependencies[i]);
-		        }
-			};
-			
-			$scope.toggleCardLock = function(panel){
-				Bakery.toggleCardLock(panel, Bakery.resource.cardList);
-			};
 			
 			var chooseAbility = function(event, object){
 				$scope.modalShown = true;
@@ -199,7 +190,7 @@ angular.module('core')
 			
 			//Watch for change in EXP input
 			var watchEXP = function(newValue, oldValue){
-				if(Bakery.resource && newValue !== oldValue){
+				if (Bakery.resource && newValue !== oldValue){
 					PcsCard2.EXP = parseInt(newValue);
 					Bakery.resource.experience = parseInt(newValue);
 				}
@@ -207,9 +198,9 @@ angular.module('core')
 			
 			//Watch for change in experience
 			var watchExperience = function(newValue, oldValue){
-				if(Bakery.resource && newValue !== oldValue){
+				if (Bakery.resource && newValue !== oldValue){
 					PcsCard2.factorExperience();
-					if(newValue !== PcsCard2.EXP){
+					if (newValue !== PcsCard2.EXP){
 						PcsCard2.EXP = newValue;
 					}
 				}
@@ -217,7 +208,7 @@ angular.module('core')
 			
 			//Watch for changes in level
 			var watchLevel = function(newValue, oldValue){
-				if(Bakery.resource.abilities){
+				if (Bakery.resource.abilities){
 					PcsCard2.factorHealth();
 					PcsCard2.factorStamina();
 					PcsTraits.factorTraitLimit();

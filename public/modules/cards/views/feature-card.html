@@ -37,7 +37,7 @@
 	</a>
 </div>
 <div style="position: absolute; top: 20em; left: 14em; width: 1em;" class="text-center">
-	<a data-ng-click="$parent.toggleCardLock(panel);" stop-event>
+	<a data-ng-click="Architect.toggleCardLock(panel, Bakery.resource.cardList);" stop-event>
 		<i ng-hide="$parent.panel.locked" class="glyphicon glyphicon-lock grey-icon"></i>
 		<i ng-show="$parent.panel.locked" class="glyphicon glyphicon-lock blue-icon"></i>
 	</a>

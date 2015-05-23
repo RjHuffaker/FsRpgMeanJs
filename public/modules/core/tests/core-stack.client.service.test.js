@@ -67,36 +67,33 @@
             }
         });
         
-        it('setColumnStacked(cardList, x_coord) should set stacked for each panel of that x_coord', function(){
-            CoreStack.setColumnStacked(mockData.featDeck.cardList, 0);
-            CoreStack.setColumnStacked(mockData.featDeck.cardList, 30);
-            for(var i = 0; i < mockData.featDeck.cardList.length; i++){
-                var _panel = mockData.featDeck.cardList[i];
-                if(_panel.x_coord === 0){
-                    expect(_panel.stacked).toBe(false);
-                }
-                if(_panel.x_coord === 30){
-                    expect(_panel.stacked).toBe(true);
-                }
-            }
-        });
-        
-        it('setColumnOverlap(cardList, x_coord) should set y_overlap for each panel of that x_coord', function(){
+        it('setColumnVars(cardList, x_coord) should set stacked and y_overlap for each panel of that x_coord', function(){
             
+            // Setup
             var _cardList = mockData.featDeck.cardList;
+            CoreStack.setColumnVars(_cardList, 45);
+            
+            // Get lowest panel in column
             var _lowest = CoreStack.getLowestPanel(_cardList, 45);
-            if(_lowest.panel.y_coord > 0){
-                var _column = CoreStack.getColumnArray(_cardList, 45);
-                CoreStack.setColumnOverlap(_cardList, 45);
-                _column.sort(function(a, b){
-                    return _cardList[a].y_coord - _cardList[b].y_coord;
-                });
+            
+            // Get an array representing each panel in column
+            var _column = CoreStack.getColumnArray(_cardList, 45);
+            
+            // Sort array according to y_coord
+            _column.sort(function(a, b){
+                return _cardList[a].y_coord - _cardList[b].y_coord;
+            });
+            
+            if(_column.length > 1){
                 for(var i = 0; i < _column.length; i++){
+                    var _panel = _cardList[_column[i]];
+                    var _next = _cardList[_column[i+1]];
+                    
+                    // Check each element in sorted array
+                    expect(_panel.stacked).toBeTruthy();
                     if(_column[i] === _lowest.index){
-                        expect(_cardList[_column[i]].y_overlap).toBeFalsy();
+                        expect(_panel.y_overlap).toBeFalsy();
                     } else {
-                        var _panel = _cardList[_column[i]];
-                        var _next = _cardList[_column[i+1]];
                         if(_next.y_coord - _panel.y_coord === 3){
                             expect(_panel.y_overlap).toBeTruthy();
                         } else if(_next.y_coord - _panel.y_coord === 21){
@@ -104,6 +101,9 @@
                         }
                     }
                 }
+            } else {
+                expect(_lowest.panel.y_overlap).toBeFalsy();
+                expect(_lowest.panel.stacked).toBeFalsy();
             }
         });
         

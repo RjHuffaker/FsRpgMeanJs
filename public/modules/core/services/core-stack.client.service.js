@@ -67,39 +67,28 @@ angular.module('core').factory('CoreStack', ['$rootScope', function($rootScope) 
     service.getColumnArray = function(cardList, x_coord){
         var _column = [];
         for(var i =0; i < cardList.length; i++){
-            if(cardList[i].x_coord === x_coord){
+            if (cardList[i].x_coord === x_coord){
                 _column.push(i);
             }
         }
         return _column;
     };
     
-    service.setColumnStacked = function(cardList, x_coord){
+    service.setColumnVars = function(cardList, x_coord){
         var _lowest = service.getLowestPanel(cardList, x_coord);
-        if(_lowest.panel.y_coord > 0){
-            var _column = service.getColumnArray(cardList, x_coord);
-            for(var i = 0; i < _column.length; i++){
-                cardList[_column[i]].stacked = true;
-            }
-        } else {
-            cardList[_lowest.index].stacked = false;
-        }
-    };
-    
-    service.setColumnOverlap = function(cardList, x_coord){
-        var _lowest = service.getLowestPanel(cardList, x_coord);
-        if(_lowest.panel.y_coord > 0){
+        if (_lowest.panel.y_coord > 0){
             var _column = service.getColumnArray(cardList, x_coord);
             _column.sort(function(a, b){
                 return cardList[a].y_coord - cardList[b].y_coord;
             });
             for(var i = 0; i < _column.length; i++){
-                if(_column[i] === _lowest.index){
+                cardList[_column[i]].stacked = true;
+                if (_column[i] === _lowest.index){
                     cardList[_column[i]].y_overlap = false;
                 } else {
                     var _panel = cardList[_column[i]];
                     var _next = cardList[_column[i+1]];
-                    if(_next.y_coord - _panel.y_coord === 3){
+                    if (_next.y_coord - _panel.y_coord === 3){
                         _panel.y_overlap = true;
                     } else if(_next.y_coord - _panel.y_coord === 21){
                         _panel.y_overlap = false;
@@ -107,6 +96,7 @@ angular.module('core').factory('CoreStack', ['$rootScope', function($rootScope) 
                 }
             }
         } else {
+            cardList[_lowest.index].stacked = false;
             cardList[_lowest.index].y_overlap = false;
         }
     };

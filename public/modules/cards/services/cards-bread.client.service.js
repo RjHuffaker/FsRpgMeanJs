@@ -68,7 +68,7 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
             deck.cardList.push(panel);
             Bakery.setDeckSize(Bakery.resource);
         }).then(function(response){
-            if(deckShift) Bakery.expandDeck(panel, Bakery.resource.cardList);
+            if(deckShift) CorePanel.expandDeck(panel, Bakery.resource.cardList);
         }).then(function(response){
             if(deckSave) editDeck(deck, true);
         });
@@ -82,9 +82,9 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
         cardResource.$remove(function(response){
                 if(deck) CorePanel.removePanel(deck.cardList, panel);
             }).then(function(response){
-                if(deck) Bakery.setDeckSize(deck);
+                if(deck) CorePanel.setDeckSize(deck);
             }).then(function(response){
-                if(deck) Bakery.collapseDeck(panel, deck.cardList);
+                if(deck) CorePanel.collapseDeck(panel, deck.cardList);
             }).then(function(response){
                 if(deck) editDeck(deck, false);
         });

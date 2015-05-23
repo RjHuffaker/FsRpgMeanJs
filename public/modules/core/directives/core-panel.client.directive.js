@@ -282,64 +282,37 @@ angular.module('core')
 						if(crossingEdge(mouseX, mouseY) === 'top'){
 							if(vectorX > 0 && !slot_y_overlap && !slot_x_overlap && !panel_x_overlap){
 								console.log('corePanel:moveDiagonalUp');
-								scope.$emit('corePanel:moveDiagonalUp', {
-									slot: slot,
-									panel: panel
-								});
+								CoreMove.moveDiagonalUp(slot, panel);
 							} else if(changeX === 0 && !panel_y_overlap){
 								console.log('corePanel:moveVertical');
-								scope.$emit('corePanel:moveVertical', {
-									slot: slot,
-									panel: panel
-								});
+								CoreMove.moveVertical(slot, panel);
 							} else {
 								console.log('corePanel:moveHorizontal');
-								scope.$emit('corePanel:moveHorizontal', {
-									slot: slot,
-									panel: panel
-								});
+								CoreMove.moveHorizontal(slot, panel);
 							}
 						} else if(crossingEdge(mouseX, mouseY) === 'bottom'){
 							if(changeX > 0 && changeX <= _x_dim){
 								console.log('corePanel:moveDiagonalDown');
-								scope.$emit('corePanel:moveDiagonalDown', {
-									slot: slot,
-									panel: panel
-								});
+								CoreMove.moveDiagonalDown(slot, panel);
 							} else if(changeX === 0 && !panel_y_overlap){
 								console.log('corePanel:moveVertical');
-								scope.$emit('corePanel:moveVertical', {
-									slot: slot,
-									panel: panel
-								});
+								CoreMove.moveVertical(slot, panel);
 							} else {
 								console.log('corePanel:moveHorizontal');
-								scope.$emit('corePanel:moveHorizontal', {
-									slot: slot,
-									panel: panel
-								});
+								CoreMove.moveHorizontal(slot, panel);
 							}
 						} else if(crossingEdge(mouseX, mouseY) === 'left' || crossingEdge(mouseX, mouseY) === 'right'){
 							if(vectorY * 2 > vectorX){
 								if(moveY < 0){
 									console.log('corePanel:moveDiagonalUp');
-									scope.$emit('corePanel:moveDiagonalUp', {
-										slot: slot,
-										panel: panel
-									});
+									CoreMove.moveDiagonalUp(slot, panel);
 								} else if(moveY > 0){
 									console.log('corePanel:moveDiagonalDown');
-									scope.$emit('corePanel:moveDiagonalDown', {
-										slot: slot,
-										panel: panel
-									});
+									CoreMove.moveDiagonalDown(slot, panel);
 								}
 							} else {
 								console.log('corePanel:moveHorizontal');
-								scope.$emit('corePanel:moveHorizontal', {
-									slot: slot,
-									panel: panel
-								});
+								CoreMove.moveHorizontal(slot, panel);
 							}
 						}
 					}
@@ -354,9 +327,7 @@ angular.module('core')
 						panel: _panel
 					});
 					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
-						$rootScope.$broadcast('corePanel:toggleOverlap', {
-							panel: _panel
-						});
+						CoreMove.triggerOverlap(_panel);
 					}
 				};
 				

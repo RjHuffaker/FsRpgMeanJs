@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'pcsDefaults', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, pcsDefaults){
+angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'CoreStack', 'CorePanel', 'pcsDefaults', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CoreStack, CorePanel, pcsDefaults){
     var service = {};
     
     //BROWSE
@@ -12,7 +12,7 @@ angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authent
                 panelType: 'playerOptions'
             });
             Bakery.resource.cardList = response;
-            Bakery.setCardList(Bakery.resource.cardList);
+            CoreStack.setCardList(Bakery.resource.cardList);
         });
     };
     
@@ -46,9 +46,9 @@ angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authent
     //DELETE
     service.delete = function(pc, resource){
         pc.$remove(function(response){
-            Bakery.removePanel(pc, resource.cardList);
-            Bakery.setDeckSize(resource);
-            Bakery.collapseDeck(pc, resource.cardList);
+            CorePanel.removePanel(pc, resource.cardList);
+            CorePanel.setDeckSize(resource);
+            CorePanel.collapseDeck(pc, resource.cardList);
         });
     };
     

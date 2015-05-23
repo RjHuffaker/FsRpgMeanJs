@@ -38,7 +38,7 @@ angular.module('cards')
 			templateUrl: '../modules/pcs/views/card-pc-3.html'
 		};
 	})
-	.directive('featureCard', ['DataSRVC', 'Bakery', function(DataSRVC, Bakery){
+	.directive('featureCard', ['DataSRVC', 'Bakery', 'Architect', function(DataSRVC, Bakery, Architect){
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/cards/views/feature-card.html',
@@ -46,6 +46,7 @@ angular.module('cards')
 			link: function(scope, element, attrs){
 				scope.Bakery = Bakery;
 				scope.dataSRVC = DataSRVC;
+				scope.Architect = Architect;
 			}
 		};
 	}])

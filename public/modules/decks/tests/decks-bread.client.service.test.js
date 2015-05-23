@@ -11,8 +11,8 @@
             DecksBread = _DecksBread_;
         }]));
         
-        it('DecksBread should not be undefined', function(){
-            expect(DecksBread).not.toBeUndefined();
+        it('DecksBread should be defined', function(){
+            expect(DecksBread).not.toBeDefined();
         });
         
     });

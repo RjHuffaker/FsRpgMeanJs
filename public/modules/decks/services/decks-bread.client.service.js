@@ -114,8 +114,8 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
     service.delete = function(deck, resource){
         deck.$remove(function(response){
             CorePanel.removePanel(resource.cardList, deck);
-            Bakery.setDeckSize(resource);
-            Bakery.collapseDeck(deck, resource.cardList);
+            CorePanel.setDeckSize(resource);
+            CorePanel.collapseDeck(deck, resource.cardList);
         });
     };
     

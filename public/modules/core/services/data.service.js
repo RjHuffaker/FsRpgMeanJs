@@ -23,6 +23,12 @@ angular.module('core').factory('DataSRVC', [
 			{order: 9, name: 'd12', sides: 12, image: 'modules/core/img/d_12.png'}
 		];
 		
+		service.aspectTypes = [
+			'Archetype',
+			'Allegiance',
+			'Race'
+		];
+		
 		service.targetTypes = [
 			'Utility',
 			'Close',
