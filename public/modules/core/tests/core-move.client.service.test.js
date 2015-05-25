@@ -12,7 +12,7 @@
         }]));
         
         it('CoreMove should be defined', function(){
-            expect(CoreMove).not.toBeDefined();
+            expect(CoreMove).toBeDefined();
         });
         
     });

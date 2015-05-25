@@ -12,7 +12,7 @@
         }]));
         
         it('DecksBread should be defined', function(){
-            expect(DecksBread).not.toBeDefined();
+            expect(DecksBread).toBeDefined();
         });
         
     });

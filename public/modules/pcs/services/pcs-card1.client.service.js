@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing pc1 data.
-angular.module('pcs').factory('PcsCard1', ['$rootScope', 'Bakery',
-	function($rootScope, Bakery){
+angular.module('pcs').factory('PcsCard1', ['$rootScope', 'Bakery', 'CoreVars',
+	function($rootScope, Bakery, CoreVars){
 		var service = {};
 		
 		service.chosenDie = {};
@@ -14,12 +14,13 @@ angular.module('pcs').factory('PcsCard1', ['$rootScope', 'Bakery',
 		};
 		
 		$rootScope.$on('ability:onPress', function(event, object){
+			console.log(object);
 			service.chosenAbility = Bakery.resource.abilities[object.ability.order];
 		});
 		
-		
 		service.chooseDie = function(dice){
-			service.modalShown = false;
+			CoreVars.modalShown = false;
+			CoreVars.diceBoxShown = false;
 			
 			var _abilityPair;
 			var _ability1;

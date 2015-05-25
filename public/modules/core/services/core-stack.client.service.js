@@ -61,7 +61,7 @@ angular.module('core').factory('CoreStack', ['$rootScope', function($rootScope) 
             cardList[i].stacked = false;
             cardList[i].locked = false;
         }
-        $rootScope.$broadcast('DeckOrder:onDeckChange');
+        $rootScope.$broadcast('corePanel:onReleaseCard');
     };
     
     service.getColumnArray = function(cardList, x_coord){

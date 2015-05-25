@@ -46,22 +46,16 @@ angular.module('core').factory('CoreMove', ['$rootScope', 'CoreVars', 'Bakery', 
 			} else {
 				_deck[panel_index].dragging = true;
 			}
-			
-			$rootScope.$digest();
 		};
 		
 		// Reset move variables
 		var onReleaseCard = function(event, object){
 			var _deck = getCardList();
-			var panel = object.panel;
-			var panel_index = CorePanel.getPanel(_deck, panel.x_coord, panel.y_coord).index;
 			
 			CoreVars.cardMoved = false;
 			for(var ia = 0; ia < _deck.length; ia++){
 				_deck[ia].dragging = false;
 			}
-			
-			$rootScope.$digest();
 		};
 		
 		service.triggerOverlap = function(panel){

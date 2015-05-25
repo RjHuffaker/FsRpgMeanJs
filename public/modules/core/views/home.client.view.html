@@ -1,6 +1,6 @@
 <section data-ng-controller="CoreController" screen-size style="height: {{windowHeight-50}}px">
 	<div class="container-fluid deck-panel" style="height: {{windowHeight - 50}}px">
-		<div class="fill-parent modal-overlay" ng-click="hideModal()" ng-show="modalShown"></div>
+		<div class="fill-parent modal-overlay" ng-click="CoreVars.hideModal()" ng-show="CoreVars.modalShown"></div>
 		<div core-stack ng-mouseleave="true">
 			<ul>
 				<li core-panel panel="panel" ng-repeat="panel in Bakery.resource.cardList"
@@ -12,6 +12,6 @@
 			</ul>
 		</div>
 	</div>
-	<div dice-box ng-show="diceBoxShown"></div>
-	<div modal-deck ng-show="modalDeckShown"></div>
+	<div dice-box ng-show="CoreVars.diceBoxShown"></div>
+	<div modal-deck ng-show="CoreVars.modalDeckShown"></div>
 </section>

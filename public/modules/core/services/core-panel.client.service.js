@@ -19,7 +19,7 @@ angular.module('core').factory('CorePanel', ['$rootScope', '$resource', function
         }
     };
     
-    service.removePanel = function(cardList, panel){
+    service.removePanel = function(panel, cardList){
         for(var i = 0; i < cardList.length; i++){
             if (cardList[i] === panel ) {
                 cardList.splice(i, 1);
@@ -110,7 +110,7 @@ angular.module('core').factory('CorePanel', ['$rootScope', '$resource', function
                 slotData.cardNumber++;
             }
         }
-        $rootScope.$broadcast('Bakery:onDeckChange');
+        $rootScope.$broadcast('corePanel:onReleaseCard');
     };
     
     service.collapseDeck = function(panel, cardList){
@@ -125,7 +125,7 @@ angular.module('core').factory('CorePanel', ['$rootScope', '$resource', function
                 slotData.cardNumber--;
             }
         }
-        $rootScope.$broadcast('Bakery:onDeckChange');
+        $rootScope.$broadcast('corePanel:onReleaseCard');
     };
     
     service.setDeckSize = function(resource){

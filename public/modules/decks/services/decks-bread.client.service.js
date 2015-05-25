@@ -113,7 +113,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
     //DELETE
     service.delete = function(deck, resource){
         deck.$remove(function(response){
-            CorePanel.removePanel(resource.cardList, deck);
+            CorePanel.removePanel(deck, resource.cardList);
             CorePanel.setDeckSize(resource);
             CorePanel.collapseDeck(deck, resource.cardList);
         });

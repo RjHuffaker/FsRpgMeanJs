@@ -56,8 +56,7 @@ angular.module('pcs').factory('pcsDefaults', [function(){
 					locked: true,
 				},
 				{
-					name: 'Level 0 Trait',
-					panelType: 'featureCard',
+					panelType: 'Trait',
 					x_coord: 45,
 					y_coord: 0,
 					x_overlap: false,
@@ -65,7 +64,10 @@ angular.module('pcs').factory('pcsDefaults', [function(){
 					dragging: false,
 					stacked: false,
 					locked: true,
-					level: 0
+					level: 0,
+					traitData: {
+						name: 'Level 0 Trait'
+					}
 				}
 			]
 		};

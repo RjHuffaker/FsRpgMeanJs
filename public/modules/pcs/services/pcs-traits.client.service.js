@@ -3,16 +3,10 @@
 'use strict';
 
 // Factory-service for managing PC traits
-angular.module('pcs').factory('PcsTraits', ['$resource', 'Bakery', 
-	function($resource, Bakery){
+angular.module('pcs').factory('PcsTraits', ['Bakery', 'CoreStack',
+	function(Bakery, CoreStack){
 		
 		var service = {};
-		
-		var Traits = $resource(
-			'traits/:traitId',
-			{ traitId: '@_id' },
-			{ update: { method: 'PUT' } }
-		);
 		
 		// Factor Trait Limit
 		service.factorTraitLimit = function(){
@@ -36,7 +30,7 @@ angular.module('pcs').factory('PcsTraits', ['$resource', 'Bakery',
 		service.traitAtLevel = function(level){
 			var traitAtLevel = false;
 			for(var ib = 0; ib < Bakery.resource.cardList.length; ib++){
-				if(Bakery.resource.cardList[ib].cardType === 'trait'){
+				if(Bakery.resource.cardList[ib].panelType === 'Trait'){
 					if(Bakery.resource.cardList[ib].level === level){
 						traitAtLevel = true;
 					}
@@ -47,27 +41,20 @@ angular.module('pcs').factory('PcsTraits', ['$resource', 'Bakery',
 		
 		service.addTrait = function(level){
 			var newTrait = {
-				name: 'Level '+level+' Trait',
-				cardType: 'trait',
-				x_coord: Bakery.lastPanel(Bakery.resource.cardList).panel.x_coord + 15,
+				panelType: 'Trait',
+				x_coord: CoreStack.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
 				dragging: false,
 				stacked: false,
 				locked: true,
-				level: level
+				level: level,
+				traitData: {
+					name: 'Level '+level+' Trait'
+				}
 			};
 			Bakery.resource.cardList.push(newTrait);
-		};
-		
-		service.lockCard = function(card){
-			card.panelType = 'player';
-			card.locked = true;
-			card.x_coord = (card.cardNumber - 1) * 15;
-			card.y_coord = 0;
-			card.dragging = false;
-			card.stacked = false;
 		};
 		
 		return service;

@@ -2,8 +2,8 @@
 
 // Core Controller
 angular.module('core')
-	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'Architect', 'Player',
-		function($location, $scope, $rootScope, $window, Authentication, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems, Architect, Player) {
+	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'Architect', 'Player', 'CoreVars',
+		function($location, $scope, $rootScope, $window, Authentication, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems, Architect, Player, CoreVars) {
 			
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
@@ -28,13 +28,9 @@ angular.module('core')
 			
 			$scope.Architect = Architect;
 			
-			$scope.Player = Player;
+		//	$scope.Player = Player;
 			
-			$scope.modalShown = false;
-			
-			$scope.diceBoxShown = false;
-			
-			$scope.modalDeckShown = false;
+			$scope.CoreVars = CoreVars;
 			
 			var pcNew = false;
 			
@@ -46,11 +42,11 @@ angular.module('core')
 				if (!enable) return;
 				$scope.$on('$destroy', onDestroy);
 				$scope.$on('screenSize:onHeightChange', onHeightChange);
-				$scope.$on('ability:onPress', chooseAbility);
-				$scope.$on('pcsCard1:updateAbility', updateAbility);
-				$scope.$watch('pcsCard2.EXP', watchEXP);
-				$scope.$watch('Bakery.resource.experience', watchExperience);
-				$scope.$watch('Bakery.resource.level', watchLevel);
+				$scope.$on('ability:onPress', Player.chooseAbility);
+        		$scope.$on('PcsCard1:updateAbility', Player.updateAbility);
+				$scope.$watch('CoreVars.EXP', Player.watchEXP);
+				$scope.$watch('Bakery.resource.experience', Player.watchExperience);
+				$scope.$watch('Bakery.resource.level', Player.watchLevel);
 			};
 			
 			var onDestroy = function(){
@@ -134,11 +130,6 @@ angular.module('core')
 				$scope.browsePcs();
 			};
 			
-			$scope.hideModal = function(){
-				$scope.modalShown = false;
-				$scope.diceBoxShown = false;
-				$scope.modalDeckShown = false;
-			};
 			
 			$scope.changeFeatureCard = function(card){
 				$scope.modalShown = true;
@@ -156,66 +147,6 @@ angular.module('core')
 	 				isOpen: $scope.status.isopen
 	 			});
 	 		};
-			
-			
-			var chooseAbility = function(event, object){
-				$scope.modalShown = true;
-				$scope.diceBoxShown = true;
-			};
-			
-			var updateAbility = function(event, object){
-				var abilityPair = object.abilityPair;
-				var ability1 = object.ability1;
-				var ability2 = object.ability2;
-				switch(abilityPair){
-					case 1:
-						PcsCard1.factorBlock(ability1, ability2);
-						PcsCard2.factorHealth();
-						PcsCard2.factorStamina();
-						PcsCard2.factorCarryingCapacity();
-						break;
-					case 2:
-						PcsCard1.factorDodge(ability1, ability2);
-						break;
-					case 3:
-						PcsCard1.factorAlertness(ability1, ability2);
-						break;
-					case 4:
-						PcsCard1.factorTenacity(ability1, ability2);
-						break;
-				}
-				$scope.modalShown = false;
-				$scope.diceBoxShown = false;
-			};
-			
-			//Watch for change in EXP input
-			var watchEXP = function(newValue, oldValue){
-				if (Bakery.resource && newValue !== oldValue){
-					PcsCard2.EXP = parseInt(newValue);
-					Bakery.resource.experience = parseInt(newValue);
-				}
-			};
-			
-			//Watch for change in experience
-			var watchExperience = function(newValue, oldValue){
-				if (Bakery.resource && newValue !== oldValue){
-					PcsCard2.factorExperience();
-					if (newValue !== PcsCard2.EXP){
-						PcsCard2.EXP = newValue;
-					}
-				}
-			};
-			
-			//Watch for changes in level
-			var watchLevel = function(newValue, oldValue){
-				if (Bakery.resource.abilities){
-					PcsCard2.factorHealth();
-					PcsCard2.factorStamina();
-					PcsTraits.factorTraitLimit();
-					PcsFeats.factorFeatLimit();
-					PcsAugments.factorAugmentLimit();
-				}
-			};
 			
 			initialize();
 			

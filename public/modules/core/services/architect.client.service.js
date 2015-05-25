@@ -35,8 +35,8 @@ angular.module('core').factory('Architect', ['$rootScope', 'Bakery', 'DecksBread
             resource.dependencies.push(deck);
         }
         
-        for(var i = 0; i < Bakery.resource.dependencies.length; i++){
-            DecksBread.browseAspects(Bakery.resource.dependencies[i]);
+        for(var i = 0; i < resource.dependencies.length; i++){
+            DecksBread.browseAspects(resource.dependencies[i]);
         }
     };
     

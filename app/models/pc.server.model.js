@@ -158,6 +158,13 @@ var PcSchema = new Schema({
 		type: Number,
 		default: 0
 	},
+	deckType: {
+		type: String,
+		default: 'pc'
+	},
+	deckSize: {
+		type: Number
+	},
 	cardList: []
 });
 

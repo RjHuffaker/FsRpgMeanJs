@@ -1,8 +1,9 @@
 'use strict';
 
 // Factory-service for managing PC card deck.
-angular.module('pcs').factory('PcsFeats', ['Bakery',
-	function(Bakery){
+angular.module('pcs').factory('PcsFeats', ['Bakery', 'CoreStack',
+	function(Bakery, CoreStack){
+		
 		var service = {};
 		
 		// Factor Feat Limit
@@ -28,7 +29,7 @@ angular.module('pcs').factory('PcsFeats', ['Bakery',
 		service.featAtLevel = function(level){
 			var featAtLevel = false;
 			for(var ib = 0; ib < Bakery.resource.cardList.length; ib++){
-				if(Bakery.resource.cardList[ib].cardType === 'feat'){
+				if(Bakery.resource.cardList[ib].panelType === 'Feat'){
 					if(Bakery.resource.cardList[ib].level === level){
 						featAtLevel = true;
 					}
@@ -39,16 +40,18 @@ angular.module('pcs').factory('PcsFeats', ['Bakery',
 		
 		service.addFeat = function(level){
 			var newFeat = {
-				name: 'Level '+level+' Feat',
-				cardType: 'feat',
-				x_coord: Bakery.resource.cardList[Bakery.lastCard()].x_coord + 15,
+				panelType: 'Feat',
+				x_coord: CoreStack.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
 				dragging: false,
 				stacked: false,
 				locked: true,
-				level: level
+				level: level,
+				featData: {
+					name: 'Level '+level+' Feat'
+				}
 			};
 			Bakery.resource.cardList.push(newFeat);
 		};

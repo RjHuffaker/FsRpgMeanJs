@@ -5,6 +5,7 @@ angular.module('core').factory('CoreVars', ['$rootScope', 'Bakery', 'CorePanel',
     function($rootScope, Bakery, CorePanel, CoreStack){
         var service = {};
         
+        service.experience = 0;
         service.x_dim = 15;
         service.y_dim = 21;
         service.x_tab = 3;
@@ -16,6 +17,10 @@ angular.module('core').factory('CoreVars', ['$rootScope', 'Bakery', 'CorePanel',
         var moveSpeed = 800;
         var moveTimer;
         
+        service.modalShown = false;
+        service.diceBoxShown = false;
+        service.modalDeckShown = false;
+        
         // Set move booleans
         service.setCardMoving = function(){
             clearTimeout(moveTimer);
@@ -25,6 +30,12 @@ angular.module('core').factory('CoreVars', ['$rootScope', 'Bakery', 'CorePanel',
                 service.cardMoving = false;
                 CoreStack.setDeckWidth(Bakery.resource.cardList);
             }, moveSpeed);
+        };
+        
+        service.hideModal = function(){
+            service.modalShown = false;
+            service.diceBoxShown = false;
+            service.modalDeckShown = false;
         };
         
         return service;

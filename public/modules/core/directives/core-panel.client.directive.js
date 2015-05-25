@@ -60,7 +60,6 @@ angular.module('core')
 					scope.$on('corePanel:onReleaseCard', onReleaseCard);
 					scope.$on('coreStack:onMouseLeave', onMouseLeave);
 					scope.$on('CardsCtrl:onDropdown', onDropdown);
-					scope.$on('Bakery:onDeckChange', onReleaseCard);
 					scope.$watch('panel.x_coord', resetPosition);
 					scope.$watch('panel.y_coord', resetPosition);
 					element.on(_pressEvents, onPress);
@@ -355,7 +354,6 @@ angular.module('core')
 				};
 				
 				var crossingEdge = function(mouseX, mouseY){
-					
 					var cardOffset = element.offset();
 					var slotX = cardOffset.left;
 					var slotY = cardOffset.top;

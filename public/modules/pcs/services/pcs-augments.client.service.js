@@ -1,8 +1,9 @@
 'use strict';
 
 // Factory-service for managing PC card deck.
-angular.module('pcs').factory('PcsAugments', ['Bakery', 
-	function(Bakery){
+angular.module('pcs').factory('PcsAugments', ['Bakery', 'CoreStack',
+	function(Bakery, CoreStack){
+		
 		var service = {};
 		
 		// Factor Augment Limit
@@ -27,7 +28,7 @@ angular.module('pcs').factory('PcsAugments', ['Bakery',
 		service.augmentAtLevel = function(level){
 			var augmentAtLevel = false;
 			for(var ib = 0; ib < Bakery.resource.cardList.length; ib++){
-				if(Bakery.resource.cardList[ib].cardType === 'augment'){
+				if(Bakery.resource.cardList[ib].panelType === 'Augment'){
 					if(Bakery.resource.cardList[ib].level === level){
 						augmentAtLevel = true;
 					}
@@ -38,16 +39,18 @@ angular.module('pcs').factory('PcsAugments', ['Bakery',
 		
 		service.addAugment = function(level){
 			var newAugment = {
-				name: 'Level '+level+' Augment',
-				cardType: 'augment',
-				x_coord: Bakery.resource.cardList[Bakery.lastCard()].x_coord + 15,
+				panelType: 'Augment',
+				x_coord: CoreStack.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
 				dragging: false,
 				stacked: false,
 				locked: true,
-				level: level
+				level: level,
+				augmentData: {
+					name: 'Level '+level+' Augment'
+				}
 			};
 			Bakery.resource.cardList.push(newAugment);
 		};

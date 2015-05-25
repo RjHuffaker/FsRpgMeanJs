@@ -5,12 +5,6 @@ angular.module('pcs').factory('PcsCard2', ['$rootScope', 'Bakery', 'PcsTraits',
 	function($rootScope, Bakery, PcsTraits){
 		var service = {};
 		
-		service.EXP = 0;
-		
-		if(Bakery.resource){
-			service.EXP = Bakery.resource.experience;
-		}
-		
 		service.factorExperience = function(){
 			var mLevel = 0;
 			var mExperience = Number(Bakery.resource.experience);
