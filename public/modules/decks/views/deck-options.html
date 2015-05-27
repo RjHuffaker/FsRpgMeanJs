@@ -34,8 +34,8 @@
 						<li role="presentation" ng-repeat="dependency in Bakery.dependencyDecks"
 							stop-click><label>
 							<input type="checkbox" value="dependency" 
-								ng-checked="Architect.findDependency(dependency, Bakery.resource) > -1"
-								ng-click="Architect.toggleDependency(dependency, Bakery.resource)" >
+								ng-checked="BuilderHub.findDependency(dependency, Bakery.resource) > -1"
+								ng-click="BuilderHub.toggleDependency(dependency, Bakery.resource)" >
 							{{dependency.name}}
 						</label></li>
 						

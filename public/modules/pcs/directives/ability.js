@@ -2,7 +2,7 @@
 
 // Directive for managing ability dice
 angular.module('pcs')
-    .directive('ability', ['$parse', '$rootScope', '$window', 'PcsCard1', function($parse, $rootScope, $window, PcsCard1){
+    .directive('ability', ['$parse', '$rootScope', '$window', 'abilityDice', function($parse, $rootScope, $window, abilityDice){
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
@@ -47,7 +47,7 @@ angular.module('pcs')
                     _ability = newVal;
                 };
                 
-                var getPosition = function(){
+                var getAbility = function(){
                     var offset = element.offset();
                     var caret = _ability.order < 4 ? 'top-caret' : 'bottom-caret';
                     var topEdge = _ability.order < 4 ? offset.top + convertEm(3) : offset.top - convertEm(9);
@@ -62,13 +62,14 @@ angular.module('pcs')
                 
                 
                 var onHeightChange = function(event, object){
-                    if(_ability.order === PcsCard1.chosenAbility.order){
-                        $rootScope.$broadcast('ability:setPosition', getPosition());
+                    if(_ability.order === abilityDice.chosenAbility.order){
+                        $rootScope.$broadcast('ability:setPosition', getAbility());
                     }
                 };
                 
                 var onPress = function(){
-                    $rootScope.$broadcast('ability:onPress', getPosition());
+                    abilityDice.chooseAbility(_ability);
+                    $rootScope.$broadcast('ability:onPress', getAbility());
                 };
                 
                 initialize();

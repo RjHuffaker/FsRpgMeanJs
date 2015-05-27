@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Bakery', 'CorePanel', 'CoreStack',
-    function($rootScope, CoreVars, Bakery, CorePanel, CoreStack){
+angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Bakery', 'MovePanel', 'MoveStack',
+    function($rootScope, CoreVars, Bakery, MovePanel, MoveStack){
         
         return function(cardList, panel){
             if(!CoreVars.cardMoved){
@@ -11,8 +11,8 @@ angular.module('core').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Bake
                 var panel_y = panel.y_coord;
                 var panel_x_overlap = panel.x_overlap;
                 var panel_y_overlap = panel.y_overlap;
-                var panel_index = CorePanel.getPanel(cardList, panel_x, panel_y).index;
-                var lowest_index = CoreStack.getLowestPanel(cardList, panel_x).index;
+                var panel_index = MovePanel.getPanel(cardList, panel_x, panel_y).index;
+                var lowest_index = MoveStack.getLowestPanel(cardList, panel_x).index;
                 var lowest_y = cardList[lowest_index].y_coord;
                 
                 if(panel_x > 0 && lowest_y === 0){

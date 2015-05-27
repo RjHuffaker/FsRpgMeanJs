@@ -29,10 +29,10 @@
 				<i class="glyphicon glyphicon-chevron-right alert-primary"></i> Insert After
 			</label></li>
 			<li role="presentation" class="dropdown-header" stop-click>Edit Options</li>
-			<li data-ng-click="$parent.Architect.toggleCardLock(panel);" ng-hide="panel.locked"><label>
+			<li data-ng-click="$parent.BuilderHub.toggleCardLock(panel);" ng-hide="panel.locked"><label>
 				<i class="glyphicon glyphicon-lock alert-primary"></i> Lock Card
 			</label></li>
-			<li data-ng-click="$parent.Architect.toggleCardLock(panel);" ng-show="panel.locked"><label>
+			<li data-ng-click="$parent.BuilderHub.toggleCardLock(panel);" ng-show="panel.locked"><label>
 				<i class="glyphicon glyphicon-lock blue-icon alert-primary"></i> Unlock Card
 			</label></li>
 			<li ng-hide="featureCard.$pristine" data-ng-click="$parent.editCard(panel); featureCard.$setPristine();"><label>

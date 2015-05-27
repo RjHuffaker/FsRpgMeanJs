@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'CoreStack', 'CorePanel', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CoreStack, CorePanel){
+angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'MoveStack', 'MovePanel', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, MoveStack, MovePanel){
     var service = {};
     
     var editDeck = function(deck, _loadDeck) {
@@ -17,7 +17,7 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
     
     //BROWSE
     service.browse = function(cardType, params, destination){
-        var cardParams = CorePanel.getCardParams(params);
+        var cardParams = MovePanel.getCardParams(params);
         Bakery.getCardResource(cardType).query(cardParams, function(response){
             return response;
         });
@@ -25,7 +25,7 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
     
     //READ
     service.read = function(panel, callback){
-        var params = CorePanel.getCardParams(panel);
+        var params = MovePanel.getCardParams(panel);
         Bakery.getCardResource(panel.panelType).get(
             params,
         function(response){
@@ -37,7 +37,7 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
     service.edit = function(panel){
         var cardResource = Bakery.getNewCardResource(panel);
         if(panel.panelType !== 'Aspect'){
-            var panelData = CorePanel.getPanelData(panel);
+            var panelData = MovePanel.getPanelData(panel);
             if(panelData.aspect) cardResource.aspect = panelData.aspect._id;
         }
         cardResource.$update();
@@ -59,16 +59,16 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
             y_coord: 0
         };
         
-        CorePanel.setPanelData(panel, card);
+        MovePanel.setPanelData(panel, card);
         
         var cardResource = Bakery.getNewCardResource(panel);
         
         cardResource.$save(function(response){
-            CorePanel.setPanelData(panel, response);
+            MovePanel.setPanelData(panel, response);
             deck.cardList.push(panel);
-            Bakery.setDeckSize(Bakery.resource);
+            MovePanel.setDeckSize(Bakery.resource);
         }).then(function(response){
-            if(deckShift) CorePanel.expandDeck(panel, Bakery.resource.cardList);
+            if(deckShift) MovePanel.expandDeck(panel, Bakery.resource.cardList);
         }).then(function(response){
             if(deckSave) editDeck(deck, true);
         });
@@ -80,11 +80,11 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
         
         var cardResource = Bakery.getNewCardResource(panel);
         cardResource.$remove(function(response){
-                if(deck) CorePanel.removePanel(deck.cardList, panel);
+                if(deck) MovePanel.removePanel(deck.cardList, panel);
             }).then(function(response){
-                if(deck) CorePanel.setDeckSize(deck);
+                if(deck) MovePanel.setDeckSize(deck);
             }).then(function(response){
-                if(deck) CorePanel.collapseDeck(panel, deck.cardList);
+                if(deck) MovePanel.collapseDeck(panel, deck.cardList);
             }).then(function(response){
                 if(deck) editDeck(deck, false);
         });

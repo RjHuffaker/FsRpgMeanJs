@@ -44,6 +44,11 @@ angular.element(document).ready(function() {
 'use strict';
 
 // Use application configuration module to register a new module
+ApplicationConfiguration.registerModule('builder');
+
+'use strict';
+
+// Use application configuration module to register a new module
 ApplicationConfiguration.registerModule('campaigns');
 
 'use strict';
@@ -63,6 +68,15 @@ ApplicationConfiguration.registerModule('decks');
 'use strict';
 
 // Use application configuration module to register a new module
+ApplicationConfiguration.registerModule('move');
+
+'use strict';
+
+// Use Applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('narrator');
+'use strict';
+
+// Use application configuration module to register a new module
 ApplicationConfiguration.registerModule('npcs');
 
 'use strict';
@@ -73,8 +87,66 @@ ApplicationConfiguration.registerModule('pcs');
 'use strict';
 
 // Use Applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('player');
+'use strict';
+
+// Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('users');
 
+'use strict';
+
+angular.module('core').factory('BuilderHub', ['$rootScope', 'Bakery', 'DecksBread', function($rootScope, Bakery, DecksBread) {
+    
+    var service = {};
+    
+    // Used by card-logo.html and feature-card.html
+    service.toggleCardLock = function(panel, cardList){
+        for(var i = 0; i < cardList.length; i++){
+            if (panel === cardList[i]){
+                cardList[i].locked = !cardList[i].locked;
+            }
+        }
+    };
+    
+    // Used by deck-options.html and 'toggleDependency'
+    service.findDependency = function(deck, resource){
+        var index = -1;
+        for(var i = 0; i < resource.dependencies.length; i++){
+            var dependency = resource.dependencies[i];
+            if (dependency._id === deck._id){
+                index = i;
+            }
+        }
+        return index;
+    };
+
+    // Used by core.client.controller
+    service.toggleDependency = function(deck, resource){
+        var deckIndex = service.findDependency(deck, resource);
+
+        if (deckIndex > -1) {
+            resource.dependencies.splice(deckIndex, 1);
+        } else {
+            resource.dependencies.push(deck);
+        }
+        
+        for(var i = 0; i < resource.dependencies.length; i++){
+            DecksBread.browseAspects(resource.dependencies[i]);
+        }
+    };
+    
+    // Used by card-header.html
+    service.changeAspect = function(card, aspect){
+        console.log(card);
+        console.log(aspect);
+        if (card.aspect !== aspect){
+            card.aspect = aspect;
+        }
+    };
+    
+    return service;
+    
+}]);
 'use strict';
 
 angular.module('campaigns').controller('CampaignsController', ['$scope', 'Socket',
@@ -447,7 +519,7 @@ angular.module('cards')
 	.directive('playerOptions', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/core/views/options-player.html'
+			templateUrl: '../modules/player/views/options-player.html'
 		};
 	})
 	.directive('pcSummary', function(){
@@ -480,7 +552,7 @@ angular.module('cards')
 			templateUrl: '../modules/pcs/views/card-pc-3.html'
 		};
 	})
-	.directive('featureCard', ['DataSRVC', 'Bakery', 'Architect', function(DataSRVC, Bakery, Architect){
+	.directive('featureCard', ['DataSRVC', 'Bakery', 'BuilderHub', function(DataSRVC, Bakery, BuilderHub){
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/cards/views/feature-card.html',
@@ -488,14 +560,14 @@ angular.module('cards')
 			link: function(scope, element, attrs){
 				scope.Bakery = Bakery;
 				scope.dataSRVC = DataSRVC;
-				scope.Architect = Architect;
+				scope.BuilderHub = BuilderHub;
 			}
 		};
 	}])
 	.directive('narratorOptions', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/core/views/options-narrator.html'
+			templateUrl: '../modules/narrator/views/options-narrator.html'
 		};
 	})
 	.directive('npcSummary', function(){
@@ -516,10 +588,10 @@ angular.module('cards')
 			templateUrl: '../modules/npcs/views/npc-origin.html'
 		};
 	})
-	.directive('architectOptions', function(){
+	.directive('builderOptions', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/core/views/options-architect.html'
+			templateUrl: '../modules/builder/views/options-builder.html'
 		};
 	})
 	.directive('deckSummary', function(){
@@ -594,7 +666,7 @@ angular.module('cards').factory('Augments', ['$resource',
         }]);
 'use strict';
 
-angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'CoreStack', 'CorePanel', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CoreStack, CorePanel){
+angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'MoveStack', 'MovePanel', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, MoveStack, MovePanel){
     var service = {};
     
     var editDeck = function(deck, _loadDeck) {
@@ -611,7 +683,7 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
     
     //BROWSE
     service.browse = function(cardType, params, destination){
-        var cardParams = CorePanel.getCardParams(params);
+        var cardParams = MovePanel.getCardParams(params);
         Bakery.getCardResource(cardType).query(cardParams, function(response){
             return response;
         });
@@ -619,7 +691,7 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
     
     //READ
     service.read = function(panel, callback){
-        var params = CorePanel.getCardParams(panel);
+        var params = MovePanel.getCardParams(panel);
         Bakery.getCardResource(panel.panelType).get(
             params,
         function(response){
@@ -631,7 +703,7 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
     service.edit = function(panel){
         var cardResource = Bakery.getNewCardResource(panel);
         if(panel.panelType !== 'Aspect'){
-            var panelData = CorePanel.getPanelData(panel);
+            var panelData = MovePanel.getPanelData(panel);
             if(panelData.aspect) cardResource.aspect = panelData.aspect._id;
         }
         cardResource.$update();
@@ -653,16 +725,16 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
             y_coord: 0
         };
         
-        CorePanel.setPanelData(panel, card);
+        MovePanel.setPanelData(panel, card);
         
         var cardResource = Bakery.getNewCardResource(panel);
         
         cardResource.$save(function(response){
-            CorePanel.setPanelData(panel, response);
+            MovePanel.setPanelData(panel, response);
             deck.cardList.push(panel);
-            Bakery.setDeckSize(Bakery.resource);
+            MovePanel.setDeckSize(Bakery.resource);
         }).then(function(response){
-            if(deckShift) CorePanel.expandDeck(panel, Bakery.resource.cardList);
+            if(deckShift) MovePanel.expandDeck(panel, Bakery.resource.cardList);
         }).then(function(response){
             if(deckSave) editDeck(deck, true);
         });
@@ -674,11 +746,11 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
         
         var cardResource = Bakery.getNewCardResource(panel);
         cardResource.$remove(function(response){
-                if(deck) CorePanel.removePanel(deck.cardList, panel);
+                if(deck) MovePanel.removePanel(deck.cardList, panel);
             }).then(function(response){
-                if(deck) CorePanel.setDeckSize(deck);
+                if(deck) MovePanel.setDeckSize(deck);
             }).then(function(response){
-                if(deck) CorePanel.collapseDeck(panel, deck.cardList);
+                if(deck) MovePanel.collapseDeck(panel, deck.cardList);
             }).then(function(response){
                 if(deck) editDeck(deck, false);
         });
@@ -775,8 +847,8 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
 
 // Core Controller
 angular.module('core')
-	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'Architect', 'Player', 'CoreVars',
-		function($location, $scope, $rootScope, $window, Authentication, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems, Architect, Player, CoreVars) {
+	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'BuilderHub', 'PlayerHub', 'CoreVars',
+		function($location, $scope, $rootScope, $window, Authentication, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsTraits, PcsFeats, PcsAugments, PcsItems, BuilderHub, PlayerHub, CoreVars) {
 			
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
@@ -784,12 +856,6 @@ angular.module('core')
 			$scope.Bakery = Bakery;
             
 			$scope.dataSRVC = DataSRVC;
-			
-			$scope.pcsCard1 = PcsCard1;
-			
-			$scope.pcsCard2 = PcsCard2;
-			
-			$scope.pcsCard3 = PcsCard3;
 			
 			$scope.pcsTraits = PcsTraits;
 			
@@ -799,9 +865,9 @@ angular.module('core')
 			
 			$scope.pcsItems = PcsItems;
 			
-			$scope.Architect = Architect;
+			$scope.BuilderHub = BuilderHub;
 			
-		//	$scope.Player = Player;
+			$scope.PlayerHub = PlayerHub;
 			
 			$scope.CoreVars = CoreVars;
 			
@@ -815,11 +881,10 @@ angular.module('core')
 				if (!enable) return;
 				$scope.$on('$destroy', onDestroy);
 				$scope.$on('screenSize:onHeightChange', onHeightChange);
-				$scope.$on('ability:onPress', Player.chooseAbility);
-        		$scope.$on('PcsCard1:updateAbility', Player.updateAbility);
-				$scope.$watch('CoreVars.EXP', Player.watchEXP);
-				$scope.$watch('Bakery.resource.experience', Player.watchExperience);
-				$scope.$watch('Bakery.resource.level', Player.watchLevel);
+				$scope.$on('ability:onPress', PlayerHub.chooseAbility);
+				$scope.$watch('CoreVars.EXP', PlayerHub.watchEXP);
+				$scope.$watch('Bakery.resource.experience', PlayerHub.watchExperience);
+				$scope.$watch('Bakery.resource.level', PlayerHub.watchLevel);
 			};
 			
 			var onDestroy = function(){
@@ -962,484 +1027,6 @@ angular.module('core').controller('HeaderController', ['$document', '$rootScope'
 }]);
 'use strict';
 
-// Directive for managing card decks.
-angular.module('core')
-	.directive('corePanel', ['$document', '$parse', '$rootScope', '$window', 'Bakery', 'CoreMove', function($document, $parse, $rootScope, $window, Bakery, CoreMove){
-		return {
-			restrict: 'A',
-			templateUrl: '../modules/core/views/core-panel.html',
-			link: function(scope, element, attrs){
-				
-				Array.min = function(array){
-					return Math.min.apply(Math, array);
-				};
-				
-				var _startX, _startY, 
-					_mouseX, _mouseY,
-					_moveX, _moveY,
-					_panelX, _panelY,
-					_slotX, _slotY,
-					_startCol, _mouseCol, _panelCol,
-					_startRow, _mouseRow, _panelRow,
-					_moveTimer,
-					_x_dim, _y_dim,
-					_x_tab, _y_tab,
-					_x_cover, _y_cover;
-				
-				var _dropdownOpen = false;
-				
-				var _stacked = false;
-				
-				var _panel = $parse(attrs.panel) || null;
-				
-				var _hasTouch = ('ontouchstart' in window);
-				
-				var _pressEvents = 'touchstart mousedown';
-				var _moveEvents = 'touchmove mousemove';
-				var _releaseEvents = 'touchend mouseup';
-				
-				var _pressTimer = null;
-				
-				var initialize = function(){
-					// prevent native drag
-					element.attr('draggable', 'false');
-					toggleListeners(true);
-					$document.ready(function () {
-						onHeightChange();
-					});
-				};
-				
-				var toggleListeners = function(enable){
-					// remove listeners
-					if (!enable)return;
-					
-					// add listeners
-					scope.$on('$destroy', onDestroy);
-					scope.$watch(attrs.panel, onCardChange);
-					scope.$on('screenSize:onHeightChange', onHeightChange);
-					scope.$on('corePanel:onPressCard', onPressCard);
-					scope.$on('corePanel:onMoveCard', onMoveCard);
-					scope.$on('corePanel:onReleaseCard', onReleaseCard);
-					scope.$on('coreStack:onMouseLeave', onMouseLeave);
-					scope.$on('CardsCtrl:onDropdown', onDropdown);
-					scope.$watch('panel.x_coord', resetPosition);
-					scope.$watch('panel.y_coord', resetPosition);
-					element.on(_pressEvents, onPress);
-					
-					// prevent native drag for images
-					 if(! _hasTouch && element[0].nodeName.toLowerCase() === 'img'){
-						element.on('mousedown', function(){ return false;});
-					}
-				};
-				
-				var onDestroy = function(enable){
-					toggleListeners(false);
-				};
-				
-				var onCardChange = function(newVal, oldVal){
-					_panel = newVal;
-					
-					element.css({
-						top: '0',
-						left: '-21em'
-					});
-					
-					setTimeout(function(){
-						setPosition();
-				//		setOffset();
-					}, 0);
-				};
-				
-				var onDropdown = function(event, object){
-					_dropdownOpen = object.isOpen;
-				};
-				
-				var getElementFontSize = function() {
-					return parseFloat(
-						$window.getComputedStyle(element[0], null).getPropertyValue('font-size')
-					);
-				};
-				
-				var convertEm = function(value) {
-					return value * getElementFontSize();
-				};
-				
-				var onHeightChange = function(event, object){
-					_x_dim = convertEm(15);
-					_y_dim = convertEm(21);
-					_x_tab = convertEm(3);
-					_y_tab = convertEm(3);
-					_x_cover = convertEm(12);
-					_y_cover = convertEm(18);
-					
-					setPosition();
-				};
-				
-				var resetPosition = function(newVal, oldVal){
-					if(element.hasClass('card-moving')){
-						setPosition();
-					//	setOffset();
-					}
-				};
-				
-				var setPosition = function(){
-					element.css({
-						top: _panel.y_coord + 'em',
-						left: _panel.x_coord + 'em'
-					});
-				};
-				
-				var setOffset = function(){
-					var offset = Math.random()*0.2 - 0.1;
-					element.css({
-						'-ms-transform': 'translate('+offset+'em,'+offset+'em)',
-						'-webkit-transform': 'translate('+offset+'em,'+offset+'em)',
-						'transform': 'translate('+offset+'em,'+offset+'em)'
-					});
-				};
-				
-				// When the element is clicked start the drag behaviour
-				var onPress = function(event){
-					if(!_dropdownOpen){
-						// Small delay for touch devices to allow for native window scrolling
-						if(_hasTouch){
-							cancelPress();
-							_pressTimer = setTimeout(function(){
-								cancelPress();
-								onLongPress(event);
-							}, 100);
-							
-							$document.on(_moveEvents, cancelPress);
-							$document.on(_releaseEvents, cancelPress);
-						}else if(!_hasTouch){
-							onLongPress(event);
-						}
-					} else {
-						$document.triggerHandler('click');
-					}
-				};
-				
-				var cancelPress = function(){
-					clearTimeout(_pressTimer);
-					$document.off(_moveEvents, cancelPress);
-					$document.off(_releaseEvents, cancelPress);
-				};
-				
-				// PRESS
-				// Primary "press" function
-				var onLongPress = function(event){
-					
-					_startX = (event.pageX || event.touches[0].pageX);
-					_startY = (event.pageY || event.touches[0].pageY);
-					
-					_moveX = 0;
-					_moveY = 0;
-					
-					$document.on(_moveEvents, onMove);
-					$document.on(_releaseEvents, onRelease);
-					
-					element.removeClass('card-moving');
-					
-					$rootScope.$broadcast('corePanel:onPressCard', {
-						startX: _startX,
-						startY: _startY,
-						panel: _panel
-					});
-				};
-				
-				var onPressCard = function(event, object){
-					
-					_startCol = convertEm(_panel.x_coord);
-					_startRow = convertEm(_panel.y_coord);
-					
-					var panel = object.panel;
-					var panel_x = panel.x_coord;
-					var panel_y = panel.y_coord;
-					var panel_y_overlap = panel.y_overlap;
-					
-					var slot = _panel;
-					var slot_x = slot.x_coord;
-					var slot_y = slot.y_coord;
-					
-					if(slot_y !== panel_y || slot_x !== panel_x){
-						if(slot_x !== panel_x){
-							element.addClass('card-moving');
-						} else if(slot_x !== panel_x && slot_y > panel_y && panel_y_overlap){
-							element.addClass('card-moving');
-						} else if(slot_x === panel_x && !panel_y_overlap){
-							element.addClass('card-moving');
-						}
-					}
-				};
-				
-				// MOVE
-				// Primary "move" function
-				var onMove = function(event){
-					event.preventDefault();
-					
-					_mouseX = (event.pageX || event.touches[0].pageX);
-					_mouseY = (event.pageY || event.touches[0].pageY);
-					
-					_mouseCol = convertEm(_panel.x_coord);
-					_mouseRow = convertEm(_panel.y_coord);
-					
-					_moveX = _mouseX - _startX;
-					_moveY = _mouseY - _startY;
-					
-					_panelX = _moveX + _startCol - (_startCol - _mouseCol);
-					_panelY = _moveY + _startRow - (_startRow - _mouseRow);
-					
-					element.css({
-						left: _moveX + _startCol + 'px',
-						top: _moveY + _startRow + 'px'
-					});
-					
-					$rootScope.$broadcast('corePanel:onMoveCard', {
-						mouseX: _mouseX,
-						mouseY: _mouseY,
-						moveX: _moveX,
-						moveY: _moveY,
-						panelX: _panelX,
-						panelY: _panelY,
-						panel: _panel
-					});
-				};
-				
-				// Callback function to move a single card or each card in a vertical stack
-				var onMoveCard = function(event, object){
-					
-					var mouseX = object.mouseX;
-					var mouseY = object.mouseY;
-					
-					var moveX = object.moveX;
-					var moveY = object.moveY;
-					
-					var vectorX = Math.abs(object.moveX);
-					var vectorY = Math.abs(object.moveY);
-					
-					var panel = object.panel;
-					var panel_x = panel.x_coord;
-					var panel_y = panel.y_coord;
-					var panel_x_overlap = panel.x_overlap;
-					var panel_y_overlap = panel.y_overlap;
-					
-					var slot = _panel;
-					var slot_x = slot.x_coord;
-					var slot_y = slot.y_coord;
-					var slot_x_overlap = slot.x_overlap;
-					var slot_y_overlap = slot.y_overlap;
-					
-					var changeX = Math.abs(panel_x - slot_x);
-					var changeY = Math.abs(panel_y - slot_y);
-					
-					if(changeX === 0 && slot_y > panel_y && panel_y_overlap){
-						if(!element.hasClass('card-moving')){	//Enables moving all cards within a stack
-							element.css({
-								left: (_startCol + moveX) + 'px',
-								top: (_startRow + moveY) + 'px'
-							});
-						}
-					} else if(changeX > 0 || changeY > 0){
-						if(crossingEdge(mouseX, mouseY) === 'top'){
-							if(vectorX > 0 && !slot_y_overlap && !slot_x_overlap && !panel_x_overlap){
-								console.log('corePanel:moveDiagonalUp');
-								CoreMove.moveDiagonalUp(slot, panel);
-							} else if(changeX === 0 && !panel_y_overlap){
-								console.log('corePanel:moveVertical');
-								CoreMove.moveVertical(slot, panel);
-							} else {
-								console.log('corePanel:moveHorizontal');
-								CoreMove.moveHorizontal(slot, panel);
-							}
-						} else if(crossingEdge(mouseX, mouseY) === 'bottom'){
-							if(changeX > 0 && changeX <= _x_dim){
-								console.log('corePanel:moveDiagonalDown');
-								CoreMove.moveDiagonalDown(slot, panel);
-							} else if(changeX === 0 && !panel_y_overlap){
-								console.log('corePanel:moveVertical');
-								CoreMove.moveVertical(slot, panel);
-							} else {
-								console.log('corePanel:moveHorizontal');
-								CoreMove.moveHorizontal(slot, panel);
-							}
-						} else if(crossingEdge(mouseX, mouseY) === 'left' || crossingEdge(mouseX, mouseY) === 'right'){
-							if(vectorY * 2 > vectorX){
-								if(moveY < 0){
-									console.log('corePanel:moveDiagonalUp');
-									CoreMove.moveDiagonalUp(slot, panel);
-								} else if(moveY > 0){
-									console.log('corePanel:moveDiagonalDown');
-									CoreMove.moveDiagonalDown(slot, panel);
-								}
-							} else {
-								console.log('corePanel:moveHorizontal');
-								CoreMove.moveHorizontal(slot, panel);
-							}
-						}
-					}
-				};
-				
-				// RELEASE
-				// Primary "release" function
-				var onRelease = function(){
-					$document.off(_moveEvents, onMove);
-					$document.off(_releaseEvents, onRelease);
-					$rootScope.$broadcast('corePanel:onReleaseCard', {
-						panel: _panel
-					});
-					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
-						CoreMove.triggerOverlap(_panel);
-					}
-				};
-				
-				// General response to "release" event
-				var onReleaseCard = function(event, object){
-					element.addClass('card-moving');
-					setTimeout(function(){
-						setPosition();
-					}, 0);
-					
-					clearTimeout(_moveTimer);
-					
-					_moveTimer = setTimeout(function(){
-						element.removeClass('card-moving');
-					}, 600);
-				};
-				
-				// Respond to 'onMouseLeave' event similar to onRelease, but without toggling overlap
-				var onMouseLeave = function(){
-					$document.off(_moveEvents, onMove);
-					$document.off(_releaseEvents, onRelease);
-					$rootScope.$broadcast('corePanel:onReleaseCard', {
-						panel: _panel
-					});
-				};
-				
-				var crossingEdge = function(mouseX, mouseY){
-					var cardOffset = element.offset();
-					var slotX = cardOffset.left;
-					var slotY = cardOffset.top;
-					var leftEdge = _panel.x_overlap ? slotX + _x_cover : slotX;
-					var rightEdge = slotX + _x_dim;
-					var topEdge = slotY;
-					var bottomEdge = _panel.y_overlap ? slotY + _y_tab : slotY + _y_dim;
-					
-				//	console.log('testing '+_panel.name+':  X '+_panel.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_panel.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
-					
-					if(mouseX >= leftEdge && mouseX <= rightEdge && mouseY >= topEdge && mouseY <= bottomEdge){
-						var left = mouseX - leftEdge;
-						var right = rightEdge - mouseX;
-						var top = mouseY - topEdge;
-						var bottom = bottomEdge - mouseY;
-						
-						var edges = [left, right, top, bottom],
-						closestEdge = Math.min.apply(Math.min, edges),
-						edgeNames = ['left', 'right', 'top', 'bottom'],
-						edgeName = edgeNames[edges.indexOf(closestEdge)];
-						
-				//		console.log('crossing '+edgeName+' edge of '+_panel.name+':  X '+_panel.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_panel.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
-						
-						return edgeName;
-					}
-				};
-				
-				initialize();
-				
-			}
-		};
-	}]);
-'use strict';
-
-// Directive for managing card decks.
-angular.module('core')
-	.directive('coreStack', ['$rootScope', '$window', 'Bakery', 'CoreStack', 'CoreMove', function($rootScope, $window, Bakery, CoreStack, CoreMove){
-		return {
-			restrict: 'A',
-			link: function(scope, element, attrs) {
-				
-				var pressed = false;
-				
-				var initialize = function(){
-					toggleListeners(true);
-				};
-				
-				var toggleListeners = function (enable) {
-					// remove listeners
-					if (!enable)return;
-					
-					// add listeners
-					scope.$on('$destroy', onDestroy);
-					element.on('mouseleave', onMouseLeave);
-					scope.$on('screenSize:onHeightChange', onHeightChange);
-					scope.$on('CoreStack:setDeckWidth', setDeckWidth);
-					scope.$on('corePanel:onPressCard', onPress);
-					scope.$on('corePanel:onReleaseCard', onRelease);
-					scope.$on('corePanel:onMoveCard', onMoveCard);
-				};
-				
-				var onDestroy = function(enable){
-					toggleListeners(false);
-				};
-				
-				var onHeightChange = function(event, object){
-					var windowHeight = object.newHeight-50;
-					element.css({
-						'height': windowHeight+'px'
-					});
-				};
-				
-				var setDeckWidth = function(){
-					var deckWidth = CoreStack.getDeckWidth(Bakery.resource.cardList);
-					element.css({
-						'width': deckWidth+'em'
-					});
-				};
-				
-				var getElementFontSize = function(){
-					return parseFloat(
-						$window.getComputedStyle(element[0], null).getPropertyValue('font-size')
-					);
-				};
-				
-				var convertEm = function(value) {
-					return value * getElementFontSize();
-				};
-				
-				var onPress = function(){
-					pressed = true;
-				};
-				
-				var onRelease = function(){
-					pressed = false;
-				};
-				
-				var onMoveCard = function(event, object){
-					
-					var deckOffset = element.offset();
-					var deckWidth = CoreStack.getDeckWidth(Bakery.resource.cardList);
-					var deckLeftEdge = deckOffset.left;
-					var deckRightEdge = convertEm(deckWidth + 3);
-					
-					if(object.mouseX <= deckLeftEdge){
-						CoreMove.unstackLeft(object.panel);
-					} else if(object.mouseX >= deckRightEdge){
-						CoreMove.unstackRight(object.panel);
-					}
-					
-				};
-				
-				var onMouseLeave = function(event){
-					if(pressed){
-						$rootScope.$broadcast('coreStack:onMouseLeave');
-					}
-				};
-				
-				initialize();
-			}
-		};
-	}]);
-'use strict';
-
 angular.module('core')
 	.directive('modalDialogWindow', function() {
 		return {
@@ -1513,62 +1100,8 @@ coreModule
 	}]);
 'use strict';
 
-angular.module('core').factory('Architect', ['$rootScope', 'Bakery', 'DecksBread', function($rootScope, Bakery, DecksBread) {
-    
-    var service = {};
-    
-    // Used by card-logo.html and feature-card.html
-    service.toggleCardLock = function(panel, cardList){
-        for(var i = 0; i < cardList.length; i++){
-            if (panel === cardList[i]){
-                cardList[i].locked = !cardList[i].locked;
-            }
-        }
-    };
-    
-    // Used by deck-options.html and 'toggleDependency'
-    service.findDependency = function(deck, resource){
-        var index = -1;
-        for(var i = 0; i < resource.dependencies.length; i++){
-            var dependency = resource.dependencies[i];
-            if (dependency._id === deck._id){
-                index = i;
-            }
-        }
-        return index;
-    };
-
-    // Used by core.client.controller
-    service.toggleDependency = function(deck, resource){
-        var deckIndex = service.findDependency(deck, resource);
-
-        if (deckIndex > -1) {
-            resource.dependencies.splice(deckIndex, 1);
-        } else {
-            resource.dependencies.push(deck);
-        }
-        
-        for(var i = 0; i < resource.dependencies.length; i++){
-            DecksBread.browseAspects(resource.dependencies[i]);
-        }
-    };
-    
-    // Used by card-header.html
-    service.changeAspect = function(card, aspect){
-        console.log(card);
-        console.log(aspect);
-        if (card.aspect !== aspect){
-            card.aspect = aspect;
-        }
-    };
-    
-    return service;
-    
-}]);
-'use strict';
-
 // General BREAD Factory-service.
-angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'CoreStack', 'CorePanel', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, CoreStack, CorePanel, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
+angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'MoveStack', 'MovePanel', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, MoveStack, MovePanel, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
 	var service = {};
     
     service.Decks = Decks;
@@ -1634,384 +1167,8 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('CoreMove', ['$rootScope', 'CoreVars', 'Bakery', 'CorePanel', 'CoreStack', 'switchHorizontal', 'switchVertical', 'stackOver', 'stackUnder', 'unstackCard', 'toggleOverlap',
-	function($rootScope, CoreVars, Bakery, CorePanel, CoreStack, switchHorizontal, switchVertical, stackOver, stackUnder, unstackCard, toggleOverlap){
-		
-		var service = {};
-		
-		service.windowHeight = 0;
-		
-		var getCardList = function(){
-			return Bakery.resource.cardList;
-		};
-		
-		var initialize = function(){
-			toggleListeners(true);
-		};
-		
-		var toggleListeners = function(enable){
-			if(!enable) return;
-			$rootScope.$on('screenSize:onHeightChange', onHeightChange);
-			
-			$rootScope.$on('corePanel:onPressCard', onPressCard);
-			$rootScope.$on('corePanel:onReleaseCard', onReleaseCard);
-		};
-		
-		var onHeightChange = function(event, object){
-			service.windowHeight = object.newHeight;
-		};
-		
-		// Reset move variables
-		var onPressCard = function(event, object){
-			var _deck = getCardList();
-			var panel = object.panel;
-			var panel_x = panel.x_coord;
-			var panel_y = panel.y_coord;
-			var panel_index = CorePanel.getPanel(_deck, panel_x, panel_y).index;
-			
-			CoreVars.cardMoved = false;
-			if(_deck[panel_index].y_overlap){
-				for(var ia = 0; ia < _deck.length; ia++){
-					if(_deck[ia].x_coord === panel_x && _deck[ia].y_coord >= panel_y){
-						_deck[ia].dragging = true;
-					}
-				}
-			} else {
-				_deck[panel_index].dragging = true;
-			}
-		};
-		
-		// Reset move variables
-		var onReleaseCard = function(event, object){
-			var _deck = getCardList();
-			
-			CoreVars.cardMoved = false;
-			for(var ia = 0; ia < _deck.length; ia++){
-				_deck[ia].dragging = false;
-			}
-		};
-		
-		service.triggerOverlap = function(panel){
-			if(!CoreVars.cardMoved){
-				var _deck = getCardList();
-				toggleOverlap(_deck, panel);
-			}
-		};
-		
-		service.moveHorizontal = function(slot, panel){
-			var _deck = getCardList();
-			var _lowest_index = CoreStack.getLowestPanel(_deck, panel.x_coord).index;
-			if(panel.y_coord > 0 || (panel.y_coord === 0 && panel.stacked && !panel.y_overlap)){
-				console.log('unstackCard');
-				unstackCard(_deck, slot, panel);
-			} else if (panel.y_coord === 0){
-				console.log('switchHorizontal');
-				switchHorizontal(_deck, slot, panel);
-			}
-		};
-
-		service.moveDiagonalUp = function(slot, panel){
-			var _deck = getCardList();
-			var _lowest_index = CoreStack.getLowestPanel(_deck, panel.x_coord).index;
-			if(panel.y_coord === 0){
-				stackUnder(_deck, slot, panel);
-			} else {
-				unstackCard(_deck, slot, panel);
-			}
-		};
-
-		service.moveDiagonalDown = function(slot, panel){
-			var _deck = getCardList();
-			var _lowest_index = CoreStack.getLowestPanel(_deck, panel.x_coord).index;
-			if(panel.y_coord === 0){
-				stackOver(_deck, slot, panel);
-			} else {
-				unstackCard(_deck, slot, panel);
-			}
-		};
-		
-		service.moveVertical = function(slot, panel){
-			var _deck = getCardList();
-			switchVertical(_deck, slot, panel);
-		};
-		
-		service.unstackLeft = function(panel){
-			if(panel.y_coord > 0){
-				var _deck = getCardList();
-				var unstack_coord = CorePanel.getPanel(_deck, 0, 0).panel.x_coord - CoreVars.x_dim;
-				unstackCard(_deck, {x_coord: unstack_coord}, panel);
-			}
-		};
-		
-		service.unstackRight = function(panel){
-			if(panel.y_coord > 0){
-				var _deck = getCardList();
-				var _last = CoreStack.getLastPanel(_deck);
-				var unstack_coord = _last.panel.x_coord + CoreVars.x_dim;
-				unstackCard(_deck, {x_coord: unstack_coord}, panel);
-			}
-		};
-		
-		initialize();
-		
-		return service;
-	}]);
-
-'use strict';
-
-// Panel helper-functions
-angular.module('core').factory('CorePanel', ['$rootScope', '$resource', function($rootScope, $resource) {
-    
-    var service = {};
-    
-    service.getPanel = function(cardList, x_coord, y_coord){
-        if (cardList.length > 0){
-            var _index = 0;
-            var _panel = { x_coord: 0 };
-            for(var i = 0; i < cardList.length; i++){
-                if (cardList[i].x_coord === x_coord && cardList[i].y_coord === y_coord){
-                    return{
-                        index: i, panel: cardList[i]
-                    };
-                }
-            }
-        }
-    };
-    
-    service.removePanel = function(panel, cardList){
-        for(var i = 0; i < cardList.length; i++){
-            if (cardList[i] === panel ) {
-                cardList.splice(i, 1);
-            }
-        }
-    };
-    
-    service.getPanelData = function(panel){
-        switch(panel.panelType){
-            case 'Aspect':
-                return panel.aspectData;
-            case 'Trait':
-                return panel.traitData;
-            case 'Feat':
-                return panel.featData;
-            case 'Augment':
-                return panel.augmentData;
-            case 'Item':
-                return panel.itemData;
-            case 'Origin':
-                return panel.originData;
-            default:
-                return false;
-        }
-    };
-    
-    service.setPanelData = function(panel, cardData){
-        switch(panel.panelType){
-            case 'Aspect':
-                panel.aspectData = cardData;
-                break;
-            case 'Trait':
-                panel.traitData = cardData;
-                break;
-            case 'Feat':
-                panel.featData = cardData;
-                break;
-            case 'Augment':
-                panel.augmentData = cardData;
-                break;
-            case 'Item':
-                panel.itemData = cardData;
-                break;
-            case 'Origin':
-                panel.originData = cardData;
-                break;
-            default:
-                return false;
-        }
-    };
-    
-    service.getCardParams = function(panel){
-        var cardId;
-        switch(panel.panelType){
-            case 'Aspect':
-                cardId = panel.aspectData._id;
-                return { aspectId: panel.aspectData._id };
-            case 'Trait':
-                cardId = panel.traitData._id;
-                return { traitId: panel.traitData._id };
-            case 'Feat':
-                cardId = panel.featData._id;
-                return { featId: panel.featData._id };
-            case 'Augment':
-                cardId = panel.augmentData._id;
-                return { augmentId: panel.augmentData._id };
-            case 'Item':
-                cardId = panel.itemData._id;
-                return { itemId: panel.itemData._id };
-            case 'Origin':
-                cardId = panel.originData._id;
-                return { originId: panel.originData._id };
-            default:
-                return false;
-        }
-    };
-    
-    service.expandDeck = function(panel, cardList){
-        var panel_x_coord = panel.x_coord;
-        var panel_y_coord = panel.y_coord;
-        
-        for(var i = 0; i < cardList.length; i++){
-            var slot = cardList[i];
-            
-            var slotData = service.getPanelData(slot);
-            if (slot !== panel && slot.x_coord >= panel_x_coord){
-                slot.x_coord += 15;
-                slotData.cardNumber++;
-            }
-        }
-        $rootScope.$broadcast('corePanel:onReleaseCard');
-    };
-    
-    service.collapseDeck = function(panel, cardList){
-        var panel_x_coord = panel.x_coord;
-        var panel_y_coord = panel.y_coord;
-        
-        for(var i = 0; i < cardList.length; i++){
-            var slot = cardList[i];
-            var slotData = service.getPanelData(slot);
-            if (slot.x_coord > panel_x_coord){
-                slot.x_coord -= 15;
-                slotData.cardNumber--;
-            }
-        }
-        $rootScope.$broadcast('corePanel:onReleaseCard');
-    };
-    
-    service.setDeckSize = function(resource){
-        var _length = resource.cardList.length - 1;
-        resource.deckSize = _length;
-        for(var i = 0; i < resource.cardList.length; i++){
-            var panel = resource.cardList[i];
-            var panelData = service.getPanelData(panel);
-            panelData.deckSize = _length;
-        }
-    };
-    
-    return service;
-    
-}]);
-'use strict';
-
-// Stack helper-functions
-angular.module('core').factory('CoreStack', ['$rootScope', function($rootScope) {
-    
-    var service = {};
-    
-    service.getLastPanel = function(cardList){
-        var _index = 0;
-        var _panel = { x_coord: 0 };
-        if(cardList.length > 0){
-            for(var i = 0; i < cardList.length; i++){
-                if(cardList[i].x_coord > (_panel.x_coord || -1)){
-                    _index = i;
-                    _panel = cardList[i];
-                }
-            }
-        }
-        return {
-            index: _index, panel: _panel
-        };  
-    };
-    
-    service.getLowestPanel = function(cardList, x_coord){
-        var _index = 0;
-        var _panel = { y_coord: 0 };
-        if(cardList.length > 0){
-            for(var i = 0; i < cardList.length; i++){
-                if(cardList[i].x_coord === x_coord){
-                    if(cardList[i].y_coord > (_panel.y_coord || -1)){
-                        _index = i;
-                        _panel = cardList[i];
-                    }
-                }
-            }
-        }
-        return {
-            index: _index, panel: _panel
-        };
-    };
-    
-    service.getDeckWidth = function(cardList){
-        var lastPanel = service.getLastPanel(cardList);
-        return lastPanel.panel.x_coord + 15;
-    };
-    
-    service.setDeckWidth = function(cardList){
-        var _deckWidth = service.getDeckWidth(cardList);
-        $rootScope.$broadcast('CoreStack:setDeckWidth', {
-            deckWidth: _deckWidth
-        });
-    };
-    
-    service.setCardList = function(cardList){
-        for(var i = 0; i < cardList.length; i++){
-            cardList[i].x_coord = i * 15;
-            cardList[i].y_coord = 0;
-            cardList[i].x_overlap = false;
-            cardList[i].y_overlap = false;
-            cardList[i].dragging = false;
-            cardList[i].stacked = false;
-            cardList[i].locked = false;
-        }
-        $rootScope.$broadcast('corePanel:onReleaseCard');
-    };
-    
-    service.getColumnArray = function(cardList, x_coord){
-        var _column = [];
-        for(var i =0; i < cardList.length; i++){
-            if (cardList[i].x_coord === x_coord){
-                _column.push(i);
-            }
-        }
-        return _column;
-    };
-    
-    service.setColumnVars = function(cardList, x_coord){
-        var _lowest = service.getLowestPanel(cardList, x_coord);
-        if (_lowest.panel.y_coord > 0){
-            var _column = service.getColumnArray(cardList, x_coord);
-            _column.sort(function(a, b){
-                return cardList[a].y_coord - cardList[b].y_coord;
-            });
-            for(var i = 0; i < _column.length; i++){
-                cardList[_column[i]].stacked = true;
-                if (_column[i] === _lowest.index){
-                    cardList[_column[i]].y_overlap = false;
-                } else {
-                    var _panel = cardList[_column[i]];
-                    var _next = cardList[_column[i+1]];
-                    if (_next.y_coord - _panel.y_coord === 3){
-                        _panel.y_overlap = true;
-                    } else if(_next.y_coord - _panel.y_coord === 21){
-                        _panel.y_overlap = false;
-                    }
-                }
-            }
-        } else {
-            cardList[_lowest.index].stacked = false;
-            cardList[_lowest.index].y_overlap = false;
-        }
-    };
-    
-    
-    return service;
-    
-}]);
-'use strict';
-
-// Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('CoreVars', ['$rootScope', 'Bakery', 'CorePanel', 'CoreStack',
-    function($rootScope, Bakery, CorePanel, CoreStack){
+angular.module('core').factory('CoreVars', ['$rootScope', 'Bakery', 'MovePanel', 'MoveStack',
+    function($rootScope, Bakery, MovePanel, MoveStack){
         var service = {};
         
         service.experience = 0;
@@ -2023,22 +1180,20 @@ angular.module('core').factory('CoreVars', ['$rootScope', 'Bakery', 'CorePanel',
         service.y_cover = 18;
         service.cardMoved = false;
         service.cardMoving = false;
-        var moveSpeed = 800;
         var moveTimer;
         
         service.modalShown = false;
         service.diceBoxShown = false;
         service.modalDeckShown = false;
         
-        // Set move booleans
         service.setCardMoving = function(){
             clearTimeout(moveTimer);
             service.cardMoving = true;
             service.cardMoved = true;
             moveTimer = setTimeout(function(){
                 service.cardMoving = false;
-                CoreStack.setDeckWidth(Bakery.resource.cardList);
-            }, moveSpeed);
+                MoveStack.setDeckWidth(Bakery.resource.cardList);
+            }, 800);
         };
         
         service.hideModal = function(){
@@ -2648,75 +1803,6 @@ angular.module('core').factory('mockDataBuilder', function() {
 });
 'use strict';
 
-angular.module('core').factory('Player', ['$rootScope', 'CoreVars', 'Bakery', 'PcsCard1', 'PcsCard2', 'PcsTraits', 'PcsFeats', 'PcsAugments', function($rootScope, CoreVars, Bakery, PcsCard1, PcsCard2, PcsTraits, PcsFeats, PcsAugments) {
-    
-    var service = {};
-    
-    service.updateAbility = function(event, object){
-        console.log('updateAbility');
-        console.log(object);
-        
-        var abilityPair = object.abilityPair;
-        var ability1 = object.ability1;
-        var ability2 = object.ability2;
-        switch(abilityPair){
-            case 1:
-                PcsCard1.factorBlock(ability1, ability2);
-                PcsCard2.factorHealth();
-                PcsCard2.factorStamina();
-                PcsCard2.factorCarryingCapacity();
-                break;
-            case 2:
-                PcsCard1.factorDodge(ability1, ability2);
-                break;
-            case 3:
-                PcsCard1.factorAlertness(ability1, ability2);
-                break;
-            case 4:
-                PcsCard1.factorTenacity(ability1, ability2);
-                break;
-        }
-    };
-    
-    service.chooseAbility = function(event, object){
-        CoreVars.modalShown = true;
-        CoreVars.diceBoxShown = true;
-    };
-    
-    //Watch for change in EXP input
-    service.watchEXP = function(newValue, oldValue){
-        if (Bakery.resource.deckType === 'pc' && newValue !== oldValue){
-            CoreVars.EXP = parseInt(newValue);
-            Bakery.resource.experience = parseInt(newValue);
-        }
-    };
-    
-    //Watch for change in experience
-    service.watchExperience = function(newValue, oldValue){
-        if (Bakery.resource.deckType === 'pc' && newValue !== oldValue){
-            PcsCard2.factorExperience();
-            if (newValue !== PcsCard2.EXP){
-                CoreVars.EXP = newValue;
-            }
-        }
-    };
-    
-    //Watch for changes in level
-    service.watchLevel = function(newValue, oldValue){
-        if (Bakery.resource.deckType === 'pc'){
-            PcsCard2.factorHealth();
-            PcsCard2.factorStamina();
-            PcsTraits.factorTraitLimit();
-            PcsFeats.factorFeatLimit();
-            PcsAugments.factorAugmentLimit();
-        }
-    };
-    
-    return service;
-    
-}]);
-'use strict';
-
 //socket factory that provides the socket service
 angular.module('core').factory('Socket', ['socketFactory',
     function(socketFactory) {
@@ -2728,406 +1814,7 @@ angular.module('core').factory('Socket', ['socketFactory',
 ]);
 'use strict';
 
-// Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('stackOver', ['$rootScope', 'CoreVars', 'Bakery', 'CorePanel', 'CoreStack',
-    function($rootScope, CoreVars, Bakery, CorePanel, CoreStack){
-        
-        return function(cardList, slot, panel){
-            if(!CoreVars.cardMoving && !slot.x_overlap && !panel.x_overlap){
-                
-                var slot_x = slot.x_coord;
-                var slot_y = slot.y_coord;
-                var slot_index = CorePanel.getPanel(cardList, slot_x, slot_y).index;
-                var slot_x_overlap = slot.x_overlap;
-                var slot_y_overlap = slot.y_overlap;
-                
-                var panel_x = panel.x_coord;
-                var panel_y = panel.y_coord;
-                var panel_index = CorePanel.getPanel(cardList, panel_x, panel_y).index;
-                var panel_x_overlap = panel.x_overlap;
-                var panel_y_overlap = panel.y_overlap;
-                var panel_lowest_index = CoreStack.getLowestPanel(cardList, panel_x).index;
-                var panel_lowest_coord = cardList[panel_lowest_index].y_coord;
-                
-                var newColumn = panel_x > slot_x ? slot_x : slot_x - CoreVars.x_dim;
-                
-                if(!slot_x_overlap && !panel_x_overlap){
-                    CoreVars.setCardMoving();
-                    for(var ia = 0; ia < cardList.length; ia++){
-                        if(!cardList[ia].dragging && cardList[ia].x_coord === newColumn && cardList[ia].y_coord > slot_y){
-                            cardList[ia].y_coord += panel_lowest_coord + CoreVars.y_tab;
-                        }
-                        if(cardList[ia].dragging){
-                            cardList[ia].x_coord = slot_x;
-                            cardList[ia].y_coord += slot_y + CoreVars.y_tab - panel_y;
-                        }
-                        if(cardList[ia].x_coord > panel_x && panel_y === 0){
-                            cardList[ia].x_coord -= CoreVars.x_dim;
-                        }
-                    }
-                    CoreStack.setColumnVars(cardList, newColumn);
-                    CoreStack.setColumnVars(cardList, slot_x);
-                    CoreStack.setColumnVars(cardList, panel_x);
-                }
-                $rootScope.$digest();
-            }
-        };
-        
-    }]);
-'use strict';
-
-// Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('stackUnder', ['$rootScope', 'CoreVars', 'Bakery', 'CorePanel', 'CoreStack',
-    function($rootScope, CoreVars, Bakery, CorePanel, CoreStack){
-        
-        // Stack one card behind another and reposition deck to fill the gap
-        return function(cardList, slot, panel){
-            if(!CoreVars.cardMoving && !slot.x_overlap && !panel.x_overlap){
-                
-                var panel_x = panel.x_coord;
-                var panel_y = panel.y_coord;
-                var panel_index = CorePanel.getPanel(cardList, panel_x, panel_y).index;
-                var panel_x_overlap = panel.x_overlap;
-                var panel_y_overlap = panel.y_overlap;
-                var panel_lowest_coord = CoreStack.getLowestPanel(cardList, panel_x).panel.y_coord;
-                
-                var slot_x = slot.x_coord;
-                var slot_y = slot.y_coord;
-                var slot_index = CorePanel.getPanel(cardList, slot_x, slot_y).index;
-                var slot_lowest_coord = CoreStack.getLowestPanel(cardList, slot_x).panel.y_coord;
-                var newColumn = panel_x > slot_x ? slot_x : slot_x - CoreVars.x_dim;
-                
-                CoreVars.setCardMoving();
-                for(var ia = 0; ia < cardList.length; ia++){
-                    if(!cardList[ia].dragging && cardList[ia].x_coord === slot_x){
-                        cardList[ia].y_coord += panel_lowest_coord + CoreVars.y_tab;
-                    }
-                    if(cardList[ia].x_coord > panel_x){
-                        cardList[ia].x_coord -= CoreVars.x_dim;
-                    }
-                    if(cardList[ia].dragging){
-                        cardList[ia].x_coord = newColumn;
-                    }
-                }
-                CoreStack.setColumnVars(cardList, newColumn);
-                CoreStack.setColumnVars(cardList, slot_x);
-                CoreStack.setColumnVars(cardList, panel_x);
-                $rootScope.$digest();
-            }
-        };
-        
-    }]);
-'use strict';
-
-// Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('switchHorizontal', ['$rootScope', 'CoreVars', 'Bakery', 'CorePanel', 'CoreStack',
-    function($rootScope, CoreVars, Bakery, CorePanel, CoreStack){
-        
-        return function(cardList, slot, panel){
-            console.log('switchHorizontal');
-            if(!CoreVars.cardMoving){
-                
-                var slot_x = slot.x_coord;
-                var slot_y = slot.y_coord;
-                var slot_index = CorePanel.getPanel(cardList, slot_x, slot_y).index;
-                var slot_x_overlap = slot.x_overlap;
-                var slot_position = slot_x;
-                
-                var panel_x = panel.x_coord;
-                var panel_y = panel.y_coord;
-                var panel_index = CorePanel.getPanel(cardList, panel_x, panel_y).index;
-                var panel_x_overlap = panel.x_overlap;
-                var panel_width = CoreVars.x_dim;
-                
-                if(panel_x - slot_x > 0){
-                // PANEL MOVING LEFT
-                    CoreVars.setCardMoving();
-                    
-                    if(slot_x === 0 && panel_x_overlap){
-                        slot_position = 0;
-                        panel_width -= CoreVars.x_cover;
-                        cardList[slot_index].x_overlap = true;
-                        cardList[panel_index].x_overlap = false;
-                    } else {
-                        if(panel_x_overlap){
-                            panel_width -= CoreVars.x_cover;
-                            slot_position -= CoreVars.x_cover;
-                        }
-                        if(slot_x_overlap){
-                            slot_position += CoreVars.x_cover;
-                        }
-                    }
-                    for(var ia = 0; ia < cardList.length; ia++){
-                        if(cardList[ia].x_coord >= slot_x && cardList[ia].x_coord < panel_x){
-                        // Modify position of each card in "SLOT" column and to the left of "PANEL" column
-                            cardList[ia].x_coord += panel_width;
-                        } else if(cardList[ia].x_coord === panel_x){
-                        // Modify position of each card in "PANEL" column
-                            cardList[ia].x_coord = slot_position;
-                        }
-                    }
-                } else if(panel_x - slot_x < 0){
-                // PANEL MOVING RIGHT
-                    CoreVars.setCardMoving();
-                    if(panel_x === 0 && slot_x_overlap){
-                        var first_index = CorePanel.getPanel(cardList, 0, 0);
-                //      cardList[first_index].x_coord = 0;
-                        cardList[first_index].x_overlap = false;
-                        cardList[panel_index].x_overlap = true;
-                        panel_width -= CoreVars.x_cover;
-                    } else if(panel_x > 0){
-                        if(panel_x_overlap){
-                            panel_width -= CoreVars.x_cover;
-                        }
-                    }
-                    
-                    for(var ib = 0; ib < cardList.length; ib++){
-                        if(cardList[ib].x_coord <= slot_x && cardList[ib].x_coord > panel_x){
-                        // Modify position of each card in "SLOT" column
-                            cardList[ib].x_coord -= panel_width;
-                        } else if(cardList[ib].x_coord === panel_x){
-                        // Modify position of each card in "PANEL" column
-                            cardList[ib].x_coord = slot_position;
-                        }
-                    }
-                }
-                $rootScope.$digest();
-            }
-        };
-        
-    }]);
-'use strict';
-
-// Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('switchVertical', ['$rootScope', 'CoreVars', 'Bakery', 'CorePanel', 'CoreStack',
-    function($rootScope, CoreVars, Bakery, CorePanel, CoreStack){
-        
-        return function(cardList, slot, panel){
-            console.log('switchVertical');
-            if(!CoreVars.cardMoving){
-                
-                var slot_x = slot.x_coord;
-                var slot_y = slot.y_coord;
-                var slot_index = CorePanel.getPanel(cardList, slot_x, slot_y).index;
-                var slot_y_overlap = slot.y_overlap;
-                
-                var panel_x = panel.x_coord;
-                var panel_y = panel.y_coord;
-                
-                var panel_index = CorePanel.getPanel(cardList, panel_x, panel_y).index;
-                var panel_y_overlap = panel.y_overlap;
-                
-                var lowest_index = CoreStack.getLowestPanel(cardList, slot_x).index;
-                var lowest_y = cardList[lowest_index].y_coord;
-                
-                if(panel_y - slot_y > 0){
-                // PANEL MOVING UP
-                    CoreVars.setCardMoving();
-                    
-                    cardList[slot_index].y_coord = panel_y;
-                    cardList[slot_index].y_overlap = panel_y_overlap;
-                    $rootScope.$digest();
-                    cardList[panel_index].y_coord = slot_y;
-                    cardList[panel_index].y_overlap = slot_y_overlap;
-                    
-                } else if(panel_y - slot_y < 0){
-                // PANEL MOVING DOWN
-                    CoreVars.setCardMoving();
-                    
-                    cardList[slot_index].y_coord = panel_y;
-                    cardList[slot_index].y_overlap = panel_y_overlap;
-                    $rootScope.$digest();
-                    cardList[panel_index].y_coord = slot_y;
-                    cardList[panel_index].y_overlap = slot_y_overlap;
-                }
-                $rootScope.$digest();
-            }
-        };
-        
-    }]);
-'use strict';
-
-// Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Bakery', 'CorePanel', 'CoreStack',
-    function($rootScope, CoreVars, Bakery, CorePanel, CoreStack){
-        
-        return function(cardList, panel){
-            if(!CoreVars.cardMoved){
-                
-                var panel_x = panel.x_coord;
-                var panel_y = panel.y_coord;
-                var panel_x_overlap = panel.x_overlap;
-                var panel_y_overlap = panel.y_overlap;
-                var panel_index = CorePanel.getPanel(cardList, panel_x, panel_y).index;
-                var lowest_index = CoreStack.getLowestPanel(cardList, panel_x).index;
-                var lowest_y = cardList[lowest_index].y_coord;
-                
-                if(panel_x > 0 && lowest_y === 0){
-                // x_overlap
-                    if(panel_x_overlap && !CoreVars.cardMoving){
-                    // Card overlapped
-                        CoreVars.setCardMoving();
-                        cardList[panel_index].x_overlap = false;
-                        for(var ia = 0; ia < cardList.length; ia++){
-                            if(panel_x <= cardList[ia].x_coord){
-                                cardList[ia].x_coord += CoreVars.x_cover;
-                            }
-                        }
-                    } else if(!panel_x_overlap && !CoreVars.cardMoving){
-                    // Card not overlapped
-                        CoreVars.setCardMoving();
-                        cardList[panel_index].x_overlap = true;
-                        for(var ib = 0; ib < cardList.length; ib++){
-                            if(panel_x <= cardList[ib].x_coord){
-                                cardList[ib].x_coord -= CoreVars.x_cover;
-                            }
-                        }
-                    }
-                } else if(panel_y !== lowest_y){
-                // y_overlap
-                    if(panel_y_overlap && !CoreVars.cardMoving){
-                    // Card overlapped
-                        CoreVars.setCardMoving();
-                        cardList[panel_index].y_overlap = false;
-                        for(var ic = 0; ic < cardList.length; ic++){
-                            if(panel_x === cardList[ic].x_coord && panel_y < cardList[ic].y_coord){
-                                cardList[ic].y_coord += CoreVars.y_cover;
-                            }
-                        }
-                    } else if(!panel_y_overlap && !CoreVars.cardMoving){
-                    // Card not overlapped
-                        CoreVars.setCardMoving();
-                        cardList[panel_index].y_overlap = true;
-                        for(var id = 0; id < cardList.length; id++){
-                            if(panel_x === cardList[id].x_coord && panel_y < cardList[id].y_coord){
-                                cardList[id].y_coord -= CoreVars.y_cover;
-                            }
-                        }
-                    }
-                }
-                $rootScope.$digest();
-                CoreVars.cardMoved = false;
-            }
-        };
-        
-    }]);
-'use strict';
-
-// Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery', 'CorePanel', 'CoreStack',
-    function($rootScope, CoreVars, Bakery, CorePanel, CoreStack){
-        
-        return function(cardList, slot, panel){
-            if(!CoreVars.cardMoving){
-                
-                if(CoreStack.getLowestPanel(cardList, panel.x_coord).panel.y_coord > 0){
-                    var panel_x = panel.x_coord;
-                    var panel_y = panel.y_coord;
-                    var panel_index = CorePanel.getPanel(cardList, panel_x, panel_y).index;
-                    var panel_x_overlap = panel.x_overlap;
-                    var panel_y_overlap = panel.y_overlap;
-                    var slot_x = slot.x_coord;
-                    
-                    var new_slot_index, new_panel_index;
-                    
-                    if(panel_x - slot_x > 0){
-                    // Card is unstacking to the left
-                        CoreVars.setCardMoving();
-                        if(panel_y_overlap){
-                        // Unstack multiple cards to the left
-                            for(var ia = 0; ia < cardList.length; ia++){
-                                if(cardList[ia].x_coord > panel_x){
-                                    cardList[ia].x_coord += CoreVars.x_dim;
-                                }
-                                if(cardList[ia].x_coord === panel_x){
-                                    if(panel_y_overlap){
-                                        if(cardList[ia].y_coord < panel_y){
-                                            cardList[ia].x_coord += CoreVars.x_dim;
-                                        } else if(cardList[ia].y_coord >= panel_y){
-                                            cardList[ia].y_coord -= panel_y;
-                                        }
-                                    }
-                                }
-                            }
-                        } else if(!panel_y_overlap){
-                        // Unstack single card to the left
-                            for(var ib = 0; ib < cardList.length; ib++){
-                                if(cardList[ib].x_coord >= panel_x){
-                                    if(cardList[ib].x_coord === panel_x && cardList[ib].y_coord > panel_y){
-                                        cardList[ib].y_coord -= CoreVars.y_dim;
-                                    }
-                                    if(ib !== panel_index){
-                                        cardList[ib].x_coord += CoreVars.x_dim;
-                                    }
-                                }
-                            }
-                            cardList[panel_index].y_coord = 0;
-                            cardList[panel_index].stacked = false;
-                        }
-                        new_slot_index = CoreStack.getLowestPanel(cardList, panel_x).index;
-                        new_panel_index = CoreStack.getLowestPanel(cardList, panel_x + CoreVars.x_dim).index;
-                        
-                        cardList[new_slot_index].y_overlap = false;
-                        if(cardList[new_slot_index].y_coord === 0){
-                            cardList[new_slot_index].stacked = false;
-                        }
-                        
-                        cardList[new_panel_index].y_overlap = false;
-                        if(cardList[new_panel_index].y_coord === 0){
-                            cardList[new_panel_index].stacked = false;
-                        }
-                    } else if(panel_x - slot_x < 0 && !CoreVars.cardMoving){
-                    //Card is unstacking to the right
-                        CoreVars.setCardMoving();
-                        if(panel_y_overlap){
-                        // Unstack multiple cards to the right
-                            for(var ic = 0; ic < cardList.length; ic++){
-                                if(cardList[ic].x_coord > panel_x){
-                                    cardList[ic].x_coord += CoreVars.x_dim;
-                                }
-                                if(cardList[ic].x_coord === panel_x){
-                                    if(cardList[ic].y_coord >= panel_y){
-                                        cardList[ic].x_coord += CoreVars.x_dim;
-                                        cardList[ic].y_coord -= panel_y;
-                                    }
-                                }
-                            }
-                        } else if(!panel_y_overlap){
-                        // Unstack single card to the right
-                            for(var id = 0; id < cardList.length; id++){
-                                if(cardList[id].x_coord > panel_x){
-                                    cardList[id].x_coord += CoreVars.x_dim;
-                                }
-                                if(cardList[id].x_coord === panel_x && cardList[id].y_coord > panel_y){
-                                    cardList[id].y_coord -= CoreVars.y_dim;
-                                }
-                            }
-                            cardList[panel_index].x_coord += CoreVars.x_dim;
-                            cardList[panel_index].y_coord = 0;
-                        }
-                        
-                        new_slot_index = CoreStack.getLowestPanel(cardList, panel_x).index;
-                        new_panel_index = CoreStack.getLowestPanel(cardList, slot_x).index;
-                        
-                        cardList[new_slot_index].y_overlap = false;
-                        if(cardList[new_slot_index].y_coord === 0){
-                            cardList[new_slot_index].stacked = false;
-                        }
-                        
-                        cardList[new_panel_index].y_overlap = false;
-                        if(cardList[new_panel_index].y_coord === 0){
-                            cardList[new_panel_index].stacked = false;
-                        }
-                    }
-                }
-                $rootScope.$digest();
-            }
-        };
-        
-    }]);
-'use strict';
-
-angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'CoreStack', 'CorePanel', 'CardsBread', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CoreStack, CorePanel, CardsBread){
+angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'MoveStack', 'MovePanel', 'CardsBread', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, MoveStack, MovePanel, CardsBread){
     
     var service = {};
     
@@ -3160,18 +1847,18 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
         if(param){
             Bakery.Decks.query(param, function(response){
                 response.unshift({
-                    panelType: 'architectOptions'
+                    panelType: 'builderOptions'
                 });
                 Bakery.resource.cardList = response;
-                CoreStack.setCardList(Bakery.resource.cardList);
+                MoveStack.setCardList(Bakery.resource.cardList);
             });
         } else {
             Bakery.Decks.list(function(response){
                 response.unshift({
-                    panelType: 'architectOptions'
+                    panelType: 'builderOptions'
                 });
                 Bakery.resource.cardList = response;
-                CoreStack.setCardList(Bakery.resource.cardList);
+                MoveStack.setCardList(Bakery.resource.cardList);
             });
         }
     };
@@ -3240,9 +1927,9 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
     //DELETE
     service.delete = function(deck, resource){
         deck.$remove(function(response){
-            CorePanel.removePanel(deck, resource.cardList);
-            CorePanel.setDeckSize(resource);
-            CorePanel.collapseDeck(deck, resource.cardList);
+            MovePanel.removePanel(deck, resource.cardList);
+            MovePanel.setDeckSize(resource);
+            MovePanel.collapseDeck(deck, resource.cardList);
         });
     };
     
@@ -3277,6 +1964,1259 @@ angular.module('decks').factory('Decks', ['$resource',
                 }
             );
         }]);
+'use strict';
+
+// Directive for managing card decks.
+angular.module('move')
+	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'Bakery', 'MoveHub',function($document, $parse, $rootScope, $window, Bakery, MoveHub){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/core/views/card-panel.html',
+			link: function(scope, element, attrs){
+				
+				Array.min = function(array){
+					return Math.min.apply(Math, array);
+				};
+				
+				var _startX, _startY, 
+					_mouseX, _mouseY,
+					_moveX, _moveY,
+					_panelX, _panelY,
+					_slotX, _slotY,
+					_startCol, _mouseCol, _panelCol,
+					_startRow, _mouseRow, _panelRow,
+					_moveTimer,
+					_x_dim, _y_dim,
+					_x_tab, _y_tab,
+					_x_cover, _y_cover;
+				
+				var _dropdownOpen = false;
+				
+				var _stacked = false;
+				
+				var _panel = $parse(attrs.panel) || null;
+				
+				var _hasTouch = ('ontouchstart' in window);
+				
+				var _pressEvents = 'touchstart mousedown';
+				var _moveEvents = 'touchmove mousemove';
+				var _releaseEvents = 'touchend mouseup';
+				
+				var _pressTimer = null;
+				
+				var initialize = function(){
+					// prevent native drag
+					element.attr('draggable', 'false');
+					toggleListeners(true);
+					$document.ready(function () {
+						onHeightChange();
+					});
+				};
+				
+				var toggleListeners = function(enable){
+					// remove listeners
+					if (!enable)return;
+					
+					// add listeners
+					scope.$on('$destroy', onDestroy);
+					scope.$watch(attrs.panel, onCardChange);
+					scope.$on('screenSize:onHeightChange', onHeightChange);
+					scope.$on('cardPanel:onPressCard', onPressCard);
+					scope.$on('cardPanel:onMoveCard', onMoveCard);
+					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
+					scope.$on('deckStack:onMouseLeave', onMouseLeave);
+					scope.$on('CardsCtrl:onDropdown', onDropdown);
+					scope.$watch('panel.x_coord', resetPosition);
+					scope.$watch('panel.y_coord', resetPosition);
+					element.on(_pressEvents, onPress);
+					
+					// prevent native drag for images
+					 if(! _hasTouch && element[0].nodeName.toLowerCase() === 'img'){
+						element.on('mousedown', function(){ return false;});
+					}
+				};
+				
+				var onDestroy = function(enable){
+					toggleListeners(false);
+				};
+				
+				var onCardChange = function(newVal, oldVal){
+					_panel = newVal;
+					
+					element.css({
+						top: '0',
+						left: '-21em'
+					});
+					
+					setTimeout(function(){
+						setPosition();
+				//		setOffset();
+					}, 0);
+				};
+				
+				var onDropdown = function(event, object){
+					_dropdownOpen = object.isOpen;
+				};
+				
+				var getElementFontSize = function() {
+					return parseFloat(
+						$window.getComputedStyle(element[0], null).getPropertyValue('font-size')
+					);
+				};
+				
+				var convertEm = function(value) {
+					return value * getElementFontSize();
+				};
+				
+				var onHeightChange = function(event, object){
+					_x_dim = convertEm(15);
+					_y_dim = convertEm(21);
+					_x_tab = convertEm(3);
+					_y_tab = convertEm(3);
+					_x_cover = convertEm(12);
+					_y_cover = convertEm(18);
+					
+					setPosition();
+				};
+				
+				var resetPosition = function(newVal, oldVal){
+					if(element.hasClass('card-moving')){
+						setPosition();
+					//	setOffset();
+					}
+				};
+				
+				var setPosition = function(){
+					element.css({
+						top: _panel.y_coord + 'em',
+						left: _panel.x_coord + 'em'
+					});
+				};
+				
+				var setOffset = function(){
+					var offset = Math.random()*0.2 - 0.1;
+					element.css({
+						'-ms-transform': 'translate('+offset+'em,'+offset+'em)',
+						'-webkit-transform': 'translate('+offset+'em,'+offset+'em)',
+						'transform': 'translate('+offset+'em,'+offset+'em)'
+					});
+				};
+				
+				// When the element is clicked start the drag behaviour
+				var onPress = function(event){
+					if(!_dropdownOpen){
+						// Small delay for touch devices to allow for native window scrolling
+						if(_hasTouch){
+							cancelPress();
+							_pressTimer = setTimeout(function(){
+								cancelPress();
+								onLongPress(event);
+							}, 100);
+							
+							$document.on(_moveEvents, cancelPress);
+							$document.on(_releaseEvents, cancelPress);
+						}else if(!_hasTouch){
+							onLongPress(event);
+						}
+					} else {
+						$document.triggerHandler('click');
+					}
+				};
+				
+				var cancelPress = function(){
+					clearTimeout(_pressTimer);
+					$document.off(_moveEvents, cancelPress);
+					$document.off(_releaseEvents, cancelPress);
+				};
+				
+				// PRESS
+				// Primary "press" function
+				var onLongPress = function(event){
+					
+					_startX = (event.pageX || event.touches[0].pageX);
+					_startY = (event.pageY || event.touches[0].pageY);
+					
+					_moveX = 0;
+					_moveY = 0;
+					
+					$document.on(_moveEvents, onMove);
+					$document.on(_releaseEvents, onRelease);
+					
+					element.removeClass('card-moving');
+					
+					$rootScope.$broadcast('cardPanel:onPressCard', {
+						startX: _startX,
+						startY: _startY,
+						panel: _panel
+					});
+				};
+				
+				var onPressCard = function(event, object){
+					
+					_startCol = convertEm(_panel.x_coord);
+					_startRow = convertEm(_panel.y_coord);
+					
+					var panel = object.panel;
+					var panel_x = panel.x_coord;
+					var panel_y = panel.y_coord;
+					var panel_y_overlap = panel.y_overlap;
+					
+					var slot = _panel;
+					var slot_x = slot.x_coord;
+					var slot_y = slot.y_coord;
+					
+					if(slot_y !== panel_y || slot_x !== panel_x){
+						if(slot_x !== panel_x){
+							element.addClass('card-moving');
+						} else if(slot_x !== panel_x && slot_y > panel_y && panel_y_overlap){
+							element.addClass('card-moving');
+						} else if(slot_x === panel_x && !panel_y_overlap){
+							element.addClass('card-moving');
+						}
+					}
+				};
+				
+				// MOVE
+				// Primary "move" function
+				var onMove = function(event){
+					event.preventDefault();
+					
+					_mouseX = (event.pageX || event.touches[0].pageX);
+					_mouseY = (event.pageY || event.touches[0].pageY);
+					
+					_mouseCol = convertEm(_panel.x_coord);
+					_mouseRow = convertEm(_panel.y_coord);
+					
+					_moveX = _mouseX - _startX;
+					_moveY = _mouseY - _startY;
+					
+					_panelX = _moveX + _startCol - (_startCol - _mouseCol);
+					_panelY = _moveY + _startRow - (_startRow - _mouseRow);
+					
+					element.css({
+						left: _moveX + _startCol + 'px',
+						top: _moveY + _startRow + 'px'
+					});
+					
+					$rootScope.$broadcast('cardPanel:onMoveCard', {
+						mouseX: _mouseX,
+						mouseY: _mouseY,
+						moveX: _moveX,
+						moveY: _moveY,
+						panelX: _panelX,
+						panelY: _panelY,
+						panel: _panel
+					});
+				};
+				
+				// Callback function to move a single card or each card in a vertical stack
+				var onMoveCard = function(event, object){
+					
+					var mouseX = object.mouseX;
+					var mouseY = object.mouseY;
+					
+					var moveX = object.moveX;
+					var moveY = object.moveY;
+					
+					var vectorX = Math.abs(object.moveX);
+					var vectorY = Math.abs(object.moveY);
+					
+					var panel = object.panel;
+					var panel_x = panel.x_coord;
+					var panel_y = panel.y_coord;
+					var panel_x_overlap = panel.x_overlap;
+					var panel_y_overlap = panel.y_overlap;
+					
+					var slot = _panel;
+					var slot_x = slot.x_coord;
+					var slot_y = slot.y_coord;
+					var slot_x_overlap = slot.x_overlap;
+					var slot_y_overlap = slot.y_overlap;
+					
+					var changeX = Math.abs(panel_x - slot_x);
+					var changeY = Math.abs(panel_y - slot_y);
+					
+					if(changeX === 0 && slot_y > panel_y && panel_y_overlap){
+						if(!element.hasClass('card-moving')){	//Enables moving all cards within a stack
+							element.css({
+								left: (_startCol + moveX) + 'px',
+								top: (_startRow + moveY) + 'px'
+							});
+						}
+					} else if(changeX > 0 || changeY > 0){
+						if(crossingEdge(mouseX, mouseY) === 'top'){
+							if(vectorX > 0 && !slot_y_overlap && !slot_x_overlap && !panel_x_overlap){
+								console.log('cardPanel:moveDiagonalUp');
+								MoveHub.moveDiagonalUp(slot, panel);
+							} else if(changeX === 0 && !panel_y_overlap){
+								console.log('cardPanel:moveVertical');
+								MoveHub.moveVertical(slot, panel);
+							} else {
+								console.log('cardPanel:moveHorizontal');
+								MoveHub.moveHorizontal(slot, panel);
+							}
+						} else if(crossingEdge(mouseX, mouseY) === 'bottom'){
+							if(changeX > 0 && changeX <= _x_dim){
+								console.log('cardPanel:moveDiagonalDown');
+								MoveHub.moveDiagonalDown(slot, panel);
+							} else if(changeX === 0 && !panel_y_overlap){
+								console.log('cardPanel:moveVertical');
+								MoveHub.moveVertical(slot, panel);
+							} else {
+								console.log('cardPanel:moveHorizontal');
+								MoveHub.moveHorizontal(slot, panel);
+							}
+						} else if(crossingEdge(mouseX, mouseY) === 'left' || crossingEdge(mouseX, mouseY) === 'right'){
+							if(vectorY * 2 > vectorX){
+								if(moveY < 0){
+									console.log('cardPanel:moveDiagonalUp');
+									MoveHub.moveDiagonalUp(slot, panel);
+								} else if(moveY > 0){
+									console.log('cardPanel:moveDiagonalDown');
+									MoveHub.moveDiagonalDown(slot, panel);
+								}
+							} else {
+								console.log('cardPanel:moveHorizontal');
+								MoveHub.moveHorizontal(slot, panel);
+							}
+						}
+					}
+				};
+				
+				// RELEASE
+				// Primary "release" function
+				var onRelease = function(){
+					$document.off(_moveEvents, onMove);
+					$document.off(_releaseEvents, onRelease);
+					$rootScope.$broadcast('cardPanel:onReleaseCard', {
+						panel: _panel
+					});
+					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
+						MoveHub.triggerOverlap(_panel);
+					}
+				};
+				
+				// General response to "release" event
+				var onReleaseCard = function(event, object){
+					element.addClass('card-moving');
+					setTimeout(function(){
+						setPosition();
+					}, 0);
+					
+					clearTimeout(_moveTimer);
+					
+					_moveTimer = setTimeout(function(){
+						element.removeClass('card-moving');
+					}, 600);
+				};
+				
+				// Respond to 'onMouseLeave' event similar to onRelease, but without toggling overlap
+				var onMouseLeave = function(){
+					$document.off(_moveEvents, onMove);
+					$document.off(_releaseEvents, onRelease);
+					$rootScope.$broadcast('cardPanel:onReleaseCard', {
+						panel: _panel
+					});
+				};
+				
+				var crossingEdge = function(mouseX, mouseY){
+					var cardOffset = element.offset();
+					var slotX = cardOffset.left;
+					var slotY = cardOffset.top;
+					var leftEdge = _panel.x_overlap ? slotX + _x_cover : slotX;
+					var rightEdge = slotX + _x_dim;
+					var topEdge = slotY;
+					var bottomEdge = _panel.y_overlap ? slotY + _y_tab : slotY + _y_dim;
+					
+				//	console.log('testing '+_panel.name+':  X '+_panel.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_panel.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
+					
+					if(mouseX >= leftEdge && mouseX <= rightEdge && mouseY >= topEdge && mouseY <= bottomEdge){
+						var left = mouseX - leftEdge;
+						var right = rightEdge - mouseX;
+						var top = mouseY - topEdge;
+						var bottom = bottomEdge - mouseY;
+						
+						var edges = [left, right, top, bottom],
+						closestEdge = Math.min.apply(Math.min, edges),
+						edgeNames = ['left', 'right', 'top', 'bottom'],
+						edgeName = edgeNames[edges.indexOf(closestEdge)];
+						
+				//		console.log('crossing '+edgeName+' edge of '+_panel.name+':  X '+_panel.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_panel.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
+						
+						return edgeName;
+					}
+				};
+				
+				initialize();
+				
+			}
+		};
+	}]);
+'use strict';
+
+// Directive for managing card decks.
+angular.module('move')
+	.directive('deckStack', ['$rootScope', '$window', 'Bakery', 'MoveStack', 'MoveHub', function($rootScope, $window, Bakery, MoveStack, MoveHub){
+		return {
+			restrict: 'A',
+			link: function(scope, element, attrs) {
+				
+				var pressed = false;
+				
+				var initialize = function(){
+					toggleListeners(true);
+				};
+				
+				var toggleListeners = function (enable) {
+					// remove listeners
+					if (!enable)return;
+					
+					// add listeners
+					scope.$on('$destroy', onDestroy);
+					element.on('mouseleave', onMouseLeave);
+					scope.$on('screenSize:onHeightChange', onHeightChange);
+					scope.$on('MoveStack:setDeckWidth', setDeckWidth);
+					scope.$on('cardPanel:onPressCard', onPress);
+					scope.$on('cardPanel:onReleaseCard', onRelease);
+					scope.$on('cardPanel:onMoveCard', onMoveCard);
+				};
+				
+				var onDestroy = function(enable){
+					toggleListeners(false);
+				};
+				
+				var onHeightChange = function(event, object){
+					var windowHeight = object.newHeight-50;
+					element.css({
+						'height': windowHeight+'px'
+					});
+				};
+				
+				var setDeckWidth = function(){
+					var deckWidth = MoveStack.getDeckWidth(Bakery.resource.cardList);
+					element.css({
+						'width': deckWidth+'em'
+					});
+				};
+				
+				var getElementFontSize = function(){
+					return parseFloat(
+						$window.getComputedStyle(element[0], null).getPropertyValue('font-size')
+					);
+				};
+				
+				var convertEm = function(value) {
+					return value * getElementFontSize();
+				};
+				
+				var onPress = function(){
+					pressed = true;
+				};
+				
+				var onRelease = function(){
+					pressed = false;
+				};
+				
+				var onMoveCard = function(event, object){
+					
+					var deckOffset = element.offset();
+					var deckWidth = MoveStack.getDeckWidth(Bakery.resource.cardList);
+					var deckLeftEdge = deckOffset.left;
+					var deckRightEdge = convertEm(deckWidth + 3);
+					
+					if(object.mouseX <= deckLeftEdge){
+						MoveHub.unstackLeft(object.panel);
+					} else if(object.mouseX >= deckRightEdge){
+						MoveHub.unstackRight(object.panel);
+					}
+					
+				};
+				
+				var onMouseLeave = function(event){
+					if(pressed){
+						$rootScope.$broadcast('deckStack:onMouseLeave');
+					}
+				};
+				
+				initialize();
+			}
+		};
+	}]);
+'use strict';
+
+// Factory-service for managing card-deck, card-slot and card-panel directives.
+angular.module('move').factory('MoveHub', ['$rootScope', 'CoreVars', 'Bakery', 'MovePanel', 'MoveStack', 'switchHorizontal', 'switchVertical', 'stackOver', 'stackUnder', 'unstackCard', 'toggleOverlap',
+	function($rootScope, CoreVars, Bakery, MovePanel, MoveStack, switchHorizontal, switchVertical, stackOver, stackUnder, unstackCard, toggleOverlap){
+		
+		var service = {};
+		
+		service.windowHeight = 0;
+		
+		var getCardList = function(){
+			return Bakery.resource.cardList;
+		};
+		
+		var initialize = function(){
+			toggleListeners(true);
+		};
+		
+		var toggleListeners = function(enable){
+			if(!enable) return;
+			$rootScope.$on('screenSize:onHeightChange', onHeightChange);
+			
+			$rootScope.$on('cardPanel:onPressCard', onPressCard);
+			$rootScope.$on('cardPanel:onReleaseCard', onReleaseCard);
+		};
+		
+		var onHeightChange = function(event, object){
+			service.windowHeight = object.newHeight;
+		};
+		
+		// Reset move variables
+		var onPressCard = function(event, object){
+			var _deck = getCardList();
+			var panel = object.panel;
+			var panel_x = panel.x_coord;
+			var panel_y = panel.y_coord;
+			var panel_index = MovePanel.getPanel(_deck, panel_x, panel_y).index;
+			
+			CoreVars.cardMoved = false;
+			if(_deck[panel_index].y_overlap){
+				for(var ia = 0; ia < _deck.length; ia++){
+					if(_deck[ia].x_coord === panel_x && _deck[ia].y_coord >= panel_y){
+						_deck[ia].dragging = true;
+					}
+				}
+			} else {
+				_deck[panel_index].dragging = true;
+			}
+		};
+		
+		// Reset move variables
+		var onReleaseCard = function(event, object){
+			var _deck = getCardList();
+			
+			CoreVars.cardMoved = false;
+			for(var ia = 0; ia < _deck.length; ia++){
+				_deck[ia].dragging = false;
+			}
+		};
+		
+		service.triggerOverlap = function(panel){
+			if(!CoreVars.cardMoved){
+				var _deck = getCardList();
+				toggleOverlap(_deck, panel);
+			}
+		};
+		
+		service.moveHorizontal = function(slot, panel){
+			var _deck = getCardList();
+			var _lowest_index = MoveStack.getLowestPanel(_deck, panel.x_coord).index;
+			if(panel.y_coord > 0 || (panel.y_coord === 0 && panel.stacked && !panel.y_overlap)){
+				console.log('unstackCard');
+				unstackCard(_deck, slot, panel);
+			} else if (panel.y_coord === 0){
+				console.log('switchHorizontal');
+				switchHorizontal(_deck, slot, panel);
+			}
+		};
+
+		service.moveDiagonalUp = function(slot, panel){
+			var _deck = getCardList();
+			var _lowest_index = MoveStack.getLowestPanel(_deck, panel.x_coord).index;
+			if(panel.y_coord === 0){
+				stackUnder(_deck, slot, panel);
+			} else {
+				unstackCard(_deck, slot, panel);
+			}
+		};
+
+		service.moveDiagonalDown = function(slot, panel){
+			var _deck = getCardList();
+			var _lowest_index = MoveStack.getLowestPanel(_deck, panel.x_coord).index;
+			if(panel.y_coord === 0){
+				stackOver(_deck, slot, panel);
+			} else {
+				unstackCard(_deck, slot, panel);
+			}
+		};
+		
+		service.moveVertical = function(slot, panel){
+			var _deck = getCardList();
+			switchVertical(_deck, slot, panel);
+		};
+		
+		service.unstackLeft = function(panel){
+			if(panel.y_coord > 0){
+				var _deck = getCardList();
+				var unstack_coord = MovePanel.getPanel(_deck, 0, 0).panel.x_coord - CoreVars.x_dim;
+				unstackCard(_deck, {x_coord: unstack_coord}, panel);
+			}
+		};
+		
+		service.unstackRight = function(panel){
+			if(panel.y_coord > 0){
+				var _deck = getCardList();
+				var _last = MoveStack.getLastPanel(_deck);
+				var unstack_coord = _last.panel.x_coord + CoreVars.x_dim;
+				unstackCard(_deck, {x_coord: unstack_coord}, panel);
+			}
+		};
+		
+		initialize();
+		
+		return service;
+	}]);
+
+'use strict';
+
+// Panel helper-functions
+angular.module('move').factory('MovePanel', ['$rootScope', '$resource', function($rootScope, $resource) {
+    
+    var service = {};
+    
+    service.getPanel = function(cardList, x_coord, y_coord){
+        if (cardList.length > 0){
+            var _index = 0;
+            var _panel = { x_coord: 0 };
+            for(var i = 0; i < cardList.length; i++){
+                if (cardList[i].x_coord === x_coord && cardList[i].y_coord === y_coord){
+                    return{
+                        index: i, panel: cardList[i]
+                    };
+                }
+            }
+        }
+    };
+    
+    service.removePanel = function(cardList, panel){
+        for(var i = 0; i < cardList.length; i++){
+            if (cardList[i] === panel ) {
+                cardList.splice(i, 1);
+            }
+        }
+    };
+    
+    service.getPanelData = function(panel){
+        switch(panel.panelType){
+            case 'Aspect':
+                return panel.aspectData;
+            case 'Trait':
+                return panel.traitData;
+            case 'Feat':
+                return panel.featData;
+            case 'Augment':
+                return panel.augmentData;
+            case 'Item':
+                return panel.itemData;
+            case 'Origin':
+                return panel.originData;
+            default:
+                return false;
+        }
+    };
+    
+    service.setPanelData = function(panel, cardData){
+        switch(panel.panelType){
+            case 'Aspect':
+                panel.aspectData = cardData;
+                break;
+            case 'Trait':
+                panel.traitData = cardData;
+                break;
+            case 'Feat':
+                panel.featData = cardData;
+                break;
+            case 'Augment':
+                panel.augmentData = cardData;
+                break;
+            case 'Item':
+                panel.itemData = cardData;
+                break;
+            case 'Origin':
+                panel.originData = cardData;
+                break;
+            default:
+                return false;
+        }
+    };
+    
+    service.getCardParams = function(panel){
+        var cardId;
+        switch(panel.panelType){
+            case 'Aspect':
+                cardId = panel.aspectData._id;
+                return { aspectId: panel.aspectData._id };
+            case 'Trait':
+                cardId = panel.traitData._id;
+                return { traitId: panel.traitData._id };
+            case 'Feat':
+                cardId = panel.featData._id;
+                return { featId: panel.featData._id };
+            case 'Augment':
+                cardId = panel.augmentData._id;
+                return { augmentId: panel.augmentData._id };
+            case 'Item':
+                cardId = panel.itemData._id;
+                return { itemId: panel.itemData._id };
+            case 'Origin':
+                cardId = panel.originData._id;
+                return { originId: panel.originData._id };
+            default:
+                return false;
+        }
+    };
+    
+    service.expandDeck = function(panel, cardList){
+        var panel_x_coord = panel.x_coord;
+        var panel_y_coord = panel.y_coord;
+        
+        for(var i = 0; i < cardList.length; i++){
+            var slot = cardList[i];
+            
+            var slotData = service.getPanelData(slot);
+            if (slot !== panel && slot.x_coord >= panel_x_coord){
+                slot.x_coord += 15;
+                slotData.cardNumber++;
+            }
+        }
+        $rootScope.$broadcast('cardPanel:onReleaseCard');
+    };
+    
+    service.collapseDeck = function(panel, cardList){
+        var panel_x_coord = panel.x_coord;
+        var panel_y_coord = panel.y_coord;
+        
+        for(var i = 0; i < cardList.length; i++){
+            var slot = cardList[i];
+            var slotData = service.getPanelData(slot);
+            if (slot.x_coord > panel_x_coord){
+                slot.x_coord -= 15;
+                slotData.cardNumber--;
+            }
+        }
+        $rootScope.$broadcast('cardPanel:onReleaseCard');
+    };
+    
+    service.setDeckSize = function(resource){
+        var _length = resource.cardList.length - 1;
+        resource.deckSize = _length;
+        for(var i = 0; i < resource.cardList.length; i++){
+            var panel = resource.cardList[i];
+            var panelData = service.getPanelData(panel);
+            panelData.deckSize = _length;
+        }
+    };
+    
+    return service;
+    
+}]);
+'use strict';
+
+// Stack helper-functions
+angular.module('move').factory('MoveStack', ['$rootScope', function($rootScope) {
+    
+    var service = {};
+    
+    service.getLastPanel = function(cardList){
+        var _index = 0;
+        var _panel = { x_coord: 0 };
+        if(cardList.length > 0){
+            for(var i = 0; i < cardList.length; i++){
+                if(cardList[i].x_coord > (_panel.x_coord || -1)){
+                    _index = i;
+                    _panel = cardList[i];
+                }
+            }
+        }
+        return {
+            index: _index, panel: _panel
+        };  
+    };
+    
+    service.getLowestPanel = function(cardList, x_coord){
+        var _index = 0;
+        var _panel = { y_coord: 0 };
+        if(cardList.length > 0){
+            for(var i = 0; i < cardList.length; i++){
+                if(cardList[i].x_coord === x_coord){
+                    if(cardList[i].y_coord > (_panel.y_coord || -1)){
+                        _index = i;
+                        _panel = cardList[i];
+                    }
+                }
+            }
+        }
+        return {
+            index: _index, panel: _panel
+        };
+    };
+    
+    service.getDeckWidth = function(cardList){
+        var lastPanel = service.getLastPanel(cardList);
+        return lastPanel.panel.x_coord + 15;
+    };
+    
+    service.setDeckWidth = function(cardList){
+        var _deckWidth = service.getDeckWidth(cardList);
+        $rootScope.$broadcast('MoveStack:setDeckWidth', {
+            deckWidth: _deckWidth
+        });
+    };
+    
+    service.setCardList = function(cardList){
+        for(var i = 0; i < cardList.length; i++){
+            cardList[i].x_coord = i * 15;
+            cardList[i].y_coord = 0;
+            cardList[i].x_overlap = false;
+            cardList[i].y_overlap = false;
+            cardList[i].dragging = false;
+            cardList[i].stacked = false;
+            cardList[i].locked = false;
+        }
+        $rootScope.$broadcast('cardPanel:onReleaseCard');
+    };
+    
+    service.getColumnArray = function(cardList, x_coord){
+        var _column = [];
+        for(var i =0; i < cardList.length; i++){
+            if (cardList[i].x_coord === x_coord){
+                _column.push(i);
+            }
+        }
+        return _column;
+    };
+    
+    service.setColumnVars = function(cardList, x_coord){
+        var _lowest = service.getLowestPanel(cardList, x_coord);
+        if (_lowest.panel.y_coord > 0){
+            var _column = service.getColumnArray(cardList, x_coord);
+            _column.sort(function(a, b){
+                return cardList[a].y_coord - cardList[b].y_coord;
+            });
+            for(var i = 0; i < _column.length; i++){
+                cardList[_column[i]].stacked = true;
+                if (_column[i] === _lowest.index){
+                    cardList[_column[i]].y_overlap = false;
+                } else {
+                    var _panel = cardList[_column[i]];
+                    var _next = cardList[_column[i+1]];
+                    if (_next.y_coord - _panel.y_coord === 3){
+                        _panel.y_overlap = true;
+                    } else if(_next.y_coord - _panel.y_coord === 21){
+                        _panel.y_overlap = false;
+                    }
+                }
+            }
+        } else {
+            cardList[_lowest.index].stacked = false;
+            cardList[_lowest.index].y_overlap = false;
+        }
+    };
+    
+    
+    return service;
+    
+}]);
+'use strict';
+
+// Factory-service for managing card-deck, card-slot and card-panel directives.
+angular.module('move').factory('stackOver', ['$rootScope', 'CoreVars', 'Bakery', 'MovePanel', 'MoveStack',
+    function($rootScope, CoreVars, Bakery, MovePanel, MoveStack){
+        
+        return function(cardList, slot, panel){
+            if(!CoreVars.cardMoving && !slot.x_overlap && !panel.x_overlap){
+                
+                var slot_x = slot.x_coord;
+                var slot_y = slot.y_coord;
+                var slot_index = MovePanel.getPanel(cardList, slot_x, slot_y).index;
+                var slot_x_overlap = slot.x_overlap;
+                var slot_y_overlap = slot.y_overlap;
+                
+                var panel_x = panel.x_coord;
+                var panel_y = panel.y_coord;
+                var panel_index = MovePanel.getPanel(cardList, panel_x, panel_y).index;
+                var panel_x_overlap = panel.x_overlap;
+                var panel_y_overlap = panel.y_overlap;
+                var panel_lowest_index = MoveStack.getLowestPanel(cardList, panel_x).index;
+                var panel_lowest_coord = cardList[panel_lowest_index].y_coord;
+                
+                var newColumn = panel_x > slot_x ? slot_x : slot_x - CoreVars.x_dim;
+                
+                if(!slot_x_overlap && !panel_x_overlap){
+                    CoreVars.setCardMoving();
+                    for(var ia = 0; ia < cardList.length; ia++){
+                        if(!cardList[ia].dragging && cardList[ia].x_coord === newColumn && cardList[ia].y_coord > slot_y){
+                            cardList[ia].y_coord += panel_lowest_coord + CoreVars.y_tab;
+                        }
+                        if(cardList[ia].dragging){
+                            cardList[ia].x_coord = slot_x;
+                            cardList[ia].y_coord += slot_y + CoreVars.y_tab - panel_y;
+                        }
+                        if(cardList[ia].x_coord > panel_x && panel_y === 0){
+                            cardList[ia].x_coord -= CoreVars.x_dim;
+                        }
+                    }
+                    MoveStack.setColumnVars(cardList, newColumn);
+                    MoveStack.setColumnVars(cardList, slot_x);
+                    MoveStack.setColumnVars(cardList, panel_x);
+                }
+                $rootScope.$digest();
+            }
+        };
+        
+    }]);
+'use strict';
+
+// Factory-service for managing card-deck, card-slot and card-panel directives.
+angular.module('move').factory('stackUnder', ['$rootScope', 'CoreVars', 'Bakery', 'MovePanel', 'MoveStack',
+    function($rootScope, CoreVars, Bakery, MovePanel, MoveStack){
+        
+        // Stack one card behind another and reposition deck to fill the gap
+        return function(cardList, slot, panel){
+            if(!CoreVars.cardMoving && !slot.x_overlap && !panel.x_overlap){
+                
+                var panel_x = panel.x_coord;
+                var panel_y = panel.y_coord;
+                var panel_index = MovePanel.getPanel(cardList, panel_x, panel_y).index;
+                var panel_x_overlap = panel.x_overlap;
+                var panel_y_overlap = panel.y_overlap;
+                var panel_lowest_coord = MoveStack.getLowestPanel(cardList, panel_x).panel.y_coord;
+                
+                var slot_x = slot.x_coord;
+                var slot_y = slot.y_coord;
+                var slot_index = MovePanel.getPanel(cardList, slot_x, slot_y).index;
+                var slot_lowest_coord = MoveStack.getLowestPanel(cardList, slot_x).panel.y_coord;
+                var newColumn = panel_x > slot_x ? slot_x : slot_x - CoreVars.x_dim;
+                
+                CoreVars.setCardMoving();
+                for(var ia = 0; ia < cardList.length; ia++){
+                    if(!cardList[ia].dragging && cardList[ia].x_coord === slot_x){
+                        cardList[ia].y_coord += panel_lowest_coord + CoreVars.y_tab;
+                    }
+                    if(cardList[ia].x_coord > panel_x){
+                        cardList[ia].x_coord -= CoreVars.x_dim;
+                    }
+                    if(cardList[ia].dragging){
+                        cardList[ia].x_coord = newColumn;
+                    }
+                }
+                MoveStack.setColumnVars(cardList, newColumn);
+                MoveStack.setColumnVars(cardList, slot_x);
+                MoveStack.setColumnVars(cardList, panel_x);
+                $rootScope.$digest();
+            }
+        };
+        
+    }]);
+'use strict';
+
+// Factory-service for managing card-deck, card-slot and card-panel directives.
+angular.module('move').factory('switchHorizontal', ['$rootScope', 'CoreVars', 'Bakery', 'MovePanel', 'MoveStack',
+    function($rootScope, CoreVars, Bakery, MovePanel, MoveStack){
+        
+        return function(cardList, slot, panel){
+            console.log('switchHorizontal');
+            if(!CoreVars.cardMoving){
+                
+                var slot_x = slot.x_coord;
+                var slot_y = slot.y_coord;
+                var slot_index = MovePanel.getPanel(cardList, slot_x, slot_y).index;
+                var slot_x_overlap = slot.x_overlap;
+                var slot_position = slot_x;
+                
+                var panel_x = panel.x_coord;
+                var panel_y = panel.y_coord;
+                var panel_index = MovePanel.getPanel(cardList, panel_x, panel_y).index;
+                var panel_x_overlap = panel.x_overlap;
+                var panel_width = CoreVars.x_dim;
+                
+                if(panel_x - slot_x > 0){
+                // PANEL MOVING LEFT
+                    CoreVars.setCardMoving();
+                    
+                    if(slot_x === 0 && panel_x_overlap){
+                        slot_position = 0;
+                        panel_width -= CoreVars.x_cover;
+                        cardList[slot_index].x_overlap = true;
+                        cardList[panel_index].x_overlap = false;
+                    } else {
+                        if(panel_x_overlap){
+                            panel_width -= CoreVars.x_cover;
+                            slot_position -= CoreVars.x_cover;
+                        }
+                        if(slot_x_overlap){
+                            slot_position += CoreVars.x_cover;
+                        }
+                    }
+                    for(var ia = 0; ia < cardList.length; ia++){
+                        if(cardList[ia].x_coord >= slot_x && cardList[ia].x_coord < panel_x){
+                        // Modify position of each card in "SLOT" column and to the left of "PANEL" column
+                            cardList[ia].x_coord += panel_width;
+                        } else if(cardList[ia].x_coord === panel_x){
+                        // Modify position of each card in "PANEL" column
+                            cardList[ia].x_coord = slot_position;
+                        }
+                    }
+                } else if(panel_x - slot_x < 0){
+                // PANEL MOVING RIGHT
+                    CoreVars.setCardMoving();
+                    if(panel_x === 0 && slot_x_overlap){
+                        var first_index = MovePanel.getPanel(cardList, 0, 0);
+                //      cardList[first_index].x_coord = 0;
+                        cardList[first_index].x_overlap = false;
+                        cardList[panel_index].x_overlap = true;
+                        panel_width -= CoreVars.x_cover;
+                    } else if(panel_x > 0){
+                        if(panel_x_overlap){
+                            panel_width -= CoreVars.x_cover;
+                        }
+                    }
+                    
+                    for(var ib = 0; ib < cardList.length; ib++){
+                        if(cardList[ib].x_coord <= slot_x && cardList[ib].x_coord > panel_x){
+                        // Modify position of each card in "SLOT" column
+                            cardList[ib].x_coord -= panel_width;
+                        } else if(cardList[ib].x_coord === panel_x){
+                        // Modify position of each card in "PANEL" column
+                            cardList[ib].x_coord = slot_position;
+                        }
+                    }
+                }
+                $rootScope.$digest();
+            }
+        };
+        
+    }]);
+'use strict';
+
+// Factory-service for managing card-deck, card-slot and card-panel directives.
+angular.module('move').factory('switchVertical', ['$rootScope', 'CoreVars', 'Bakery', 'MovePanel', 'MoveStack',
+    function($rootScope, CoreVars, Bakery, MovePanel, MoveStack){
+        
+        return function(cardList, slot, panel){
+            console.log('switchVertical');
+            if(!CoreVars.cardMoving){
+                
+                var slot_x = slot.x_coord;
+                var slot_y = slot.y_coord;
+                var slot_index = MovePanel.getPanel(cardList, slot_x, slot_y).index;
+                var slot_y_overlap = slot.y_overlap;
+                
+                var panel_x = panel.x_coord;
+                var panel_y = panel.y_coord;
+                
+                var panel_index = MovePanel.getPanel(cardList, panel_x, panel_y).index;
+                var panel_y_overlap = panel.y_overlap;
+                
+                var lowest_index = MoveStack.getLowestPanel(cardList, slot_x).index;
+                var lowest_y = cardList[lowest_index].y_coord;
+                
+                if(panel_y - slot_y > 0){
+                // PANEL MOVING UP
+                    CoreVars.setCardMoving();
+                    
+                    cardList[slot_index].y_coord = panel_y;
+                    cardList[slot_index].y_overlap = panel_y_overlap;
+                    $rootScope.$digest();
+                    cardList[panel_index].y_coord = slot_y;
+                    cardList[panel_index].y_overlap = slot_y_overlap;
+                    
+                } else if(panel_y - slot_y < 0){
+                // PANEL MOVING DOWN
+                    CoreVars.setCardMoving();
+                    
+                    cardList[slot_index].y_coord = panel_y;
+                    cardList[slot_index].y_overlap = panel_y_overlap;
+                    $rootScope.$digest();
+                    cardList[panel_index].y_coord = slot_y;
+                    cardList[panel_index].y_overlap = slot_y_overlap;
+                }
+                $rootScope.$digest();
+            }
+        };
+        
+    }]);
+'use strict';
+
+// Factory-service for managing card-deck, card-slot and card-panel directives.
+angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Bakery', 'MovePanel', 'MoveStack',
+    function($rootScope, CoreVars, Bakery, MovePanel, MoveStack){
+        
+        return function(cardList, panel){
+            if(!CoreVars.cardMoved){
+                
+                var panel_x = panel.x_coord;
+                var panel_y = panel.y_coord;
+                var panel_x_overlap = panel.x_overlap;
+                var panel_y_overlap = panel.y_overlap;
+                var panel_index = MovePanel.getPanel(cardList, panel_x, panel_y).index;
+                var lowest_index = MoveStack.getLowestPanel(cardList, panel_x).index;
+                var lowest_y = cardList[lowest_index].y_coord;
+                
+                if(panel_x > 0 && lowest_y === 0){
+                // x_overlap
+                    if(panel_x_overlap && !CoreVars.cardMoving){
+                    // Card overlapped
+                        CoreVars.setCardMoving();
+                        cardList[panel_index].x_overlap = false;
+                        for(var ia = 0; ia < cardList.length; ia++){
+                            if(panel_x <= cardList[ia].x_coord){
+                                cardList[ia].x_coord += CoreVars.x_cover;
+                            }
+                        }
+                    } else if(!panel_x_overlap && !CoreVars.cardMoving){
+                    // Card not overlapped
+                        CoreVars.setCardMoving();
+                        cardList[panel_index].x_overlap = true;
+                        for(var ib = 0; ib < cardList.length; ib++){
+                            if(panel_x <= cardList[ib].x_coord){
+                                cardList[ib].x_coord -= CoreVars.x_cover;
+                            }
+                        }
+                    }
+                } else if(panel_y !== lowest_y){
+                // y_overlap
+                    if(panel_y_overlap && !CoreVars.cardMoving){
+                    // Card overlapped
+                        CoreVars.setCardMoving();
+                        cardList[panel_index].y_overlap = false;
+                        for(var ic = 0; ic < cardList.length; ic++){
+                            if(panel_x === cardList[ic].x_coord && panel_y < cardList[ic].y_coord){
+                                cardList[ic].y_coord += CoreVars.y_cover;
+                            }
+                        }
+                    } else if(!panel_y_overlap && !CoreVars.cardMoving){
+                    // Card not overlapped
+                        CoreVars.setCardMoving();
+                        cardList[panel_index].y_overlap = true;
+                        for(var id = 0; id < cardList.length; id++){
+                            if(panel_x === cardList[id].x_coord && panel_y < cardList[id].y_coord){
+                                cardList[id].y_coord -= CoreVars.y_cover;
+                            }
+                        }
+                    }
+                }
+                $rootScope.$digest();
+                CoreVars.cardMoved = false;
+            }
+        };
+        
+    }]);
+'use strict';
+
+// Factory-service for managing card-deck, card-slot and card-panel directives.
+angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery', 'MovePanel', 'MoveStack',
+    function($rootScope, CoreVars, Bakery, MovePanel, MoveStack){
+        
+        return function(cardList, slot, panel){
+            if(!CoreVars.cardMoving){
+                
+                if(MoveStack.getLowestPanel(cardList, panel.x_coord).panel.y_coord > 0){
+                    var panel_x = panel.x_coord;
+                    var panel_y = panel.y_coord;
+                    var panel_index = MovePanel.getPanel(cardList, panel_x, panel_y).index;
+                    var panel_x_overlap = panel.x_overlap;
+                    var panel_y_overlap = panel.y_overlap;
+                    var slot_x = slot.x_coord;
+                    
+                    var new_slot_index, new_panel_index;
+                    
+                    if(panel_x - slot_x > 0){
+                    // Card is unstacking to the left
+                        CoreVars.setCardMoving();
+                        if(panel_y_overlap){
+                        // Unstack multiple cards to the left
+                            for(var ia = 0; ia < cardList.length; ia++){
+                                if(cardList[ia].x_coord > panel_x){
+                                    cardList[ia].x_coord += CoreVars.x_dim;
+                                }
+                                if(cardList[ia].x_coord === panel_x){
+                                    if(panel_y_overlap){
+                                        if(cardList[ia].y_coord < panel_y){
+                                            cardList[ia].x_coord += CoreVars.x_dim;
+                                        } else if(cardList[ia].y_coord >= panel_y){
+                                            cardList[ia].y_coord -= panel_y;
+                                        }
+                                    }
+                                }
+                            }
+                        } else if(!panel_y_overlap){
+                        // Unstack single card to the left
+                            for(var ib = 0; ib < cardList.length; ib++){
+                                if(cardList[ib].x_coord >= panel_x){
+                                    if(cardList[ib].x_coord === panel_x && cardList[ib].y_coord > panel_y){
+                                        cardList[ib].y_coord -= CoreVars.y_dim;
+                                    }
+                                    if(ib !== panel_index){
+                                        cardList[ib].x_coord += CoreVars.x_dim;
+                                    }
+                                }
+                            }
+                            cardList[panel_index].y_coord = 0;
+                            cardList[panel_index].stacked = false;
+                        }
+                        new_slot_index = MoveStack.getLowestPanel(cardList, panel_x).index;
+                        new_panel_index = MoveStack.getLowestPanel(cardList, panel_x + CoreVars.x_dim).index;
+                        
+                        cardList[new_slot_index].y_overlap = false;
+                        if(cardList[new_slot_index].y_coord === 0){
+                            cardList[new_slot_index].stacked = false;
+                        }
+                        
+                        cardList[new_panel_index].y_overlap = false;
+                        if(cardList[new_panel_index].y_coord === 0){
+                            cardList[new_panel_index].stacked = false;
+                        }
+                    } else if(panel_x - slot_x < 0 && !CoreVars.cardMoving){
+                    //Card is unstacking to the right
+                        CoreVars.setCardMoving();
+                        if(panel_y_overlap){
+                        // Unstack multiple cards to the right
+                            for(var ic = 0; ic < cardList.length; ic++){
+                                if(cardList[ic].x_coord > panel_x){
+                                    cardList[ic].x_coord += CoreVars.x_dim;
+                                }
+                                if(cardList[ic].x_coord === panel_x){
+                                    if(cardList[ic].y_coord >= panel_y){
+                                        cardList[ic].x_coord += CoreVars.x_dim;
+                                        cardList[ic].y_coord -= panel_y;
+                                    }
+                                }
+                            }
+                        } else if(!panel_y_overlap){
+                        // Unstack single card to the right
+                            for(var id = 0; id < cardList.length; id++){
+                                if(cardList[id].x_coord > panel_x){
+                                    cardList[id].x_coord += CoreVars.x_dim;
+                                }
+                                if(cardList[id].x_coord === panel_x && cardList[id].y_coord > panel_y){
+                                    cardList[id].y_coord -= CoreVars.y_dim;
+                                }
+                            }
+                            cardList[panel_index].x_coord += CoreVars.x_dim;
+                            cardList[panel_index].y_coord = 0;
+                        }
+                        
+                        new_slot_index = MoveStack.getLowestPanel(cardList, panel_x).index;
+                        new_panel_index = MoveStack.getLowestPanel(cardList, slot_x).index;
+                        
+                        cardList[new_slot_index].y_overlap = false;
+                        if(cardList[new_slot_index].y_coord === 0){
+                            cardList[new_slot_index].stacked = false;
+                        }
+                        
+                        cardList[new_panel_index].y_overlap = false;
+                        if(cardList[new_panel_index].y_coord === 0){
+                            cardList[new_panel_index].stacked = false;
+                        }
+                    }
+                }
+                $rootScope.$digest();
+            }
+        };
+        
+    }]);
 'use strict';
 
 // Npcs controller
@@ -3364,7 +3304,7 @@ angular.module('npcs').factory('Npcs', ['$resource',
 
 // Directive for managing ability dice
 angular.module('pcs')
-    .directive('ability', ['$parse', '$rootScope', '$window', 'PcsCard1', function($parse, $rootScope, $window, PcsCard1){
+    .directive('ability', ['$parse', '$rootScope', '$window', 'abilityDice', function($parse, $rootScope, $window, abilityDice){
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
@@ -3409,7 +3349,7 @@ angular.module('pcs')
                     _ability = newVal;
                 };
                 
-                var getPosition = function(){
+                var getAbility = function(){
                     var offset = element.offset();
                     var caret = _ability.order < 4 ? 'top-caret' : 'bottom-caret';
                     var topEdge = _ability.order < 4 ? offset.top + convertEm(3) : offset.top - convertEm(9);
@@ -3424,13 +3364,14 @@ angular.module('pcs')
                 
                 
                 var onHeightChange = function(event, object){
-                    if(_ability.order === PcsCard1.chosenAbility.order){
-                        $rootScope.$broadcast('ability:setPosition', getPosition());
+                    if(_ability.order === abilityDice.chosenAbility.order){
+                        $rootScope.$broadcast('ability:setPosition', getAbility());
                     }
                 };
                 
                 var onPress = function(){
-                    $rootScope.$broadcast('ability:onPress', getPosition());
+                    abilityDice.chooseAbility(_ability);
+                    $rootScope.$broadcast('ability:onPress', getAbility());
                 };
                 
                 initialize();
@@ -3509,8 +3450,8 @@ angular.module('pcs')
 'use strict';
 
 // Factory-service for managing PC card deck.
-angular.module('pcs').factory('PcsAugments', ['Bakery', 'CoreStack',
-	function(Bakery, CoreStack){
+angular.module('pcs').factory('PcsAugments', ['Bakery', 'MoveStack',
+	function(Bakery, MoveStack){
 		
 		var service = {};
 		
@@ -3548,7 +3489,7 @@ angular.module('pcs').factory('PcsAugments', ['Bakery', 'CoreStack',
 		service.addAugment = function(level){
 			var newAugment = {
 				panelType: 'Augment',
-				x_coord: CoreStack.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
+				x_coord: MoveStack.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -3567,7 +3508,7 @@ angular.module('pcs').factory('PcsAugments', ['Bakery', 'CoreStack',
 	}]);
 'use strict';
 
-angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'CoreStack', 'CorePanel', 'pcsDefaults', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CoreStack, CorePanel, pcsDefaults){
+angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'MoveStack', 'MovePanel', 'pcsDefaults', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, MoveStack, MovePanel, pcsDefaults){
     var service = {};
     
     //BROWSE
@@ -3579,7 +3520,7 @@ angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authent
                 panelType: 'playerOptions'
             });
             Bakery.resource.cardList = response;
-            CoreStack.setCardList(Bakery.resource.cardList);
+            MoveStack.setCardList(Bakery.resource.cardList);
         });
     };
     
@@ -3613,178 +3554,15 @@ angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authent
     //DELETE
     service.delete = function(pc, resource){
         pc.$remove(function(response){
-            CorePanel.removePanel(pc, resource.cardList);
-            CorePanel.setDeckSize(resource);
-            CorePanel.collapseDeck(pc, resource.cardList);
+            MovePanel.removePanel(pc, resource.cardList);
+            MovePanel.setDeckSize(resource);
+            MovePanel.collapseDeck(pc, resource.cardList);
         });
     };
     
     return service;
     
 }]);
-'use strict';
-
-// Factory-service for managing pc1 data.
-angular.module('pcs').factory('PcsCard1', ['$rootScope', 'Bakery', 'CoreVars',
-	function($rootScope, Bakery, CoreVars){
-		var service = {};
-		
-		service.chosenDie = {};
-		service.previousDie = {};
-		service.chosenAbility = {};
-		
-		service.chooseAbility = function(ability){
-			service.chosenAbility = Bakery.resource.abilities[ability];
-		};
-		
-		$rootScope.$on('ability:onPress', function(event, object){
-			console.log(object);
-			service.chosenAbility = Bakery.resource.abilities[object.ability.order];
-		});
-		
-		service.chooseDie = function(dice){
-			CoreVars.modalShown = false;
-			CoreVars.diceBoxShown = false;
-			
-			var _abilityPair;
-			var _ability1;
-			var _ability2;
-			
-			this.chosenDie = Bakery.resource.dicepool[dice];
-			
-			this.previousDie = this.chosenAbility.dice;
-			
-			Bakery.resource.dicepool[dice] = Bakery.resource.dicepool[0];
-			
-			if(this.previousDie.order > 0){
-				Bakery.resource.dicepool[this.previousDie.order] = this.previousDie;
-			}
-			
-			Bakery.resource.abilities[this.chosenAbility.order].dice = this.chosenDie;
-			
-			switch(this.chosenAbility.order){
-				case 0:
-				case 1:
-					_abilityPair = 1;
-					_ability1 = Bakery.resource.abilities[0];
-					_ability2 =  Bakery.resource.abilities[1];
-					break;
-				case 2:
-				case 3:
-					_abilityPair = 2;
-					_ability1 = Bakery.resource.abilities[2];
-					_ability2 =  Bakery.resource.abilities[3];
-					break;
-				case 4:
-				case 5:
-					_abilityPair = 3;
-					_ability1 = Bakery.resource.abilities[4];
-					_ability2 =  Bakery.resource.abilities[5];
-					break;
-				case 6:
-				case 7:
-					_abilityPair = 4;
-					_ability1 = Bakery.resource.abilities[6];
-					_ability2 =  Bakery.resource.abilities[7];
-					break;
-			}
-			
-			$rootScope.$broadcast('pcsCard1:updateAbility', {
-				abilityPair: _abilityPair,
-				ability1: _ability1,
-				ability2: _ability2
-			});
-		};
-		
-		service.factorBlock = function(_str, _phy){
-			if (Number(_str.dice.sides) > Number(_phy.dice.sides)){
-				Bakery.resource.block = '2' + _str.dice.name;
-			} else {
-				Bakery.resource.block = '2' + _phy.dice.name;
-			}
-		};
-		
-		service.factorDodge = function(_fle, _dex){
-			if (Number(_fle.dice.sides) > Number(_dex.dice.sides)){
-				Bakery.resource.dodge = '2' + _fle.dice.name;
-			} else {
-				Bakery.resource.dodge = '2' + _dex.dice.name;
-			}
-		};
-		
-		service.factorAlertness = function(_acu, _int){
-			if (Number(_acu.dice.sides) > Number(_int.dice.sides)){
-				Bakery.resource.alertness = '2' + _acu.dice.name;
-			} else {
-				Bakery.resource.alertness = '2' + _int.dice.name;
-			}
-		};
-		
-		service.factorTenacity = function(_wis, _cha){
-			if (Number(_wis.dice.sides) > Number(_cha.dice.sides)){
-				Bakery.resource.tenacity = '2' + _wis.dice.name;
-			} else {
-				Bakery.resource.tenacity = '2' + _cha.dice.name;
-			}
-		};
-		
-		return service;
-	}]);
-'use strict';
-
-// Factory-service for managing pc2 data.
-angular.module('pcs').factory('PcsCard2', ['$rootScope', 'Bakery', 'PcsTraits',
-	function($rootScope, Bakery, PcsTraits){
-		var service = {};
-		
-		service.factorExperience = function(){
-			var mLevel = 0;
-			var mExperience = Number(Bakery.resource.experience);
-			for (var increment = 8; increment <= mExperience; increment++){
-				mLevel++;
-				mExperience = mExperience - increment;
-			}
-			Bakery.resource.level = mLevel;
-		};
-		
-		service.factorHealth = function(){
-			Bakery.resource.healthLimit = 
-				Math.round(
-					(Number(Bakery.resource.abilities[0].dice.sides) +
-						Number(Bakery.resource.abilities[1].dice.sides)
-					) * ((Bakery.resource.level || 0)/16 + 1));
-			Bakery.resource.healthCurrent =
-				Number(Bakery.resource.healthLimit - Bakery.resource.injury);
-		};
-		
-		service.factorStamina = function(){
-			Bakery.resource.staminaLimit = 
-				Math.round(
-					(Number(Bakery.resource.abilities[0].dice.sides) +
-						Number(Bakery.resource.abilities[1].dice.sides)
-					) * ((Bakery.resource.level || 0)/16 + 1));
-			Bakery.resource.staminaCurrent =
-				Number(Bakery.resource.healthLimit - Bakery.resource.injury);
-		};
-		
-		service.factorCarryingCapacity = function(){
-			Bakery.resource.carryCurrent = 0;
-			Bakery.resource.carryLimit =
-				Number(Bakery.resource.abilities[0].dice.sides) +
-				Number(Bakery.resource.abilities[1].dice.sides);
-		};
-		
-		return service;
-	}]);
-'use strict';
-
-// Factory-service for managing pc3 data.
-angular.module('pcs').factory('PcsCard3', ['$rootScope', 'Bakery',
-	function($rootScope, Bakery){
-		var service = {};
-		
-		return service;
-	}]);
 'use strict';
 
 angular.module('pcs').factory('pcsDefaults', [function(){
@@ -3865,8 +3643,8 @@ angular.module('pcs').factory('pcsDefaults', [function(){
 'use strict';
 
 // Factory-service for managing PC card deck.
-angular.module('pcs').factory('PcsFeats', ['Bakery', 'CoreStack',
-	function(Bakery, CoreStack){
+angular.module('pcs').factory('PcsFeats', ['Bakery', 'MoveStack',
+	function(Bakery, MoveStack){
 		
 		var service = {};
 		
@@ -3905,7 +3683,7 @@ angular.module('pcs').factory('PcsFeats', ['Bakery', 'CoreStack',
 		service.addFeat = function(level){
 			var newFeat = {
 				panelType: 'Feat',
-				x_coord: CoreStack.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
+				x_coord: MoveStack.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -3939,8 +3717,8 @@ angular.module('pcs').factory('PcsItems', ['Bakery',
 'use strict';
 
 // Factory-service for managing PC traits
-angular.module('pcs').factory('PcsTraits', ['Bakery', 'CoreStack',
-	function(Bakery, CoreStack){
+angular.module('pcs').factory('PcsTraits', ['Bakery', 'MoveStack',
+	function(Bakery, MoveStack){
 		
 		var service = {};
 		
@@ -3978,7 +3756,7 @@ angular.module('pcs').factory('PcsTraits', ['Bakery', 'CoreStack',
 		service.addTrait = function(level){
 			var newTrait = {
 				panelType: 'Trait',
-				x_coord: CoreStack.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
+				x_coord: MoveStack.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
@@ -4012,6 +3790,202 @@ angular.module('decks').factory('Pcs', ['$resource',
                 }
             );
         }]);
+'use strict';
+
+angular.module('player').factory('abilityDice', ['$rootScope', 'CoreVars', 'Bakery', function($rootScope, CoreVars, Bakery) {
+    var service = {};
+    
+    service.chosenAbility = {};
+    var chosenDie = {};
+    var previousDie = {};
+    
+    
+    service.chooseAbility = function(ability){
+        console.log(ability);
+        CoreVars.modalShown = true;
+        CoreVars.diceBoxShown = true;
+        service.chosenAbility = ability;
+    };
+    
+    service.chooseDie = function(resource, order){
+        CoreVars.modalShown = false;
+        CoreVars.diceBoxShown = false;
+        
+        chosenDie = resource.dicepool[order];
+        
+        previousDie = service.chosenAbility.dice;
+        
+        resource.dicepool[order] = resource.dicepool[0];
+        
+        if(previousDie.order > 0){
+            resource.dicepool[previousDie.order] = previousDie;
+        }
+        
+        resource.abilities[service.chosenAbility.order].dice = chosenDie;
+    };
+    
+    return service;
+}]);
+'use strict';
+
+// Factory-service for managing pc1 data.
+angular.module('player').factory('factorDefenses', [
+    function(){
+        
+        var service = {};
+        
+        service.factorBlock = function(resource){
+            var dice_a = resource.abilities[0].dice;
+            var dice_b = resource.abilities[1].dice;
+            if (Number(dice_a.sides) > Number(dice_b.sides)){
+                resource.block = '2' + dice_a.name;
+            } else {
+                resource.block = '2' + dice_b.name;
+            }
+        };
+        
+        service.factorDodge = function(resource){
+            var dice_a = resource.abilities[2].dice;
+            var dice_b = resource.abilities[3].dice;
+            if (Number(dice_a.sides) > Number(dice_b.sides)){
+                resource.dodge = '2' + dice_a.name;
+            } else {
+                resource.dodge = '2' + dice_b.name;
+            }
+        };
+        
+        service.factorAlertness = function(resource){
+            var dice_a = resource.abilities[4].dice;
+            var dice_b = resource.abilities[5].dice;
+            if (Number(dice_a.sides) > Number(dice_b.sides)){
+                resource.alertness = '2' + dice_a.name;
+            } else {
+                resource.alertness = '2' + dice_b.name;
+            }
+        };
+        
+        service.factorTenacity = function(resource){
+            var dice_a = resource.abilities[6].dice;
+            var dice_b = resource.abilities[7].dice;
+            if (Number(dice_a.sides) > Number(dice_b.sides)){
+                resource.tenacity = '2' + dice_a.name;
+            } else {
+                resource.tenacity = '2' + dice_b.name;
+            }
+        };
+        
+        return service;
+    }]);
+'use strict';
+
+// Factory-service for managing pc1 data.
+angular.module('player').factory('factorStats', ['CoreVars',
+    function(CoreVars){
+        
+        var service = {};
+        
+        service.factorExperience = function(resource){
+            var mLevel = 0;
+            var mExperience = Number(resource.experience);
+            for (var increment = 8; increment <= mExperience; increment++){
+                mLevel++;
+                mExperience = mExperience - increment;
+            }
+            resource.level = mLevel;
+        };
+        
+        service.factorHealth = function(resource){
+            resource.healthLimit = 
+                Math.round(
+                    (Number(resource.abilities[0].dice.sides) +
+                        Number(resource.abilities[1].dice.sides)
+                    ) * ((resource.level || 0)/16 + 1));
+            resource.healthCurrent =
+                Number(resource.healthLimit - resource.injury);
+        };
+        
+        service.factorStamina = function(resource){
+            resource.staminaLimit = 
+                Math.round(
+                    (Number(resource.abilities[0].dice.sides) +
+                        Number(resource.abilities[1].dice.sides)
+                    ) * ((resource.level || 0)/16 + 1));
+            resource.staminaCurrent =
+                Number(resource.healthLimit - resource.injury);
+        };
+        
+        service.factorCarryingCapacity = function(resource){
+            resource.carryCurrent = 0;
+            resource.carryLimit =
+                Number(resource.abilities[0].dice.sides) +
+                Number(resource.abilities[1].dice.sides);
+        };
+        
+        return service;
+    }]);
+'use strict';
+
+angular.module('player').factory('PlayerHub', ['$rootScope', 'CoreVars', 'Bakery', 'factorDefenses', 'factorStats', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'abilityDice', function($rootScope, CoreVars, Bakery, factorDefenses, factorStats, PcsTraits, PcsFeats, PcsAugments, abilityDice) {
+    
+    var service = {};
+    
+    service.chooseDie = function(order){
+        abilityDice.chooseDie(Bakery.resource, order);
+        switch(abilityDice.chosenAbility.order){
+            case 0:
+            case 1:
+                factorDefenses.factorBlock(Bakery.resource);
+                factorStats.factorHealth(Bakery.resource);
+                factorStats.factorStamina(Bakery.resource);
+                factorStats.factorCarryingCapacity(Bakery.resource);
+                break;
+            case 2:
+            case 3:
+                factorDefenses.factorDodge(Bakery.resource);
+                break;
+            case 4:
+            case 5:
+                factorDefenses.factorAlertness(Bakery.resource);
+                break;
+            case 6:
+            case 7:
+                factorDefenses.factorTenacity(Bakery.resource);
+                break;
+        }
+    };
+    
+    //Watch for change in EXP input
+    service.watchEXP = function(newValue, oldValue){
+        if (Bakery.resource.deckType === 'pc' && newValue !== oldValue){
+            CoreVars.EXP = parseInt(newValue);
+            Bakery.resource.experience = parseInt(newValue);
+        }
+    };
+    
+    //Watch for change in experience
+    service.watchExperience = function(newValue, oldValue){
+        if (Bakery.resource.deckType === 'pc' && newValue !== oldValue){
+            factorStats.factorExperience(Bakery.resource);
+            if (newValue !== CoreVars.EXP){
+                CoreVars.EXP = newValue;
+            }
+        }
+    };
+    
+    //Watch for changes in level
+    service.watchLevel = function(newValue, oldValue){
+        if (Bakery.resource.deckType === 'pc'){
+            factorStats.factorHealth(Bakery.resource);
+            factorStats.factorStamina(Bakery.resource);
+            PcsTraits.factorTraitLimit();
+            PcsFeats.factorFeatLimit();
+            PcsAugments.factorAugmentLimit();
+        }
+    };
+    
+    return service;
+    
+}]);
 'use strict';
 
 // Config HTTP Error Handling

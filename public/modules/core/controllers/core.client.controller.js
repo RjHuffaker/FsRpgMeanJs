@@ -2,8 +2,8 @@
 
 // Core Controller
 angular.module('core')
-	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsCard1', 'PcsCard2', 'PcsCard3', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'Architect', 'Player', 'CoreVars',
-		function($location, $scope, $rootScope, $window, Authentication, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsCard1, PcsCard2, PcsCard3, PcsTraits, PcsFeats, PcsAugments, PcsItems, Architect, Player, CoreVars) {
+	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'BuilderHub', 'PlayerHub', 'CoreVars',
+		function($location, $scope, $rootScope, $window, Authentication, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsTraits, PcsFeats, PcsAugments, PcsItems, BuilderHub, PlayerHub, CoreVars) {
 			
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
@@ -11,12 +11,6 @@ angular.module('core')
 			$scope.Bakery = Bakery;
             
 			$scope.dataSRVC = DataSRVC;
-			
-			$scope.pcsCard1 = PcsCard1;
-			
-			$scope.pcsCard2 = PcsCard2;
-			
-			$scope.pcsCard3 = PcsCard3;
 			
 			$scope.pcsTraits = PcsTraits;
 			
@@ -26,9 +20,9 @@ angular.module('core')
 			
 			$scope.pcsItems = PcsItems;
 			
-			$scope.Architect = Architect;
+			$scope.BuilderHub = BuilderHub;
 			
-		//	$scope.Player = Player;
+			$scope.PlayerHub = PlayerHub;
 			
 			$scope.CoreVars = CoreVars;
 			
@@ -42,11 +36,10 @@ angular.module('core')
 				if (!enable) return;
 				$scope.$on('$destroy', onDestroy);
 				$scope.$on('screenSize:onHeightChange', onHeightChange);
-				$scope.$on('ability:onPress', Player.chooseAbility);
-        		$scope.$on('PcsCard1:updateAbility', Player.updateAbility);
-				$scope.$watch('CoreVars.EXP', Player.watchEXP);
-				$scope.$watch('Bakery.resource.experience', Player.watchExperience);
-				$scope.$watch('Bakery.resource.level', Player.watchLevel);
+				$scope.$on('ability:onPress', PlayerHub.chooseAbility);
+				$scope.$watch('CoreVars.EXP', PlayerHub.watchEXP);
+				$scope.$watch('Bakery.resource.experience', PlayerHub.watchExperience);
+				$scope.$watch('Bakery.resource.level', PlayerHub.watchLevel);
 			};
 			
 			var onDestroy = function(){

@@ -1,8 +1,8 @@
 'use strict';
 
 // Directive for managing card decks.
-angular.module('core')
-	.directive('coreStack', ['$rootScope', '$window', 'Bakery', 'CoreStack', 'CoreMove', function($rootScope, $window, Bakery, CoreStack, CoreMove){
+angular.module('move')
+	.directive('deckStack', ['$rootScope', '$window', 'Bakery', 'MoveStack', 'MoveHub', function($rootScope, $window, Bakery, MoveStack, MoveHub){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -21,10 +21,10 @@ angular.module('core')
 					scope.$on('$destroy', onDestroy);
 					element.on('mouseleave', onMouseLeave);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
-					scope.$on('CoreStack:setDeckWidth', setDeckWidth);
-					scope.$on('corePanel:onPressCard', onPress);
-					scope.$on('corePanel:onReleaseCard', onRelease);
-					scope.$on('corePanel:onMoveCard', onMoveCard);
+					scope.$on('MoveStack:setDeckWidth', setDeckWidth);
+					scope.$on('cardPanel:onPressCard', onPress);
+					scope.$on('cardPanel:onReleaseCard', onRelease);
+					scope.$on('cardPanel:onMoveCard', onMoveCard);
 				};
 				
 				var onDestroy = function(enable){
@@ -39,7 +39,7 @@ angular.module('core')
 				};
 				
 				var setDeckWidth = function(){
-					var deckWidth = CoreStack.getDeckWidth(Bakery.resource.cardList);
+					var deckWidth = MoveStack.getDeckWidth(Bakery.resource.cardList);
 					element.css({
 						'width': deckWidth+'em'
 					});
@@ -66,21 +66,21 @@ angular.module('core')
 				var onMoveCard = function(event, object){
 					
 					var deckOffset = element.offset();
-					var deckWidth = CoreStack.getDeckWidth(Bakery.resource.cardList);
+					var deckWidth = MoveStack.getDeckWidth(Bakery.resource.cardList);
 					var deckLeftEdge = deckOffset.left;
 					var deckRightEdge = convertEm(deckWidth + 3);
 					
 					if(object.mouseX <= deckLeftEdge){
-						CoreMove.unstackLeft(object.panel);
+						MoveHub.unstackLeft(object.panel);
 					} else if(object.mouseX >= deckRightEdge){
-						CoreMove.unstackRight(object.panel);
+						MoveHub.unstackRight(object.panel);
 					}
 					
 				};
 				
 				var onMouseLeave = function(event){
 					if(pressed){
-						$rootScope.$broadcast('coreStack:onMouseLeave');
+						$rootScope.$broadcast('deckStack:onMouseLeave');
 					}
 				};
 				

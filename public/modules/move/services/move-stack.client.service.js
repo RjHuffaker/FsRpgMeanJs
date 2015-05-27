@@ -1,7 +1,7 @@
 'use strict';
 
 // Stack helper-functions
-angular.module('core').factory('CoreStack', ['$rootScope', function($rootScope) {
+angular.module('move').factory('MoveStack', ['$rootScope', function($rootScope) {
     
     var service = {};
     
@@ -46,7 +46,7 @@ angular.module('core').factory('CoreStack', ['$rootScope', function($rootScope) 
     
     service.setDeckWidth = function(cardList){
         var _deckWidth = service.getDeckWidth(cardList);
-        $rootScope.$broadcast('CoreStack:setDeckWidth', {
+        $rootScope.$broadcast('MoveStack:setDeckWidth', {
             deckWidth: _deckWidth
         });
     };
@@ -61,7 +61,7 @@ angular.module('core').factory('CoreStack', ['$rootScope', function($rootScope) 
             cardList[i].stacked = false;
             cardList[i].locked = false;
         }
-        $rootScope.$broadcast('corePanel:onReleaseCard');
+        $rootScope.$broadcast('cardPanel:onReleaseCard');
     };
     
     service.getColumnArray = function(cardList, x_coord){

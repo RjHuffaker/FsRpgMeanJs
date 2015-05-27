@@ -1,16 +1,16 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery', 'CorePanel', 'CoreStack',
-    function($rootScope, CoreVars, Bakery, CorePanel, CoreStack){
+angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery', 'MovePanel', 'MoveStack',
+    function($rootScope, CoreVars, Bakery, MovePanel, MoveStack){
         
         return function(cardList, slot, panel){
             if(!CoreVars.cardMoving){
                 
-                if(CoreStack.getLowestPanel(cardList, panel.x_coord).panel.y_coord > 0){
+                if(MoveStack.getLowestPanel(cardList, panel.x_coord).panel.y_coord > 0){
                     var panel_x = panel.x_coord;
                     var panel_y = panel.y_coord;
-                    var panel_index = CorePanel.getPanel(cardList, panel_x, panel_y).index;
+                    var panel_index = MovePanel.getPanel(cardList, panel_x, panel_y).index;
                     var panel_x_overlap = panel.x_overlap;
                     var panel_y_overlap = panel.y_overlap;
                     var slot_x = slot.x_coord;
@@ -51,8 +51,8 @@ angular.module('core').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
                             cardList[panel_index].y_coord = 0;
                             cardList[panel_index].stacked = false;
                         }
-                        new_slot_index = CoreStack.getLowestPanel(cardList, panel_x).index;
-                        new_panel_index = CoreStack.getLowestPanel(cardList, panel_x + CoreVars.x_dim).index;
+                        new_slot_index = MoveStack.getLowestPanel(cardList, panel_x).index;
+                        new_panel_index = MoveStack.getLowestPanel(cardList, panel_x + CoreVars.x_dim).index;
                         
                         cardList[new_slot_index].y_overlap = false;
                         if(cardList[new_slot_index].y_coord === 0){
@@ -93,8 +93,8 @@ angular.module('core').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
                             cardList[panel_index].y_coord = 0;
                         }
                         
-                        new_slot_index = CoreStack.getLowestPanel(cardList, panel_x).index;
-                        new_panel_index = CoreStack.getLowestPanel(cardList, slot_x).index;
+                        new_slot_index = MoveStack.getLowestPanel(cardList, panel_x).index;
+                        new_panel_index = MoveStack.getLowestPanel(cardList, slot_x).index;
                         
                         cardList[new_slot_index].y_overlap = false;
                         if(cardList[new_slot_index].y_coord === 0){

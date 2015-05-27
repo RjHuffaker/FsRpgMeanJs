@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('core').factory('Architect', ['$rootScope', 'Bakery', 'DecksBread', function($rootScope, Bakery, DecksBread) {
+angular.module('core').factory('BuilderHub', ['$rootScope', 'Bakery', 'DecksBread', function($rootScope, Bakery, DecksBread) {
     
     var service = {};
     

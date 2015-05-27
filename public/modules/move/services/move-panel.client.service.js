@@ -1,7 +1,7 @@
 'use strict';
 
 // Panel helper-functions
-angular.module('core').factory('CorePanel', ['$rootScope', '$resource', function($rootScope, $resource) {
+angular.module('move').factory('MovePanel', ['$rootScope', '$resource', function($rootScope, $resource) {
     
     var service = {};
     
@@ -19,7 +19,7 @@ angular.module('core').factory('CorePanel', ['$rootScope', '$resource', function
         }
     };
     
-    service.removePanel = function(panel, cardList){
+    service.removePanel = function(cardList, panel){
         for(var i = 0; i < cardList.length; i++){
             if (cardList[i] === panel ) {
                 cardList.splice(i, 1);
@@ -110,7 +110,7 @@ angular.module('core').factory('CorePanel', ['$rootScope', '$resource', function
                 slotData.cardNumber++;
             }
         }
-        $rootScope.$broadcast('corePanel:onReleaseCard');
+        $rootScope.$broadcast('cardPanel:onReleaseCard');
     };
     
     service.collapseDeck = function(panel, cardList){
@@ -125,7 +125,7 @@ angular.module('core').factory('CorePanel', ['$rootScope', '$resource', function
                 slotData.cardNumber--;
             }
         }
-        $rootScope.$broadcast('corePanel:onReleaseCard');
+        $rootScope.$broadcast('cardPanel:onReleaseCard');
     };
     
     service.setDeckSize = function(resource){

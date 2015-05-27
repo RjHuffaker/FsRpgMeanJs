@@ -5,7 +5,7 @@ angular.module('cards')
 	.directive('playerOptions', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/core/views/options-player.html'
+			templateUrl: '../modules/player/views/options-player.html'
 		};
 	})
 	.directive('pcSummary', function(){
@@ -38,7 +38,7 @@ angular.module('cards')
 			templateUrl: '../modules/pcs/views/card-pc-3.html'
 		};
 	})
-	.directive('featureCard', ['DataSRVC', 'Bakery', 'Architect', function(DataSRVC, Bakery, Architect){
+	.directive('featureCard', ['DataSRVC', 'Bakery', 'BuilderHub', function(DataSRVC, Bakery, BuilderHub){
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/cards/views/feature-card.html',
@@ -46,14 +46,14 @@ angular.module('cards')
 			link: function(scope, element, attrs){
 				scope.Bakery = Bakery;
 				scope.dataSRVC = DataSRVC;
-				scope.Architect = Architect;
+				scope.BuilderHub = BuilderHub;
 			}
 		};
 	}])
 	.directive('narratorOptions', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/core/views/options-narrator.html'
+			templateUrl: '../modules/narrator/views/options-narrator.html'
 		};
 	})
 	.directive('npcSummary', function(){
@@ -74,10 +74,10 @@ angular.module('cards')
 			templateUrl: '../modules/npcs/views/npc-origin.html'
 		};
 	})
-	.directive('architectOptions', function(){
+	.directive('builderOptions', function(){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/core/views/options-architect.html'
+			templateUrl: '../modules/builder/views/options-builder.html'
 		};
 	})
 	.directive('deckSummary', function(){

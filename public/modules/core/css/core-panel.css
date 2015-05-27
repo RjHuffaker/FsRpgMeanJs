@@ -1,4 +1,4 @@
-[core-panel] {
+[card-panel] {
 	position: absolute;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -14,7 +14,7 @@
 	cursor: grab;
 }
 
-[core-panel].card-moving {
+[card-panel].card-moving {
 	-webkit-transition: .75s ease-in-out !important;
 	-moz-transition: .75s ease-in-out !important;
 	-o-transition: .75s ease-in-out !important;
@@ -22,14 +22,14 @@
 	transition: .75s ease-in-out !important;
 }
 
-[core-panel].dragging {
+[card-panel].dragging {
 	cursor: move;
 	cursor: -webkit-grabbing;
 	cursor: -moz-grabbing;
 	cursor: grabbing;
 }
 
-[core-panel] > div > div {
+[card-panel] > div > div {
 	-moz-border-radius: .5em;
 	-webkit-border-radius: .5em;
 	border-radius: .5em;
@@ -40,7 +40,7 @@
 	background-color: Wheat;
 }
 
-[core-panel].ng-leave, [core-panel].ng-enter {
+[card-panel].ng-leave, [card-panel].ng-enter {
 	margin-top: 3em;
 	transition-property:  left;
 	-webkit-transition: 1s ease-in-out !important;
@@ -50,6 +50,6 @@
 	transition: 1s ease-in-out !important;
 }
 
-[core-panel].ng-leave.ng-leave-active {
+[card-panel].ng-leave.ng-leave-active {
 	margin-top: 45em;
 }

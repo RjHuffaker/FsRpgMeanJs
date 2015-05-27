@@ -1,7 +1,20 @@
 <div ng-switch on="panel.panelType" class="fill-parent">
 	<div ng-switch-when="playerOptions" player-options class="fill-parent"></div>
+	<div ng-switch-when="builderOptions" builder-options class="fill-parent"></div>
+	<div ng-switch-when="narratorOptions" narrator-options class="fill-parent"></div>
+	
 	<div ng-switch-when="pcSummary" pc-summary class="fill-parent"></div>
 	<div ng-switch-when="pcOptions" pc-options class="fill-parent"></div>
+	
+	<div ng-switch-when="deckSummary" deck-summary class="fill-parent {{panel.deckType}}"></div>
+	<div ng-switch-when="deckOptions" deck-options class="fill-parent"></div>
+	
+	<div ng-switch-when="npcSummary" npc-summary class="fill-parent"></div>
+	<div ng-switch-when="npcOptions" npc-options class="fill-parent"></div>
+	
+	<div ng-switch-when="campaignSummary" ccampaign-summary class="fill-parent"></div>
+	<div ng-switch-when="campaignOptions" campaign-options class="fill-parent"></div>
+
 	<div ng-switch-when="pc1" card-pc-1 class="fill-parent"></div>
 	<div ng-switch-when="pc2" card-pc-2 class="fill-parent"></div>
 	<div ng-switch-when="pc3" card-pc-3 class="fill-parent"></div>
@@ -25,16 +38,6 @@
 		card="panel.originData" panel="panel"
 		class="card-origin fill-parent"></div>
 	
-	<div ng-switch-when="architectOptions" architect-options class="fill-parent"></div>
-	<div ng-switch-when="deckSummary" deck-summary class="fill-parent {{panel.deckType}}"></div>
-	<div ng-switch-when="deckOptions" deck-options class="fill-parent"></div>
-	
-	<div ng-switch-when="narratorOptions" narrator-options class="fill-parent"></div>
-	<div ng-switch-when="npcSummary" npc-summary class="fill-parent"></div>
-	<div ng-switch-when="npcOptions" npc-options class="fill-parent"></div>
-	
-	<div ng-switch-when="campaignSummary" ccampaign-summary class="fill-parent"></div>
-	<div ng-switch-when="campaignOptions" campaign-options class="fill-parent"></div>
 </div>
 <div style="color: darkRed; position: absolute; top: 0; left: 13em; width: 2em;" class="text-center">
 	<span class="text-5">

@@ -5,7 +5,7 @@
 	width: 100%;
 }
 
-[core-stack] {
+[deck-stack] {
 	position: absolute;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -13,7 +13,7 @@
 	user-select: none;
 }
 
-div[core-stack] {
+div[deck-stack] {
 	white-space: nowrap;
 	margin-left: 3em;
 	-webkit-transition: .75s ease-in-out width;
@@ -23,6 +23,6 @@ div[core-stack] {
 	transition: .75s ease-in-out width;
 }
 
-[core-stack] > ul{
+[deck-stack] > ul{
 	list-style: none;
 }

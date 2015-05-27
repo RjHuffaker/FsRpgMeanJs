@@ -1,9 +1,9 @@
 <section data-ng-controller="CoreController" screen-size style="height: {{windowHeight-50}}px">
 	<div class="container-fluid deck-panel" style="height: {{windowHeight - 50}}px">
 		<div class="fill-parent modal-overlay" ng-click="CoreVars.hideModal()" ng-show="CoreVars.modalShown"></div>
-		<div core-stack ng-mouseleave="true">
+		<div deck-stack ng-mouseleave="true">
 			<ul>
-				<li core-panel panel="panel" ng-repeat="panel in Bakery.resource.cardList"
+				<li card-panel panel="panel" ng-repeat="panel in Bakery.resource.cardList"
 					ng-class="{'stacked': panel.stacked, 'dragging': panel.dragging,
 						'x_overlap': panel.x_overlap, 'y_overlap': panel.y_overlap}"
 					ng-style="{'z-index': 4998 - panel.x_coord + panel.y_coord}"

@@ -1,11 +1,11 @@
 'use strict';
 
 // Directive for managing card decks.
-angular.module('core')
-	.directive('corePanel', ['$document', '$parse', '$rootScope', '$window', 'Bakery', 'CoreMove', function($document, $parse, $rootScope, $window, Bakery, CoreMove){
+angular.module('move')
+	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'Bakery', 'MoveHub',function($document, $parse, $rootScope, $window, Bakery, MoveHub){
 		return {
 			restrict: 'A',
-			templateUrl: '../modules/core/views/core-panel.html',
+			templateUrl: '../modules/core/views/card-panel.html',
 			link: function(scope, element, attrs){
 				
 				Array.min = function(array){
@@ -55,10 +55,10 @@ angular.module('core')
 					scope.$on('$destroy', onDestroy);
 					scope.$watch(attrs.panel, onCardChange);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
-					scope.$on('corePanel:onPressCard', onPressCard);
-					scope.$on('corePanel:onMoveCard', onMoveCard);
-					scope.$on('corePanel:onReleaseCard', onReleaseCard);
-					scope.$on('coreStack:onMouseLeave', onMouseLeave);
+					scope.$on('cardPanel:onPressCard', onPressCard);
+					scope.$on('cardPanel:onMoveCard', onMoveCard);
+					scope.$on('cardPanel:onReleaseCard', onReleaseCard);
+					scope.$on('deckStack:onMouseLeave', onMouseLeave);
 					scope.$on('CardsCtrl:onDropdown', onDropdown);
 					scope.$watch('panel.x_coord', resetPosition);
 					scope.$watch('panel.y_coord', resetPosition);
@@ -178,7 +178,7 @@ angular.module('core')
 					
 					element.removeClass('card-moving');
 					
-					$rootScope.$broadcast('corePanel:onPressCard', {
+					$rootScope.$broadcast('cardPanel:onPressCard', {
 						startX: _startX,
 						startY: _startY,
 						panel: _panel
@@ -232,7 +232,7 @@ angular.module('core')
 						top: _moveY + _startRow + 'px'
 					});
 					
-					$rootScope.$broadcast('corePanel:onMoveCard', {
+					$rootScope.$broadcast('cardPanel:onMoveCard', {
 						mouseX: _mouseX,
 						mouseY: _mouseY,
 						moveX: _moveX,
@@ -280,38 +280,38 @@ angular.module('core')
 					} else if(changeX > 0 || changeY > 0){
 						if(crossingEdge(mouseX, mouseY) === 'top'){
 							if(vectorX > 0 && !slot_y_overlap && !slot_x_overlap && !panel_x_overlap){
-								console.log('corePanel:moveDiagonalUp');
-								CoreMove.moveDiagonalUp(slot, panel);
+								console.log('cardPanel:moveDiagonalUp');
+								MoveHub.moveDiagonalUp(slot, panel);
 							} else if(changeX === 0 && !panel_y_overlap){
-								console.log('corePanel:moveVertical');
-								CoreMove.moveVertical(slot, panel);
+								console.log('cardPanel:moveVertical');
+								MoveHub.moveVertical(slot, panel);
 							} else {
-								console.log('corePanel:moveHorizontal');
-								CoreMove.moveHorizontal(slot, panel);
+								console.log('cardPanel:moveHorizontal');
+								MoveHub.moveHorizontal(slot, panel);
 							}
 						} else if(crossingEdge(mouseX, mouseY) === 'bottom'){
 							if(changeX > 0 && changeX <= _x_dim){
-								console.log('corePanel:moveDiagonalDown');
-								CoreMove.moveDiagonalDown(slot, panel);
+								console.log('cardPanel:moveDiagonalDown');
+								MoveHub.moveDiagonalDown(slot, panel);
 							} else if(changeX === 0 && !panel_y_overlap){
-								console.log('corePanel:moveVertical');
-								CoreMove.moveVertical(slot, panel);
+								console.log('cardPanel:moveVertical');
+								MoveHub.moveVertical(slot, panel);
 							} else {
-								console.log('corePanel:moveHorizontal');
-								CoreMove.moveHorizontal(slot, panel);
+								console.log('cardPanel:moveHorizontal');
+								MoveHub.moveHorizontal(slot, panel);
 							}
 						} else if(crossingEdge(mouseX, mouseY) === 'left' || crossingEdge(mouseX, mouseY) === 'right'){
 							if(vectorY * 2 > vectorX){
 								if(moveY < 0){
-									console.log('corePanel:moveDiagonalUp');
-									CoreMove.moveDiagonalUp(slot, panel);
+									console.log('cardPanel:moveDiagonalUp');
+									MoveHub.moveDiagonalUp(slot, panel);
 								} else if(moveY > 0){
-									console.log('corePanel:moveDiagonalDown');
-									CoreMove.moveDiagonalDown(slot, panel);
+									console.log('cardPanel:moveDiagonalDown');
+									MoveHub.moveDiagonalDown(slot, panel);
 								}
 							} else {
-								console.log('corePanel:moveHorizontal');
-								CoreMove.moveHorizontal(slot, panel);
+								console.log('cardPanel:moveHorizontal');
+								MoveHub.moveHorizontal(slot, panel);
 							}
 						}
 					}
@@ -322,11 +322,11 @@ angular.module('core')
 				var onRelease = function(){
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
-					$rootScope.$broadcast('corePanel:onReleaseCard', {
+					$rootScope.$broadcast('cardPanel:onReleaseCard', {
 						panel: _panel
 					});
 					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
-						CoreMove.triggerOverlap(_panel);
+						MoveHub.triggerOverlap(_panel);
 					}
 				};
 				
@@ -348,7 +348,7 @@ angular.module('core')
 				var onMouseLeave = function(){
 					$document.off(_moveEvents, onMove);
 					$document.off(_releaseEvents, onRelease);
-					$rootScope.$broadcast('corePanel:onReleaseCard', {
+					$rootScope.$broadcast('cardPanel:onReleaseCard', {
 						panel: _panel
 					});
 				};

@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('core').factory('CoreMove', ['$rootScope', 'CoreVars', 'Bakery', 'CorePanel', 'CoreStack', 'switchHorizontal', 'switchVertical', 'stackOver', 'stackUnder', 'unstackCard', 'toggleOverlap',
-	function($rootScope, CoreVars, Bakery, CorePanel, CoreStack, switchHorizontal, switchVertical, stackOver, stackUnder, unstackCard, toggleOverlap){
+angular.module('move').factory('MoveHub', ['$rootScope', 'CoreVars', 'Bakery', 'MovePanel', 'MoveStack', 'switchHorizontal', 'switchVertical', 'stackOver', 'stackUnder', 'unstackCard', 'toggleOverlap',
+	function($rootScope, CoreVars, Bakery, MovePanel, MoveStack, switchHorizontal, switchVertical, stackOver, stackUnder, unstackCard, toggleOverlap){
 		
 		var service = {};
 		
@@ -20,8 +20,8 @@ angular.module('core').factory('CoreMove', ['$rootScope', 'CoreVars', 'Bakery', 
 			if(!enable) return;
 			$rootScope.$on('screenSize:onHeightChange', onHeightChange);
 			
-			$rootScope.$on('corePanel:onPressCard', onPressCard);
-			$rootScope.$on('corePanel:onReleaseCard', onReleaseCard);
+			$rootScope.$on('cardPanel:onPressCard', onPressCard);
+			$rootScope.$on('cardPanel:onReleaseCard', onReleaseCard);
 		};
 		
 		var onHeightChange = function(event, object){
@@ -34,7 +34,7 @@ angular.module('core').factory('CoreMove', ['$rootScope', 'CoreVars', 'Bakery', 
 			var panel = object.panel;
 			var panel_x = panel.x_coord;
 			var panel_y = panel.y_coord;
-			var panel_index = CorePanel.getPanel(_deck, panel_x, panel_y).index;
+			var panel_index = MovePanel.getPanel(_deck, panel_x, panel_y).index;
 			
 			CoreVars.cardMoved = false;
 			if(_deck[panel_index].y_overlap){
@@ -67,7 +67,7 @@ angular.module('core').factory('CoreMove', ['$rootScope', 'CoreVars', 'Bakery', 
 		
 		service.moveHorizontal = function(slot, panel){
 			var _deck = getCardList();
-			var _lowest_index = CoreStack.getLowestPanel(_deck, panel.x_coord).index;
+			var _lowest_index = MoveStack.getLowestPanel(_deck, panel.x_coord).index;
 			if(panel.y_coord > 0 || (panel.y_coord === 0 && panel.stacked && !panel.y_overlap)){
 				console.log('unstackCard');
 				unstackCard(_deck, slot, panel);
@@ -79,7 +79,7 @@ angular.module('core').factory('CoreMove', ['$rootScope', 'CoreVars', 'Bakery', 
 
 		service.moveDiagonalUp = function(slot, panel){
 			var _deck = getCardList();
-			var _lowest_index = CoreStack.getLowestPanel(_deck, panel.x_coord).index;
+			var _lowest_index = MoveStack.getLowestPanel(_deck, panel.x_coord).index;
 			if(panel.y_coord === 0){
 				stackUnder(_deck, slot, panel);
 			} else {
@@ -89,7 +89,7 @@ angular.module('core').factory('CoreMove', ['$rootScope', 'CoreVars', 'Bakery', 
 
 		service.moveDiagonalDown = function(slot, panel){
 			var _deck = getCardList();
-			var _lowest_index = CoreStack.getLowestPanel(_deck, panel.x_coord).index;
+			var _lowest_index = MoveStack.getLowestPanel(_deck, panel.x_coord).index;
 			if(panel.y_coord === 0){
 				stackOver(_deck, slot, panel);
 			} else {
@@ -105,7 +105,7 @@ angular.module('core').factory('CoreMove', ['$rootScope', 'CoreVars', 'Bakery', 
 		service.unstackLeft = function(panel){
 			if(panel.y_coord > 0){
 				var _deck = getCardList();
-				var unstack_coord = CorePanel.getPanel(_deck, 0, 0).panel.x_coord - CoreVars.x_dim;
+				var unstack_coord = MovePanel.getPanel(_deck, 0, 0).panel.x_coord - CoreVars.x_dim;
 				unstackCard(_deck, {x_coord: unstack_coord}, panel);
 			}
 		};
@@ -113,7 +113,7 @@ angular.module('core').factory('CoreMove', ['$rootScope', 'CoreVars', 'Bakery', 
 		service.unstackRight = function(panel){
 			if(panel.y_coord > 0){
 				var _deck = getCardList();
-				var _last = CoreStack.getLastPanel(_deck);
+				var _last = MoveStack.getLastPanel(_deck);
 				var unstack_coord = _last.panel.x_coord + CoreVars.x_dim;
 				unstackCard(_deck, {x_coord: unstack_coord}, panel);
 			}

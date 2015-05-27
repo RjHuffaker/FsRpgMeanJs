@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'CoreStack', 'CorePanel', 'CardsBread', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, CoreStack, CorePanel, CardsBread){
+angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'MoveStack', 'MovePanel', 'CardsBread', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, MoveStack, MovePanel, CardsBread){
     
     var service = {};
     
@@ -33,18 +33,18 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
         if(param){
             Bakery.Decks.query(param, function(response){
                 response.unshift({
-                    panelType: 'architectOptions'
+                    panelType: 'builderOptions'
                 });
                 Bakery.resource.cardList = response;
-                CoreStack.setCardList(Bakery.resource.cardList);
+                MoveStack.setCardList(Bakery.resource.cardList);
             });
         } else {
             Bakery.Decks.list(function(response){
                 response.unshift({
-                    panelType: 'architectOptions'
+                    panelType: 'builderOptions'
                 });
                 Bakery.resource.cardList = response;
-                CoreStack.setCardList(Bakery.resource.cardList);
+                MoveStack.setCardList(Bakery.resource.cardList);
             });
         }
     };
@@ -113,9 +113,9 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
     //DELETE
     service.delete = function(deck, resource){
         deck.$remove(function(response){
-            CorePanel.removePanel(deck, resource.cardList);
-            CorePanel.setDeckSize(resource);
-            CorePanel.collapseDeck(deck, resource.cardList);
+            MovePanel.removePanel(deck, resource.cardList);
+            MovePanel.setDeckSize(resource);
+            MovePanel.collapseDeck(deck, resource.cardList);
         });
     };
     

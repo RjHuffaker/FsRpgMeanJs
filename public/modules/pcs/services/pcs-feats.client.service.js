@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing PC card deck.
-angular.module('pcs').factory('PcsFeats', ['Bakery', 'CoreStack',
-	function(Bakery, CoreStack){
+angular.module('pcs').factory('PcsFeats', ['Bakery', 'MoveStack',
+	function(Bakery, MoveStack){
 		
 		var service = {};
 		
@@ -41,7 +41,7 @@ angular.module('pcs').factory('PcsFeats', ['Bakery', 'CoreStack',
 		service.addFeat = function(level){
 			var newFeat = {
 				panelType: 'Feat',
-				x_coord: CoreStack.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
+				x_coord: MoveStack.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,
