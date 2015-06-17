@@ -5,6 +5,7 @@
  */
 var mongoose = require('mongoose'),
 	Dice = require('./dice.server.model'),
+	Panel = require('./panel.server.model'),
 	Schema = mongoose.Schema;
 
 var DiceSchema = new Schema(Dice);
@@ -39,14 +40,6 @@ var PcSchema = new Schema({
 	panelType: {
 		type: String, 
 		default: 'pcSummary'
-	},
-	x_coord: {
-		type: Number,
-		default: 0
-	},
-	y_coord: {
-		type: Number,
-		default: 0
 	},
 	name: {
 		type: String,
@@ -165,7 +158,9 @@ var PcSchema = new Schema({
 	deckSize: {
 		type: Number
 	},
-	cardList: []
+	cardList: [
+		Panel
+	]
 });
 
 mongoose.model('Pc', PcSchema);

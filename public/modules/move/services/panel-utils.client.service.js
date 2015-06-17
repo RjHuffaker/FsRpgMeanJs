@@ -1,22 +1,69 @@
 'use strict';
 
 // Panel helper-functions
-angular.module('move').factory('MovePanel', ['$rootScope', '$resource', function($rootScope, $resource) {
+angular.module('move').factory('PanelUtils', ['$rootScope', '$resource', function($rootScope, $resource) {
     
     var service = {};
     
     service.getPanel = function(cardList, x_coord, y_coord){
         if (cardList.length > 0){
-            var _index = 0;
             var _panel = { x_coord: 0 };
+            var _index = 0;
+            var _order = 0;
             for(var i = 0; i < cardList.length; i++){
-                if (cardList[i].x_coord === x_coord && cardList[i].y_coord === y_coord){
-                    return{
-                        index: i, panel: cardList[i]
-                    };
+                var test_x = cardList[i].x_coord;
+                var test_y = cardList[i].y_coord;
+                if(test_x <= x_coord){
+                    if(test_y <= y_coord){
+                        if(test_x === x_coord && test_y === y_coord){
+                            _panel = cardList[i];
+                            _index = i;
+                        } else {
+                            _order++;
+                        }
+                    }
+                }
+            }
+            return{
+                panel: _panel,
+                index: _index,
+                order: _order
+            };
+        }
+    };
+    
+    service.getLastPanel = function(cardList){
+        var _index = 0;
+        var _panel = { x_coord: 0 };
+        if(cardList.length > 0){
+            for(var i = 0; i < cardList.length; i++){
+                if(cardList[i].x_coord > (_panel.x_coord || -1)){
+                    _index = i;
+                    _panel = cardList[i];
                 }
             }
         }
+        return {
+            index: _index, panel: _panel
+        };  
+    };
+    
+    service.getLowestPanel = function(cardList, x_coord){
+        var _index = 0;
+        var _panel = { y_coord: 0 };
+        if(cardList.length > 0){
+            for(var i = 0; i < cardList.length; i++){
+                if(cardList[i].x_coord === x_coord){
+                    if(cardList[i].y_coord > (_panel.y_coord || -1)){
+                        _index = i;
+                        _panel = cardList[i];
+                    }
+                }
+            }
+        }
+        return {
+            index: _index, panel: _panel
+        };
     };
     
     service.removePanel = function(cardList, panel){
@@ -97,47 +144,5 @@ angular.module('move').factory('MovePanel', ['$rootScope', '$resource', function
         }
     };
     
-    service.expandDeck = function(panel, cardList){
-        var panel_x_coord = panel.x_coord;
-        var panel_y_coord = panel.y_coord;
-        
-        for(var i = 0; i < cardList.length; i++){
-            var slot = cardList[i];
-            
-            var slotData = service.getPanelData(slot);
-            if (slot !== panel && slot.x_coord >= panel_x_coord){
-                slot.x_coord += 15;
-                slotData.cardNumber++;
-            }
-        }
-        $rootScope.$broadcast('cardPanel:onReleaseCard');
-    };
-    
-    service.collapseDeck = function(panel, cardList){
-        var panel_x_coord = panel.x_coord;
-        var panel_y_coord = panel.y_coord;
-        
-        for(var i = 0; i < cardList.length; i++){
-            var slot = cardList[i];
-            var slotData = service.getPanelData(slot);
-            if (slot.x_coord > panel_x_coord){
-                slot.x_coord -= 15;
-                slotData.cardNumber--;
-            }
-        }
-        $rootScope.$broadcast('cardPanel:onReleaseCard');
-    };
-    
-    service.setDeckSize = function(resource){
-        var _length = resource.cardList.length - 1;
-        resource.deckSize = _length;
-        for(var i = 0; i < resource.cardList.length; i++){
-            var panel = resource.cardList[i];
-            var panelData = service.getPanelData(panel);
-            panelData.deckSize = _length;
-        }
-    };
-    
     return service;
-    
 }]);

@@ -3,8 +3,8 @@
 'use strict';
 
 // Factory-service for managing PC traits
-angular.module('pcs').factory('PcsTraits', ['Bakery', 'MoveStack',
-	function(Bakery, MoveStack){
+angular.module('pcs').factory('PcsTraits', ['Bakery', 'PanelUtils', 'StackUtils',
+	function(Bakery, PanelUtils, StackUtils){
 		
 		var service = {};
 		
@@ -42,7 +42,7 @@ angular.module('pcs').factory('PcsTraits', ['Bakery', 'MoveStack',
 		service.addTrait = function(level){
 			var newTrait = {
 				panelType: 'Trait',
-				x_coord: MoveStack.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
+				x_coord: PanelUtils.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
 				x_overlap: false,
 				y_overlap: false,

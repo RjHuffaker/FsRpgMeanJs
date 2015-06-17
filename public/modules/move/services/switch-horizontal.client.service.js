@@ -1,77 +1,69 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('move').factory('switchHorizontal', ['$rootScope', 'CoreVars', 'Bakery', 'MovePanel', 'MoveStack',
-    function($rootScope, CoreVars, Bakery, MovePanel, MoveStack){
+angular.module('move').factory('switchHorizontal', ['$rootScope', 'CoreVars', 'Bakery', 'PanelUtils', 'DeckUtils', 'StackUtils',
+    function($rootScope, CoreVars, Bakery, PanelUtils, DeckUtils, StackUtils){
         
         return function(cardList, slot, panel){
-            console.log('switchHorizontal');
             if(!CoreVars.cardMoving){
+                console.log('switchHorizontal');
                 
-                var slot_x = slot.x_coord;
-                var slot_y = slot.y_coord;
-                var slot_index = MovePanel.getPanel(cardList, slot_x, slot_y).index;
-                var slot_x_overlap = slot.x_overlap;
-                var slot_position = slot_x;
+                CoreVars.setCardMoving();
                 
-                var panel_x = panel.x_coord;
-                var panel_y = panel.y_coord;
-                var panel_index = MovePanel.getPanel(cardList, panel_x, panel_y).index;
-                var panel_x_overlap = panel.x_overlap;
-                var panel_width = CoreVars.x_dim;
+                var slotStack = StackUtils.getStack(cardList, slot);
+                var panelStack = StackUtils.getStack(cardList, panel);
                 
-                if(panel_x - slot_x > 0){
-                // PANEL MOVING LEFT
-                    CoreVars.setCardMoving();
+                var leftEdge, rightEdge,
+                    leftLeft, rightLeft,
+                    leftRight, rightRight,
+                    leftPanel, rightPanel, 
+                    leftStack = [], rightStack = [];
                     
-                    if(slot_x === 0 && panel_x_overlap){
-                        slot_position = 0;
-                        panel_width -= CoreVars.x_cover;
-                        cardList[slot_index].x_overlap = true;
-                        cardList[panel_index].x_overlap = false;
-                    } else {
-                        if(panel_x_overlap){
-                            panel_width -= CoreVars.x_cover;
-                            slot_position -= CoreVars.x_cover;
-                        }
-                        if(slot_x_overlap){
-                            slot_position += CoreVars.x_cover;
-                        }
-                    }
-                    for(var ia = 0; ia < cardList.length; ia++){
-                        if(cardList[ia].x_coord >= slot_x && cardList[ia].x_coord < panel_x){
-                        // Modify position of each card in "SLOT" column and to the left of "PANEL" column
-                            cardList[ia].x_coord += panel_width;
-                        } else if(cardList[ia].x_coord === panel_x){
-                        // Modify position of each card in "PANEL" column
-                            cardList[ia].x_coord = slot_position;
-                        }
-                    }
-                } else if(panel_x - slot_x < 0){
-                // PANEL MOVING RIGHT
-                    CoreVars.setCardMoving();
-                    if(panel_x === 0 && slot_x_overlap){
-                        var first_index = MovePanel.getPanel(cardList, 0, 0);
-                //      cardList[first_index].x_coord = 0;
-                        cardList[first_index].x_overlap = false;
-                        cardList[panel_index].x_overlap = true;
-                        panel_width -= CoreVars.x_cover;
-                    } else if(panel_x > 0){
-                        if(panel_x_overlap){
-                            panel_width -= CoreVars.x_cover;
-                        }
-                    }
-                    
-                    for(var ib = 0; ib < cardList.length; ib++){
-                        if(cardList[ib].x_coord <= slot_x && cardList[ib].x_coord > panel_x){
-                        // Modify position of each card in "SLOT" column
-                            cardList[ib].x_coord -= panel_width;
-                        } else if(cardList[ib].x_coord === panel_x){
-                        // Modify position of each card in "PANEL" column
-                            cardList[ib].x_coord = slot_position;
-                        }
-                    }
+                var slotDimens = StackUtils.getStackDimens(cardList, slot);
+                var panelDimens = StackUtils.getStackDimens(cardList, panel);
+                
+                if(slot.x_coord < panel.x_coord){
+                    // Panel moving left <----
+                    leftPanel = slot;
+                    rightPanel = panel;
+                    leftLeft = slotDimens.left;
+                    leftRight = panelDimens.left;
+                    rightLeft = panelDimens.left;
+                    rightRight = panelDimens.right + CoreVars.x_dim_em;
+                    leftStack = StackUtils.getRange(cardList, leftEdge, rightEdge);
+                    rightStack = StackUtils.getStack(cardList, slot);
+                } else if(panel.x_coord < slot.x_coord){
+                    // Panel moving right ---->
+                    leftPanel = panel;
+                    rightPanel = slot;
+                    leftLeft = panelDimens.left;
+                    leftRight = panelDimens.right + CoreVars.x_dim_em;
+                    rightLeft = panelDimens.right + CoreVars.x_dim_em;
+                    rightRight = slotDimens.right + CoreVars.x_dim_em;
+                    leftStack = StackUtils.getStack(cardList, panel);
+                    rightStack = StackUtils.getRange(cardList, leftEdge, rightEdge);
                 }
+                
+                console.log('LL: '+leftLeft+' / LR: '+leftRight+' | RL: '+rightLeft+' / RR: '+rightRight);
+                
+                var leftWidth =  leftRight - leftLeft;
+                var rightWidth = rightRight - rightLeft;
+                var totalWidth = rightRight - leftLeft;
+                
+                console.log('LW: '+leftWidth+' + RW: '+rightWidth+' = TW: '+totalWidth);
+                
+                StackUtils.setRange(cardList, leftLeft, leftRight, function(_leftStack){
+                    StackUtils.setRange(cardList, rightLeft, rightRight, function(_rightStack){
+                        for(var ib = 0; ib < _rightStack.length; ib++){
+                            _rightStack[ib].x_coord -= totalWidth - rightWidth;
+                        }
+                    });
+                    console.log(_leftStack);
+                    for(var ic = 0; ic < _leftStack.length; ic++){
+                        _leftStack[ic].x_coord += totalWidth - leftWidth;
+                    }
+                });
+                
                 $rootScope.$digest();
             }
         };

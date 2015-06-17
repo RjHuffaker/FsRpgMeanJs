@@ -2,7 +2,7 @@
 
 // Directive for managing card decks.
 angular.module('move')
-	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'Bakery', 'MoveHub',function($document, $parse, $rootScope, $window, Bakery, MoveHub){
+	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'MoveHub', 'Bakery', 'CoreVars', 'checkEdge', 'onCardMove', 'PanelUtils', 'StackUtils', 'DeckUtils', function($document, $parse, $rootScope, $window, MoveHub, Bakery, CoreVars, checkEdge, onCardMove, PanelUtils, StackUtils, DeckUtils){
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/core/views/card-panel.html',
@@ -19,14 +19,9 @@ angular.module('move')
 					_slotX, _slotY,
 					_startCol, _mouseCol, _panelCol,
 					_startRow, _mouseRow, _panelRow,
-					_moveTimer,
-					_x_dim, _y_dim,
-					_x_tab, _y_tab,
-					_x_cover, _y_cover;
+					_moveTimer;
 				
 				var _dropdownOpen = false;
-				
-				var _stacked = false;
 				
 				var _panel = $parse(attrs.panel) || null;
 				
@@ -84,7 +79,6 @@ angular.module('move')
 					
 					setTimeout(function(){
 						setPosition();
-				//		setOffset();
 					}, 0);
 				};
 				
@@ -103,12 +97,12 @@ angular.module('move')
 				};
 				
 				var onHeightChange = function(event, object){
-					_x_dim = convertEm(15);
-					_y_dim = convertEm(21);
-					_x_tab = convertEm(3);
-					_y_tab = convertEm(3);
-					_x_cover = convertEm(12);
-					_y_cover = convertEm(18);
+					CoreVars.x_dim_px = convertEm(15);
+					CoreVars.y_dim_px = convertEm(21);
+					CoreVars.x_tab_px = convertEm(3);
+					CoreVars.y_tab_px = convertEm(3);
+					CoreVars.x_cover_px = convertEm(12);
+					CoreVars.y_cover_px = convertEm(18);
 					
 					setPosition();
 				};
@@ -116,7 +110,6 @@ angular.module('move')
 				var resetPosition = function(newVal, oldVal){
 					if(element.hasClass('card-moving')){
 						setPosition();
-					//	setOffset();
 					}
 				};
 				
@@ -124,15 +117,6 @@ angular.module('move')
 					element.css({
 						top: _panel.y_coord + 'em',
 						left: _panel.x_coord + 'em'
-					});
-				};
-				
-				var setOffset = function(){
-					var offset = Math.random()*0.2 - 0.1;
-					element.css({
-						'-ms-transform': 'translate('+offset+'em,'+offset+'em)',
-						'-webkit-transform': 'translate('+offset+'em,'+offset+'em)',
-						'transform': 'translate('+offset+'em,'+offset+'em)'
 					});
 				};
 				
@@ -178,6 +162,12 @@ angular.module('move')
 					
 					element.removeClass('card-moving');
 					
+					StackUtils.setStack(Bakery.resource.cardList, _panel, function(stackArray){
+						for(var i = 0; i < stackArray.length; i++){
+                            stackArray[i].dragging = true;
+                        }
+					});
+					
 					$rootScope.$broadcast('cardPanel:onPressCard', {
 						startX: _startX,
 						startY: _startY,
@@ -190,23 +180,8 @@ angular.module('move')
 					_startCol = convertEm(_panel.x_coord);
 					_startRow = convertEm(_panel.y_coord);
 					
-					var panel = object.panel;
-					var panel_x = panel.x_coord;
-					var panel_y = panel.y_coord;
-					var panel_y_overlap = panel.y_overlap;
-					
-					var slot = _panel;
-					var slot_x = slot.x_coord;
-					var slot_y = slot.y_coord;
-					
-					if(slot_y !== panel_y || slot_x !== panel_x){
-						if(slot_x !== panel_x){
-							element.addClass('card-moving');
-						} else if(slot_x !== panel_x && slot_y > panel_y && panel_y_overlap){
-							element.addClass('card-moving');
-						} else if(slot_x === panel_x && !panel_y_overlap){
-							element.addClass('card-moving');
-						}
+					if(!_panel.dragging){
+						element.addClass('card-moving');
 					}
 				};
 				
@@ -227,11 +202,6 @@ angular.module('move')
 					_panelX = _moveX + _startCol - (_startCol - _mouseCol);
 					_panelY = _moveY + _startRow - (_startRow - _mouseRow);
 					
-					element.css({
-						left: _moveX + _startCol + 'px',
-						top: _moveY + _startRow + 'px'
-					});
-					
 					$rootScope.$broadcast('cardPanel:onMoveCard', {
 						mouseX: _mouseX,
 						mouseY: _mouseY,
@@ -243,77 +213,17 @@ angular.module('move')
 					});
 				};
 				
-				// Callback function to move a single card or each card in a vertical stack
+				// Function to move a single card or each card in a vertical stack
 				var onMoveCard = function(event, object){
-					
-					var mouseX = object.mouseX;
-					var mouseY = object.mouseY;
-					
-					var moveX = object.moveX;
-					var moveY = object.moveY;
-					
-					var vectorX = Math.abs(object.moveX);
-					var vectorY = Math.abs(object.moveY);
-					
-					var panel = object.panel;
-					var panel_x = panel.x_coord;
-					var panel_y = panel.y_coord;
-					var panel_x_overlap = panel.x_overlap;
-					var panel_y_overlap = panel.y_overlap;
-					
-					var slot = _panel;
-					var slot_x = slot.x_coord;
-					var slot_y = slot.y_coord;
-					var slot_x_overlap = slot.x_overlap;
-					var slot_y_overlap = slot.y_overlap;
-					
-					var changeX = Math.abs(panel_x - slot_x);
-					var changeY = Math.abs(panel_y - slot_y);
-					
-					if(changeX === 0 && slot_y > panel_y && panel_y_overlap){
-						if(!element.hasClass('card-moving')){	//Enables moving all cards within a stack
-							element.css({
-								left: (_startCol + moveX) + 'px',
-								top: (_startRow + moveY) + 'px'
-							});
-						}
-					} else if(changeX > 0 || changeY > 0){
-						if(crossingEdge(mouseX, mouseY) === 'top'){
-							if(vectorX > 0 && !slot_y_overlap && !slot_x_overlap && !panel_x_overlap){
-								console.log('cardPanel:moveDiagonalUp');
-								MoveHub.moveDiagonalUp(slot, panel);
-							} else if(changeX === 0 && !panel_y_overlap){
-								console.log('cardPanel:moveVertical');
-								MoveHub.moveVertical(slot, panel);
-							} else {
-								console.log('cardPanel:moveHorizontal');
-								MoveHub.moveHorizontal(slot, panel);
-							}
-						} else if(crossingEdge(mouseX, mouseY) === 'bottom'){
-							if(changeX > 0 && changeX <= _x_dim){
-								console.log('cardPanel:moveDiagonalDown');
-								MoveHub.moveDiagonalDown(slot, panel);
-							} else if(changeX === 0 && !panel_y_overlap){
-								console.log('cardPanel:moveVertical');
-								MoveHub.moveVertical(slot, panel);
-							} else {
-								console.log('cardPanel:moveHorizontal');
-								MoveHub.moveHorizontal(slot, panel);
-							}
-						} else if(crossingEdge(mouseX, mouseY) === 'left' || crossingEdge(mouseX, mouseY) === 'right'){
-							if(vectorY * 2 > vectorX){
-								if(moveY < 0){
-									console.log('cardPanel:moveDiagonalUp');
-									MoveHub.moveDiagonalUp(slot, panel);
-								} else if(moveY > 0){
-									console.log('cardPanel:moveDiagonalDown');
-									MoveHub.moveDiagonalDown(slot, panel);
-								}
-							} else {
-								console.log('cardPanel:moveHorizontal');
-								MoveHub.moveHorizontal(slot, panel);
-							}
-						}
+					object.slot = _panel;
+					object.offset = element.offset();
+					if(!element.hasClass('card-moving')){
+						element.css({
+							left: object.moveX + _startCol + 'px',
+							top: object.moveY + _startRow + 'px'
+						});
+					} else {
+						onCardMove(object);
 					}
 				};
 				
@@ -327,6 +237,11 @@ angular.module('move')
 					});
 					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
 						MoveHub.triggerOverlap(_panel);
+					}
+					CoreVars.cardMoved = false;
+					var _deck = Bakery.resource.cardList;
+					for(var i = 0; i < _deck.length; i++){
+						_deck[i].dragging = false;
 					}
 				};
 				
@@ -351,34 +266,6 @@ angular.module('move')
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
 						panel: _panel
 					});
-				};
-				
-				var crossingEdge = function(mouseX, mouseY){
-					var cardOffset = element.offset();
-					var slotX = cardOffset.left;
-					var slotY = cardOffset.top;
-					var leftEdge = _panel.x_overlap ? slotX + _x_cover : slotX;
-					var rightEdge = slotX + _x_dim;
-					var topEdge = slotY;
-					var bottomEdge = _panel.y_overlap ? slotY + _y_tab : slotY + _y_dim;
-					
-				//	console.log('testing '+_panel.name+':  X '+_panel.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_panel.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
-					
-					if(mouseX >= leftEdge && mouseX <= rightEdge && mouseY >= topEdge && mouseY <= bottomEdge){
-						var left = mouseX - leftEdge;
-						var right = rightEdge - mouseX;
-						var top = mouseY - topEdge;
-						var bottom = bottomEdge - mouseY;
-						
-						var edges = [left, right, top, bottom],
-						closestEdge = Math.min.apply(Math.min, edges),
-						edgeNames = ['left', 'right', 'top', 'bottom'],
-						edgeName = edgeNames[edges.indexOf(closestEdge)];
-						
-				//		console.log('crossing '+edgeName+' edge of '+_panel.name+':  X '+_panel.x_overlap+':'+leftEdge+'>'+mouseX+'>'+rightEdge+'  Y '+_panel.y_overlap+':'+topEdge+'>'+mouseY+'>'+bottomEdge);
-						
-						return edgeName;
-					}
 				};
 				
 				initialize();

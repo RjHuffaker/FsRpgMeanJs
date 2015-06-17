@@ -2,8 +2,8 @@
 
 // Core Controller
 angular.module('core')
-	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'BuilderHub', 'PlayerHub', 'CoreVars',
-		function($location, $scope, $rootScope, $window, Authentication, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsTraits, PcsFeats, PcsAugments, PcsItems, BuilderHub, PlayerHub, CoreVars) {
+	.controller('CoreController', ['$location', '$scope', '$rootScope', '$window', 'Authentication', 'Bakery', 'CardsBread', 'DecksBread', 'PcsBread', 'DataSRVC', 'PcsTraits', 'PcsFeats', 'PcsAugments', 'PcsItems', 'BuilderHub', 'PlayerHub', 'CoreVars', 'DeckUtils',
+		function($location, $scope, $rootScope, $window, Authentication, Bakery, CardsBread, DecksBread, PcsBread, DataSRVC, PcsTraits, PcsFeats, PcsAugments, PcsItems, BuilderHub, PlayerHub, CoreVars, DeckUtils) {
 			
 			// This provides Authentication context.
 			$scope.authentication = Authentication;
@@ -35,7 +35,6 @@ angular.module('core')
 			var toggleListeners = function(enable){
 				if (!enable) return;
 				$scope.$on('$destroy', onDestroy);
-				$scope.$on('screenSize:onHeightChange', onHeightChange);
 				$scope.$on('ability:onPress', PlayerHub.chooseAbility);
 				$scope.$watch('CoreVars.EXP', PlayerHub.watchEXP);
 				$scope.$watch('Bakery.resource.experience', PlayerHub.watchExperience);
@@ -44,11 +43,6 @@ angular.module('core')
 			
 			var onDestroy = function(){
 				toggleListeners(false);
-			};
-			
-			var onHeightChange = function(event, object){
-				$scope.windowHeight = object.newHeight;
-				$scope.$digest();
 			};
 			
             //BROWSE Functions
@@ -104,25 +98,28 @@ angular.module('core')
             
             //DELETE Functions
             $scope.deleteCard = function(panel){
-				CardsBread.delete(panel, Bakery.resource);
+				CardsBread.delete(Bakery.resource, panel);
 			};
             
 			$scope.deleteDeck = function(deck){
-				DecksBread.delete(deck, Bakery.resource);
+				DecksBread.delete(Bakery.resource, deck);
 			};
             
             $scope.deletePc = function(pc){
-				PcsBread.delete(pc, Bakery.resource);
+				PcsBread.delete(Bakery.resource, pc);
 			};
 			
             //Misc Handler Functions
 			$scope.exitPc = function(pc){
 				if(pcNew){
-					PcsBread.delete(pc, Bakery.resource);
+					PcsBread.delete(Bakery.resource, pc);
 				}
 				$scope.browsePcs();
 			};
 			
+			$scope.shuffleDeck = function(cardList){
+				DeckUtils.shuffleDeck(cardList);
+			};
 			
 			$scope.changeFeatureCard = function(card){
 				$scope.modalShown = true;

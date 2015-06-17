@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'MoveStack', 'MovePanel', 'pcsDefaults', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, MoveStack, MovePanel, pcsDefaults){
+angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'PanelUtils', 'StackUtils', 'DeckUtils', 'pcsDefaults', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, PanelUtils, StackUtils, DeckUtils, pcsDefaults){
     var service = {};
     
     //BROWSE
@@ -12,7 +12,7 @@ angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authent
                 panelType: 'playerOptions'
             });
             Bakery.resource.cardList = response;
-            MoveStack.setCardList(Bakery.resource.cardList);
+            DeckUtils.setCardList(Bakery.resource.cardList);
         });
     };
     
@@ -26,7 +26,7 @@ angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authent
     //EDIT
     service.edit = function(pc) {
         pc.$update(function(response) {
-
+            console.log(response);
         }, function(errorResponse) {
             this.error = errorResponse.data.message;
         });
@@ -44,11 +44,15 @@ angular.module('pcs').factory('PcsBread', ['$stateParams', '$location', 'Authent
     };
     
     //DELETE
-    service.delete = function(pc, resource){
+    service.delete = function(resource, pc){
+        var _pc_x = pc.x_coord;
+        var _pc_y = pc.y_coord;
         pc.$remove(function(response){
-            MovePanel.removePanel(pc, resource.cardList);
-            MovePanel.setDeckSize(resource);
-            MovePanel.collapseDeck(pc, resource.cardList);
+            if(resource) PanelUtils.removePanel(resource.cardList, pc);
+        }).then(function(response){
+            if(resource) DeckUtils.setDeckSize(resource);
+        }).then(function(response){
+            if(resource) DeckUtils.collapseDeck(resource.cardList, { x_coord: _pc_x, y_coord: _pc_y });
         });
     };
     

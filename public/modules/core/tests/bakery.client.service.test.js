@@ -5,18 +5,18 @@
 		
 		beforeEach(module(ApplicationConfiguration.applicationModuleName));
 
-		var Bakery, MoveStack, MovePanel, mockDataBuilder, mockData;
+		var Bakery, StackUtils, PanelUtils, mockDataBuilder, mockData;
 		
 		beforeEach(inject(['Bakery', function (_Bakery_) {
 			Bakery = _Bakery_;
 		}]));
 		
-		beforeEach(inject(['MoveStack', function (_MoveStack_) {
-            MoveStack = _MoveStack_;
+		beforeEach(inject(['StackUtils', function (_StackUtils_) {
+            StackUtils = _StackUtils_;
         }]));
 		
-		beforeEach(inject(['MovePanel', function (_MovePanel_) {
-            MovePanel = _MovePanel_;
+		beforeEach(inject(['PanelUtils', function (_PanelUtils_) {
+            PanelUtils = _PanelUtils_;
         }]));
 		
 		beforeEach(inject(['mockDataBuilder', function (_mockDataBuilder_) {

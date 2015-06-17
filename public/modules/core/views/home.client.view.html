@@ -1,5 +1,5 @@
-<section data-ng-controller="CoreController" screen-size style="height: {{windowHeight-50}}px">
-	<div class="container-fluid deck-panel" style="height: {{windowHeight - 50}}px">
+<section data-ng-controller="CoreController" screen-size style="height: {{CoreVars.windowHeight - 50}}px">
+	<div class="container-fluid deck-panel" style="height: {{CoreVars.windowHeight - 50}}px">
 		<div class="fill-parent modal-overlay" ng-click="CoreVars.hideModal()" ng-show="CoreVars.modalShown"></div>
 		<div deck-stack ng-mouseleave="true">
 			<ul>

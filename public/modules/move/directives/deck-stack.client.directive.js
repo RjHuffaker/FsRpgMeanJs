@@ -2,7 +2,7 @@
 
 // Directive for managing card decks.
 angular.module('move')
-	.directive('deckStack', ['$rootScope', '$window', 'Bakery', 'MoveStack', 'MoveHub', function($rootScope, $window, Bakery, MoveStack, MoveHub){
+	.directive('deckStack', ['$rootScope', '$window', 'Bakery', 'StackUtils', 'DeckUtils', 'MoveHub', function($rootScope, $window, Bakery, StackUtils, DeckUtils, MoveHub){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -21,7 +21,7 @@ angular.module('move')
 					scope.$on('$destroy', onDestroy);
 					element.on('mouseleave', onMouseLeave);
 					scope.$on('screenSize:onHeightChange', onHeightChange);
-					scope.$on('MoveStack:setDeckWidth', setDeckWidth);
+					scope.$on('DeckUtils:setDeckWidth', setDeckWidth);
 					scope.$on('cardPanel:onPressCard', onPress);
 					scope.$on('cardPanel:onReleaseCard', onRelease);
 					scope.$on('cardPanel:onMoveCard', onMoveCard);
@@ -39,7 +39,7 @@ angular.module('move')
 				};
 				
 				var setDeckWidth = function(){
-					var deckWidth = MoveStack.getDeckWidth(Bakery.resource.cardList);
+					var deckWidth = DeckUtils.getDeckWidth(Bakery.resource.cardList);
 					element.css({
 						'width': deckWidth+'em'
 					});
@@ -66,7 +66,7 @@ angular.module('move')
 				var onMoveCard = function(event, object){
 					
 					var deckOffset = element.offset();
-					var deckWidth = MoveStack.getDeckWidth(Bakery.resource.cardList);
+					var deckWidth = DeckUtils.getDeckWidth(Bakery.resource.cardList);
 					var deckLeftEdge = deckOffset.left;
 					var deckRightEdge = convertEm(deckWidth + 3);
 					

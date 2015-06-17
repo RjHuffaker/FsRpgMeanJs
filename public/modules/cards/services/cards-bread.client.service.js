@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'MoveStack', 'MovePanel', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, MoveStack, MovePanel){
+angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'PanelUtils', 'DeckUtils', 'StackUtils', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, PanelUtils, DeckUtils, StackUtils){
     var service = {};
     
     var editDeck = function(deck, _loadDeck) {
@@ -17,7 +17,7 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
     
     //BROWSE
     service.browse = function(cardType, params, destination){
-        var cardParams = MovePanel.getCardParams(params);
+        var cardParams = PanelUtils.getCardParams(params);
         Bakery.getCardResource(cardType).query(cardParams, function(response){
             return response;
         });
@@ -25,7 +25,7 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
     
     //READ
     service.read = function(panel, callback){
-        var params = MovePanel.getCardParams(panel);
+        var params = PanelUtils.getCardParams(panel);
         Bakery.getCardResource(panel.panelType).get(
             params,
         function(response){
@@ -37,18 +37,18 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
     service.edit = function(panel){
         var cardResource = Bakery.getNewCardResource(panel);
         if(panel.panelType !== 'Aspect'){
-            var panelData = MovePanel.getPanelData(panel);
+            var panelData = PanelUtils.getPanelData(panel);
             if(panelData.aspect) cardResource.aspect = panelData.aspect._id;
         }
         cardResource.$update();
     };
     
     //ADD
-    service.add = function(deck, cardType, cardNumber, deckShift, deckSave){
+    service.add = function(resource, cardType, cardNumber, deckShift, deckSave){
         var card = {
-            deck: deck._id,
-            deckSize: deck.deckSize,
-            deckName: deck.name,
+            deck: resource._id,
+            deckSize: resource.deckSize,
+            deckName: resource.name,
             cardNumber: cardNumber,
             cardType: cardType
         };
@@ -59,34 +59,34 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
             y_coord: 0
         };
         
-        MovePanel.setPanelData(panel, card);
+        PanelUtils.setPanelData(panel, card);
         
         var cardResource = Bakery.getNewCardResource(panel);
         
         cardResource.$save(function(response){
-            MovePanel.setPanelData(panel, response);
-            deck.cardList.push(panel);
-            MovePanel.setDeckSize(Bakery.resource);
+            PanelUtils.setPanelData(panel, response);
+            resource.cardList.push(panel);
+            DeckUtils.setDeckSize(Bakery.resource);
         }).then(function(response){
-            if(deckShift) MovePanel.expandDeck(panel, Bakery.resource.cardList);
+            if(deckShift) DeckUtils.expandDeck(Bakery.resource.cardList, panel);
         }).then(function(response){
-            if(deckSave) editDeck(deck, true);
+            if(deckSave) editDeck(resource, true);
         });
     };
     
     //DELETE
-    service.delete = function(panel, deck){
+    service.delete = function(resource, panel){
         if(panel.panelType === 'architectOptions') return;
         
         var cardResource = Bakery.getNewCardResource(panel);
         cardResource.$remove(function(response){
-                if(deck) MovePanel.removePanel(deck.cardList, panel);
-            }).then(function(response){
-                if(deck) MovePanel.setDeckSize(deck);
-            }).then(function(response){
-                if(deck) MovePanel.collapseDeck(panel, deck.cardList);
-            }).then(function(response){
-                if(deck) editDeck(deck, false);
+            if(resource) PanelUtils.removePanel(resource.cardList, panel);
+        }).then(function(response){
+            if(resource) DeckUtils.setDeckSize(resource);
+        }).then(function(response){
+            if(resource) DeckUtils.collapseDeck(resource.cardList, panel);
+        }).then(function(response){
+            if(resource) editDeck(resource, false);
         });
     };
     

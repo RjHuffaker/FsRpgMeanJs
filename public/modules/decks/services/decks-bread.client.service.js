@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'MoveStack', 'MovePanel', 'CardsBread', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, MoveStack, MovePanel, CardsBread){
+angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Bakery', 'PanelUtils', 'DeckUtils', 'StackUtils', 'CardsBread', function($stateParams, $location, Authentication, $resource, $rootScope, Bakery, PanelUtils, DeckUtils, StackUtils, CardsBread){
     
     var service = {};
     
@@ -36,7 +36,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
                     panelType: 'builderOptions'
                 });
                 Bakery.resource.cardList = response;
-                MoveStack.setCardList(Bakery.resource.cardList);
+                DeckUtils.setCardList(Bakery.resource.cardList);
             });
         } else {
             Bakery.Decks.list(function(response){
@@ -44,7 +44,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
                     panelType: 'builderOptions'
                 });
                 Bakery.resource.cardList = response;
-                MoveStack.setCardList(Bakery.resource.cardList);
+                DeckUtils.setCardList(Bakery.resource.cardList);
             });
         }
     };
@@ -111,12 +111,17 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
     };
     
     //DELETE
-    service.delete = function(deck, resource){
+    service.delete = function(resource, deck){
+        var _deck_x = deck.x_coord;
+        var _deck_y = deck.y_coord;
         deck.$remove(function(response){
-            MovePanel.removePanel(deck, resource.cardList);
-            MovePanel.setDeckSize(resource);
-            MovePanel.collapseDeck(deck, resource.cardList);
+            if(resource) PanelUtils.removePanel(resource.cardList, deck);
+        }).then(function(response){
+            if(resource) DeckUtils.setDeckSize(resource);
+        }).then(function(response){
+            if(resource) DeckUtils.collapseDeck(resource.cardList, { x_coord: _deck_x, y_coord: _deck_y });
         });
+        
     };
     
     return service;

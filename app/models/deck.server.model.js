@@ -27,14 +27,6 @@ var DeckSchema = new Schema({
 		type: String,
 		default: 'deckSummary'
 	},
-	x_coord: {
-		type: Number,
-		default: 0
-	},
-	y_coord: {
-		type: Number,
-		default: 0
-	},
 	dependencies: [
 		{
 			type: Schema.ObjectId,

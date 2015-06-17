@@ -1,63 +1,69 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Bakery', 'MovePanel', 'MoveStack',
-    function($rootScope, CoreVars, Bakery, MovePanel, MoveStack){
+angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'PanelUtils', 'DeckUtils', 'StackUtils',
+    function($rootScope, CoreVars, PanelUtils, DeckUtils, StackUtils){
         
         return function(cardList, panel){
-            if(!CoreVars.cardMoved){
+            if(!CoreVars.cardMoved && !CoreVars.cardMoving){
                 
-                var panel_x = panel.x_coord;
-                var panel_y = panel.y_coord;
-                var panel_x_overlap = panel.x_overlap;
-                var panel_y_overlap = panel.y_overlap;
-                var panel_index = MovePanel.getPanel(cardList, panel_x, panel_y).index;
-                var lowest_index = MoveStack.getLowestPanel(cardList, panel_x).index;
-                var lowest_y = cardList[lowest_index].y_coord;
+                console.log('toggleOverlap');
                 
-                if(panel_x > 0 && lowest_y === 0){
+                var _refArray = DeckUtils.getRefArray(cardList);
+                var _panelOrder = PanelUtils.getPanel(cardList, panel.x_coord, panel.y_coord).order;
+                var _previous = cardList[_refArray[_panelOrder - 1]];
+                var _last = PanelUtils.getLastPanel(cardList).panel;
+                var _lowest = PanelUtils.getLowestPanel(cardList, panel.x_coord).panel;
+                
+                if(panel.x_coord > 0 && _lowest.y_coord === 0 && !_previous.y_stack){
                 // x_overlap
-                    if(panel_x_overlap && !CoreVars.cardMoving){
+                    if(panel.x_overlap){
                     // Card overlapped
                         CoreVars.setCardMoving();
-                        cardList[panel_index].x_overlap = false;
-                        for(var ia = 0; ia < cardList.length; ia++){
-                            if(panel_x <= cardList[ia].x_coord){
-                                cardList[ia].x_coord += CoreVars.x_cover;
+                        StackUtils.setRange(cardList, panel.x_coord, _last.x_coord+1, function(rangeArray){
+                            for(var ia = 0; ia < rangeArray.length; ia++){
+                                rangeArray[ia].x_coord += CoreVars.x_cover_em;
                             }
-                        }
-                    } else if(!panel_x_overlap && !CoreVars.cardMoving){
+                        });
+                    } else if(!panel.x_overlap){
                     // Card not overlapped
                         CoreVars.setCardMoving();
-                        cardList[panel_index].x_overlap = true;
-                        for(var ib = 0; ib < cardList.length; ib++){
-                            if(panel_x <= cardList[ib].x_coord){
-                                cardList[ib].x_coord -= CoreVars.x_cover;
+                        StackUtils.setRange(cardList, panel.x_coord, _last.x_coord+1, function(rangeArray){
+                            for(var ia = 0; ia < rangeArray.length; ia++){
+                                rangeArray[ia].x_coord -= CoreVars.x_cover_em;
                             }
-                        }
+                        });
                     }
-                } else if(panel_y !== lowest_y){
+                } else if(panel.y_coord !== _lowest.y_coord){
                 // y_overlap
-                    if(panel_y_overlap && !CoreVars.cardMoving){
+                    if(panel.y_overlap){
                     // Card overlapped
                         CoreVars.setCardMoving();
-                        cardList[panel_index].y_overlap = false;
-                        for(var ic = 0; ic < cardList.length; ic++){
-                            if(panel_x === cardList[ic].x_coord && panel_y < cardList[ic].y_coord){
-                                cardList[ic].y_coord += CoreVars.y_cover;
+                        StackUtils.setStack(cardList, panel, function(stackArray){
+                            for(var i = 0; i < stackArray.length; i++){
+                                var _current = stackArray[i];
+                                if(panel.y_coord < _current.y_coord){
+                                    _current.y_coord += CoreVars.y_cover_em;
+                                }
                             }
-                        }
-                    } else if(!panel_y_overlap && !CoreVars.cardMoving){
+                        });
+                        
+                    } else if(!panel.y_overlap){
                     // Card not overlapped
                         CoreVars.setCardMoving();
-                        cardList[panel_index].y_overlap = true;
-                        for(var id = 0; id < cardList.length; id++){
-                            if(panel_x === cardList[id].x_coord && panel_y < cardList[id].y_coord){
-                                cardList[id].y_coord -= CoreVars.y_cover;
+                        StackUtils.setStack(cardList, panel, function(stackArray){
+                            panel.y_overlap = true;
+                            for(var i = 0; i < stackArray.length; i++){
+                                var _current = stackArray[i];
+                                if(panel.y_coord < _current.y_coord){
+                                    _current.y_coord -= CoreVars.y_cover_em;
+                                }
                             }
-                        }
+                        });
                     }
                 }
+                
+                StackUtils.setOverlap(cardList);
                 $rootScope.$digest();
                 CoreVars.cardMoved = false;
             }

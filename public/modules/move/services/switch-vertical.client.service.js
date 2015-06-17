@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('move').factory('switchVertical', ['$rootScope', 'CoreVars', 'Bakery', 'MovePanel', 'MoveStack',
-    function($rootScope, CoreVars, Bakery, MovePanel, MoveStack){
+angular.module('move').factory('switchVertical', ['$rootScope', 'CoreVars', 'Bakery', 'PanelUtils', 'StackUtils',
+    function($rootScope, CoreVars, Bakery, PanelUtils, StackUtils){
         
         return function(cardList, slot, panel){
             console.log('switchVertical');
@@ -10,16 +10,16 @@ angular.module('move').factory('switchVertical', ['$rootScope', 'CoreVars', 'Bak
                 
                 var slot_x = slot.x_coord;
                 var slot_y = slot.y_coord;
-                var slot_index = MovePanel.getPanel(cardList, slot_x, slot_y).index;
+                var slot_index = PanelUtils.getPanel(cardList, slot_x, slot_y).index;
                 var slot_y_overlap = slot.y_overlap;
                 
                 var panel_x = panel.x_coord;
                 var panel_y = panel.y_coord;
                 
-                var panel_index = MovePanel.getPanel(cardList, panel_x, panel_y).index;
+                var panel_index = PanelUtils.getPanel(cardList, panel_x, panel_y).index;
                 var panel_y_overlap = panel.y_overlap;
                 
-                var lowest_index = MoveStack.getLowestPanel(cardList, slot_x).index;
+                var lowest_index = PanelUtils.getLowestPanel(cardList, slot_x).index;
                 var lowest_y = cardList[lowest_index].y_coord;
                 
                 if(panel_y - slot_y > 0){

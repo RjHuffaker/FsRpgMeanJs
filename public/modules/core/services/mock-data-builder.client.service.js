@@ -161,7 +161,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         mockData.feat_3 = {
             panelType: 'Feat',
             x_coord: 15,
-            y_coord: 21,
+            y_coord: 3,
             featData: {
                 name: 'Feat the Third',
                 cardType: 'Feat',
@@ -172,7 +172,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         mockData.feat_4 = {
             panelType: 'Feat',
             x_coord: 30,
-            y_coord: 21,
+            y_coord: 0,
             featData: {
                 name: 'Feat the Fourth',
                 cardType: 'Feat',
@@ -183,7 +183,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         mockData.feat_5 = {
             panelType: 'Feat',
             x_coord: 30,
-            y_coord: 0,
+            y_coord: 3,
             featData: {
                 name: 'Feat the Fifth',
                 cardType: 'Feat',
@@ -194,15 +194,13 @@ angular.module('core').factory('mockDataBuilder', function() {
         mockData.feat_6 = {
             panelType: 'Feat',
             x_coord: 30,
-            y_coord: 42,
+            y_coord: 6,
             featData: {
                 name: 'Feat the Sixth',
                 cardType: 'Feat',
                 cardNumber: 6
             }
         };
-        
-        
         
         mockData.feat_7 = {
             panelType: 'Feat',
@@ -229,7 +227,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         mockData.feat_9 = {
             panelType: 'Feat',
             x_coord: 45,
-            y_coord: 24,
+            y_coord: 6,
             featData: {
                 name: 'Feat the Ninth',
                 cardType: 'Feat',
@@ -240,7 +238,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         mockData.feat_10 = {
             panelType: 'Feat',
             x_coord: 45,
-            y_coord: 27,
+            y_coord: 9,
             featData: {
                 name: 'Feat the Tenth',
                 cardType: 'Feat',

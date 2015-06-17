@@ -5,18 +5,14 @@
         
         beforeEach(module(ApplicationConfiguration.applicationModuleName));
         
-        var BuilderHub, MoveStack, MovePanel, mockDataBuilder, mockData;
+        var BuilderHub, DeckUtils, mockDataBuilder, mockData;
         
         beforeEach(inject(['BuilderHub', function (_BuilderHub_) {
             BuilderHub = _BuilderHub_;
         }]));
         
-        beforeEach(inject(['MoveStack', function (_MoveStack_) {
-            MoveStack = _MoveStack_;
-        }]));
-        
-        beforeEach(inject(['MovePanel', function (_MovePanel_) {
-            MovePanel = _MovePanel_;
+        beforeEach(inject(['DeckUtils', function (_DeckUtils_) {
+            DeckUtils = _DeckUtils_;
         }]));
         
         beforeEach(inject(['mockDataBuilder', function (_mockDataBuilder_) {
@@ -28,7 +24,7 @@
         });
         
         it('toggleCardLock(panel, cardList) should toggle the panel.locked boolean in the cardList', function(){
-            MoveStack.setCardList(mockData.traitDeck.cardList);
+            DeckUtils.setCardList(mockData.traitDeck.cardList);
             
             BuilderHub.toggleCardLock(mockData.trait_1, mockData.traitDeck.cardList);
             expect(mockData.traitDeck.cardList[0].locked).toBe(true);

@@ -29,45 +29,16 @@ angular.module('pcs').factory('pcsDefaults', [function(){
 					panelType: 'pc1',
 					x_coord: 0,
 					y_coord: 0,
-					x_overlap: false,
-					y_overlap: false,
-					dragging: false,
-					stacked: false,
-					locked: true
 				},
 				{
 					panelType: 'pc2',
 					x_coord: 15,
-					y_coord: 0,
-					x_overlap: false,
-					y_overlap: false,
-					dragging: false,
-					stacked: false,
-					locked: true
+					y_coord: 0
 				},
 				{
 					panelType: 'pc3',
 					x_coord: 30,
-					y_coord: 0,
-					x_overlap: false,
-					y_overlap: false,
-					dragging: false,
-					stacked: false,
-					locked: true,
-				},
-				{
-					panelType: 'Trait',
-					x_coord: 45,
-					y_coord: 0,
-					x_overlap: false,
-					y_overlap: false,
-					dragging: false,
-					stacked: false,
-					locked: true,
-					level: 0,
-					traitData: {
-						name: 'Level 0 Trait'
-					}
+					y_coord: 0
 				}
 			]
 		};
