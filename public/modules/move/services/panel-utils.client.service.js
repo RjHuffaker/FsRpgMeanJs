@@ -5,30 +5,37 @@ angular.module('move').factory('PanelUtils', ['$rootScope', '$resource', functio
     
     var service = {};
     
-    service.getPanel = function(cardList, x_coord, y_coord){
-        if (cardList.length > 0){
-            var _panel = { x_coord: 0 };
+    service.getPanel = function(cardList, panelId){
+        if(cardList.length > 0){
+            var _panel = { x_coord: 0, y_coord: 0 };
             var _index = 0;
             var _order = 0;
-            for(var i = 0; i < cardList.length; i++){
-                var test_x = cardList[i].x_coord;
-                var test_y = cardList[i].y_coord;
-                if(test_x <= x_coord){
-                    if(test_y <= y_coord){
-                        if(test_x === x_coord && test_y === y_coord){
-                            _panel = cardList[i];
-                            _index = i;
-                        } else {
-                            _order++;
-                        }
-                    }
+            
+            for(var ia = 0; ia < cardList.length; ia++){
+                var test_a = cardList[ia];
+                if(test_a._id === panelId){
+                    _panel = test_a;
+                    _index = ia;
                 }
             }
-            return{
+            
+            for(var ib = 0; ib < cardList.length; ib++){
+                var test_b = cardList[ib];
+                if(test_b.x_coord < _panel.x_coord){
+                    _order++;
+                } else if(test_b.x_coord === _panel.x_coord && test_b.y_coord < _panel.y_coord){
+                    _order++;
+                }
+            }
+            
+            return {
                 panel: _panel,
                 index: _index,
                 order: _order
             };
+            
+        } else {
+            console.log('Error: cardList.length = 0');
         }
     };
     

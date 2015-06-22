@@ -40,13 +40,10 @@ angular.module('pcs').factory('PcsFeats', ['Bakery', 'PanelUtils', 'StackUtils',
 		
 		service.addFeat = function(level){
 			var newFeat = {
+				_id: 'feat'+level+'Id',
 				panelType: 'Feat',
 				x_coord: PanelUtils.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
-				x_overlap: false,
-				y_overlap: false,
-				dragging: false,
-				stacked: false,
 				locked: true,
 				level: level,
 				featData: {

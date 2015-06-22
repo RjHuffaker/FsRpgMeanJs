@@ -59,7 +59,7 @@ angular.module('move').factory('MoveHub', ['$rootScope', 'CoreVars', 'Bakery', '
 		service.unstackLeft = function(panel){
 			if(panel.y_coord > 0){
 				var _deck = getCardList();
-				var unstack_coord = PanelUtils.getPanel(_deck, 0, 0).panel.x_coord - CoreVars.x_dim_em;
+				var unstack_coord = -CoreVars.x_dim_em;
 				unstackCard(_deck, {x_coord: unstack_coord}, panel);
 			}
 		};

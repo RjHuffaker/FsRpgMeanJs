@@ -41,13 +41,10 @@ angular.module('pcs').factory('PcsTraits', ['Bakery', 'PanelUtils', 'StackUtils'
 		
 		service.addTrait = function(level){
 			var newTrait = {
+				_id: 'trait'+level+'Id',
 				panelType: 'Trait',
 				x_coord: PanelUtils.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
-				x_overlap: false,
-				y_overlap: false,
-				dragging: false,
-				stacked: false,
 				locked: true,
 				level: level,
 				traitData: {

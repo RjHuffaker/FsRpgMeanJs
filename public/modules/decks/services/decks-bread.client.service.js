@@ -33,6 +33,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
         if(param){
             Bakery.Decks.query(param, function(response){
                 response.unshift({
+                    _id: 'builderOptionsId',
                     panelType: 'builderOptions'
                 });
                 Bakery.resource.cardList = response;
@@ -41,6 +42,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
         } else {
             Bakery.Decks.list(function(response){
                 response.unshift({
+                    _id: 'builderOptionsId',
                     panelType: 'builderOptions'
                 });
                 Bakery.resource.cardList = response;
@@ -93,6 +95,7 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
             deckType: type,
             deckSize: size,
             cardList: [{
+                _id: 'deckOptionsId',
                 panelType: 'deckOptions',
                 x_coord: 0,
                 y_coord: 0

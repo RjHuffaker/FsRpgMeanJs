@@ -10,7 +10,7 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
                 if(PanelUtils.getLowestPanel(cardList, panel.x_coord).panel.y_coord > 0){
                     var panel_x = panel.x_coord;
                     var panel_y = panel.y_coord;
-                    var panel_index = PanelUtils.getPanel(cardList, panel_x, panel_y).index;
+                    var panel_index = PanelUtils.getPanel(cardList, panel._id).index;
                     var panel_x_overlap = panel.x_overlap;
                     var panel_y_overlap = panel.y_overlap;
                     var slot_x = slot.x_coord;

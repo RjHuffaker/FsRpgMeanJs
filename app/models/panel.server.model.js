@@ -44,19 +44,19 @@ var PanelSchema = {
 	y_coord: {
 		type: Number
 	},
-	x_above: {
+	aboveId: {
 		type: Schema.Types.ObjectId,
 		ref: 'Panel'
 	},
-	y_above: {
+	belowId: {
 		type: Schema.Types.ObjectId,
 		ref: 'Panel'
 	},
-	x_below: {
+	leftId: {
 		type: Schema.Types.ObjectId,
 		ref: 'Panel'
 	},
-	y_below: {
+	rightId: {
 		type: Schema.Types.ObjectId,
 		ref: 'Panel'
 	},

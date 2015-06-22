@@ -37,14 +37,13 @@
 	<div ng-switch-when="Origin" feature-card
 		card="panel.originData" panel="panel"
 		class="card-origin fill-parent"></div>
-	
 </div>
 <div style="color: darkRed; position: absolute; top: 0; left: 13em; width: 2em;" class="text-center">
 	<span class="text-5">
 		<span ng-show="panel.dragging">D </span>
-		<span ng-show="panel.x_stack">xs </span>
-		<span ng-show="panel.y_stack">ys </span>
-		<span ng-show="panel.x_overlap">xo </span>
-		<span ng-show="panel.y_overlap">yo </span>
+		<span ng-show="panel.aboveId">A </span>
+		<span ng-show="panel.belowId">B </span>
+		<span ng-show="panel.leftId">L </span>
+		<span ng-show="panel.rightId">R </span>
 	</span>
 </div>

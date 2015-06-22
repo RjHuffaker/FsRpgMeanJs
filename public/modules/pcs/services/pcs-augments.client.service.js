@@ -39,17 +39,14 @@ angular.module('pcs').factory('PcsAugments', ['Bakery', 'PanelUtils', 'StackUtil
 		
 		service.addAugment = function(level){
 			var newAugment = {
+				_id: 'augment'+level+'Id',
 				panelType: 'Augment',
 				x_coord: PanelUtils.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
-				x_overlap: false,
-				y_overlap: false,
-				dragging: false,
-				stacked: false,
 				locked: true,
 				level: level,
 				augmentData: {
-					name: 'Level '+level+' Augment'
+					_name: 'Level '+level+' Augment'
 				}
 			};
 			Bakery.resource.cardList.push(newAugment);
