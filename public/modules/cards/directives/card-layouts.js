@@ -103,4 +103,10 @@ angular.module('cards')
 			restrict: 'A',
 			templateUrl: '../modules/campaigns/views/campaign-options.html'
 		};
+	})
+	.directive('deckDemo', function(){
+		return {
+			restrict: 'A',
+			templateUrl: '../modules/core/views/deck-demo.html'
+		};
 	});

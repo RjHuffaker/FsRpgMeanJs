@@ -1,7 +1,7 @@
 'use strict';
 
 // General BREAD Factory-service.
-angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'StackUtils', 'PanelUtils', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, StackUtils, PanelUtils, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
+angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'StackUtils', 'PanelUtils', 'demoDeck', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, StackUtils, PanelUtils, demoDeck, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
 	var service = {};
     
     service.Decks = Decks;
@@ -20,9 +20,7 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
     
     service.Origins = Origins;
     
-    service.resource = {
-		cardList: []
-	};
+    service.resource = demoDeck;
     
     service.getCardResource = function(cardType){
         switch(cardType){

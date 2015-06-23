@@ -34,10 +34,6 @@ angular.module('move').factory('DeckUtils', ['$rootScope', 'PanelUtils', functio
         for(var i = 0; i < cardList.length; i++){
             cardList[i].x_coord = i * 15;
             cardList[i].y_coord = 0;
-            cardList[i].x_overlap = false;
-            cardList[i].y_overlap = false;
-            cardList[i].x_stack = false;
-            cardList[i].y_stack = false;
             cardList[i].dragging = false;
             cardList[i].locked = false;
         }
