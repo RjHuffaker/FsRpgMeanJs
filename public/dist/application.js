@@ -1443,7 +1443,7 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                 panelType: 'deckDemo',
                 x_coord: 63,
                 y_coord: 0,
-                content: 'More coming soon!'
+                content: 'More coming soon! Recently refactored panel "getter" and "setter" methods to return a specific panel based upon its unique objectId instead of its x/y coordinates. This should allow for more reliable and flexible stacking, including the possibility of overlapping horizontal and vertical stacks.'
             }
         ]
     };
