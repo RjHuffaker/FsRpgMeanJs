@@ -44,10 +44,6 @@
                 var _panel = mockData.traitDeck.cardList[i];
                 expect(_panel.x_coord).toEqual(i * 15);
                 expect(_panel.y_coord).toEqual(0);
-                expect(_panel.x_overlap).toBe(false);
-                expect(_panel.y_overlap).toBe(false);
-                expect(_panel.x_stack).toBe(false);
-                expect(_panel.y_stack).toBe(false);
                 expect(_panel.dragging).toBe(false);
                 expect(_panel.locked).toBe(false);
             }
@@ -57,7 +53,7 @@
             var _cardList = mockData.traitDeck.cardList;
             DeckUtils.setCardList(_cardList);
             
-            DeckUtils.expandDeck(_cardList[0], _cardList);
+            DeckUtils.expandDeck(_cardList, _cardList[0]);
             expect(_cardList[0].x_coord).toEqual(0);
             
             for(var i = 1; i < _cardList.length; i++){
@@ -69,7 +65,7 @@
             var _cardList = mockData.traitDeck.cardList;
             DeckUtils.setCardList(_cardList);
             
-            DeckUtils.collapseDeck(_cardList[0], _cardList);
+            DeckUtils.collapseDeck(_cardList, _cardList[0]);
             expect(_cardList[0].x_coord).toEqual(0);
             
             for(var i = 1; i < _cardList.length; i++){
@@ -93,18 +89,6 @@
             DeckUtils.setDeckSize(mockData.traitDeck);
             var _length = mockData.traitDeck.cardList.length - 1;
             expect(mockData.traitDeck.deckSize).toEqual(_length);
-        });
-        
-        it('shuffleDeck(cardList) should randomly rearrange the x_coord of each element in cardList', function(){
-            var _cardList = mockData.featDeck.cardList;
-            
-            DeckUtils.shuffleDeck(_cardList);
-            
-            var _refArray = DeckUtils.getRefArray(_cardList);
-        //    console.log('shuffleDeck:');
-        //    for(var i = 0; i < _refArray.length; i++){
-        //        console.log(_cardList[_refArray[i]].x_coord+' / '+_cardList[_refArray[i]].y_coord);
-        //    }
         });
         
     });

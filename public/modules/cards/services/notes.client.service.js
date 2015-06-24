@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('cards').factory('Augments', ['$resource',
+angular.module('cards').factory('Notes', ['$resource',
         function($resource){
             return $resource(
-                'augments/:augmentId',
+                'notes/:noteId',
                 {
-                    augmentId: '@_id'
+                    noteId: '@_id'
                 },
                 {
                     update: {

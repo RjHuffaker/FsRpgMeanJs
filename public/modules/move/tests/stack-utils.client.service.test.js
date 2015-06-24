@@ -1,3 +1,4 @@
+
 'use strict';
 
 (function(){
@@ -7,7 +8,7 @@
         beforeEach(module(ApplicationConfiguration.applicationModuleName));
         
         // Initialize global variables
-        var StackUtils, PanelUtils, DeckUtils, mockDataBuilder, mockData;
+        var StackUtils, PanelUtils, DeckUtils, shuffleDeck, mockDataBuilder, mockData;
         
         beforeEach(inject(['StackUtils', function (_StackUtils_) {
             StackUtils = _StackUtils_;
@@ -21,6 +22,10 @@
             DeckUtils = _DeckUtils_;
         }]));
         
+        beforeEach(inject(['shuffleDeck', function (_shuffleDeck_) {
+            shuffleDeck = _shuffleDeck_;
+        }]));
+        
         beforeEach(inject(['mockDataBuilder', function (_mockDataBuilder_) {
             mockDataBuilder = _mockDataBuilder_;
         }]));
@@ -32,7 +37,7 @@
         it('getStack(cardList, panel) should return the index of each card in the same vertical or horizontal stack as the given panel', function(){
             console.log('getStack');
             var _cardList = mockData.featDeck.cardList;
-            DeckUtils.shuffleDeck(_cardList);
+            shuffleDeck(_cardList);
             
             var _refArray = DeckUtils.getRefArray(_cardList);
             console.log('_cardList[_refArray[i]]: ');

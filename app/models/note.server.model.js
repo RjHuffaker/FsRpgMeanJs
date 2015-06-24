@@ -11,10 +11,7 @@ var mongoose = require('mongoose'),
  */
 var NoteSchema = new Schema({
 	name: {
-		type: String,
-		default: '',
-		required: 'Please fill Note name',
-		trim: true
+		type: String
 	},
 	created: {
 		type: Date,
@@ -24,13 +21,21 @@ var NoteSchema = new Schema({
 		type: Schema.ObjectId,
 		ref: 'User'
 	},
+	deck: {
+		type: Schema.ObjectId,
+		ref: 'Deck'
+	},
+	deckSize: {
+		type: Number
+	},
+	deckName: {
+		type: String
+	},
 	cardType: {
-		type: String,
-		default: 'item'
+		type: String
 	},
 	cardNumber: {
-		type: Number,
-		default: 0
+		type: Number
 	},
 	content: {
 		type: String

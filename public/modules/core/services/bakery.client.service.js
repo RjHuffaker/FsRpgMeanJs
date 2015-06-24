@@ -1,7 +1,7 @@
 'use strict';
 
 // General BREAD Factory-service.
-angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'StackUtils', 'PanelUtils', 'demoDeck', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, StackUtils, PanelUtils, demoDeck, Pcs, Aspects, Traits, Feats, Augments, Items, Origins){
+angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authentication', '$resource', '$rootScope', 'Decks', 'StackUtils', 'PanelUtils', 'demoDeck', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', 'Notes', function($stateParams, $location, Authentication, $resource, $rootScope, Decks, StackUtils, PanelUtils, demoDeck, Pcs, Aspects, Traits, Feats, Augments, Items, Origins, Notes){
 	var service = {};
     
     service.Decks = Decks;
@@ -20,6 +20,8 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
     
     service.Origins = Origins;
     
+    service.Notes = Notes;
+    
     service.resource = demoDeck;
     
     service.getCardResource = function(cardType){
@@ -36,6 +38,8 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
                 return service.Items;
             case 'Origin':
                 return service.Origins;
+            case 'Note':
+                return service.Notes;
             default:
                 return false;
         }
@@ -55,6 +59,8 @@ angular.module('core').factory('Bakery', ['$stateParams', '$location', 'Authenti
                 return new service.Items(panel.itemData);
             case 'Origin':
                 return new service.Origins(panel.originData);
+            case 'Note':
+                return new service.Origins(panel.noteData);
             default:
                 return false;
         }

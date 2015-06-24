@@ -38,6 +38,10 @@ var PanelSchema = {
 		type: Schema.Types.ObjectId,
 		ref: 'Origin'
 	},
+	noteData: {
+		type: Schema.Types.ObjectId,
+		ref: 'Note'
+	},
 	x_coord: {
 		type: Number
 	},
@@ -59,22 +63,6 @@ var PanelSchema = {
 	rightId: {
 		type: Schema.Types.ObjectId,
 		ref: 'Panel'
-	},
-	x_overlap: {
-		type: Boolean,
-		default: false
-	},
-	y_overlap: {
-		type: Boolean,
-		default: false
-	},
-	x_stack: {
-		type: Boolean,
-		default: false
-	},
-	y_stack: {
-		type: Boolean,
-		default: false
 	},
 	dragging: {
 		type: Boolean,

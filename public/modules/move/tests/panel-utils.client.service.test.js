@@ -25,12 +25,12 @@
             mockData = mockDataBuilder.newMockData();
         });
         
-        it('getPanel(cardList, x_coord, y_coord) should retrieve the panel at the specified index', function(){
+        it('getPanel(cardList, panelId) should retrieve the panel of the specified _id', function(){
             DeckUtils.setCardList(mockData.aspectDeck.cardList);
-            var panel_1 = PanelUtils.getPanel(mockData.aspectDeck.cardList, 0, 0).panel;
-            var index_1 = PanelUtils.getPanel(mockData.aspectDeck.cardList, 0, 0).index;
-            var panel_2 = PanelUtils.getPanel(mockData.aspectDeck.cardList, 60, 0).panel;
-            var index_2 = PanelUtils.getPanel(mockData.aspectDeck.cardList, 60, 0).index;
+            var panel_1 = PanelUtils.getPanel(mockData.aspectDeck.cardList, mockData.aspect_1._id).panel;
+            var index_1 = PanelUtils.getPanel(mockData.aspectDeck.cardList, mockData.aspect_1._id).index;
+            var panel_2 = PanelUtils.getPanel(mockData.aspectDeck.cardList, mockData.aspect_5._id).panel;
+            var index_2 = PanelUtils.getPanel(mockData.aspectDeck.cardList, mockData.aspect_5._id).index;
             expect(panel_1.aspectData.name).toEqual('Aspect the First');
             expect(index_1).toEqual(0);
             expect(panel_2.aspectData.name).toEqual('Aspect the Fifth');

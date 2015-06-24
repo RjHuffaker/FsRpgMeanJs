@@ -84,44 +84,6 @@ describe('Note CRUD tests', function() {
 			});
 	});
 
-	it('should not be able to save Note instance if not logged in', function(done) {
-		agent.post('/notes')
-			.send(note)
-			.expect(401)
-			.end(function(noteSaveErr, noteSaveRes) {
-				// Call the assertion callback
-				done(noteSaveErr);
-			});
-	});
-
-	it('should not be able to save Note instance if no name is provided', function(done) {
-		// Invalidate name field
-		note.name = '';
-
-		agent.post('/auth/signin')
-			.send(credentials)
-			.expect(200)
-			.end(function(signinErr, signinRes) {
-				// Handle signin error
-				if (signinErr) done(signinErr);
-
-				// Get the userId
-				var userId = user.id;
-
-				// Save a new Note
-				agent.post('/notes')
-					.send(note)
-					.expect(400)
-					.end(function(noteSaveErr, noteSaveRes) {
-						// Set message assertion
-						(noteSaveRes.body.message).should.match('Please fill Note name');
-						
-						// Handle Note save error
-						done(noteSaveErr);
-					});
-			});
-	});
-
 	it('should be able to update Note instance if signed in', function(done) {
 		agent.post('/auth/signin')
 			.send(credentials)

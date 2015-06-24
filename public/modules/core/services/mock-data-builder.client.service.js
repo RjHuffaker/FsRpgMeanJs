@@ -7,6 +7,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         var mockData = {};
         
         mockData.aspect_1 = {
+            _id: 'aspect_1_id',
             panelType: 'Aspect',
             aspectData: {
                 name: 'Aspect the First',
@@ -16,6 +17,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.aspect_2 = {
+            _id: 'aspect_2_id',
             panelType: 'Aspect',
             aspectData: {
                 name: 'Aspect the Second',
@@ -25,6 +27,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.aspect_3 = {
+            _id: 'aspect_3_id',
             panelType: 'Aspect',
             aspectData: {
                 name: 'Aspect the Third',
@@ -34,6 +37,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.aspect_4 = {
+            _id: 'aspect_4_id',
             panelType: 'Aspect',
             aspectData: {
                 name: 'Aspect the Fourth',
@@ -43,6 +47,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.aspect_5 = {
+            _id: 'aspect_5_id',
             panelType: 'Aspect',
             aspectData: {
                 name: 'Aspect the Fifth',
@@ -52,6 +57,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.aspect_6 = {
+            _id: 'aspect_6_id',
             panelType: 'Aspect',
             aspectData: {
                 name: 'Aspect the Sixth',
@@ -61,6 +67,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.aspect_7 = {
+            _id: 'aspect_7_id',
             panelType: 'Aspect',
             aspectData: {
                 name: 'Aspect the Seventh',
@@ -70,6 +77,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.aspect_8 = {
+            _id: 'aspect_8_id',
             panelType: 'Aspect',
             aspectData: {
                 name: 'Aspect the Eighth',
@@ -90,6 +98,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.trait_1 = {
+            _id: 'trait_1_id',
             panelType: 'Trait',
             traitData: {
                 name: 'Trait the First',
@@ -99,6 +108,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.trait_2 = {
+            _id: 'trait_2_id',
             panelType: 'Trait',
             traitData: {
                 name: 'Trait the Second',
@@ -108,6 +118,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.trait_3 = {
+            _id: 'trait_3_id',
             panelType: 'Trait',
             traitData: {
                 name: 'Trait the Third',
@@ -117,6 +128,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.trait_4 = {
+            _id: 'trait_4_id',
             panelType: 'Trait',
             traitData: {
                 name: 'Trait the Fourth',
@@ -137,6 +149,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.feat_1 = {
+            _id: 'feat_1_id',
             panelType: 'Feat',
             x_coord: 0,
             y_coord: 0,
@@ -148,6 +161,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.feat_2 = {
+            _id: 'feat_2_id',
             panelType: 'Feat',
             x_coord: 15,
             y_coord: 0,
@@ -159,6 +173,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.feat_3 = {
+            _id: 'feat_3_id',
             panelType: 'Feat',
             x_coord: 15,
             y_coord: 3,
@@ -170,6 +185,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.feat_4 = {
+            _id: 'feat_4_id',
             panelType: 'Feat',
             x_coord: 30,
             y_coord: 0,
@@ -181,6 +197,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.feat_5 = {
+            _id: 'feat_5_id',
             panelType: 'Feat',
             x_coord: 30,
             y_coord: 3,
@@ -192,6 +209,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.feat_6 = {
+            _id: 'feat_6_id',
             panelType: 'Feat',
             x_coord: 30,
             y_coord: 6,
@@ -203,6 +221,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.feat_7 = {
+            _id: 'feat_7_id',
             panelType: 'Feat',
             x_coord: 45,
             y_coord: 0,
@@ -214,6 +233,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.feat_8 = {
+            _id: 'feat_8_id',
             panelType: 'Feat',
             x_coord: 45,
             y_coord: 3,
@@ -225,6 +245,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.feat_9 = {
+            _id: 'feat_9_id',
             panelType: 'Feat',
             x_coord: 45,
             y_coord: 6,
@@ -236,6 +257,7 @@ angular.module('core').factory('mockDataBuilder', function() {
         };
         
         mockData.feat_10 = {
+            _id: 'feat_10_id',
             panelType: 'Feat',
             x_coord: 45,
             y_coord: 9,

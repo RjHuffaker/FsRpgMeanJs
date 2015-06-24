@@ -1,14 +1,14 @@
 'use strict';
 
 /**
- * Module dependencies.
+ * Module dependencies
  */
 var mongoose = require('mongoose'),
 	Action = require('./action.server.model'),
 	Schema = mongoose.Schema;
 
 /**
- * Card Schema
+ * Feat Schema
  */
 var FeatSchema = new Schema({
 	name: {

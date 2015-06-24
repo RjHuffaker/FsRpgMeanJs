@@ -1,6 +1,5 @@
 'use strict';
 
-// General BREAD Factory-service.
 angular.module('cards').factory('Traits', ['$resource',
         function($resource){
             return $resource(
