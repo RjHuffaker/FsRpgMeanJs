@@ -6,7 +6,7 @@ angular.module('move').factory('stackUnder', ['$rootScope', 'CoreVars', 'Bakery'
         
         // Stack one card behind another and reposition deck to fill the gap
         return function(cardList, slot, panel){
-            if(!CoreVars.cardMoving && !slot.leftId && !slot.rightId && !panel.leftId && !panel.rightId){
+            if(!CoreVars.cardMoving && !slot.left.overlap && !slot.right.overlap && !panel.left.overlap && !panel.right.overlap){
                 
                 var panel_x = panel.x_coord;
                 var panel_y = panel.y_coord;
@@ -16,8 +16,8 @@ angular.module('move').factory('stackUnder', ['$rootScope', 'CoreVars', 'Bakery'
                 var slot_y = slot.y_coord;
                 var newColumn = panel_x > slot_x ? slot_x : slot_x - CoreVars.x_dim_em;
                 
-                panel.aboveId = slot._id;
-                slot.belowId = panel._id;
+                panel.above.overlap = slot._id;
+                slot.below.overlap = panel._id;
                 
                 CoreVars.setCardMoving();
                 for(var i = 0; i < cardList.length; i++){

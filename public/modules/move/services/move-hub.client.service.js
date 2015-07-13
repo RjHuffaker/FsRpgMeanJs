@@ -22,7 +22,7 @@ angular.module('move').factory('MoveHub', ['$rootScope', 'CoreVars', 'Bakery', '
 		service.moveHorizontal = function(slot, panel){
 			var _deck = getCardList();
 			var _lowest_index = PanelUtils.getLowestPanel(_deck, panel.x_coord).index;
-		//	if(panel.y_coord > 0 || (panel.y_coord === 0 && panel.stacked && !panel.y_overlap)){
+		//	if(panel.y_coord > 0 || (panel.y_coord === 0 && panel.stacked && !panel.above.overlap)){
 		//		console.log('unstackCard');
 		//		unstackCard(_deck, slot, panel);
 		//	} else if (panel.y_coord === 0){

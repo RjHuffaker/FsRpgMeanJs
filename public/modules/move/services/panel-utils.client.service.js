@@ -6,36 +6,58 @@ angular.module('move').factory('PanelUtils', ['$rootScope', '$resource', functio
     var service = {};
     
     service.getPanel = function(cardList, panelId){
-        if(cardList.length > 0){
-            var _panel = { x_coord: 0, y_coord: 0 };
-            var _index = 0;
-            var _order = 0;
-            
-            for(var ia = 0; ia < cardList.length; ia++){
-                var test_a = cardList[ia];
-                if(test_a._id === panelId){
-                    _panel = test_a;
-                    _index = ia;
-                }
+        for(var i = 0; i < cardList.length; i++){
+            if(cardList[i]._id === panelId){
+                return cardList[i];
             }
-            
-            for(var ib = 0; ib < cardList.length; ib++){
-                var test_b = cardList[ib];
-                if(test_b.x_coord < _panel.x_coord){
-                    _order++;
-                } else if(test_b.x_coord === _panel.x_coord && test_b.y_coord < _panel.y_coord){
-                    _order++;
-                }
+        }
+    };
+    
+    service.getPanelIndex = function(cardList, panelId){
+        for(var i = 0; i < cardList.length; i++){
+            if(cardList[i]._id === panelId){
+                return i;
             }
-            
-            return {
-                panel: _panel,
-                index: _index,
-                order: _order
-            };
-            
-        } else {
-            console.log('Error: cardList.length = 0');
+        }
+    };
+    
+    service.getPanelOrder = function(cardList, panelId){
+        var _order = 0;
+        var _index = service.getFirstIndex(cardList);
+        var _panel = cardList[_index];
+        while((_panel.above.adjacent || _panel.above.overlap || _panel.right.adjacent || _panel.right.overlap)&& _panel._id !== panelId){
+            if(_panel.above.adjacent){
+                _index = service.getPanelIndex(cardList, _panel.above.adjacent);
+            } else if(_panel.above.overlap){
+                _index = service.getPanelIndex(cardList, _panel.above.overlap);
+            } else if(_panel.right.adjacent){
+                _index = service.getPanelIndex(cardList, _panel.right.adjacent);
+            } else if(_panel.right.overlap){
+                _index = service.getPanelIndex(cardList, _panel.right.overlap);
+            }
+            _panel = cardList[_index];
+            _order++;
+        }
+        return _order;
+    };
+    
+    service.getRootPanel = function(cardList, panelId){
+        var _panel = service.getPanel(cardList, panelId);
+        while(_panel.below.overlap || _panel.left.overlap){
+            if(_panel.left.overlap){
+                _panel = service.getPanel(cardList, _panel.left.overlap);
+            } else if (_panel.below.overlap){
+                _panel = service.getPanel(cardList, _panel.below.overlap);
+            }
+        }
+        return _panel;
+    };
+    
+    service.getFirstIndex = function(cardList){
+        for(var i = 0; i < cardList.length; i++){
+            if(cardList[i].x_coord === 0 && cardList[i].y_coord === 0){
+                return i;
+            }
         }
     };
     

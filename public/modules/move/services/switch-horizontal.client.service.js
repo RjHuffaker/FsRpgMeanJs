@@ -6,61 +6,64 @@ angular.module('move').factory('switchHorizontal', ['$rootScope', 'CoreVars', 'B
         
         return function(cardList, slot, panel){
             if(!CoreVars.cardMoving){
-                console.log('switchHorizontal');
+                console.log('switchHorizontal: '+slot.x_coord+'/'+panel.x_coord);
                 
                 CoreVars.setCardMoving();
                 
                 var slotStack = StackUtils.getStack(cardList, slot);
                 var panelStack = StackUtils.getStack(cardList, panel);
                 
-                var leftEdge, rightEdge,
-                    leftLeft, rightLeft,
-                    leftRight, rightRight,
-                    leftPanel, rightPanel, 
-                    leftStack = [], rightStack = [];
-                    
-                var slotDimens = StackUtils.getStackDimens(cardList, slot);
-                var panelDimens = StackUtils.getStackDimens(cardList, panel);
+                var slotOrder = PanelUtils.getPanelOrder(cardList, slot._id);
+                var panelOrder = PanelUtils.getPanelOrder(cardList, panel._id);
                 
-                if(slot.x_coord < panel.x_coord){
+                // Refactor to use slotId and panelId.
+                // Remove x/y_coord dependence.
+                
+                var leftLeft, leftRight,
+                    rightLeft, rightRight;
+                    
+                if(slotOrder < panelOrder){
                     // Panel moving left <----
-                    leftPanel = slot;
-                    rightPanel = panel;
-                    leftLeft = slotDimens.left;
-                    leftRight = panelDimens.left;
-                    rightLeft = panelDimens.left;
-                    rightRight = panelDimens.right + CoreVars.x_dim_em;
-                    leftStack = StackUtils.getRange(cardList, leftEdge, rightEdge);
-                    rightStack = StackUtils.getStack(cardList, slot);
-                } else if(panel.x_coord < slot.x_coord){
+                    leftLeft = StackUtils.getStackBottom(cardList, slot._id);
+                    leftRight = StackUtils.getStackBottom(cardList, panel._id).left.adjacent;
+                    leftRight = PanelUtils.getPanel(cardList, leftRight);
+                    rightLeft = StackUtils.getStackBottom(cardList, panel._id);
+                    rightRight = StackUtils.getStackTop(cardList, panel._id);
+                } else if(panelOrder < slotOrder){
                     // Panel moving right ---->
-                    leftPanel = panel;
-                    rightPanel = slot;
-                    leftLeft = panelDimens.left;
-                    leftRight = panelDimens.right + CoreVars.x_dim_em;
-                    rightLeft = panelDimens.right + CoreVars.x_dim_em;
-                    rightRight = slotDimens.right + CoreVars.x_dim_em;
-                    leftStack = StackUtils.getStack(cardList, panel);
-                    rightStack = StackUtils.getRange(cardList, leftEdge, rightEdge);
+                    leftLeft = StackUtils.getStackBottom(cardList, panel._id);
+                    leftRight = StackUtils.getStackTop(cardList, panel._id);
+                    rightLeft = StackUtils.getStackTop(cardList, panel._id).right.adjacent;
+                    rightLeft = PanelUtils.getPanel(cardList, rightLeft);
+                    rightRight = StackUtils.getStackTop(cardList, slot._id);
                 }
                 
-                console.log('LL: '+leftLeft+' / LR: '+leftRight+' | RL: '+rightLeft+' / RR: '+rightRight);
+                var leftRange = StackUtils.getRange(cardList, leftLeft._id, leftRight._id);
+                var rightRange = StackUtils.getRange(cardList, rightLeft._id, rightRight._id);
                 
-                var leftWidth =  leftRight - leftLeft;
-                var rightWidth = rightRight - rightLeft;
-                var totalWidth = rightRight - leftLeft;
+                var leftDimens = StackUtils.getRangeDimens(leftRange);
+                var rightDimens = StackUtils.getRangeDimens(rightRange);
+                
+                console.log('LL: '+leftDimens.left+' / LR: '+leftDimens.right+' | RL: '+rightDimens.left+' / RR: '+rightDimens.right);
+                
+                var leftWidth =  leftDimens.right - leftDimens.left;
+                var rightWidth = rightDimens.right - rightDimens.left;
+                var totalWidth = rightDimens.right - leftDimens.left;
                 
                 console.log('LW: '+leftWidth+' + RW: '+rightWidth+' = TW: '+totalWidth);
                 
-                StackUtils.setRange(cardList, leftLeft, leftRight, function(_leftStack){
-                    StackUtils.setRange(cardList, rightLeft, rightRight, function(_rightStack){
+                StackUtils.setRange(cardList, leftLeft._id, leftRight._id, function(_leftStack){
+                    StackUtils.setRange(cardList, rightLeft._id, rightRight._id, function(_rightStack){
                         for(var ib = 0; ib < _rightStack.length; ib++){
                             _rightStack[ib].x_coord -= totalWidth - rightWidth;
+                            rightLeft.left.adjacent = leftLeft.left.adjacent;
+                            rightRight.right.adjacent = leftLeft._id;
                         }
                     });
-                    console.log(_leftStack);
                     for(var ic = 0; ic < _leftStack.length; ic++){
                         _leftStack[ic].x_coord += totalWidth - leftWidth;
+                        leftLeft.left.adjacent = rightLeft._id;
+                        leftRight.right.adjacent = rightRight.right.adjacent;
                     }
                 });
                 

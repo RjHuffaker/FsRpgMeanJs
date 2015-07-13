@@ -19,14 +19,14 @@ angular.module('move').factory('onCardMove', ['CoreVars', 'MoveHub', 'checkEdge'
                 var slot_y = slot.y_coord;
                 var slot_x_px = object.offset.left;
                 var slot_y_px = object.offset.top;
-                var slot_x_overlap = slot.leftId || slot.rightId;
-                var slot_y_overlap = slot.aboveId || slot.belowId;
+                var slot_x_overlap = slot.left.overlap || slot.right.overlap;
+                var slot_y_overlap = slot.above.overlap || slot.below.overlap;
                 
                 var panel = object.panel;
                 var panel_x = panel.x_coord;
                 var panel_y = panel.y_coord;
-                var panel_x_overlap = panel.leftId || panel.rightId;
-                var panel_y_overlap = panel.aboveId || panel.belowId;
+                var panel_x_overlap = panel.left.overlap || panel.right.overlap;
+                var panel_y_overlap = panel.above.overlap || panel.below.overlap;
                 
                 var changeX = Math.abs(panel_x - slot_x);
                 var changeY = Math.abs(panel_y - slot_y);

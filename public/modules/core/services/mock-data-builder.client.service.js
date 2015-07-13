@@ -153,6 +153,22 @@ angular.module('core').factory('mockDataBuilder', function() {
             panelType: 'Feat',
             x_coord: 0,
             y_coord: 0,
+            above: {
+                adjacent: null,
+                overlap: null
+            },
+            below: {
+                adjacent: null,
+                overlap: null
+            },
+            left: {
+                adjacent: null,
+                overlap: null
+            },
+            right: {
+                adjacent: 'feat_2_id',
+                overlap: null
+            },
             featData: {
                 name: 'Feat the First',
                 cardType: 'Feat',
@@ -165,6 +181,22 @@ angular.module('core').factory('mockDataBuilder', function() {
             panelType: 'Feat',
             x_coord: 15,
             y_coord: 0,
+            above: {
+                adjacent: null,
+                overlap: 'feat_3_id'
+            },
+            below: {
+                adjacent: null,
+                overlap: null
+            },
+            left: {
+                adjacent: 'feat_1_id',
+                overlap: null
+            },
+            right: {
+                adjacent: null,
+                overlap: null
+            },
             featData: {
                 name: 'Feat the Second',
                 cardType: 'Feat',
@@ -177,6 +209,22 @@ angular.module('core').factory('mockDataBuilder', function() {
             panelType: 'Feat',
             x_coord: 15,
             y_coord: 3,
+            above: {
+                adjacent: null,
+                overlap: null
+            },
+            below: {
+                adjacent: null,
+                overlap: 'feat_2_id'
+            },
+            left: {
+                adjacent: null,
+                overlap: null
+            },
+            right: {
+                adjacent: 'feat_4_id',
+                overlap: null
+            },
             featData: {
                 name: 'Feat the Third',
                 cardType: 'Feat',
@@ -189,6 +237,22 @@ angular.module('core').factory('mockDataBuilder', function() {
             panelType: 'Feat',
             x_coord: 30,
             y_coord: 0,
+            above: {
+                adjacent: null,
+                overlap: 'feat_5_id'
+            },
+            below: {
+                adjacent: null,
+                overlap: null
+            },
+            left: {
+                adjacent: 'feat_3_id',
+                overlap: null
+            },
+            right: {
+                adjacent: null,
+                overlap: null
+            },
             featData: {
                 name: 'Feat the Fourth',
                 cardType: 'Feat',
@@ -201,6 +265,22 @@ angular.module('core').factory('mockDataBuilder', function() {
             panelType: 'Feat',
             x_coord: 30,
             y_coord: 3,
+            above: {
+                adjacent: null,
+                overlap: 'feat_6_id'
+            },
+            below: {
+                adjacent: null,
+                overlap: 'feat_4_id'
+            },
+            left: {
+                adjacent: null,
+                overlap: null
+            },
+            right: {
+                adjacent: null,
+                overlap: null
+            },
             featData: {
                 name: 'Feat the Fifth',
                 cardType: 'Feat',
@@ -213,6 +293,22 @@ angular.module('core').factory('mockDataBuilder', function() {
             panelType: 'Feat',
             x_coord: 30,
             y_coord: 6,
+            above: {
+                adjacent: null,
+                overlap: null
+            },
+            below: {
+                adjacent: null,
+                overlap: 'feat_5_id'
+            },
+            left: {
+                adjacent: null,
+                overlap: null
+            },
+            right: {
+                adjacent: 'feat_7_id',
+                overlap: null
+            },
             featData: {
                 name: 'Feat the Sixth',
                 cardType: 'Feat',
@@ -225,6 +321,22 @@ angular.module('core').factory('mockDataBuilder', function() {
             panelType: 'Feat',
             x_coord: 45,
             y_coord: 0,
+            above: {
+                adjacent: null,
+                overlap: 'feat_8_id'
+            },
+            below: {
+                adjacent: null,
+                overlap: null
+            },
+            left: {
+                adjacent: 'feat_6_id',
+                overlap: null
+            },
+            right: {
+                adjacent: null,
+                overlap: null
+            },
             featData: {
                 name: 'Feat the Seventh',
                 cardType: 'Feat',
@@ -237,6 +349,22 @@ angular.module('core').factory('mockDataBuilder', function() {
             panelType: 'Feat',
             x_coord: 45,
             y_coord: 3,
+            above: {
+                adjacent: null,
+                overlap: 'feat_9_id'
+            },
+            below: {
+                adjacent: null,
+                overlap: 'feat_7_id'
+            },
+            left: {
+                adjacent: null,
+                overlap: null
+            },
+            right: {
+                adjacent: null,
+                overlap: null
+            },
             featData: {
                 name: 'Feat the Eighth',
                 cardType: 'Feat',
@@ -249,6 +377,22 @@ angular.module('core').factory('mockDataBuilder', function() {
             panelType: 'Feat',
             x_coord: 45,
             y_coord: 6,
+            above: {
+                adjacent: null,
+                overlap: 'feat_10_id'
+            },
+            below: {
+                adjacent: null,
+                overlap: 'feat_8_id'
+            },
+            left: {
+                adjacent: null,
+                overlap: null
+            },
+            right: {
+                adjacent: null,
+                overlap: null
+            },
             featData: {
                 name: 'Feat the Ninth',
                 cardType: 'Feat',
@@ -261,6 +405,22 @@ angular.module('core').factory('mockDataBuilder', function() {
             panelType: 'Feat',
             x_coord: 45,
             y_coord: 9,
+            above: {
+                adjacent: null,
+                overlap: null
+            },
+            below: {
+                adjacent: null,
+                overlap: 'feat_9_id'
+            },
+            left: {
+                adjacent: null,
+                overlap: null
+            },
+            right: {
+                adjacent: null,
+                overlap: null
+            },
             featData: {
                 name: 'Feat the Tenth',
                 cardType: 'Feat',

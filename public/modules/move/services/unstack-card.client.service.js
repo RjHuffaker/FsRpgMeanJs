@@ -10,9 +10,9 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
                 if(PanelUtils.getLowestPanel(cardList, panel.x_coord).panel.y_coord > 0){
                     var panel_x = panel.x_coord;
                     var panel_y = panel.y_coord;
-                    var panel_index = PanelUtils.getPanel(cardList, panel._id).index;
-                    var panel_x_overlap = panel.x_overlap;
-                    var panel_y_overlap = panel.y_overlap;
+                    var panel_index = PanelUtils.getPanelIndex(cardList, panel._id);
+                    var panel_x_overlap = panel.left.overlap;
+                    var panel_y_overlap = panel.above.overlap;
                     var slot_x = slot.x_coord;
                     
                     var new_slot_index, new_panel_index;
@@ -54,12 +54,12 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
                         new_slot_index = PanelUtils.getLowestPanel(cardList, panel_x).index;
                         new_panel_index = PanelUtils.getLowestPanel(cardList, panel_x + CoreVars.x_dim_em).index;
                         
-                        cardList[new_slot_index].y_overlap = false;
+                        cardList[new_slot_index].above.overlap = false;
                         if(cardList[new_slot_index].y_coord === 0){
                             cardList[new_slot_index].stacked = false;
                         }
                         
-                        cardList[new_panel_index].y_overlap = false;
+                        cardList[new_panel_index].above.overlap = false;
                         if(cardList[new_panel_index].y_coord === 0){
                             cardList[new_panel_index].stacked = false;
                         }
@@ -96,12 +96,12 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
                         new_slot_index = PanelUtils.getLowestPanel(cardList, panel_x).index;
                         new_panel_index = PanelUtils.getLowestPanel(cardList, slot_x).index;
                         
-                        cardList[new_slot_index].y_overlap = false;
+                        cardList[new_slot_index].above.overlap = false;
                         if(cardList[new_slot_index].y_coord === 0){
                             cardList[new_slot_index].stacked = false;
                         }
                         
-                        cardList[new_panel_index].y_overlap = false;
+                        cardList[new_panel_index].above.overlap = false;
                         if(cardList[new_panel_index].y_coord === 0){
                             cardList[new_panel_index].stacked = false;
                         }

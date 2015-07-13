@@ -9,54 +9,57 @@ angular.module('move').factory('shuffleDeck', ['$rootScope', 'CoreVars', 'PanelU
                 _y_coord = 0;
             
             var pushRight = function(current, previous){
-                console.log('pushRight');
                 _x_coord += 15;
                 _y_coord = 0;
+                
                 current.x_coord = _x_coord;
                 current.y_coord = _y_coord;
-                previous.belowId = null;
-                previous.rightId = null;
-                current.aboveId = null;
-                current.belowId = null;
-                current.leftId = null;
-                current.rightId = null;
+                current.above = { adjacent: null, overlap: null };
+                current.below = { adjacent: null, overlap: null };
+                current.left = { adjacent: previous._id, overlap: null };
+                current.right = { adjacent: null, overlap: null };
+                
+                previous.right = { adjacent: current._id, overlap: null };
             };
             
             var stackRight = function(current, previous){
-                console.log('stackRight');
                 _x_coord += 3;
                 _y_coord = 0;
+                
                 current.x_coord = _x_coord;
                 current.y_coord = _y_coord;
-                previous.rightId = current._id;
-                current.aboveId = null;
-                current.belowId = null;
-                current.leftId = previous._id;
-                current.rightId = null;
+                current.above = { adjacent: null, overlap: null };
+                current.below = { adjacent: null, overlap: null };
+                current.left = { adjacent: null, overlap: previous._id };
+                current.right = { adjacent: null, overlap: null };
+                
+                previous.right = { adjacent: null, overlap: current._id };
             };
             
             var pushUp = function(current, previous){
-                console.log('pushUp');
                 _y_coord += 21;
+                
                 current.x_coord = _x_coord;
                 current.y_coord = _y_coord;
-                previous.belowId = null;
-                current.aboveId = null;
-                current.belowId = null;
-                current.leftId = null;
-                current.rightId = null;
+                current.above = { adjacent: null, overlap: null };
+                current.below = { adjacent: current._id, overlap: null };
+                current.left = { adjacent: null, overlap: null };
+                current.right = { adjacent: null, overlap: null };
+                
+                previous.above = { adjacent: current._id, overlap: null };
             };
             
             var stackUp = function(current, previous){
-                console.log('stackUp');
                 _y_coord += 3;
+                
                 current.x_coord = _x_coord;
                 current.y_coord = _y_coord;
-                previous.belowId = current._id;
-                current.aboveId = previous._id;
-                current.belowId = null;
-                current.leftId = null;
-                current.rightId = null;
+                current.above = { adjacent: null, overlap: null };
+                current.below = { adjacent: null, overlap: previous._id };
+                current.left = { adjacent: null, overlap: null };
+                current.right = { adjacent: null, overlap: null };
+                
+                previous.above = { adjacent: null, overlap: previous._id };
             };
             
             _refArray.sort(function() { return 0.5 - Math.random(); });
@@ -70,36 +73,36 @@ angular.module('move').factory('shuffleDeck', ['$rootScope', 'CoreVars', 'PanelU
                     var _1d4 = Math.floor(Math.random() * 4 + 1);
                     switch(_1d4){
                         case 1:
-                            if(_previous.leftId){
+                            if(_previous.left.overlap){
                                 pushRight(_current, _previous);
-                            } else if(_previous.belowId || _previous.y_coord > 0){
+                            } else if(_previous.below.overlap || _previous.y_coord > 0){
                                 pushRight(_current, _previous);
                             } else {
                                 pushRight(_current, _previous);
                             }
                             break;
                         case 2:
-                            if(_previous.leftId){
+                            if(_previous.left.overlap){
                                 stackRight(_current, _previous);
-                            } else if(_previous.belowId || _previous.y_coord > 0){
+                            } else if(_previous.below.overlap || _previous.y_coord > 0){
                                 pushRight(_current, _previous);
                             } else {
                                 stackRight(_current, _previous);
                             }
                             break;
                         case 3:
-                            if(_previous.leftId){
+                            if(_previous.left.overlap){
                                 pushRight(_current, _previous);
-                            } else if(_previous.belowId || _previous.y_coord > 0){
+                            } else if(_previous.below.overlap || _previous.y_coord > 0){
                                 stackUp(_current, _previous);
                             } else {
                                 pushUp(_current, _previous);
                             }
                             break;
                         case 4:
-                            if(_previous.leftId){
+                            if(_previous.left.overlap){
                                 stackRight(_current, _previous);
-                            } else if(_previous.belowId || _previous.y_coord > 0){
+                            } else if(_previous.below.overlap || _previous.y_coord > 0){
                                 stackUp(_current, _previous);
                             } else {
                                 stackUp(_current, _previous);
@@ -109,8 +112,10 @@ angular.module('move').factory('shuffleDeck', ['$rootScope', 'CoreVars', 'PanelU
                 } else {
                     _current.x_coord = 0;
                     _current.y_coord = 0;
-                    _current.leftId = null;
-                    _current.aboveId = null;
+                    _current.above = { adjacent: null, overlap: null };
+                    _current.below = { adjacent: null, overlap: null };
+                    _current.left = { adjacent: null, overlap: null };
+                    _current.right = { adjacent: null, overlap: null };
                 }
             }
             

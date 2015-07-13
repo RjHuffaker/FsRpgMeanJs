@@ -10,10 +10,9 @@ angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Pane
                 console.log('toggleOverlap');
                 
                 var _refArray = DeckUtils.getRefArray(cardList);
-                var _panelObject = PanelUtils.getPanel(cardList, panel._id);
-                var _panelOrder = _panelObject.order;
+                var _panelOrder = PanelUtils.getPanelOrder(cardList, panel._id);
                 
-                var _panelColumn = StackUtils.getColumn(cardList, panel.x_coord);
+                var _panelColumn = StackUtils.getColumn(cardList, panel._id);
                 
                 var _previous = cardList[_refArray[_panelOrder - 1]] || null;
                 var _next = cardList[_refArray[_panelOrder + 1]] || null;
@@ -22,41 +21,41 @@ angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Pane
                 var _lowest = PanelUtils.getLowestPanel(cardList, panel.x_coord).panel;
                 
                 var unstack_x = function(){
-                    console.log('unstack_x - _previous: '+_previous.x_coord+'/'+_previous.y_coord);
-                    console.log('unstack_x - panel: '+panel.x_coord+'/'+panel.y_coord);
                     CoreVars.setCardMoving();
-                    _previous.rightId = null;
-                    panel.leftId = null;
-                    StackUtils.setRange(cardList, panel.x_coord, _last.x_coord+1, function(rangeArray){
-                        for(var ia = 0; ia < rangeArray.length; ia++){
-                            rangeArray[ia].x_coord += CoreVars.x_cover_em;
+                    _previous.right.adjacent = panel._id;
+                    _previous.right.overlap = null;
+                    panel.left.adjacent = _previous._id;
+                    panel.left.overlap = null;
+                    StackUtils.setRange(cardList, panel._id, _last._id, function(rangeArray){
+                        for(var i = 0; i < rangeArray.length; i++){
+                            rangeArray[i].x_coord += CoreVars.x_cover_em;
                         }
                     });
                 };
                 
                 var stack_x = function(){
-                    console.log('stack_x - _previous: '+_previous.x_coord+'/'+_previous.y_coord);
-                    console.log('stack_x - panel: '+panel.x_coord+'/'+panel.y_coord);
                     CoreVars.setCardMoving();
-                    _previous.rightId = panel._id;
-                    panel.leftId = _previous._id;
-                    StackUtils.setRange(cardList, panel.x_coord, _last.x_coord+1, function(rangeArray){
-                        for(var ia = 0; ia < rangeArray.length; ia++){
-                            rangeArray[ia].x_coord -= CoreVars.x_cover_em;
+                    _previous.right.adjacent = null;
+                    _previous.right.overlap = panel._id;
+                    panel.left.adjacent = null;
+                    panel.left.overlap = _previous._id;
+                    StackUtils.setRange(cardList, panel._id, _last._id, function(rangeArray){
+                        console.log('length '+rangeArray.length);
+                        for(var i = 0; i < rangeArray.length; i++){
+                            rangeArray[i].x_coord -= CoreVars.x_cover_em;
                         }
                     });
                 };
                 
                 var unstack_y = function(){
-                    console.log('unstack_y - panel: '+panel.x_coord+'/'+panel.y_coord);
-                    console.log('unstack_y - _next: '+_next.x_coord+'/'+_next.y_coord);
                     CoreVars.setCardMoving();
-                    panel.aboveId = null;
-                    _next.belowId = null;
-                    StackUtils.setColumn(cardList, panel.x_coord, function(columnArray){
-                        console.log('columnArray length '+columnArray.length);
+                    panel.above.adjacent = _next._id;
+                    panel.above.overlap = null;
+                    _next.below.adjacent = panel._id;
+                    _next.below.overlap = null;
+                    
+                    StackUtils.setColumn(cardList, panel._id, function(columnArray){
                         for(var i = 0; i < columnArray.length; i++){
-                            console.log('unstack_y: '+columnArray[i].y_coord);
                             if(panel.y_coord < columnArray[i].y_coord){
                                 columnArray[i].y_coord += CoreVars.y_cover_em;
                             }
@@ -65,15 +64,14 @@ angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Pane
                 };
                 
                 var stack_y = function(){
-                    console.log('stack_y - panel: '+panel.x_coord+'/'+panel.y_coord);
-                    console.log('stack_y - _next: '+_next.x_coord+'/'+_next.y_coord);
                     CoreVars.setCardMoving();
-                    panel.aboveId = _next._id;
-                    _next.belowId = panel._id;
-                    StackUtils.setColumn(cardList, panel.x_coord, function(columnArray){
-                        console.log('columnArray length '+columnArray.length);
+                    panel.above.adjacent = null;
+                    panel.above.overlap = _next._id;
+                    _next.below.adjacent = null;
+                    _next.below.overlap = panel._id;
+                    
+                    StackUtils.setColumn(cardList, panel._id, function(columnArray){
                         for(var i = 0; i < columnArray.length; i++){
-                            console.log('stack_y: '+columnArray[i].y_coord);
                             if(panel.y_coord < columnArray[i].y_coord){
                                 columnArray[i].y_coord -= CoreVars.y_cover_em;
                             }
@@ -83,24 +81,24 @@ angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Pane
                 console.log('panelId: '+panel._id);
                 
                 if(_previous && _panelColumn.length === 1){
-                    if(panel.leftId && _previous.rightId){
-                        if(panel.x_coord === _previous.x_coord + 3){
+                    if(panel.left.overlap && _previous.right.overlap){
+                        if(panel.left.overlap === _previous._id && _previous.right.overlap === panel._id){
                             unstack_x();
                         }
-                    } else if(panel.y_coord === _previous.y_coord){
-                        if(panel.x_coord === _previous.x_coord + 15){
+                    } else if(panel.left.adjacent && _previous.right.adjacent){
+                        if(panel.left.adjacent === _previous._id && _previous.right.adjacent === panel._id){
                             stack_x();
                         }
                     }
                 }
                 
-                if(_next && !panel.leftId && !panel.rightId){
-                    if(panel.aboveId && _next.belowId){
-                        if(panel.y_coord === _next.y_coord - 3){
+                if(_next && _panelColumn.length > 1){
+                    if(panel.above.overlap && _next.below.overlap){
+                        if(panel.above.overlap === _next._id && _next.below.overlap === panel._id){
                             unstack_y();
                         }
-                    } else if(panel.x_coord === _next.x_coord){
-                        if(panel.y_coord === _next.y_coord - 21){
+                    } else if(panel.above.adjacent && _next.below.adjacent){
+                        if(panel.above.adjacent === _next._id && _next.below.adjacent === panel._id){
                             stack_y();
                         }
                     }

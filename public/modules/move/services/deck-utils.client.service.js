@@ -6,36 +6,53 @@ angular.module('move').factory('DeckUtils', ['$rootScope', 'PanelUtils', functio
     var service = {};
     
     service.getRefArray = function(cardList){
-        var _cardList = [];
-        for(var i = 0; i < cardList.length; i++){
-            _cardList.push(i);
+        var _index = PanelUtils.getFirstIndex(cardList);
+        var _panel = cardList[_index];
+        var _refArray = [_index];
+        
+        while(_panel.above.adjacent || _panel.above.overlap || _panel.right.adjacent || _panel.right.overlap){
+            if(_panel.above.adjacent){
+                _index = PanelUtils.getPanelOrder(cardList, _panel.above.adjacent);
+            } else if(_panel.above.overlap){
+                _index = PanelUtils.getPanelOrder(cardList, _panel.above.overlap);
+            } else if(_panel.right.adjacent){
+                _index = PanelUtils.getPanelOrder(cardList, _panel.right.adjacent);
+            } else if(_panel.right.overlap){
+                _index = PanelUtils.getPanelOrder(cardList, _panel.right.overlap);
+            }
+            console.log(_index);
+            _refArray.push(_index);
+            _panel = cardList[_index];
         }
         
-        _cardList.sort(function(a, b){
-            var axy = cardList[a].x_coord * 100 + cardList[a].y_coord;
-            var bxy = cardList[b].x_coord * 100 + cardList[b].y_coord;
-            return (cardList[a].x_coord * 100 + cardList[a].y_coord) - (cardList[b].x_coord * 100 + cardList[b].y_coord);
-        });
-        
-        return _cardList;
+        return _refArray;
     };
     
     service.getRefIndex = function(cardList, panel){
-        var _panel = 0;
+        var _index = 0;
         for(var i = 0; i < cardList.length; i++){
-            if(cardList[i].x_coord === panel.x_coord && cardList[i].y_coord === panel.y_coord){
-                _panel = i;
+            if(cardList[i]._id === panel._id){
+                return i;
             }
         }
-        return _panel;
     };
     
     service.setCardList = function(cardList){
         for(var i = 0; i < cardList.length; i++){
-            cardList[i].x_coord = i * 15;
-            cardList[i].y_coord = 0;
-            cardList[i].dragging = false;
-            cardList[i].locked = false;
+            var _previous = cardList[i-1] || null;
+            var _current = cardList[i];
+            var _next = cardList[i+1] || null;
+            
+            _current.x_coord = i * 15;
+            _current.y_coord = 0;
+            _current.dragging = false;
+            _current.locked = false;
+            _current.above = { adjacent: null, overlap: null };
+            _current.below = { adjacent: null, overlap: null };
+            _current.left = { adjacent: null, overlap: null };
+            _current.right = { adjacent: null, overlap: null };
+            if(_previous) _current.left.adjacent = _previous._id;
+            if(_next) _current.right.adjacent = _next._id;
         }
         $rootScope.$broadcast('cardPanel:onReleaseCard');
     };

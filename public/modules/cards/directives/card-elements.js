@@ -130,7 +130,7 @@ angular.module('cards')
 			link: function(scope, element, attrs){
 				var _pressEvents = 'touchstart mousedown';
 				element.on(_pressEvents, function(event){
-					if(!scope.panel.x_overlap && !scope.panel.y_overlap){
+					if(!scope.panel.left.overlap && !scope.panel.above.overlap){
 						event.stopPropagation();
 					}
 				});

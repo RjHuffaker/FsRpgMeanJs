@@ -43,12 +43,40 @@
 		card="panel.noteData" panel="panel"
 		class="card-note fill-parent"></div>
 </div>
-<div style="color: darkRed; position: absolute; top: 0; left: 13em; width: 2em;" class="text-center">
-	<span class="text-5">
-		<span ng-show="panel.dragging">D </span>
-		<span ng-show="panel.aboveId">A </span>
-		<span ng-show="panel.belowId">B </span>
-		<span ng-show="panel.leftId">L </span>
-		<span ng-show="panel.rightId">R </span>
-	</span>
+
+<div style="color: darkRed; position: absolute; top: 0; left: 13.25em; height: 1.5em; width: 1.5em;" class="text-center">
+	<table width="100%" height="100%" class="text-6">
+		<tbody>
+			<tr height="33%">
+				<td colspan="3">
+					<span ng-show="panel.below.adjacent">&utri;</span>
+					<span ng-show="panel.below.overlap">&utrif;</span>
+					<span ng-hide="panel.below.adjacent || panel.below.overlap">&cir;</span>
+				</td>
+			</tr>
+			<tr height="33%">
+				<td width="33%">
+					<span ng-show="panel.left.adjacent">&ltri;</span>
+					<span ng-show="panel.left.overlap">&ltrif;</span>
+					<span ng-hide="panel.left.adjacent || panel.left.overlap">&cir;</span>
+				</td>
+				<td width="33%">
+					<span ng-show="!panel.dragging">&#x025FB;</span>
+					<span ng-show="panel.dragging">&#x025FC;</span>
+				</td>
+				<td width="33%">
+					<span ng-show="panel.right.adjacent">&rtri;</span>
+					<span ng-show="panel.right.overlap">&rtrif;</span>
+					<span ng-hide="panel.right.adjacent || panel.right.overlap">&cir;</span>
+				</td>
+			</tr>
+			<tr height="33%">
+				<td colspan="3">
+					<span ng-show="panel.above.adjacent">&dtri;</span>
+					<span ng-show="panel.above.overlap">&dtrif;</span>
+					<span ng-hide="panel.above.adjacent || panel.above.overlap">&cir;</span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 </div>

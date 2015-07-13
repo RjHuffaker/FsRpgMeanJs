@@ -48,21 +48,45 @@ var PanelSchema = {
 	y_coord: {
 		type: Number
 	},
-	aboveId: {
-		type: Schema.Types.ObjectId,
-		ref: 'Panel'
+	above: {
+		adjacent: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
+		overlap: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
 	},
-	belowId: {
-		type: Schema.Types.ObjectId,
-		ref: 'Panel'
+	below: {
+		adjacent: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
+		overlap: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
 	},
-	leftId: {
-		type: Schema.Types.ObjectId,
-		ref: 'Panel'
+	left: {
+		adjacent: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
+		overlap: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
 	},
-	rightId: {
-		type: Schema.Types.ObjectId,
-		ref: 'Panel'
+	right: {
+		adjacent: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
+		overlap: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
 	},
 	dragging: {
 		type: Boolean,

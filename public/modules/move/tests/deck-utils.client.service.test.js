@@ -37,7 +37,6 @@
             expect(_cardList[_refIndex]).toEqual(_cardList[3]);
         });
         
-        
         it('setCardList(cardList) should add default variables to each element in cardList', function(){
             DeckUtils.setCardList(mockData.traitDeck.cardList);
             for(var i = 0; i < mockData.traitDeck.cardList.length; i++){

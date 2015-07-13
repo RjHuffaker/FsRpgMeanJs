@@ -7,17 +7,13 @@
         beforeEach(module(ApplicationConfiguration.applicationModuleName));
         
         // Initialize global variables
-        var PanelUtils, DeckUtils, mockDataBuilder, mockData;
+        var PanelUtils, DeckUtils, mockDataBuilder, shuffleDeck, mockData;
         
-        beforeEach(inject(['PanelUtils', function (_PanelUtils_) {
+        beforeEach(inject(['PanelUtils', 'DeckUtils', 'shuffleDeck', 'mockDataBuilder', 
+            function (_PanelUtils_, _DeckUtils_, _shuffleDeck_, _mockDataBuilder_) {
             PanelUtils = _PanelUtils_;
-        }]));
-        
-        beforeEach(inject(['DeckUtils', function (_DeckUtils_) {
             DeckUtils = _DeckUtils_;
-        }]));
-        
-        beforeEach(inject(['mockDataBuilder', function (_mockDataBuilder_) {
+            shuffleDeck = _shuffleDeck_;
             mockDataBuilder = _mockDataBuilder_;
         }]));
         
@@ -27,14 +23,27 @@
         
         it('getPanel(cardList, panelId) should retrieve the panel of the specified _id', function(){
             DeckUtils.setCardList(mockData.aspectDeck.cardList);
-            var panel_1 = PanelUtils.getPanel(mockData.aspectDeck.cardList, mockData.aspect_1._id).panel;
-            var index_1 = PanelUtils.getPanel(mockData.aspectDeck.cardList, mockData.aspect_1._id).index;
-            var panel_2 = PanelUtils.getPanel(mockData.aspectDeck.cardList, mockData.aspect_5._id).panel;
-            var index_2 = PanelUtils.getPanel(mockData.aspectDeck.cardList, mockData.aspect_5._id).index;
-            expect(panel_1.aspectData.name).toEqual('Aspect the First');
+            var panel_1 = PanelUtils.getPanel(mockData.aspectDeck.cardList, mockData.aspect_1._id);
+            var index_1 = PanelUtils.getPanelIndex(mockData.aspectDeck.cardList, mockData.aspect_1._id);
+            var panel_2 = PanelUtils.getPanel(mockData.aspectDeck.cardList, mockData.aspect_5._id);
+            var index_2 = PanelUtils.getPanelIndex(mockData.aspectDeck.cardList, mockData.aspect_5._id);
+            expect(panel_1).toEqual(mockData.aspect_1);
             expect(index_1).toEqual(0);
-            expect(panel_2.aspectData.name).toEqual('Aspect the Fifth');
+            expect(panel_2).toEqual(mockData.aspect_5);
             expect(index_2).toEqual(4);
+        });
+        
+        it('getRootPanel(cardList, panel) should return the root panel of the panel stack', function(){
+            var _cardList = mockData.featDeck.cardList;
+            shuffleDeck(_cardList);
+            for(var i = 0; i < _cardList.length; i++){
+                var _panel = _cardList[i];
+                var _root = PanelUtils.getRootPanel(_cardList, _panel._id);
+                expect(_root.below.overlap).toBeFalsy();
+                expect(_root.left.overlap).toBeFalsy();
+                expect(_root.x_coord <= _panel.x_coord).toBeTruthy();
+                expect(_root.y_coord <= _panel.y_coord).toBeTruthy();
+            }
         });
         
         it('getLastPanel(cardList) should retrieve the last panel and index from the cardList', function(){
@@ -50,9 +59,9 @@
             var panel_1 = PanelUtils.getLowestPanel(mockData.featDeck.cardList, 0).panel;
             var panel_2 = PanelUtils.getLowestPanel(mockData.featDeck.cardList, 15).panel;
             var panel_3 = PanelUtils.getLowestPanel(mockData.featDeck.cardList, 30).panel;
-            expect(panel_1.featData.name).toEqual('Feat the First');
-            expect(panel_2.featData.name).toEqual('Feat the Third');
-            expect(panel_3.featData.name).toEqual('Feat the Sixth');
+            expect(panel_1).toEqual(mockData.feat_1);
+            expect(panel_2).toEqual(mockData.feat_3);
+            expect(panel_3).toEqual(mockData.feat_6);
         });
         
         it('removePanel(cardList, panel) should remove panel from cardList', function(){

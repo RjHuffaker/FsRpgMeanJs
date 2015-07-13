@@ -5,7 +5,7 @@ angular.module('move').factory('stackOver', ['$rootScope', 'CoreVars', 'Bakery',
     function($rootScope, CoreVars, Bakery, PanelUtils, StackUtils){
         
         return function(cardList, slot, panel){
-            if(!CoreVars.cardMoving && !slot.x_overlap && !panel.x_overlap){
+            if(!CoreVars.cardMoving && !slot.left.overlap && !panel.right.overlap){
                 
                 console.log('stackOver');
                 
@@ -19,7 +19,7 @@ angular.module('move').factory('stackOver', ['$rootScope', 'CoreVars', 'Bakery',
                 
                 var newColumn = panel_x > slot_x ? slot_x : slot_x - CoreVars.x_dim_em;
                 
-                if(!slot.leftId && !slot.rightId && !panel.leftId && !panel.rightId){
+                if(!slot.left.overlap && !slot.right.overlap && !panel.left.overlap && !panel.right.overlap){
                     CoreVars.setCardMoving();
                     for(var ia = 0; ia < cardList.length; ia++){
                         if(!cardList[ia].dragging && cardList[ia].x_coord === newColumn && cardList[ia].y_coord > slot_y){
