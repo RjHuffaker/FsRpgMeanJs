@@ -17,7 +17,7 @@ angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Pane
                 var _previous = cardList[_refArray[_panelOrder - 1]] || null;
                 var _next = cardList[_refArray[_panelOrder + 1]] || null;
                 
-                var _last = PanelUtils.getLastPanel(cardList).panel;
+                var _last = PanelUtils.getLast(cardList).panel;
                 var _lowest = PanelUtils.getLowestPanel(cardList, panel.x_coord).panel;
                 
                 var unstack_x = function(){

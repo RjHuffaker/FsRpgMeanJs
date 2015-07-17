@@ -7,7 +7,7 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
         deckSize: 3,
         cardList: [
             {
-                _id: 'demoCard1',
+                _id: 'DC1',
                 panelType: 'deckDemo',
                 x_coord: 0,
                 y_coord: 0,
@@ -24,13 +24,13 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                     overlap: null
                 },
                 right: {
-                    adjacent: 'demoCard2',
+                    adjacent: 'DC2',
                     overlap: null
                 },
                 content: 'Here is a basic demonstration of a card-deck layout. While additional features may be accessed via the menu bar, this simple demo serves to show how card-objects may be manipulated by the user, much same as you might a physical deck of cards.'
             },
             {
-                _id: 'demoCard2',
+                _id: 'DC2',
                 panelType: 'deckDemo',
                 x_coord: 15,
                 y_coord: 0,
@@ -43,63 +43,40 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                     overlap: null
                 },
                 left: {
-                    adjacent: 'demoCard1',
+                    adjacent: 'DC1',
                     overlap: null
                 },
                 right: {
-                    adjacent: 'demoCard3',
+                    adjacent: 'DC3',
                     overlap: null
                 },
                 content: 'For starters, cards can be moved around freely, automatically returning to their position unless moved to a new position.'
             },
             {
-                _id: 'demoCard3',
+                _id: 'DC3',
                 panelType: 'deckDemo',
                 x_coord: 30,
                 y_coord: 0,
                 above: {
                     adjacent: null,
-                    overlap: 'demoCard4'
+                    overlap: null
                 },
                 below: {
                     adjacent: null,
                     overlap: null
                 },
                 left: {
-                    adjacent: 'demoCard2',
+                    adjacent: 'DC2',
                     overlap: null
                 },
                 right: {
-                    adjacent: null,
+                    adjacent: 'DC4',
                     overlap: null
                 },
                 content: 'Note that the content of each card may vary, and has no relation whatsoever to its actual position. Click again to cover it back up.'
             },
             {
-                _id: 'demoCard4',
-                panelType: 'deckDemo',
-                x_coord: 30,
-                y_coord: 3,
-                above: {
-                    adjacent: null,
-                    overlap: null
-                },
-                below: {
-                    adjacent: null,
-                    overlap: 'demoCard3'
-                },
-                left: {
-                    adjacent: null,
-                    overlap: null
-                },
-                right: {
-                    adjacent: 'demoCard5',
-                    overlap: null
-                },
-                content: 'Cards may be stacked vertically. Click on an covered card to uncover it.'
-            },
-            {
-                _id: 'demoCard5',
+                _id: 'DC4',
                 panelType: 'deckDemo',
                 x_coord: 45,
                 y_coord: 0,
@@ -112,19 +89,19 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                     overlap: null
                 },
                 left: {
-                    adjacent: 'demoCard3',
+                    adjacent: 'DC3',
                     overlap: null
                 },
                 right: {
-                    adjacent: null,
-                    overlap: 'demoCard6'
+                    adjacent: 'DC5',
+                    overlap: null
                 },
-                content: 'Cards can also be stacked horizontally, but only if they are not already stacked vertically.'
+                content: 'Cards may be stacked vertically. Click on an covered card to uncover it.'
             },
             {
-                _id: 'demoCard6',
+                _id: 'DC5',
                 panelType: 'deckDemo',
-                x_coord: 48,
+                x_coord: 60,
                 y_coord: 0,
                 above: {
                     adjacent: null,
@@ -135,17 +112,17 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                     overlap: null
                 },
                 left: {
-                    adjacent: null,
-                    overlap: 'demoCard5'
-                },
-                right: {
-                    adjacent: 'demoCard7',
+                    adjacent: 'DC4',
                     overlap: null
                 },
-                content: 'Both vertical and horizontal stacks may be reordered as a single entity.'
+                right: {
+                    adjacent: null,
+                    overlap: 'DC6'
+                },
+                content: 'Cards can also be stacked horizontally, but only if they are not already stacked vertically.'
             },
             {
-                _id: 'demoCard7',
+                _id: 'DC6',
                 panelType: 'deckDemo',
                 x_coord: 63,
                 y_coord: 0,
@@ -158,17 +135,17 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                     overlap: null
                 },
                 left: {
-                    adjacent: 'demoCard6',
-                    overlap: null
+                    adjacent: null,
+                    overlap: 'DC5'
                 },
                 right: {
-                    adjacent: 'demoCard8',
+                    adjacent: 'DC7',
                     overlap: null
                 },
-                content: 'The content of each card can also be modified by the user (TODO: add input field).'
+                content: 'Both vertical and horizontal stacks may be reordered as a single entity.'
             },
             {
-                _id: 'demoCard8',
+                _id: 'DC7',
                 panelType: 'deckDemo',
                 x_coord: 78,
                 y_coord: 0,
@@ -181,7 +158,30 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                     overlap: null
                 },
                 left: {
-                    adjacent: 'demoCard7',
+                    adjacent: 'DC6',
+                    overlap: null
+                },
+                right: {
+                    adjacent: 'DC8',
+                    overlap: null
+                },
+                content: 'The content of each card can also be modified by the user (TODO: add input field).'
+            },
+            {
+                _id: 'DC8',
+                panelType: 'deckDemo',
+                x_coord: 93,
+                y_coord: 0,
+                above: {
+                    adjacent: null,
+                    overlap: null
+                },
+                below: {
+                    adjacent: null,
+                    overlap: null
+                },
+                left: {
+                    adjacent: 'DC7',
                     overlap: null
                 },
                 right: {

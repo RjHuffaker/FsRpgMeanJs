@@ -41,7 +41,7 @@ angular.module('pcs').factory('PcsAugments', ['Bakery', 'PanelUtils', 'StackUtil
 			var newAugment = {
 				_id: 'augment'+level+'Id',
 				panelType: 'Augment',
-				x_coord: PanelUtils.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
+				x_coord: PanelUtils.getLast(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
 				locked: true,
 				level: level,

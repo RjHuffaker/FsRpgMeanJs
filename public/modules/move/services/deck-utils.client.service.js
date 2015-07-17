@@ -6,35 +6,25 @@ angular.module('move').factory('DeckUtils', ['$rootScope', 'PanelUtils', functio
     var service = {};
     
     service.getRefArray = function(cardList){
-        var _index = PanelUtils.getFirstIndex(cardList);
+        var _index = PanelUtils.getFirst(cardList).index;
         var _panel = cardList[_index];
         var _refArray = [_index];
         
         while(_panel.above.adjacent || _panel.above.overlap || _panel.right.adjacent || _panel.right.overlap){
             if(_panel.above.adjacent){
-                _index = PanelUtils.getPanelOrder(cardList, _panel.above.adjacent);
+                _index = PanelUtils.getPanelIndex(cardList, _panel.above.adjacent);
             } else if(_panel.above.overlap){
-                _index = PanelUtils.getPanelOrder(cardList, _panel.above.overlap);
+                _index = PanelUtils.getPanelIndex(cardList, _panel.above.overlap);
             } else if(_panel.right.adjacent){
-                _index = PanelUtils.getPanelOrder(cardList, _panel.right.adjacent);
+                _index = PanelUtils.getPanelIndex(cardList, _panel.right.adjacent);
             } else if(_panel.right.overlap){
-                _index = PanelUtils.getPanelOrder(cardList, _panel.right.overlap);
+                _index = PanelUtils.getPanelIndex(cardList, _panel.right.overlap);
             }
-            console.log(_index);
             _refArray.push(_index);
             _panel = cardList[_index];
         }
         
         return _refArray;
-    };
-    
-    service.getRefIndex = function(cardList, panel){
-        var _index = 0;
-        for(var i = 0; i < cardList.length; i++){
-            if(cardList[i]._id === panel._id){
-                return i;
-            }
-        }
     };
     
     service.setCardList = function(cardList){
@@ -97,7 +87,7 @@ angular.module('move').factory('DeckUtils', ['$rootScope', 'PanelUtils', functio
     };
     
     service.getDeckWidth = function(cardList){
-        var lastPanel = PanelUtils.getLastPanel(cardList);
+        var lastPanel = PanelUtils.getLast(cardList);
         return lastPanel.panel.x_coord + 15;
     };
     

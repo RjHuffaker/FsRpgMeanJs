@@ -1,4 +1,14 @@
-<div class="content-panel" class="text-8"
-    style="white-space: normal;">
+<div class="content-panel" style="white-space: normal;">
+    <p class="text-center text-6">
+        Id: {{panel._id}}
+    </p>
+    <p class="text-center text-6">
+        Above: {{panel.below.adjacent || 'null'}}/{{panel.below.overlap || 'null'}} - 
+        Below: {{panel.above.adjacent || 'null'}}/{{panel.above.overlap || 'null'}}
+    </p>
+    <p class="text-center text-6">
+        Left: {{panel.left.adjacent || 'null'}}/{{panel.left.overlap || 'null'}} - 
+        right: {{panel.right.adjacent || 'null'}}/{{panel.right.overlap || 'null'}}
+    </p>
     {{panel.content}}
 </div>

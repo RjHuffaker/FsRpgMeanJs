@@ -46,11 +46,11 @@
             }
         });
         
-        it('getLastPanel(cardList) should retrieve the last panel and index from the cardList', function(){
+        it('getLast(cardList) should retrieve the last panel and index from the cardList', function(){
             DeckUtils.setCardList(mockData.aspectDeck.cardList);
             DeckUtils.setCardList(mockData.traitDeck.cardList);
-            var lastCard_1 = PanelUtils.getLastPanel(mockData.aspectDeck.cardList);
-            var lastCard_2 = PanelUtils.getLastPanel(mockData.traitDeck.cardList);
+            var lastCard_1 = PanelUtils.getLast(mockData.aspectDeck.cardList);
+            var lastCard_2 = PanelUtils.getLast(mockData.traitDeck.cardList);
             expect(lastCard_1.index).toEqual(7);
             expect(lastCard_2.index).toEqual(3);
         });

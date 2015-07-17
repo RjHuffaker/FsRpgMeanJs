@@ -31,12 +31,6 @@
             }
         });
         
-        it('getRefIndex(cardList, panel) should return the cardList index of the given panel', function(){
-            var _cardList = mockData.featDeck.cardList;
-            var _refIndex = DeckUtils.getRefIndex(_cardList, _cardList[3]);
-            expect(_cardList[_refIndex]).toEqual(_cardList[3]);
-        });
-        
         it('setCardList(cardList) should add default variables to each element in cardList', function(){
             DeckUtils.setCardList(mockData.traitDeck.cardList);
             for(var i = 0; i < mockData.traitDeck.cardList.length; i++){

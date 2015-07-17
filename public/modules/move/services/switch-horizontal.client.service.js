@@ -16,9 +16,6 @@ angular.module('move').factory('switchHorizontal', ['$rootScope', 'CoreVars', 'B
                 var slotOrder = PanelUtils.getPanelOrder(cardList, slot._id);
                 var panelOrder = PanelUtils.getPanelOrder(cardList, panel._id);
                 
-                // Refactor to use slotId and panelId.
-                // Remove x/y_coord dependence.
-                
                 var leftLeft, leftRight,
                     rightLeft, rightRight;
                     
@@ -44,27 +41,41 @@ angular.module('move').factory('switchHorizontal', ['$rootScope', 'CoreVars', 'B
                 var leftDimens = StackUtils.getRangeDimens(leftRange);
                 var rightDimens = StackUtils.getRangeDimens(rightRange);
                 
-                console.log('LL: '+leftDimens.left+' / LR: '+leftDimens.right+' | RL: '+rightDimens.left+' / RR: '+rightDimens.right);
-                
                 var leftWidth =  leftDimens.right - leftDimens.left;
                 var rightWidth = rightDimens.right - rightDimens.left;
                 var totalWidth = rightDimens.right - leftDimens.left;
                 
-                console.log('LW: '+leftWidth+' + RW: '+rightWidth+' = TW: '+totalWidth);
+                var outerLeft = PanelUtils.getPanel(cardList, leftLeft.left.adjacent);
+                var outerRight = PanelUtils.getPanel(cardList, rightRight.right.adjacent);
                 
                 StackUtils.setRange(cardList, leftLeft._id, leftRight._id, function(_leftStack){
                     StackUtils.setRange(cardList, rightLeft._id, rightRight._id, function(_rightStack){
+                        
+                        if(outerLeft){
+                            outerLeft.right.adjacent = rightLeft._id;
+                            rightLeft.left.adjacent = outerLeft._id;
+                        } else {
+                            rightLeft.left.adjacent = null;
+                        }
+                        
+                        if(outerRight){
+                            outerRight.left.adjacent = leftRight._id;
+                            leftRight.right.adjacent = outerRight._id;
+                        } else {
+                            leftRight.right.adjacent = null;
+                        }
+                        
                         for(var ib = 0; ib < _rightStack.length; ib++){
                             _rightStack[ib].x_coord -= totalWidth - rightWidth;
-                            rightLeft.left.adjacent = leftLeft.left.adjacent;
                             rightRight.right.adjacent = leftLeft._id;
                         }
                     });
+                    
                     for(var ic = 0; ic < _leftStack.length; ic++){
                         _leftStack[ic].x_coord += totalWidth - leftWidth;
-                        leftLeft.left.adjacent = rightLeft._id;
-                        leftRight.right.adjacent = rightRight.right.adjacent;
+                        leftLeft.left.adjacent = rightRight._id;
                     }
+                    console.log(cardList);
                 });
                 
                 $rootScope.$digest();

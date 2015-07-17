@@ -42,7 +42,7 @@ angular.module('pcs').factory('PcsFeats', ['Bakery', 'PanelUtils', 'StackUtils',
 			var newFeat = {
 				_id: 'feat'+level+'Id',
 				panelType: 'Feat',
-				x_coord: PanelUtils.getLastPanel(Bakery.resource.cardList).panel.x_coord + 15,
+				x_coord: PanelUtils.getLast(Bakery.resource.cardList).panel.x_coord + 15,
 				y_coord: 0,
 				locked: true,
 				level: level,
