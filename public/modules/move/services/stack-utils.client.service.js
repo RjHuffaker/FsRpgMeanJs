@@ -81,15 +81,13 @@ angular.module('move').factory('StackUtils', ['$rootScope', 'CoreVars', 'PanelUt
         
         var _rangeArray = [];
         
-        console.log('getRange: '+_leftOrder+'/'+_rightOrder);
+        // console.log('getRange: '+_leftOrder+'/'+_rightOrder);
         
         for(var i = 0; i < _refArray.length; i++){
             if(_leftOrder <= i && i <= _rightOrder){
                 _rangeArray.push(cardList[_refArray[i]]);
             }
         }
-        
-        console.log(_rangeArray);
         
         return _rangeArray;
     };
@@ -104,10 +102,8 @@ angular.module('move').factory('StackUtils', ['$rootScope', 'CoreVars', 'PanelUt
         // console.log('setRange: '+_leftOrder+'/'+_rightOrder);
         
         for(var i = 0; i < _refArray.length; i++){
-            console.log('i: '+i+'_leftOrder: '+_leftOrder+' _rightOrder: '+_rightOrder);
             if(_leftOrder <= i && i <= _rightOrder){
                 _rangeArray.push(cardList[_refArray[i]]);
-                console.log('setRange: '+cardList[_refArray[i]]._id);
             }
         }
         
@@ -149,10 +145,14 @@ angular.module('move').factory('StackUtils', ['$rootScope', 'CoreVars', 'PanelUt
     };
     
     service.getRangeDimens = function(rangeArray){
+        var _above = rangeArray[rangeArray.length-1].y_coord + CoreVars.y_dim_em;
+        var _below = rangeArray[0].y_coord;
         var _left = rangeArray[0].x_coord;
         var _right = rangeArray[rangeArray.length-1].x_coord + CoreVars.x_dim_em;
         
         return {
+            above: _above,
+            below: _below,
             left: _left,
             right: _right
         };

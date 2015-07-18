@@ -10,9 +10,6 @@ angular.module('move').factory('switchHorizontal', ['$rootScope', 'CoreVars', 'B
                 
                 CoreVars.setCardMoving();
                 
-                var slotStack = StackUtils.getStack(cardList, slot);
-                var panelStack = StackUtils.getStack(cardList, panel);
-                
                 var slotOrder = PanelUtils.getPanelOrder(cardList, slot._id);
                 var panelOrder = PanelUtils.getPanelOrder(cardList, panel._id);
                 
@@ -48,8 +45,8 @@ angular.module('move').factory('switchHorizontal', ['$rootScope', 'CoreVars', 'B
                 var outerLeft = PanelUtils.getPanel(cardList, leftLeft.left.adjacent);
                 var outerRight = PanelUtils.getPanel(cardList, rightRight.right.adjacent);
                 
-                StackUtils.setRange(cardList, leftLeft._id, leftRight._id, function(_leftStack){
-                    StackUtils.setRange(cardList, rightLeft._id, rightRight._id, function(_rightStack){
+                StackUtils.setRange(cardList, leftLeft._id, leftRight._id, function(_leftRange){
+                    StackUtils.setRange(cardList, rightLeft._id, rightRight._id, function(_rightRange){
                         
                         if(outerLeft){
                             outerLeft.right.adjacent = rightLeft._id;
@@ -65,17 +62,18 @@ angular.module('move').factory('switchHorizontal', ['$rootScope', 'CoreVars', 'B
                             leftRight.right.adjacent = null;
                         }
                         
-                        for(var ib = 0; ib < _rightStack.length; ib++){
-                            _rightStack[ib].x_coord -= totalWidth - rightWidth;
-                            rightRight.right.adjacent = leftLeft._id;
+                        rightRight.right.adjacent = leftLeft._id;
+                        
+                        for(var ib = 0; ib < _rightRange.length; ib++){
+                            _rightRange[ib].x_coord -= totalWidth - rightWidth;
                         }
                     });
                     
-                    for(var ic = 0; ic < _leftStack.length; ic++){
-                        _leftStack[ic].x_coord += totalWidth - leftWidth;
-                        leftLeft.left.adjacent = rightRight._id;
+                    leftLeft.left.adjacent = rightRight._id;
+                    
+                    for(var ic = 0; ic < _leftRange.length; ic++){
+                        _leftRange[ic].x_coord += totalWidth - leftWidth;
                     }
-                    console.log(cardList);
                 });
                 
                 $rootScope.$digest();

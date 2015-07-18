@@ -1,12 +1,12 @@
 'use strict';
 
 // Panel helper-functions
-angular.module('move').factory('PanelUtils', ['$rootScope', '$resource', function($rootScope, $resource) {
+angular.module('move').factory('PanelUtils', ['$rootScope', '$resource', 'CoreVars', function($rootScope, $resource, CoreVars) {
     
     var service = {};
     
     service.getPanel = function(cardList, panelId){
-        var _panel = null;
+        var _panel = CoreVars.nullPanel;
         for(var i = 0; i < cardList.length; i++){
             if(cardList[i]._id === panelId){
                 _panel = cardList[i];

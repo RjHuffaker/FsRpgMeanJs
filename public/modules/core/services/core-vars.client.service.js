@@ -23,6 +23,14 @@ angular.module('core').factory('CoreVars', ['$rootScope',
         service.x_cover_px = 144;
         service.y_cover_px = 192;
         
+        service.nullPanel = {
+            _id: null,
+            above: { adjacent: null, overlap: null },
+            below: { adjacent: null, overlap: null },
+            left: { adjacent: null, overlap: null },
+            right: { adjacent: null, overlap: null }
+        };
+        
         service.cardMoved = false;
         service.cardMoving = false;
         var moveTimer;
