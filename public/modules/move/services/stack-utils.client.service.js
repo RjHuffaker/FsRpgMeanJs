@@ -7,14 +7,13 @@ angular.module('move').factory('StackUtils', ['$rootScope', 'CoreVars', 'PanelUt
     
     service.getStack = function(cardList, panel){
         var _refArray = DeckUtils.getRefArray(cardList);
-        var _panelOrder = PanelUtils.getPanelOrder(cardList, panel._id);
-        var _panel = PanelUtils.getRootPanel(cardList, panel._id);
+        var _panel = service.getStackAbove(cardList, panel._id);
         var _panelArray = [ _panel ];
         
-        while(_panel.above.overlap || _panel.right.overlap){
-            if(_panel.above.overlap){
-                console.log('getStack: panel.above.overlap',_panel.above.overlap);
-                _panel = PanelUtils.getPanel(cardList, _panel.above.overlap);
+        while(_panel.below.overlap || _panel.right.overlap){
+            if(_panel.below.overlap){
+                console.log('getStack: panel.below.overlap',_panel.below.overlap);
+                _panel = PanelUtils.getPanel(cardList, _panel.below.overlap);
                 _panelArray.push(_panel);
             } else if(_panel.right.overlap){
                 console.log('getStack: panel.right.overlap',_panel.right.overlap);
@@ -22,19 +21,20 @@ angular.module('move').factory('StackUtils', ['$rootScope', 'CoreVars', 'PanelUt
                 _panelArray.push(_panel);
             }
         }
+        console.log(_panelArray);
         return _panelArray;
     };
     
     service.setStack = function(cardList, panel, callBack){
         var _refArray = DeckUtils.getRefArray(cardList);
         var _panelOrder = PanelUtils.getPanelOrder(cardList, panel._id);
-        var _panel = PanelUtils.getRootPanel(cardList, panel._id);
+        var _panel = service.getStackAbove(cardList, panel._id);
         var _panelArray = [ _panel ];
         
-        while(_panel.above.overlap || _panel.right.overlap){
-            if(_panel.above.overlap){
-                console.log('setStack: panel.above.overlap', _panel.above.overlap);
-                _panel = PanelUtils.getPanel(cardList, _panel.above.overlap);
+        while(_panel.below.overlap || _panel.right.overlap){
+            if(_panel.below.overlap){
+                console.log('setStack: panel.below.overlap', _panel.below.overlap);
+                _panel = PanelUtils.getPanel(cardList, _panel.below.overlap);
                 _panelArray.push(_panel);
             } else if(_panel.right.overlap){
                 console.log('setStack: panel.right.overlap', _panel.right.overlap);
@@ -46,12 +46,12 @@ angular.module('move').factory('StackUtils', ['$rootScope', 'CoreVars', 'PanelUt
         if(callBack) callBack(_panelArray);
     };
     
-    service.getStackBottom = function(cardList, panelId){
+    service.getStackAbove = function(cardList, panelId){
         var _panel = PanelUtils.getPanel(cardList, panelId);
         
-        while(_panel.below.overlap || _panel.left.overlap){
-            if(_panel.below.overlap){
-                _panel = PanelUtils.getPanel(cardList, _panel.below.overlap);
+        while(_panel.above.overlap || _panel.left.overlap){
+            if(_panel.above.overlap){
+                _panel = PanelUtils.getPanel(cardList, _panel.above.overlap);
             } else if(_panel.left.overlap){
                 _panel = PanelUtils.getPanel(cardList, _panel.left.overlap);
             }
@@ -60,12 +60,12 @@ angular.module('move').factory('StackUtils', ['$rootScope', 'CoreVars', 'PanelUt
         return _panel;
     };
     
-    service.getStackTop = function(cardList, panelId){
+    service.getStackBelow = function(cardList, panelId){
         var _panel = PanelUtils.getPanel(cardList, panelId);
         
-        while(_panel.above.overlap || _panel.right.overlap){
-            if(_panel.above.overlap){
-                _panel = PanelUtils.getPanel(cardList, _panel.above.overlap);
+        while(_panel.below.overlap || _panel.right.overlap){
+            if(_panel.below.overlap){
+                _panel = PanelUtils.getPanel(cardList, _panel.below.overlap);
             } else if(_panel.right.overlap){
                 _panel = PanelUtils.getPanel(cardList, _panel.right.overlap);
             }
@@ -114,12 +114,12 @@ angular.module('move').factory('StackUtils', ['$rootScope', 'CoreVars', 'PanelUt
         var _panel = PanelUtils.getRootPanel(cardList, panelId);
         var _columnArray = [_panel];
         
-        while(_panel.above.adjacent || _panel.above.overlap){
-            if(_panel.above.adjacent){
-                _panel = PanelUtils.getPanel(cardList, _panel.above.adjacent);
+        while(_panel.below.adjacent || _panel.below.overlap){
+            if(_panel.below.adjacent){
+                _panel = PanelUtils.getPanel(cardList, _panel.below.adjacent);
                 _columnArray.push(_panel);
-            } else if(_panel.above.overlap){
-                _panel = PanelUtils.getPanel(cardList, _panel.above.overlap);
+            } else if(_panel.below.overlap){
+                _panel = PanelUtils.getPanel(cardList, _panel.below.overlap);
                 _columnArray.push(_panel);
             }
         }
@@ -131,12 +131,12 @@ angular.module('move').factory('StackUtils', ['$rootScope', 'CoreVars', 'PanelUt
         var _panel = PanelUtils.getRootPanel(cardList, panelId);
         var _columnArray = [_panel];
         
-        while(_panel.above.adjacent || _panel.above.overlap){
-            if(_panel.above.adjacent){
-                _panel = PanelUtils.getPanel(cardList, _panel.above.adjacent);
+        while(_panel.below.adjacent || _panel.below.overlap){
+            if(_panel.below.adjacent){
+                _panel = PanelUtils.getPanel(cardList, _panel.below.adjacent);
                 _columnArray.push(_panel);
-            } else if(_panel.above.overlap){
-                _panel = PanelUtils.getPanel(cardList, _panel.above.overlap);
+            } else if(_panel.below.overlap){
+                _panel = PanelUtils.getPanel(cardList, _panel.below.overlap);
                 _columnArray.push(_panel);
             }
         }
@@ -145,8 +145,8 @@ angular.module('move').factory('StackUtils', ['$rootScope', 'CoreVars', 'PanelUt
     };
     
     service.getRangeDimens = function(rangeArray){
-        var _above = rangeArray[rangeArray.length-1].y_coord + CoreVars.y_dim_em;
-        var _below = rangeArray[0].y_coord;
+        var _above = rangeArray[0].y_coord;
+        var _below = rangeArray[rangeArray.length-1].y_coord + CoreVars.y_dim_em;
         var _left = rangeArray[0].x_coord;
         var _right = rangeArray[rangeArray.length-1].x_coord + CoreVars.x_dim_em;
         

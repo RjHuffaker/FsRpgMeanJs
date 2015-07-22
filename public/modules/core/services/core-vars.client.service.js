@@ -24,7 +24,7 @@ angular.module('core').factory('CoreVars', ['$rootScope',
         service.y_cover_px = 192;
         
         service.nullPanel = {
-            _id: null,
+            _id: null, x_coord: 0, y_coord: 0,
             above: { adjacent: null, overlap: null },
             below: { adjacent: null, overlap: null },
             left: { adjacent: null, overlap: null },

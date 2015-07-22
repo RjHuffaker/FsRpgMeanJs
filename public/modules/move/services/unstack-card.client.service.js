@@ -5,110 +5,85 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
     function($rootScope, CoreVars, Bakery, PanelUtils, StackUtils){
         
         return function(cardList, slot, panel){
-            if(!CoreVars.cardMoving){
-                
-                if(PanelUtils.getLowestPanel(cardList, panel.x_coord).panel.y_coord > 0){
-                    var panel_x = panel.x_coord;
-                    var panel_y = panel.y_coord;
-                    var panel_index = PanelUtils.getPanelIndex(cardList, panel._id);
-                    var panel_x_overlap = panel.left.overlap;
-                    var panel_y_overlap = panel.above.overlap;
-                    var slot_x = slot.x_coord;
-                    
-                    var new_slot_index, new_panel_index;
-                    
-                    if(panel_x - slot_x > 0){
-                    // Card is unstacking to the left
-                        CoreVars.setCardMoving();
-                        if(panel_y_overlap){
-                        // Unstack multiple cards to the left
-                            for(var ia = 0; ia < cardList.length; ia++){
-                                if(cardList[ia].x_coord > panel_x){
-                                    cardList[ia].x_coord += CoreVars.x_dim_em;
-                                }
-                                if(cardList[ia].x_coord === panel_x){
-                                    if(panel_y_overlap){
-                                        if(cardList[ia].y_coord < panel_y){
-                                            cardList[ia].x_coord += CoreVars.x_dim_em;
-                                        } else if(cardList[ia].y_coord >= panel_y){
-                                            cardList[ia].y_coord -= panel_y;
-                                        }
-                                    }
-                                }
-                            }
-                        } else if(!panel_y_overlap){
-                        // Unstack single card to the left
-                            for(var ib = 0; ib < cardList.length; ib++){
-                                if(cardList[ib].x_coord >= panel_x){
-                                    if(cardList[ib].x_coord === panel_x && cardList[ib].y_coord > panel_y){
-                                        cardList[ib].y_coord -= CoreVars.y_dim_em;
-                                    }
-                                    if(ib !== panel_index){
-                                        cardList[ib].x_coord += CoreVars.x_dim_em;
-                                    }
-                                }
-                            }
-                            cardList[panel_index].y_coord = 0;
-                            cardList[panel_index].stacked = false;
-                        }
-                        new_slot_index = PanelUtils.getLowestPanel(cardList, panel_x).index;
-                        new_panel_index = PanelUtils.getLowestPanel(cardList, panel_x + CoreVars.x_dim_em).index;
-                        
-                        cardList[new_slot_index].above.overlap = false;
-                        if(cardList[new_slot_index].y_coord === 0){
-                            cardList[new_slot_index].stacked = false;
-                        }
-                        
-                        cardList[new_panel_index].above.overlap = false;
-                        if(cardList[new_panel_index].y_coord === 0){
-                            cardList[new_panel_index].stacked = false;
-                        }
-                    } else if(panel_x - slot_x < 0 && !CoreVars.cardMoving){
-                    //Card is unstacking to the right
-                        CoreVars.setCardMoving();
-                        if(panel_y_overlap){
-                        // Unstack multiple cards to the right
-                            for(var ic = 0; ic < cardList.length; ic++){
-                                if(cardList[ic].x_coord > panel_x){
-                                    cardList[ic].x_coord += CoreVars.x_dim_em;
-                                }
-                                if(cardList[ic].x_coord === panel_x){
-                                    if(cardList[ic].y_coord >= panel_y){
-                                        cardList[ic].x_coord += CoreVars.x_dim_em;
-                                        cardList[ic].y_coord -= panel_y;
-                                    }
-                                }
-                            }
-                        } else if(!panel_y_overlap){
-                        // Unstack single card to the right
-                            for(var id = 0; id < cardList.length; id++){
-                                if(cardList[id].x_coord > panel_x){
-                                    cardList[id].x_coord += CoreVars.x_dim_em;
-                                }
-                                if(cardList[id].x_coord === panel_x && cardList[id].y_coord > panel_y){
-                                    cardList[id].y_coord -= CoreVars.y_dim_em;
-                                }
-                            }
-                            cardList[panel_index].x_coord += CoreVars.x_dim_em;
-                            cardList[panel_index].y_coord = 0;
-                        }
-                        
-                        new_slot_index = PanelUtils.getLowestPanel(cardList, panel_x).index;
-                        new_panel_index = PanelUtils.getLowestPanel(cardList, slot_x).index;
-                        
-                        cardList[new_slot_index].above.overlap = false;
-                        if(cardList[new_slot_index].y_coord === 0){
-                            cardList[new_slot_index].stacked = false;
-                        }
-                        
-                        cardList[new_panel_index].above.overlap = false;
-                        if(cardList[new_panel_index].y_coord === 0){
-                            cardList[new_panel_index].stacked = false;
-                        }
+            
+            if(CoreVars.cardMoving) return;
+            
+            console.log('unstackCard');
+            
+            CoreVars.setCardMoving();
+            
+            var slotOrder = PanelUtils.getPanelOrder(cardList, slot._id),
+                panelOrder = PanelUtils.getPanelOrder(cardList, panel._id),
+                panelLeft = StackUtils.getStackAbove(cardList, panel._id),
+                panelRight = StackUtils.getStackBelow(cardList, panel._id),
+                slotLeft = PanelUtils.getPanel(cardList, panelRight.right.adjacent),
+                slotRight = PanelUtils.getLast(cardList).panel;
+            
+            var nextAbove = PanelUtils.getPanel(cardList, panelLeft.above.adjacent),
+                nextLeft = PanelUtils.getPanel(cardList, nextAbove.left.adjacent),
+                nextRight = PanelUtils.getPanel(cardList, panelLeft.right.adjacent),
+                panelStack = StackUtils.getStack(cardList, panel),
+                slotStack = StackUtils.getStack(cardList, slot);
+            
+            var panelDimens = StackUtils.getRangeDimens(panelStack),
+                slotDimens = StackUtils.getRangeDimens(slotStack);
+            
+            var panelHeight = panelDimens.below - panelDimens.above,
+                panelWidth =  panelDimens.right - panelDimens.left,
+                slotPanelDiff = slotDimens.above - panelDimens.above,
+                slotHeight = slotDimens.below - slotDimens.above,
+                slotWidth = slotDimens.right - slotDimens.left,
+                totalWidth = slotDimens.right - panelDimens.left,
+                totalHeight = slotDimens.below - panelDimens.above;
+            
+            console.log('SL: '+slotLeft._id+' SR: '+slotRight._id);
+            console.log('PL: '+panelLeft._id+' PR: '+panelRight._id);
+            console.log('SL: '+slotLeft._id+' SR: '+slotRight._id);
+            console.log('NL: '+nextLeft._id+' NR: '+nextRight._id+' NA: '+nextAbove._id);
+            console.log('Slot: '+slot._id+' Panel: '+panel._id);
+            console.log('slotPanelDiff: '+slotPanelDiff);
+            
+            StackUtils.setRange(cardList, panelLeft._id, panelRight._id, function(_panelRange){
+                StackUtils.setRange(cardList, slotLeft._id, slotRight._id, function(_slotRange){
+                    for(var ia = 0; ia < _slotRange.length; ia++){
+                        _slotRange[ia].x_coord += panelWidth;
                     }
+                    
+                });
+                
+                var shiftPanelLeft;
+                
+                if(slotOrder < panelOrder){
+                    // Panel unstacking from right to left <---- (kinda works)
+                    shiftPanelLeft = 0;
+                    
+                    nextAbove.x_coord += panelWidth;
+                    
+                    slot.right.adjacent = panelLeft._id;
+                    nextAbove.left.adjacent = panelLeft._id;
+                    nextAbove.right.adjacent = slotLeft._id;
+                    nextAbove.below.adjacent = null;
+                    panelLeft.left.adjacent = slot._id;
+                    panelLeft.above.adjacent = null;
+                    panelRight.right.adjacent = nextAbove._id;
+                } else if(panelOrder < slotOrder){
+                    // Panel unstacking from left to right ----> (sorta works)
+                    shiftPanelLeft = CoreVars.x_dim_em;
+                    
+                    nextAbove.right.adjacent = panelLeft._id;
+                    nextAbove.below.adjacent = null;
+                    panelLeft.left.adjacent = nextAbove._id;
+                    panelLeft.above.adjacent = null;
                 }
-                $rootScope.$digest();
-            }
+                
+                for(var i = 0; i < _panelRange.length; i++){
+                    _panelRange[i].y_coord += slotPanelDiff;
+                    _panelRange[i].x_coord += shiftPanelLeft;
+                }
+                
+            });
+            
+            $rootScope.$digest();
         };
         
     }]);

@@ -49,10 +49,10 @@ angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Pane
                 
                 var unstack_y = function(){
                     CoreVars.setCardMoving();
-                    panel.above.adjacent = _next._id;
-                    panel.above.overlap = null;
-                    _next.below.adjacent = panel._id;
-                    _next.below.overlap = null;
+                    panel.below.adjacent = _next._id;
+                    panel.below.overlap = null;
+                    _next.above.adjacent = panel._id;
+                    _next.above.overlap = null;
                     
                     StackUtils.setColumn(cardList, panel._id, function(columnArray){
                         for(var i = 0; i < columnArray.length; i++){
@@ -65,10 +65,10 @@ angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Pane
                 
                 var stack_y = function(){
                     CoreVars.setCardMoving();
-                    panel.above.adjacent = null;
-                    panel.above.overlap = _next._id;
-                    _next.below.adjacent = null;
-                    _next.below.overlap = panel._id;
+                    panel.below.adjacent = null;
+                    panel.below.overlap = _next._id;
+                    _next.above.adjacent = null;
+                    _next.above.overlap = panel._id;
                     
                     StackUtils.setColumn(cardList, panel._id, function(columnArray){
                         for(var i = 0; i < columnArray.length; i++){
@@ -93,12 +93,12 @@ angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Pane
                 }
                 
                 if(_next && _panelColumn.length > 1){
-                    if(panel.above.overlap && _next.below.overlap){
-                        if(panel.above.overlap === _next._id && _next.below.overlap === panel._id){
+                    if(panel.below.overlap && _next.above.overlap){
+                        if(panel.below.overlap === _next._id && _next.above.overlap === panel._id){
                             unstack_y();
                         }
-                    } else if(panel.above.adjacent && _next.below.adjacent){
-                        if(panel.above.adjacent === _next._id && _next.below.adjacent === panel._id){
+                    } else if(panel.below.adjacent && _next.above.adjacent){
+                        if(panel.below.adjacent === _next._id && _next.above.adjacent === panel._id){
                             stack_y();
                         }
                     }

@@ -10,11 +10,11 @@ angular.module('move').factory('DeckUtils', ['$rootScope', 'PanelUtils', functio
         var _panel = cardList[_index];
         var _refArray = [_index];
         
-        while(_panel.above.adjacent || _panel.above.overlap || _panel.right.adjacent || _panel.right.overlap){
-            if(_panel.above.adjacent){
-                _index = PanelUtils.getPanelIndex(cardList, _panel.above.adjacent);
-            } else if(_panel.above.overlap){
-                _index = PanelUtils.getPanelIndex(cardList, _panel.above.overlap);
+        while(_panel.below.adjacent || _panel.below.overlap || _panel.right.adjacent || _panel.right.overlap){
+            if(_panel.below.adjacent){
+                _index = PanelUtils.getPanelIndex(cardList, _panel.below.adjacent);
+            } else if(_panel.below.overlap){
+                _index = PanelUtils.getPanelIndex(cardList, _panel.below.overlap);
             } else if(_panel.right.adjacent){
                 _index = PanelUtils.getPanelIndex(cardList, _panel.right.adjacent);
             } else if(_panel.right.overlap){

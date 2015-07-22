@@ -27,7 +27,7 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                     adjacent: 'DC2',
                     overlap: null
                 },
-                content: 'Here is a basic demonstration of a card-deck layout. While additional features may be accessed via the menu bar, this simple demo serves to show how card-objects may be manipulated by the user, much same as you might a physical deck of cards.'
+                content: 'Here is a basic demonstration of a card-deck layout. While additional features may be accessed via the menu bar, this simple demo serves to show how card-objects may be manipulated by the user, much the same as you might a physical deck of cards.'
             },
             {
                 _id: 'DC2',
