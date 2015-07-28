@@ -13,9 +13,12 @@ angular.module('move').factory('MoveHub', ['$rootScope', 'CoreVars', 'Bakery', '
 		};
 		
 		service.triggerOverlap = function(panel){
+			console.log(Bakery.resource);
+			Bakery.resource.logStuff();
+			
 			if(!CoreVars.cardMoved){
-				var _deck = getCardList();
-				toggleOverlap(_deck, panel);
+				var _cardList = getCardList();
+				toggleOverlap(_cardList, panel);
 			}
 		};
 		

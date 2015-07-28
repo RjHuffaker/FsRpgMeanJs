@@ -58,20 +58,19 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
         }, function(response){
             Bakery.resource = response;
             if(response.deckType !== 'Aspect'){
-                
                 service.browseDependencies();
-
                 for(var i = 0; i < response.dependencies.length; i++){
                     service.browseAspects(response.dependencies[i]);
                 }
             }
+            console.log(response);
         });
     };
     
     //EDIT
     service.edit = function(deck, _editCards, _loadDeck) {
         var _deck = new Bakery.Decks(deck);
-
+        
         _deck.$update(function(response) {
             if(_editCards){
                 for(var i = 0; i < deck.cardList.length; i++){
@@ -95,10 +94,14 @@ angular.module('decks').factory('DecksBread', ['$stateParams', '$location', 'Aut
             deckType: type,
             deckSize: size,
             cardList: [{
-                _id: 'deckOptionsId',
+                _id: { ObjectId: 'deckOptionsId' },
                 panelType: 'deckOptions',
                 x_coord: 0,
-                y_coord: 0
+                y_coord: 0,
+                above: { adjacent: null, overlap: null },
+                below: { adjacent: null, overlap: null },
+                left: { adjacent: null, overlap: null },
+                right: { adjacent: null, overlap: null }
             }]
         });
 

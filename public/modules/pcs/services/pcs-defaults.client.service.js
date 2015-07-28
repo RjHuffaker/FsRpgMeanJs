@@ -28,7 +28,7 @@ angular.module('pcs').factory('pcsDefaults', [function(){
 				{
 					panelType: 'pc1',
 					x_coord: 0,
-					y_coord: 0,
+					y_coord: 0
 				},
 				{
 					panelType: 'pc2',

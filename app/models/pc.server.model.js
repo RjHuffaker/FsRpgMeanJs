@@ -160,7 +160,61 @@ var PcSchema = new Schema({
 	},
 	cardList: [
 		Panel
-	]
+	],
+	x_coord: {
+		type: Number
+	},
+	y_coord: {
+		type: Number
+	},
+	above: {
+		adjacent: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
+		overlap: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
+	},
+	below: {
+		adjacent: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
+		overlap: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
+	},
+	left: {
+		adjacent: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
+		overlap: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
+	},
+	right: {
+		adjacent: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
+		overlap: {
+			type: Schema.Types.ObjectId,
+			ref: 'Panel'
+		},
+	},
+	dragging: {
+		type: Boolean,
+		default: false
+	},
+	locked: {
+		type: Boolean,
+		default: false
+	}
 });
 
 mongoose.model('Pc', PcSchema);

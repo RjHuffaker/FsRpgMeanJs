@@ -33,19 +33,6 @@
             expect(index_2).toEqual(4);
         });
         
-        it('getRootPanel(cardList, panel) should return the root panel of the panel stack', function(){
-            var _cardList = mockData.featDeck.cardList;
-            shuffleDeck(_cardList);
-            for(var i = 0; i < _cardList.length; i++){
-                var _panel = _cardList[i];
-                var _root = PanelUtils.getRootPanel(_cardList, _panel._id);
-                expect(_root.below.overlap).toBeFalsy();
-                expect(_root.left.overlap).toBeFalsy();
-                expect(_root.x_coord <= _panel.x_coord).toBeTruthy();
-                expect(_root.y_coord <= _panel.y_coord).toBeTruthy();
-            }
-        });
-        
         it('getLast(cardList) should retrieve the last panel and index from the cardList', function(){
             DeckUtils.setCardList(mockData.aspectDeck.cardList);
             DeckUtils.setCardList(mockData.traitDeck.cardList);

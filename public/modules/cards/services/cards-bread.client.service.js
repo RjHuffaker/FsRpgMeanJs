@@ -45,6 +45,7 @@ angular.module('cards').factory('CardsBread', ['$stateParams', '$location', 'Aut
     
     //ADD
     service.add = function(resource, cardType, cardNumber, deckShift, deckSave){
+        
         var card = {
             deck: resource._id,
             deckSize: resource.deckSize,

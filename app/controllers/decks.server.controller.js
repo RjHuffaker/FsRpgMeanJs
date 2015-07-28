@@ -21,6 +21,7 @@ exports.create = function(req, res) {
 		if (err) {
 			console.log('save error');
 			console.log(errorHandler.getErrorMessage(err));
+			console.log(err);
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
