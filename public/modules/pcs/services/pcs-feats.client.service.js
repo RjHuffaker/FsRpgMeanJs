@@ -1,36 +1,36 @@
 'use strict';
 
 // Factory-service for managing PC card deck.
-angular.module('pcs').factory('PcsFeats', ['Bakery', 'PanelUtils', 'StackUtils',
-	function(Bakery, PanelUtils, StackUtils){
+angular.module('pcs').factory('PcsFeats', ['PanelUtils',
+	function(PanelUtils){
 		
 		var service = {};
 		
 		// Factor Feat Limit
-		service.factorFeatLimit = function(){
-			Bakery.resource.featLimit = Math.ceil((Bakery.resource.level) / 4) || 0;
-			Bakery.resource.featDeck = Bakery.resource.level;
-			this.validateFeats();
+		service.factorFeatLimit = function(pcResource){
+			pcResource.featLimit = Math.ceil((pcResource.level) / 4) || 0;
+			pcResource.featDeck = pcResource.level;
+			service.validateFeats(pcResource);
 		};
 		
-		service.validateFeats = function(){
-			for(var ia = 0; ia < Bakery.resource.featDeck; ia++){
-				if(!this.featAtLevel(ia + 1)){
-					this.addFeat(ia + 1);
+		service.validateFeats = function(pcResource){
+			for(var ia = 0; ia < pcResource.featDeck; ia++){
+				if(!service.featAtLevel(pcResource, ia + 1)){
+					service.addFeat(pcResource, ia + 1);
 				}
 			}
-			for(var ic = 0; ic < Bakery.resource.cardList.length; ic++){
-				if(Bakery.resource.cardList[ic].level > Bakery.resource.level){
+			for(var ic = 0; ic < pcResource.cardList.length; ic++){
+				if(pcResource.cardList[ic].level > pcResource.level){
 					console.log('TODO: remove card');
 				}
 			}
 		};
 		
-		service.featAtLevel = function(level){
+		service.featAtLevel = function(pcResource, level){
 			var featAtLevel = false;
-			for(var ib = 0; ib < Bakery.resource.cardList.length; ib++){
-				if(Bakery.resource.cardList[ib].panelType === 'Feat'){
-					if(Bakery.resource.cardList[ib].level === level){
+			for(var ib = 0; ib < pcResource.cardList.length; ib++){
+				if(pcResource.cardList[ib].panelType === 'Feat'){
+					if(pcResource.cardList[ib].level === level){
 						featAtLevel = true;
 					}
 				}
@@ -38,19 +38,38 @@ angular.module('pcs').factory('PcsFeats', ['Bakery', 'PanelUtils', 'StackUtils',
 			return featAtLevel;
 		};
 		
-		service.addFeat = function(level){
-			var newFeat = {
+		service.addFeat = function(pcResource, level){
+			var _lastPanel = PanelUtils.getLast(pcResource.cardList).panel;
+			
+			var _newFeat = {
 				_id: 'feat'+level+'Id',
 				panelType: 'Feat',
-				x_coord: PanelUtils.getLast(Bakery.resource.cardList).panel.x_coord + 15,
+				x_coord: _lastPanel.x_coord + 15,
 				y_coord: 0,
 				locked: true,
 				level: level,
 				featData: {
 					name: 'Level '+level+' Feat'
+				},
+				above: {
+					adjacent: null, overlap: null
+				},
+				below: {
+					adjacent: null, overlap: null
+				},
+				left: {
+					adjacent: _lastPanel._id, overlap: null
+				},
+				right: {
+					adjacent: null, overlap: null
 				}
 			};
-			Bakery.resource.cardList.push(newFeat);
+			
+			_lastPanel.right.adjacent = _newFeat._id;
+			
+			pcResource.cardList.push(_newFeat);
+			
+			pcResource.$update();
 		};
 		
 		return service;

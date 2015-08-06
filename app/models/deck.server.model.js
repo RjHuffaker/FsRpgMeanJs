@@ -99,10 +99,10 @@ var DeckSchema = new Schema({
 	}
 });
 
-DeckSchema.methods.logStuff = function(){
+DeckSchema.methods.logStuff = function logStuff(){
 	console.log('Logged Stuff!');
 };
 
-DeckSchema.set('versionKey', false);
+//DeckSchema.set('versionKey', false);
 
 mongoose.model('Deck', DeckSchema);

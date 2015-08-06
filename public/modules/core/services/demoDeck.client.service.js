@@ -116,15 +116,15 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                     overlap: null
                 },
                 right: {
-                    adjacent: null,
-                    overlap: 'DC6'
+                    adjacent: 'DC6',
+                    overlap: null
                 },
                 content: 'Cards can also be stacked horizontally, but only if they are not already stacked vertically.'
             },
             {
                 _id: 'DC6',
                 panelType: 'deckDemo',
-                x_coord: 63,
+                x_coord: 75,
                 y_coord: 0,
                 above: {
                     adjacent: null,
@@ -135,8 +135,8 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                     overlap: null
                 },
                 left: {
-                    adjacent: null,
-                    overlap: 'DC5'
+                    adjacent: 'DC5',
+                    overlap: null
                 },
                 right: {
                     adjacent: 'DC7',
@@ -147,7 +147,7 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
             {
                 _id: 'DC7',
                 panelType: 'deckDemo',
-                x_coord: 78,
+                x_coord: 90,
                 y_coord: 0,
                 above: {
                     adjacent: null,
@@ -170,7 +170,7 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
             {
                 _id: 'DC8',
                 panelType: 'deckDemo',
-                x_coord: 93,
+                x_coord: 105,
                 y_coord: 0,
                 above: {
                     adjacent: null,

@@ -6,7 +6,6 @@ angular.module('move').factory('StackUtils', ['$rootScope', 'CoreVars', 'PanelUt
     var service = {};
     
     service.getStack = function(cardList, panel){
-        var _refArray = DeckUtils.getRefArray(cardList);
         var _panel = service.getStackAbove(cardList, panel._id);
         var _panelArray = [ _panel ];
         
@@ -21,13 +20,11 @@ angular.module('move').factory('StackUtils', ['$rootScope', 'CoreVars', 'PanelUt
                 _panelArray.push(_panel);
             }
         }
-        console.log(_panelArray);
+        
         return _panelArray;
     };
     
     service.setStack = function(cardList, panel, callBack){
-        var _refArray = DeckUtils.getRefArray(cardList);
-        var _panelOrder = PanelUtils.getPanelOrder(cardList, panel._id);
         var _panel = service.getStackAbove(cardList, panel._id);
         var _panelArray = [ _panel ];
         

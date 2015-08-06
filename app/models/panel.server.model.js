@@ -51,41 +51,49 @@ var PanelSchema = {
 	above: {
 		adjacent: {
 			type: Schema.Types.ObjectId,
-			ref: 'Panel'
+			ref: 'Panel',
+			default: null
 		},
 		overlap: {
 			type: Schema.Types.ObjectId,
-			ref: 'Panel'
+			ref: 'Panel',
+			default: null
 		},
 	},
 	below: {
 		adjacent: {
 			type: Schema.Types.ObjectId,
-			ref: 'Panel'
+			ref: 'Panel',
+			default: null
 		},
 		overlap: {
 			type: Schema.Types.ObjectId,
-			ref: 'Panel'
+			ref: 'Panel',
+			default: null
 		},
 	},
 	left: {
 		adjacent: {
 			type: Schema.Types.ObjectId,
-			ref: 'Panel'
+			ref: 'Panel',
+			default: null
 		},
 		overlap: {
 			type: Schema.Types.ObjectId,
-			ref: 'Panel'
+			ref: 'Panel',
+			default: null
 		},
 	},
 	right: {
 		adjacent: {
 			type: Schema.Types.ObjectId,
-			ref: 'Panel'
+			ref: 'Panel',
+			default: null
 		},
 		overlap: {
 			type: Schema.Types.ObjectId,
-			ref: 'Panel'
+			ref: 'Panel',
+			default: null
 		},
 	},
 	dragging: {

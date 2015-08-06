@@ -235,8 +235,16 @@ angular.module('move')
 					$rootScope.$broadcast('cardPanel:onReleaseCard', {
 						panel: _panel
 					});
-					if(_moveX <= convertEm(1) && _moveX >= -convertEm(1) && _moveY <= convertEm(1) && _moveY >= -convertEm(1)){
-						MoveHub.triggerOverlap(_panel);
+					
+					var _offset = element.offset();
+					
+					var _releaseX = _mouseX ? _mouseX : _startX;
+					var _releaseY = _mouseY ? _mouseY : _startY;
+					
+					var _nearest = checkEdge.crossing(_panel, _offset.left, _offset.top, _releaseX, _releaseY);
+					
+					if((_moveX) <= convertEm(1) && (_moveY) <= convertEm(1)){
+						MoveHub.triggerOverlap(_panel, _nearest);
 					}
 					CoreVars.cardMoved = false;
 					var _deck = Bakery.resource.cardList;

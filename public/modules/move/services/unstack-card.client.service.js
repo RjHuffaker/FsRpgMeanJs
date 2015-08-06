@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery', 'PanelUtils', 'StackUtils',
-    function($rootScope, CoreVars, Bakery, PanelUtils, StackUtils){
+angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery', 'PanelUtils', 'setPanelPosition',
+    function($rootScope, CoreVars, Bakery, PanelUtils, setPanelPosition){
         
         return function(cardList, slot, panel){
             
@@ -12,6 +12,48 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
             
             CoreVars.setCardMoving();
             
+            var slotOrder = PanelUtils.getPanelOrder(cardList, slot._id),
+                panelOrder = PanelUtils.getPanelOrder(cardList, panel._id);
+            
+            var slotStart = PanelUtils.getStackStart(cardList, slot._id),
+                slotEnd = PanelUtils.getStackEnd(cardList, slot._id),
+                slotStartPrev = PanelUtils.getPrev(cardList, slotStart._id).panel,
+                slotEndNext = PanelUtils.getNext(cardList, slotEnd._id).panel,
+                panelStart = PanelUtils.getStackStart(cardList, panel._id),
+                panelEnd = PanelUtils.getStackEnd(cardList, panel._id),
+                panelStartPrev = PanelUtils.getPrev(cardList, panelStart._id).panel,
+                panelEndNext = PanelUtils.getNext(cardList, panelEnd._id).panel;
+            
+            if(slotOrder < panelOrder){
+                PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
+                PanelUtils.setAdjacentHorizontal(slotEnd, panelStart);
+                PanelUtils.setAdjacentHorizontal(panelEnd, slotEndNext);
+                
+            } else if(panelOrder < slotOrder){
+                
+                PanelUtils.setAdjacentHorizontal(panelEnd, slotStart);
+                
+                if(slotOrder - panelOrder === 1){
+                    PanelUtils.setAdjacentHorizontal(panelStartPrev, panelStart);
+                }
+                
+                if(slotOrder - panelOrder > 1){
+                    PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
+                    PanelUtils.setAdjacentHorizontal(slotStartPrev, panelStart);
+                }
+            }
+            
+            
+            
+            
+            console.log(panelStartPrev._id+' ['+panelStart._id+'-'+panelEnd._id+'] '+panelEndNext._id+' --> '+slotStartPrev._id+'['+slotStart._id+'-'+slotEnd._id+']'+slotEndNext._id);
+            
+            setPanelPosition(cardList);
+            
+            $rootScope.$digest();
+            
+            
+            /*
             var slotOrder = PanelUtils.getPanelOrder(cardList, slot._id),
                 panelOrder = PanelUtils.getPanelOrder(cardList, panel._id),
                 panelLeft = StackUtils.getStackAbove(cardList, panel._id),
@@ -82,6 +124,8 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
                 }
                 
             });
+            
+            */
             
             $rootScope.$digest();
         };

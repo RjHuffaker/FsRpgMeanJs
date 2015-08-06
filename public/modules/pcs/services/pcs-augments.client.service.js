@@ -1,35 +1,35 @@
 'use strict';
 
 // Factory-service for managing PC card deck.
-angular.module('pcs').factory('PcsAugments', ['Bakery', 'PanelUtils', 'StackUtils',
-	function(Bakery, PanelUtils, StackUtils){
+angular.module('pcs').factory('PcsAugments', ['PanelUtils',
+	function(PanelUtils){
 		
 		var service = {};
 		
 		// Factor Augment Limit
-		service.factorAugmentLimit = function(){
-			Bakery.resource.augmentLimit = Math.round((Bakery.resource.level || 0) / 4);
-			this.validateAugments();
+		service.factorAugmentLimit = function(pcResource){
+			pcResource.augmentLimit = Math.round((pcResource.level || 0) / 4);
+			service.validateAugments(pcResource);
 		};
 		
-		service.validateAugments = function(){
-			for(var ia = 0; ia < Bakery.resource.augmentLimit; ia++){
-				if(!this.augmentAtLevel(ia * 4 + 2)){
-					this.addAugment(ia * 4 + 2);
+		service.validateAugments = function(pcResource){
+			for(var ia = 0; ia < pcResource.augmentLimit; ia++){
+				if(!service.augmentAtLevel(pcResource, ia * 4 + 2)){
+					service.addAugment(pcResource, ia * 4 + 2);
 				}
 			}
-			for(var ic = 0; ic < Bakery.resource.cardList.length; ic++){
-				if(Bakery.resource.cardList[ic].level > Bakery.resource.level){
+			for(var ic = 0; ic < pcResource.cardList.length; ic++){
+				if(pcResource.cardList[ic].level > pcResource.level){
 					console.log('TODO: remove card');
 				}
 			}
 		};
 		
-		service.augmentAtLevel = function(level){
+		service.augmentAtLevel = function(pcResource, level){
 			var augmentAtLevel = false;
-			for(var ib = 0; ib < Bakery.resource.cardList.length; ib++){
-				if(Bakery.resource.cardList[ib].panelType === 'Augment'){
-					if(Bakery.resource.cardList[ib].level === level){
+			for(var ib = 0; ib < pcResource.cardList.length; ib++){
+				if(pcResource.cardList[ib].panelType === 'Augment'){
+					if(pcResource.cardList[ib].level === level){
 						augmentAtLevel = true;
 					}
 				}
@@ -37,19 +37,38 @@ angular.module('pcs').factory('PcsAugments', ['Bakery', 'PanelUtils', 'StackUtil
 			return augmentAtLevel;
 		};
 		
-		service.addAugment = function(level){
-			var newAugment = {
+		service.addAugment = function(pcResource, level){
+			var _lastPanel = PanelUtils.getLast(pcResource.cardList).panel;
+			
+			var _newAugment = {
 				_id: 'augment'+level+'Id',
 				panelType: 'Augment',
-				x_coord: PanelUtils.getLast(Bakery.resource.cardList).panel.x_coord + 15,
+				x_coord: _lastPanel.x_coord + 15,
 				y_coord: 0,
 				locked: true,
 				level: level,
 				augmentData: {
 					_name: 'Level '+level+' Augment'
+				},
+				above: {
+					adjacent: null, overlap: null
+				},
+				below: {
+					adjacent: null, overlap: null
+				},
+				left: {
+					adjacent: _lastPanel._id, overlap: null
+				},
+				right: {
+					adjacent: null, overlap: null
 				}
 			};
-			Bakery.resource.cardList.push(newAugment);
+			
+			_lastPanel.right.adjacent = _newAugment._id;
+			
+			pcResource.cardList.push(_newAugment);
+			
+			pcResource.$update();
 		};
 		
 		return service;

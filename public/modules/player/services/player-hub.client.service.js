@@ -52,9 +52,9 @@ angular.module('player').factory('PlayerHub', ['$rootScope', 'CoreVars', 'Bakery
         if (Bakery.resource.deckType === 'pc'){
             factorStats.factorHealth(Bakery.resource);
             factorStats.factorStamina(Bakery.resource);
-            PcsTraits.factorTraitLimit();
-            PcsFeats.factorFeatLimit();
-            PcsAugments.factorAugmentLimit();
+            PcsTraits.factorTraitLimit(Bakery.resource);
+            PcsFeats.factorFeatLimit(Bakery.resource);
+            PcsAugments.factorAugmentLimit(Bakery.resource);
         }
     };
     

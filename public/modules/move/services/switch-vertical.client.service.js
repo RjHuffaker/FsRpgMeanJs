@@ -19,9 +19,6 @@ angular.module('move').factory('switchVertical', ['$rootScope', 'CoreVars', 'Bak
                 var panel_index = PanelUtils.getPanelIndex(cardList, panel._id);
                 var panel_y_overlap = panel.above.overlap;
                 
-                var lowest_index = PanelUtils.getLowestPanel(cardList, slot_x).index;
-                var lowest_y = cardList[lowest_index].y_coord;
-                
                 if(panel_y - slot_y > 0){
                 // PANEL MOVING UP
                     CoreVars.setCardMoving();

@@ -1,14 +1,19 @@
 'use strict';
 
 // Stack helper-functions
-angular.module('move').factory('DeckUtils', ['$rootScope', 'PanelUtils', function($rootScope, PanelUtils) {
+angular.module('move').factory('DeckUtils', ['$rootScope', 'CoreVars', 'PanelUtils', function($rootScope, CoreVars, PanelUtils) {
     
     var service = {};
     
     service.getRefArray = function(cardList){
-        var _index = PanelUtils.getFirst(cardList).index;
-        var _panel = cardList[_index];
+        var _first = PanelUtils.getFirst(cardList);
+        var _index = _first.index;
+        var _panel = _first.panel;
         var _refArray = [_index];
+        
+        if(!_panel){
+            console.log(_refArray);
+        }
         
         while(_panel.below.adjacent || _panel.below.overlap || _panel.right.adjacent || _panel.right.overlap){
             if(_panel.below.adjacent){
@@ -20,6 +25,7 @@ angular.module('move').factory('DeckUtils', ['$rootScope', 'PanelUtils', functio
             } else if(_panel.right.overlap){
                 _index = PanelUtils.getPanelIndex(cardList, _panel.right.overlap);
             }
+            
             _refArray.push(_index);
             _panel = cardList[_index];
         }
@@ -64,15 +70,80 @@ angular.module('move').factory('DeckUtils', ['$rootScope', 'PanelUtils', functio
     };
     
     service.collapseDeck = function(cardList, panel){
-        for(var i = 0; i < cardList.length; i++){
-            var slot = cardList[i];
-            var slotData = PanelUtils.getPanelData(slot);
+        
+        var _refArray = service.getRefArray(cardList);
+        var _prev = PanelUtils.getPrev(cardList, panel._id);
+        var _next = PanelUtils.getNext(cardList, panel._id);
+        var _prevPanel = _prev.panel;
+        var _nextPanel = _next.panel;
+        var _prevIndex = _prev.index;
+        var _nextIndex = _next.index;
+        
+        if(panel.above.adjacent || panel.above.overlap){
+            if(panel.below.adjacent || panel.below.overlap){
+                _prevPanel.below = panel.below;
+                _nextPanel.above = panel.above;
+            } else if(panel.right.adjacent || panel.right.overlap){
+                _prevPanel.below = panel.right;
+                _nextPanel.left = panel.above;
+                _nextPanel.above = { adjacent: null, overlap: null };
+            }
+        } else if(panel.below.adjacent || panel.below.overlap){
             
-            if (slot.x_coord > panel.x_coord){
-                slot.x_coord -= 15;
-                if(slotData) slotData.cardNumber--;
+            
+            
+        } else if(panel.left.adjacent || panel.left.overlap){
+            if(panel.below.adjacent || panel.below.overlap){
+                _prevPanel.right = panel.below;
+                _nextPanel.above = panel.left;
+            } else if(panel.right.adjacent || panel.right.overlap){
+                _prevPanel.right = panel.right;
+                _nextPanel.left = panel.left;
+                _nextPanel.above = { adjacent: null, overlap: null };
+            }
+        } else if(panel.right.adjacent || panel.right.overlap){
+            
+            
+            
+        }
+        
+        
+        
+        if(panel.below.adjacent || panel.below.overlap){
+            var _belowPanel = panel;
+            while(_belowPanel.below.adjacent || _belowPanel.below.overlap){
+                if(_belowPanel.below.adjacent){
+                    _belowPanel = PanelUtils.getPanel(cardList, _belowPanel.below.adjacent);
+                    _belowPanel.y_coord -= 21;
+                } else if(_belowPanel.below.overlap){
+                    _belowPanel = PanelUtils.getPanel(cardList, _belowPanel.below.overlap);
+                    _belowPanel.y_coord -= 3;
+                }
+            }
+        } else if(panel.right.adjacent || panel.right.overlap){
+            var _rightPanel = panel;
+            while(_rightPanel.right.adjacent || _rightPanel.right.overlap){
+                if(_rightPanel.right.adjacent){
+                    _rightPanel = PanelUtils.getPanel(cardList, _rightPanel.right.adjacent);
+                    _rightPanel.x_coord -= 15;
+                } else if(_rightPanel.right.overlap){
+                    _rightPanel = PanelUtils.getPanel(cardList, _rightPanel.right.overlap);
+                    _rightPanel.x_coord -= 3;
+                }
             }
         }
+        
+        for(var i = 0; i < _refArray.length; i++){
+            var _panel = cardList[_refArray[i]];
+            var _panelData = PanelUtils.getPanelData(_panel);
+            
+            if(_panelData) _panelData.deckSize--;
+            
+            if(i >= _nextIndex){
+                if(_panelData) _panelData.cardNumber--;
+            }
+        }
+        
         $rootScope.$broadcast('cardPanel:onReleaseCard');
     };
     

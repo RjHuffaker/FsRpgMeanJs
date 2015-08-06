@@ -37,7 +37,7 @@ angular.module('move').factory('onCardMove', ['CoreVars', 'MoveHub', 'checkEdge'
             //        var crossingResult = checkEdge.crossing(slot, slot_x_px, slot_y_px, mouseX, mouseY);
                     
                     if(crossingResult === 'top'){
-                        console.log('crossing top');
+                        // console.log('crossing top');
                         
                         if(vectorX > 0 && !slot_y_overlap && !slot_x_overlap && !panel_x_overlap){
                             console.log('cardPanel:moveDiagonalUp');
@@ -50,7 +50,7 @@ angular.module('move').factory('onCardMove', ['CoreVars', 'MoveHub', 'checkEdge'
                             MoveHub.moveHorizontal(slot, panel);
                         }
                     } else if(crossingResult === 'bottom'){
-                        console.log('crossing bottom');
+                        // console.log('crossing bottom');
                         if(changeX > 0 && changeX <= CoreVars.x_dim_px){
                             console.log('cardPanel:moveDiagonalDown');
                             MoveHub.moveDiagonalDown(slot, panel);
@@ -62,7 +62,7 @@ angular.module('move').factory('onCardMove', ['CoreVars', 'MoveHub', 'checkEdge'
                             MoveHub.moveHorizontal(slot, panel);
                         }
                     } else if(crossingResult === 'left' || crossingResult === 'right'){
-                        console.log('crossing left or right');
+                        // console.log('crossing left or right');
                         if(vectorY * 2 > vectorX){
                             if(moveY < 0){
                                 console.log('cardPanel:moveDiagonalUp');

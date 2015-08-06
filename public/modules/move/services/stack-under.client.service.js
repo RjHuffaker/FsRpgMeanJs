@@ -1,41 +1,46 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('move').factory('stackUnder', ['$rootScope', 'CoreVars', 'Bakery', 'PanelUtils', 'StackUtils',
-    function($rootScope, CoreVars, Bakery, PanelUtils, StackUtils){
+angular.module('move').factory('stackUnder', ['$rootScope', 'CoreVars', 'Bakery', 'PanelUtils', 'StackUtils', 'setPanelPosition',
+    function($rootScope, CoreVars, Bakery, PanelUtils, StackUtils, setPanelPosition){
         
-        // Stack one card behind another and reposition deck to fill the gap
         return function(cardList, slot, panel){
-            if(!CoreVars.cardMoving && !slot.left.overlap && !slot.right.overlap && !panel.left.overlap && !panel.right.overlap){
+            
+            if(CoreVars.cardMoving) return;
+            
+            // if(!slot.left.overlap && !slot.right.overlap && !panel.left.overlap && !panel.right.overlap) return;
+            
+            console.log('stackUnder');
+            
+            CoreVars.setCardMoving();
+            
+            var slotOrder = PanelUtils.getPanelOrder(cardList, slot._id),
+                panelOrder = PanelUtils.getPanelOrder(cardList, panel._id);
+            
+            var slotStart = PanelUtils.getStackStart(cardList, slot._id),
+                slotEnd = PanelUtils.getStackEnd(cardList, slot._id),
+                slotStartPrev = PanelUtils.getPrev(cardList, slotStart._id).panel,
+                slotEndNext = PanelUtils.getNext(cardList, slotEnd._id).panel,
+                panelStart = PanelUtils.getStackStart(cardList, panel._id),
+                panelEnd = PanelUtils.getStackEnd(cardList, panel._id),
+                panelStartPrev = PanelUtils.getPrev(cardList, panelStart._id).panel,
+                panelEndNext = PanelUtils.getNext(cardList, panelEnd._id).panel;
+            
+            PanelUtils.setOverlapVertical(panelEnd, slotStart);
+            
+            if(slotOrder < panelOrder || slotOrder - panelOrder > 1){
+                // Panel moving left or right more than one card
                 
-                var panel_x = panel.x_coord;
-                var panel_y = panel.y_coord;
-                var panel_lowest_coord = PanelUtils.getLowestPanel(cardList, panel_x).panel.y_coord;
-                
-                var slot_x = slot.x_coord;
-                var slot_y = slot.y_coord;
-                var newColumn = panel_x > slot_x ? slot_x : slot_x - CoreVars.x_dim_em;
-                
-                panel.above.overlap = slot._id;
-                slot.below.overlap = panel._id;
-                
-                CoreVars.setCardMoving();
-                for(var i = 0; i < cardList.length; i++){
-                    var _current = cardList[i];
-                    
-                    if(!_current.dragging && _current.x_coord === slot_x){
-                        _current.y_coord += panel_lowest_coord + CoreVars.y_tab_em;
-                    }
-                    if(_current.x_coord > panel_x){
-                        _current.x_coord -= CoreVars.x_dim_em;
-                    }
-                    if(_current.dragging){
-                        _current.x_coord = newColumn;
-                    }
-                }
-                
-                $rootScope.$digest();
+                PanelUtils.setAdjacentHorizontal(slotStartPrev, panelStart);
+                PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
             }
+            
+            console.log(panelStartPrev._id+' ['+panelStart._id+'-'+panelEnd._id+'] '+panelEndNext._id+' --> '+slotStartPrev._id+'['+slotStart._id+'-'+slotEnd._id+']'+slotEndNext._id);
+            
+            setPanelPosition(cardList);
+            
+            $rootScope.$digest();
+            
         };
         
     }]);

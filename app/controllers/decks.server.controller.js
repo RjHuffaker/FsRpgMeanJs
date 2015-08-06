@@ -36,6 +36,8 @@ exports.create = function(req, res) {
  */
 exports.read = function(req, res) {
 	res.jsonp(req.deck);
+	req.deck.logStuff();
+	console.log(req.deck.logStuff());
 };
 
 /**

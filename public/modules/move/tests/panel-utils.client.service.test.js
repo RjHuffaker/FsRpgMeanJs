@@ -42,15 +42,6 @@
             expect(lastCard_2.index).toEqual(3);
         });
         
-        it('getLowestPanel(cardList, x_coord) should retrieve the lowest panel and index of that x_coord from the cardList', function(){
-            var panel_1 = PanelUtils.getLowestPanel(mockData.featDeck.cardList, 0).panel;
-            var panel_2 = PanelUtils.getLowestPanel(mockData.featDeck.cardList, 15).panel;
-            var panel_3 = PanelUtils.getLowestPanel(mockData.featDeck.cardList, 30).panel;
-            expect(panel_1).toEqual(mockData.feat_1);
-            expect(panel_2).toEqual(mockData.feat_3);
-            expect(panel_3).toEqual(mockData.feat_6);
-        });
-        
         it('removePanel(cardList, panel) should remove panel from cardList', function(){
             PanelUtils.removePanel(mockData.traitDeck.cardList, mockData.trait_1);
             for(var i = 0; i < mockData.traitDeck.cardList.length; i++){
