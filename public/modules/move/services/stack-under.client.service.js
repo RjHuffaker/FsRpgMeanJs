@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('move').factory('stackUnder', ['$rootScope', 'CoreVars', 'Bakery', 'PanelUtils', 'StackUtils', 'setPanelPosition',
-    function($rootScope, CoreVars, Bakery, PanelUtils, StackUtils, setPanelPosition){
+angular.module('move').factory('stackUnder', ['$rootScope', 'CoreVars', 'Bakery', 'PanelUtils', 'setPanelPosition',
+    function($rootScope, CoreVars, Bakery, PanelUtils, setPanelPosition){
         
         return function(cardList, slot, panel){
             

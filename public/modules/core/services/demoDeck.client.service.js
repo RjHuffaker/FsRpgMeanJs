@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function(StackUtils, PanelUtils){
+angular.module('core').factory('demoDeck', [function(){
     return {
         dependencies: [],
         deckType: '',
@@ -11,6 +11,8 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                 panelType: 'deckDemo',
                 x_coord: 0,
                 y_coord: 0,
+                x_dim: 18,
+                y_dim: 21,
                 above: {
                     adjacent: null,
                     overlap: null
@@ -32,8 +34,10 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
             {
                 _id: 'DC2',
                 panelType: 'deckDemo',
-                x_coord: 15,
+                x_coord: 18,
                 y_coord: 0,
+                x_dim: 12,
+                y_dim: 21,
                 above: {
                     adjacent: null,
                     overlap: null
@@ -57,6 +61,8 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                 panelType: 'deckDemo',
                 x_coord: 30,
                 y_coord: 0,
+                x_dim: 15,
+                y_dim: 21,
                 above: {
                     adjacent: null,
                     overlap: null
@@ -80,6 +86,8 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                 panelType: 'deckDemo',
                 x_coord: 45,
                 y_coord: 0,
+                x_dim: 15,
+                y_dim: 21,
                 above: {
                     adjacent: null,
                     overlap: null
@@ -103,6 +111,8 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                 panelType: 'deckDemo',
                 x_coord: 60,
                 y_coord: 0,
+                x_dim: 15,
+                y_dim: 21,
                 above: {
                     adjacent: null,
                     overlap: null
@@ -126,6 +136,8 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                 panelType: 'deckDemo',
                 x_coord: 75,
                 y_coord: 0,
+                x_dim: 15,
+                y_dim: 21,
                 above: {
                     adjacent: null,
                     overlap: null
@@ -149,6 +161,8 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                 panelType: 'deckDemo',
                 x_coord: 90,
                 y_coord: 0,
+                x_dim: 15,
+                y_dim: 21,
                 above: {
                     adjacent: null,
                     overlap: null
@@ -172,6 +186,8 @@ angular.module('core').factory('demoDeck', ['StackUtils', 'PanelUtils', function
                 panelType: 'deckDemo',
                 x_coord: 105,
                 y_coord: 0,
+                x_dim: 15,
+                y_dim: 21,
                 above: {
                     adjacent: null,
                     overlap: null

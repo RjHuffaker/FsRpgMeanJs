@@ -2,7 +2,7 @@
 
 // Directive for managing card decks.
 angular.module('move')
-	.directive('deckStack', ['$rootScope', '$window', 'Bakery', 'StackUtils', 'DeckUtils', 'MoveHub', function($rootScope, $window, Bakery, StackUtils, DeckUtils, MoveHub){
+	.directive('deckStack', ['$rootScope', '$window', 'Bakery', 'DeckUtils', 'MoveHub', function($rootScope, $window, Bakery, DeckUtils, MoveHub){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {

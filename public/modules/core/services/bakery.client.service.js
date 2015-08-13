@@ -1,7 +1,7 @@
 'use strict';
 
 // General BREAD Factory-service.
-angular.module('core').factory('Bakery', ['Decks', 'StackUtils', 'PanelUtils', 'demoDeck', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', 'Notes', function(Decks, StackUtils, PanelUtils, demoDeck, Pcs, Aspects, Traits, Feats, Augments, Items, Origins, Notes){
+angular.module('core').factory('Bakery', ['PanelUtils', 'demoDeck', 'Decks', 'Pcs', 'Aspects', 'Traits', 'Feats', 'Augments', 'Items', 'Origins', 'Notes', function(PanelUtils, demoDeck, Decks, Pcs, Aspects, Traits, Feats, Augments, Items, Origins, Notes){
 	var service = {};
     
     service.Decks = Decks;

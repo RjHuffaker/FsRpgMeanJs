@@ -2,7 +2,7 @@
 
 // Directive for managing card decks.
 angular.module('move')
-	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'MoveHub', 'Bakery', 'CoreVars', 'checkEdge', 'onCardMove', 'PanelUtils', 'StackUtils', 'DeckUtils', function($document, $parse, $rootScope, $window, MoveHub, Bakery, CoreVars, checkEdge, onCardMove, PanelUtils, StackUtils, DeckUtils){
+	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'MoveHub', 'Bakery', 'CoreVars', 'checkEdge', 'onCardMove', 'PanelUtils', 'DeckUtils', function($document, $parse, $rootScope, $window, MoveHub, Bakery, CoreVars, checkEdge, onCardMove, PanelUtils, DeckUtils){
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/core/views/card-panel.html',
@@ -162,7 +162,7 @@ angular.module('move')
 					
 					element.removeClass('card-moving');
 					
-					StackUtils.setStack(Bakery.resource.cardList, _panel, function(stackArray){
+					PanelUtils.getCluster(Bakery.resource.cardList, _panel, function(stackArray){
 						for(var i = 0; i < stackArray.length; i++){
                             stackArray[i].dragging = true;
                         }
@@ -217,6 +217,7 @@ angular.module('move')
 				var onMoveCard = function(event, object){
 					object.slot = _panel;
 					object.offset = element.offset();
+					object.emPx = convertEm(1);
 					if(!element.hasClass('card-moving')){
 						element.css({
 							left: object.moveX + _startCol + 'px',
@@ -236,14 +237,9 @@ angular.module('move')
 						panel: _panel
 					});
 					
-					var _offset = element.offset();
-					
-					var _releaseX = _mouseX ? _mouseX : _startX;
-					var _releaseY = _mouseY ? _mouseY : _startY;
-					
-					var _nearest = checkEdge.crossing(_panel, _offset.left, _offset.top, _releaseX, _releaseY);
-					
-					if((_moveX) <= convertEm(1) && (_moveY) <= convertEm(1)){
+					if((_moveX) <= convertEm(2) && (_moveY) <= convertEm(2)){
+						var _offset = element.offset();
+						var _nearest = checkEdge.crossing(_panel, _offset.left, _offset.top, _startX, _startY, convertEm(1));
 						MoveHub.triggerOverlap(_panel, _nearest);
 					}
 					CoreVars.cardMoved = false;

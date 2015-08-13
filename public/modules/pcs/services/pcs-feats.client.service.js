@@ -46,6 +46,8 @@ angular.module('pcs').factory('PcsFeats', ['PanelUtils',
 				panelType: 'Feat',
 				x_coord: _lastPanel.x_coord + 15,
 				y_coord: 0,
+				x_dim: 15,
+				y_dim: 21,
 				locked: true,
 				level: level,
 				featData: {

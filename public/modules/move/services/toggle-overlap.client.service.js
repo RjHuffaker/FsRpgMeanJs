@@ -12,43 +12,25 @@ angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Pane
                 var _curr = PanelUtils.getPanel(cardList, panelId);
                 var _prev = PanelUtils.getPrev(cardList, panelId).panel;
                 var _next = PanelUtils.getNext(cardList, panelId).panel;
+                var _start = PanelUtils.getStackStart(cardList, panelId);
+                var _startPrev = PanelUtils.getPrev(cardList, _start._id).panel;
                 
                 CoreVars.setCardMoving();
                 
-                if(nearest === 'top'){
-                    if(_curr.below.overlap === _next._id && _next.above.overlap === _curr._id){
-                        PanelUtils.setAdjacentVertical(_curr, _next);
-                    }
-                } else if(nearest === 'bottom'){
-                    if(_curr.below.adjacent === _next._id && _next.above.adjacent === _curr._id){
-                        PanelUtils.setOverlapVertical(_curr, _next);
-                    }
-                } else if(nearest === 'left'){
-                    if(_curr.left.adjacent === _prev._id && _prev.right.adjacent === _curr._id){
-                        PanelUtils.setOverlapHorizontal(_prev, _curr);
-                    }
-                } else if(nearest === 'right'){
-                    if(_curr.left.overlap === _prev._id && _prev.right.overlap === _curr._id){
-                        PanelUtils.setAdjacentHorizontal(_prev, _curr);
-                    }
+                if(_curr.below.overlap && (nearest === 'above' || nearest === 'right')){
+                    PanelUtils.setAdjacentVertical(_curr, _next);
+                } else if(_curr.below.adjacent && !_start.left.overlap){
+                    PanelUtils.setOverlapVertical(_curr, _next);
                 }
-                /*
-                if(PanelUtils.panelHasLeft(_curr)){
-                    if(_curr.left.overlap === _prev._id && _prev.right.overlap === _curr._id){
-                        PanelUtils.setAdjacentHorizontal(_prev, _curr);
-                    } else if(_curr.left.adjacent === _prev._id && _prev.right.adjacent === _curr._id){
-                        PanelUtils.setOverlapHorizontal(_prev, _curr);
+                
+                if(_start.left.overlap){
+                    PanelUtils.setAdjacentHorizontal(_startPrev, _start);
+                } else if(_start.left.adjacent){
+                    if(!PanelUtils.hasBelow(_curr) || (nearest === 'below' || nearest === 'left')){
+                        PanelUtils.setOverlapHorizontal(_startPrev, _start);
                     }
                 }
                 
-                if(PanelUtils.panelHasBelow(_curr)){
-                    if(_curr.below.overlap === _next._id && _next.above.overlap === _curr._id){
-                        PanelUtils.setAdjacentVertical(_curr, _next);
-                    } else if(_curr.below.adjacent === _next._id && _next.above.adjacent === _curr._id){
-                        PanelUtils.setOverlapVertical(_curr, _next);
-                    }
-                }
-                */
                 setPanelPosition(cardList);
                 $rootScope.$digest();
                 CoreVars.cardMoved = false;

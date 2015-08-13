@@ -48,6 +48,17 @@ var PanelSchema = {
 	y_coord: {
 		type: Number
 	},
+	z_coord: {
+		type: Number
+	},
+	x_dim: {
+		type: Number,
+		default: 15
+	},
+	y_dim: {
+		type: Number,
+		default: 21
+	},
 	above: {
 		adjacent: {
 			type: Schema.Types.ObjectId,

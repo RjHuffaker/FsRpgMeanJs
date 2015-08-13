@@ -11,7 +11,9 @@ angular.module('pcs').factory('PcsBread', ['Bakery', 'CoreVars', 'PanelUtils', '
             Bakery.Pcs.query(function(response){
                 response.unshift({
                     _id: 'playerOptionsId',
-                    panelType: 'playerOptions'
+                    panelType: 'playerOptions',
+                    x_dim: 18,
+                    y_dim: 21
                 });
                 Bakery.resource.cardList = response;
                 DeckUtils.setCardList(Bakery.resource.cardList);
@@ -65,7 +67,7 @@ angular.module('pcs').factory('PcsBread', ['Bakery', 'CoreVars', 'PanelUtils', '
             }).then(function(response){
                 if(resource) DeckUtils.setDeckSize(resource);
             }).then(function(response){
-                if(resource) DeckUtils.collapseDeck(resource.cardList, { x_coord: _pc_x, y_coord: _pc_y });
+                if(resource) DeckUtils.collapseDeck(resource.cardList, pc);
             });
         };
         

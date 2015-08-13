@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('move').factory('stackOver', ['$rootScope', 'CoreVars', 'Bakery', 'PanelUtils', 'StackUtils', 'setPanelPosition',
-    function($rootScope, CoreVars, Bakery, PanelUtils, StackUtils, setPanelPosition){
+angular.module('move').factory('stackOver', ['$rootScope', 'CoreVars', 'Bakery', 'PanelUtils', 'setPanelPosition',
+    function($rootScope, CoreVars, Bakery, PanelUtils, setPanelPosition){
         
         return function(cardList, slot, panel){
             
@@ -34,6 +34,7 @@ angular.module('move').factory('stackOver', ['$rootScope', 'CoreVars', 'Bakery',
                 PanelUtils.setAdjacentVertical(slotEnd, panelStart);
                 PanelUtils.setAdjacentHorizontal(panelEnd, slotEndNext);
                 PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
+                
             } else if(slotOrder < panelOrder){
                 // Panel moving left <----
                 PanelUtils.setAdjacentVertical(slotEnd, panelStart);
@@ -43,9 +44,12 @@ angular.module('move').factory('stackOver', ['$rootScope', 'CoreVars', 'Bakery',
                     PanelUtils.setAdjacentHorizontal(panelEnd, slotEndNext);
                     PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
                 }
+                
             }
             
-            console.log(panelStartPrev._id+' ['+panelStart._id+'-'+panelEnd._id+'] '+panelEndNext._id+' --> '+slotStartPrev._id+'['+slotStart._id+'-'+slotEnd._id+']'+slotEndNext._id);
+            console.log('Panel: '+panelStartPrev._id+' ['+panelStart._id+'-'+panelEnd._id+'] '+panelEndNext._id);
+            
+            console.log('Slot: '+slotStartPrev._id+'['+slotStart._id+'-'+slotEnd._id+']'+slotEndNext._id);
             
             setPanelPosition(cardList);
             

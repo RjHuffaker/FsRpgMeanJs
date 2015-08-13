@@ -5,15 +5,11 @@
 		
 		beforeEach(module(ApplicationConfiguration.applicationModuleName));
 
-		var Bakery, StackUtils, PanelUtils, mockDataBuilder, mockData;
+		var Bakery, PanelUtils, mockDataBuilder, mockData;
 		
 		beforeEach(inject(['Bakery', function (_Bakery_) {
 			Bakery = _Bakery_;
 		}]));
-		
-		beforeEach(inject(['StackUtils', function (_StackUtils_) {
-            StackUtils = _StackUtils_;
-        }]));
 		
 		beforeEach(inject(['PanelUtils', function (_PanelUtils_) {
             PanelUtils = _PanelUtils_;

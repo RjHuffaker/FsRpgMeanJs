@@ -45,6 +45,8 @@ angular.module('pcs').factory('PcsAugments', ['PanelUtils',
 				panelType: 'Augment',
 				x_coord: _lastPanel.x_coord + 15,
 				y_coord: 0,
+				x_dim: 15,
+				y_dim: 21,
 				locked: true,
 				level: level,
 				augmentData: {
