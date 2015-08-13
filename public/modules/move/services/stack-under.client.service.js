@@ -14,9 +14,6 @@ angular.module('move').factory('stackUnder', ['$rootScope', 'CoreVars', 'Bakery'
             
             CoreVars.setCardMoving();
             
-            var slotOrder = PanelUtils.getPanelOrder(cardList, slot._id),
-                panelOrder = PanelUtils.getPanelOrder(cardList, panel._id);
-            
             var slotStart = PanelUtils.getStackStart(cardList, slot._id),
                 slotEnd = PanelUtils.getStackEnd(cardList, slot._id),
                 slotStartPrev = PanelUtils.getPrev(cardList, slotStart._id).panel,
@@ -26,13 +23,26 @@ angular.module('move').factory('stackUnder', ['$rootScope', 'CoreVars', 'Bakery'
                 panelStartPrev = PanelUtils.getPrev(cardList, panelStart._id).panel,
                 panelEndNext = PanelUtils.getNext(cardList, panelEnd._id).panel;
             
-            PanelUtils.setOverlapVertical(panelEnd, slotStart);
+            var slotOrder = PanelUtils.getPanelOrder(cardList, slotStart._id),
+                panelOrder = PanelUtils.getPanelOrder(cardList, panelEnd._id);
             
-            if(slotOrder < panelOrder || slotOrder - panelOrder > 1){
-                // Panel moving left or right more than one card
+            if(slotOrder < panelOrder){
+                // Panel moving left <---
                 
+                PanelUtils.setOverlapVertical(panelEnd, slotStart);
                 PanelUtils.setAdjacentHorizontal(slotStartPrev, panelStart);
                 PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
+                
+            } else if(panelOrder < slotOrder){
+                // Panel moving right --->
+                
+                PanelUtils.setOverlapVertical(panelEnd, slotStart);
+                
+                if(slotOrder - panelOrder > 1){
+                    // Panel moving right more than one slot --->
+                    PanelUtils.setAdjacentHorizontal(slotStartPrev, panelStart);
+                    PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
+                }
             }
             
             console.log(panelStartPrev._id+' ['+panelStart._id+'-'+panelEnd._id+'] '+panelEndNext._id+' --> '+slotStartPrev._id+'['+slotStart._id+'-'+slotEnd._id+']'+slotEndNext._id);

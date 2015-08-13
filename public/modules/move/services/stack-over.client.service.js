@@ -8,8 +8,6 @@ angular.module('move').factory('stackOver', ['$rootScope', 'CoreVars', 'Bakery',
             
             if(CoreVars.cardMoving) return;
             
-        //    if(slot.left.overlap || slot.right.overlap || panel.left.overlap || panel.right.overlap) return;
-            
             console.log('stackOver');
             
             CoreVars.setCardMoving();
@@ -23,11 +21,8 @@ angular.module('move').factory('stackOver', ['$rootScope', 'CoreVars', 'Bakery',
                 panelStartPrev = PanelUtils.getPrev(cardList, panelStart._id).panel,
                 panelEndNext = PanelUtils.getNext(cardList, panelEnd._id).panel;
             
-            var slotOrder = PanelUtils.getPanelOrder(cardList, slot._id),
-                panelOrder = PanelUtils.getPanelOrder(cardList, panel._id);
-                
-            var panelStartOrder = PanelUtils.getPanelOrder(cardList, panelStart._id),
-                slotEndOrder = PanelUtils.getPanelOrder(cardList, slotEnd._id);
+            var panelOrder = PanelUtils.getPanelOrder(cardList, panelStart._id),
+                slotOrder = PanelUtils.getPanelOrder(cardList, slotEnd._id);
             
             if(panelOrder < slotOrder){
                 // Panel moving right ---->
@@ -39,8 +34,8 @@ angular.module('move').factory('stackOver', ['$rootScope', 'CoreVars', 'Bakery',
                 // Panel moving left <----
                 PanelUtils.setAdjacentVertical(slotEnd, panelStart);
                 
-                if(panelStartOrder - slotEndOrder > 1){
-                    // Panel moving left more than one card
+                if(panelOrder - slotOrder > 1){
+                    // Panel moving left more than one slot <----
                     PanelUtils.setAdjacentHorizontal(panelEnd, slotEndNext);
                     PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
                 }
