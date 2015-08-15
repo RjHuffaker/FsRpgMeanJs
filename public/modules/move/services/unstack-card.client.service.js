@@ -21,8 +21,8 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
                 panelStartPrev = PanelUtils.getPrev(cardList, panelStart._id).panel,
                 panelEndNext = PanelUtils.getNext(cardList, panelEnd._id).panel;
             
-            var slotOrder = PanelUtils.getPanelOrder(cardList, slotEnd._id),
-                panelOrder = PanelUtils.getPanelOrder(cardList, panelStart._id);
+            var slotOrder = PanelUtils.getPanelOrder(cardList, slotStart._id),
+                panelOrder = PanelUtils.getPanelOrder(cardList, panelEnd._id);
             
             if(panelOrder < slotOrder){
                 // Panel unstacking to the right ---->

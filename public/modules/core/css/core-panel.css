@@ -13,11 +13,11 @@
 }
 
 [card-panel].card-moving {
-	-webkit-transition: .75s ease-in-out !important;
-	-moz-transition: .75s ease-in-out !important;
-	-o-transition: .75s ease-in-out !important;
-	-ms-transition: .75s ease-in-out !important;
-	transition: .75s ease-in-out !important;
+	-webkit-transition: .5s ease-in-out !important;
+	-moz-transition: .5s ease-in-out !important;
+	-o-transition: .5s ease-in-out !important;
+	-ms-transition: .5s ease-in-out !important;
+	transition: .5s ease-in-out !important;
 }
 
 [card-panel].dragging {
@@ -41,11 +41,11 @@
 [card-panel].ng-leave, [card-panel].ng-enter {
 	margin-top: 3em;
 	transition-property:  left;
-	-webkit-transition: 1s ease-in-out !important;
-	-moz-transition: 1s ease-in-out !important;
-	-o-transition: 1s ease-in-out !important;
-	-ms-transition: 1s ease-in-out !important;
-	transition: 1s ease-in-out !important;
+	-webkit-transition: 1.5s ease-in-out !important;
+	-moz-transition: 1.5s ease-in-out !important;
+	-o-transition: 1.5s ease-in-out !important;
+	-ms-transition: 1.5s ease-in-out !important;
+	transition: 1.5s ease-in-out !important;
 }
 
 [card-panel].ng-leave.ng-leave-active {

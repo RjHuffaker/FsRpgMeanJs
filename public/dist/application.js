@@ -1244,7 +1244,7 @@ angular.module('core').factory('CoreVars', ['$rootScope',
             moveTimer = setTimeout(function(){
                 service.cardMoving = false;
                 $rootScope.$broadcast('CoreVars:getDeckWidth');
-            }, 800);
+            }, 500);
         };
         
         service.hideModal = function(){
@@ -2328,7 +2328,7 @@ angular.module('decks').factory('DecksBread', ['$rootScope', 'syncLoop', 'Bakery
                     response.unshift({
                         _id: 'builderOptionsId',
                         panelType: 'builderOptions',
-                        x_dim: 18,
+                        x_dim: 15,
                         y_dim: 21
                     });
                     Bakery.resource.cardList = response;
@@ -2339,7 +2339,7 @@ angular.module('decks').factory('DecksBread', ['$rootScope', 'syncLoop', 'Bakery
                     response.unshift({
                         _id: 'builderOptionsId',
                         panelType: 'builderOptions',
-                        x_dim: 18,
+                        x_dim: 15,
                         y_dim: 21
                     });
                     Bakery.resource.cardList = response;
@@ -2394,7 +2394,7 @@ angular.module('decks').factory('DecksBread', ['$rootScope', 'syncLoop', 'Bakery
                     panelType: 'deckOptions',
                     x_coord: 0,
                     y_coord: 0,
-                    x_dim: 18,
+                    x_dim: 15,
                     y_dim: 21,
                     above: { adjacent: null, overlap: null },
                     below: { adjacent: null, overlap: null },
@@ -4120,8 +4120,8 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
                 panelStartPrev = PanelUtils.getPrev(cardList, panelStart._id).panel,
                 panelEndNext = PanelUtils.getNext(cardList, panelEnd._id).panel;
             
-            var slotOrder = PanelUtils.getPanelOrder(cardList, slotEnd._id),
-                panelOrder = PanelUtils.getPanelOrder(cardList, panelStart._id);
+            var slotOrder = PanelUtils.getPanelOrder(cardList, slotStart._id),
+                panelOrder = PanelUtils.getPanelOrder(cardList, panelEnd._id);
             
             if(panelOrder < slotOrder){
                 // Panel unstacking to the right ---->

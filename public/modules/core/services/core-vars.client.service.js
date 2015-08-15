@@ -50,7 +50,7 @@ angular.module('core').factory('CoreVars', ['$rootScope',
             moveTimer = setTimeout(function(){
                 service.cardMoving = false;
                 $rootScope.$broadcast('CoreVars:getDeckWidth');
-            }, 800);
+            }, 500);
         };
         
         service.hideModal = function(){

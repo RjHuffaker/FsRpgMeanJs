@@ -36,7 +36,7 @@ angular.module('decks').factory('DecksBread', ['$rootScope', 'syncLoop', 'Bakery
                     response.unshift({
                         _id: 'builderOptionsId',
                         panelType: 'builderOptions',
-                        x_dim: 18,
+                        x_dim: 15,
                         y_dim: 21
                     });
                     Bakery.resource.cardList = response;
@@ -47,7 +47,7 @@ angular.module('decks').factory('DecksBread', ['$rootScope', 'syncLoop', 'Bakery
                     response.unshift({
                         _id: 'builderOptionsId',
                         panelType: 'builderOptions',
-                        x_dim: 18,
+                        x_dim: 15,
                         y_dim: 21
                     });
                     Bakery.resource.cardList = response;
@@ -102,7 +102,7 @@ angular.module('decks').factory('DecksBread', ['$rootScope', 'syncLoop', 'Bakery
                     panelType: 'deckOptions',
                     x_coord: 0,
                     y_coord: 0,
-                    x_dim: 18,
+                    x_dim: 15,
                     y_dim: 21,
                     above: { adjacent: null, overlap: null },
                     below: { adjacent: null, overlap: null },
