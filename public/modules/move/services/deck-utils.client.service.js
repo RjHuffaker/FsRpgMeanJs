@@ -74,8 +74,8 @@ angular.module('move').factory('DeckUtils', ['$rootScope', 'CoreVars', 'PanelUti
     service.collapseDeck = function(cardList, panel){
         
         var _refArray = service.getRefArray(cardList);
-        var _prev = PanelUtils.getPrev(cardList, panel._id).panel;
-        var _next = PanelUtils.getNext(cardList, panel._id).panel;
+        var _prev = PanelUtils.getPrev(cardList, panel._id);
+        var _next = PanelUtils.getNext(cardList, panel._id);
         
         if(PanelUtils.hasAbove(panel)){
             if(PanelUtils.hasBelow(panel)){
@@ -123,8 +123,8 @@ angular.module('move').factory('DeckUtils', ['$rootScope', 'CoreVars', 'PanelUti
     };
     
     service.getDeckWidth = function(cardList){
-        var lastPanel = PanelUtils.getLast(cardList);
-        return lastPanel.panel.x_coord + 15;
+        var _lastPanel = PanelUtils.getLast(cardList);
+        return _lastPanel.x_coord + _lastPanel.x_dim;
     };
     
     service.setDeckWidth = function(cardList){

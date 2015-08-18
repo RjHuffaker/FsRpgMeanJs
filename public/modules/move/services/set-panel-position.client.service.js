@@ -5,9 +5,9 @@ angular.module('move').factory('setPanelPosition', ['$rootScope', 'CoreVars', 'P
     function($rootScope, CoreVars, PanelUtils, DeckUtils){
         
         return function(cardList){
-            var _curr = PanelUtils.getFirst(cardList).panel;
+            var _curr = PanelUtils.getFirst(cardList);
             var _next;
-            var _last = PanelUtils.getLast(cardList).panel;
+            var _last = PanelUtils.getLast(cardList);
             
             var _continue = true;
             var _count = 0;

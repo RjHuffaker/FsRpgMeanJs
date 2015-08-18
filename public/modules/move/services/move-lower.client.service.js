@@ -1,48 +1,50 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('move').factory('switchHorizontal', ['$rootScope', 'CoreVars', 'PanelUtils', 'DeckUtils', 'setPanelPosition',
-    function($rootScope, CoreVars, PanelUtils, DeckUtils, setPanelPosition){
+angular.module('move').factory('moveLower', ['$rootScope', 'CoreVars', 'Bakery', 'PanelUtils', 'setPanelPosition',
+    function($rootScope, CoreVars, Bakery, PanelUtils, setPanelPosition){
         
         return function(cardList, slot, panel){
             
             if(CoreVars.cardMoving) return;
             
-            console.log('switchHorizontal');
+            console.log('stackOver');
             
             CoreVars.setCardMoving();
             
-            var slotStart = PanelUtils.getRangeStart(cardList, slot._id),
-                slotEnd = PanelUtils.getRangeEnd(cardList, slot._id),
+            var slotStart = PanelUtils.getStackStart(cardList, slot._id),
+                slotEnd = PanelUtils.getStackEnd(cardList, slot._id),
                 slotStartPrev = PanelUtils.getPrev(cardList, slotStart._id),
                 slotEndNext = PanelUtils.getNext(cardList, slotEnd._id),
-                panelStart = PanelUtils.getRangeStart(cardList, panel._id),
-                panelEnd = PanelUtils.getRangeEnd(cardList, panel._id),
+                panelStart = PanelUtils.getStackStart(cardList, panel._id),
+                panelEnd = PanelUtils.getStackEnd(cardList, panel._id),
                 panelStartPrev = PanelUtils.getPrev(cardList, panelStart._id),
                 panelEndNext = PanelUtils.getNext(cardList, panelEnd._id);
             
-            var slotOrder = PanelUtils.getPanelOrder(cardList, slot._id),
-                panelOrder = PanelUtils.getPanelOrder(cardList, panel._id);
+            var panelOrder = PanelUtils.getPanelOrder(cardList, panelStart._id),
+                slotOrder = PanelUtils.getPanelOrder(cardList, slotEnd._id);
             
             if(panelOrder < slotOrder){
                 // Panel moving right ---->
-                
-                PanelUtils.setAdjacentHorizontal(slotEnd, panelStart);
+                PanelUtils.setAdjacentVertical(slotEnd, panelStart);
                 PanelUtils.setAdjacentHorizontal(panelEnd, slotEndNext);
                 PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
                 
             } else if(slotOrder < panelOrder){
                 // Panel moving left <----
+                PanelUtils.setAdjacentVertical(slotEnd, panelStart);
                 
-                PanelUtils.setAdjacentHorizontal(slotStartPrev, panelStart);
-                PanelUtils.setAdjacentHorizontal(panelEnd, slotStart);
-                PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
+                if(panelOrder - slotOrder > 1){
+                    // Panel moving left more than one slot <----
+                    PanelUtils.setAdjacentHorizontal(panelEnd, slotEndNext);
+                    PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
+                }
                 
             }
             
             console.log('Panel: '+panelStartPrev._id+' ['+panelStart._id+'-'+panelEnd._id+'] '+panelEndNext._id);
             
-            console.log('Slot: '+slotStartPrev._id+'['+slotStart._id+'-'+slotEnd._id+']'+slotEndNext._id);
+            console.log('Slot: '+slotStartPrev._id+' ['+slotStart._id+'-'+slotEnd._id+'] '+slotEndNext._id);
             
             setPanelPosition(cardList);
             

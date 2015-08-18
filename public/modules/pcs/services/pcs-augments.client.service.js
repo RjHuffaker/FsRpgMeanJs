@@ -38,7 +38,7 @@ angular.module('pcs').factory('PcsAugments', ['PanelUtils',
 		};
 		
 		service.addAugment = function(pcResource, level){
-			var _lastPanel = PanelUtils.getLast(pcResource.cardList).panel;
+			var _lastPanel = PanelUtils.getLast(pcResource.cardList);
 			
 			var _newAugment = {
 				_id: 'augment'+level+'Id',

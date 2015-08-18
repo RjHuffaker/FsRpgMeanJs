@@ -38,7 +38,7 @@ angular.module('pcs').factory('PcsTraits', ['PanelUtils',
 		};
 		
 		service.addTrait = function(pcResource, level){
-			var _lastPanel = PanelUtils.getLast(pcResource.cardList).panel;
+			var _lastPanel = PanelUtils.getLast(pcResource.cardList);
 			
 			var _newTrait = {
 				_id: 'trait'+level+'Id',

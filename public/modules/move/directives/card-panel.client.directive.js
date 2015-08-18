@@ -237,7 +237,7 @@ angular.module('move')
 						panel: _panel
 					});
 					
-					if((_moveX) <= convertEm(2) && (_moveY) <= convertEm(2)){
+					if(Math.abs(_moveX) <= convertEm(1) && Math.abs(_moveY) <= convertEm(1)){
 						var _offset = element.offset();
 						var _nearest = checkEdge.crossing(_panel, _offset.left, _offset.top, _startX, _startY, convertEm(1));
 						MoveHub.triggerOverlap(_panel, _nearest);

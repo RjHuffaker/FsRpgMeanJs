@@ -30,7 +30,7 @@ angular.module('cards').factory('CardsBread', ['Bakery', 'PanelUtils', 'DeckUtil
             Bakery.getCardResource(panel.panelType).get(
                 params,
             function(response){
-                callback(panel, response);
+                if(callback) callback(panel, response);
             });
         };
         
@@ -52,12 +52,12 @@ angular.module('cards').factory('CardsBread', ['Bakery', 'PanelUtils', 'DeckUtil
             if(prevId){
                 _prev = PanelUtils.getPanel(resource.cardList, prevId);
             } else {
-                _prev = PanelUtils.getLast(resource.cardList).panel;
+                _prev = PanelUtils.getLast(resource.cardList);
             }
             
             console.log('add: _prev._id = '+_prev._id);
             
-            var _next = PanelUtils.getNext(resource.cardList, _prev._id).panel;
+            var _next = PanelUtils.getNext(resource.cardList, _prev._id);
             
             var card = {
                 deck: resource._id,

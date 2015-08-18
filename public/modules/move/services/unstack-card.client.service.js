@@ -14,15 +14,18 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
             
             var slotStart = PanelUtils.getStackStart(cardList, slot._id),
                 slotEnd = PanelUtils.getStackEnd(cardList, slot._id),
-                slotStartPrev = PanelUtils.getPrev(cardList, slotStart._id).panel,
-                slotEndNext = PanelUtils.getNext(cardList, slotEnd._id).panel,
+                slotStartPrev = PanelUtils.getPrev(cardList, slotStart._id),
+                slotEndNext = PanelUtils.getNext(cardList, slotEnd._id),
                 panelStart = PanelUtils.getStackStart(cardList, panel._id),
                 panelEnd = PanelUtils.getStackEnd(cardList, panel._id),
-                panelStartPrev = PanelUtils.getPrev(cardList, panelStart._id).panel,
-                panelEndNext = PanelUtils.getNext(cardList, panelEnd._id).panel;
+                panelStartPrev = PanelUtils.getPrev(cardList, panelStart._id),
+                panelEndNext = PanelUtils.getNext(cardList, panelEnd._id);
             
             var slotOrder = PanelUtils.getPanelOrder(cardList, slotStart._id),
                 panelOrder = PanelUtils.getPanelOrder(cardList, panelEnd._id);
+            
+            var slotEndOrder = PanelUtils.getPanelOrder(cardList, slotEnd._id),
+                panelStartOrder = PanelUtils.getPanelOrder(cardList, panelStart._id);
             
             if(panelOrder < slotOrder){
                 // Panel unstacking to the right ---->
@@ -38,10 +41,15 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
                 
             } else if(slotOrder < panelOrder){
                 // Panel unstacking to the left <----
-                
-                PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
-                PanelUtils.setAdjacentHorizontal(slotEnd, panelStart);
-                PanelUtils.setAdjacentHorizontal(panelEnd, slotEndNext);
+                if(slotEndOrder - panelStartOrder > 1){
+                    PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
+                    PanelUtils.setAdjacentHorizontal(slotEnd, panelStart);
+                    PanelUtils.setAdjacentHorizontal(panelEnd, slotEndNext);
+                } else {
+                    PanelUtils.setAdjacentHorizontal(slotStartPrev, panelStart);
+                    PanelUtils.setAdjacentHorizontal(panelEnd, slotStart);
+                    PanelUtils.setAdjacentHorizontal(slotEnd, panelEndNext);
+                }
                 
             }
             

@@ -11,17 +11,17 @@ angular.module('move').factory('switchVertical', ['$rootScope', 'CoreVars', 'Bak
             
             CoreVars.setCardMoving();
             
-            var slotOrder = PanelUtils.getPanelOrder(cardList, slot._id);
-            var panelOrder = PanelUtils.getPanelOrder(cardList, panel._id);
-            
             var slotStart = PanelUtils.getStackStart(cardList, slot._id),
                 slotEnd = PanelUtils.getStackEnd(cardList, slot._id),
-                slotStartPrev = PanelUtils.getPrev(cardList, slotStart._id).panel,
-                slotEndNext = PanelUtils.getNext(cardList, slotEnd._id).panel,
+                slotStartPrev = PanelUtils.getPrev(cardList, slotStart._id),
+                slotEndNext = PanelUtils.getNext(cardList, slotEnd._id),
                 panelStart = PanelUtils.getStackStart(cardList, panel._id),
                 panelEnd = PanelUtils.getStackEnd(cardList, panel._id),
-                panelStartPrev = PanelUtils.getPrev(cardList, panelStart._id).panel,
-                panelEndNext = PanelUtils.getNext(cardList, panelEnd._id).panel;
+                panelStartPrev = PanelUtils.getPrev(cardList, panelStart._id),
+                panelEndNext = PanelUtils.getNext(cardList, panelEnd._id);
+            
+            var slotOrder = PanelUtils.getPanelOrder(cardList, slot._id);
+            var panelOrder = PanelUtils.getPanelOrder(cardList, panel._id);
                 
             if(slotOrder < panelOrder){
                 // Panel moving up <----

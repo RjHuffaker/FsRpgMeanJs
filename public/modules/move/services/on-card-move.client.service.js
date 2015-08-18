@@ -39,44 +39,37 @@ angular.module('move').factory('onCardMove', ['CoreVars', 'MoveHub', 'checkEdge'
             
             if(crossingResult && (changeX !== 0 || changeY !== 0)){
                 
-                if(crossingResult === 'above'){
-                    // console.log('crossing above');
-                    
-                    if(vectorX > 0 && !slot_y_overlap && !slot_x_overlap && !panel_x_overlap){
-                        console.log('cardPanel:moveDiagonalUp');
-                        MoveHub.moveDiagonalUp(slot, panel);
-                    } else if(changeX === 0 && !panel_y_overlap){
-                        console.log('cardPanel:moveVertical');
-                        MoveHub.moveVertical(slot, panel);
-                    } else {
-                        console.log('cardPanel:moveHorizontal');
-                        MoveHub.moveHorizontal(slot, panel);
-                    }
-                } else if(crossingResult === 'below'){
-                    // console.log('crossing below');
-                    if(changeX > 0){
-                        console.log('changeX: '+changeX);
-                        console.log('cardPanel:moveDiagonalDown');
-                        MoveHub.moveDiagonalDown(slot, panel);
-                    } else if(changeX === 0 && !panel_y_overlap){
-                        console.log('cardPanel:moveVertical');
-                        MoveHub.moveVertical(slot, panel);
-                    } else {
-                        console.log('cardPanel:moveHorizontal');
-                        MoveHub.moveHorizontal(slot, panel);
-                    }
+                if(crossingResult === 'above' || crossingResult === 'below'){
+                    console.log('MoveHub:moveVertical');
+                    MoveHub.moveVertical(slot, panel);
                 } else if(crossingResult === 'left' || crossingResult === 'right'){
                     // console.log('crossing left or right');
-                    if(vectorY * 2 > vectorX){
+                    if(vectorY * 2 > vectorX && !panel_x_overlap){
                         if(moveY < 0){
-                            console.log('cardPanel:moveDiagonalUp');
-                            MoveHub.moveDiagonalUp(slot, panel);
+                            console.log('MoveHub:stackHigher');
+                            MoveHub.stackHigher(slot, panel);
                         } else if(moveY > 0){
-                            console.log('cardPanel:moveDiagonalDown');
-                            MoveHub.moveDiagonalDown(slot, panel);
+                            console.log('MoveHub:stackLower');
+                            MoveHub.stackLower(slot, panel);
                         }
                     } else {
-                        console.log('cardPanel:moveHorizontal');
+                        console.log('MoveHub:moveHorizontal');
+                        MoveHub.moveHorizontal(slot, panel);
+                    }
+                } else if(crossingResult === 'higher'){
+                    if(!panel_x_overlap){
+                        console.log('MoveHub:moveHigher');
+                        MoveHub.moveHigher(slot, panel);
+                    } else {
+                        console.log('MoveHub:moveHorizontal');
+                        MoveHub.moveHorizontal(slot, panel);
+                    }
+                } else if(crossingResult === 'lower'){
+                    if(!panel_x_overlap){
+                        console.log('MoveHub:moveLower');
+                        MoveHub.moveLower(slot, panel);
+                    } else {
+                        console.log('MoveHub:moveHorizontal');
                         MoveHub.moveHorizontal(slot, panel);
                     }
                 }

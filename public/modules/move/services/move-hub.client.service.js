@@ -1,8 +1,8 @@
 'use strict';
 
 // Factory-service for managing card-deck, card-slot and card-panel directives.
-angular.module('move').factory('MoveHub', ['$rootScope', 'CoreVars', 'Bakery', 'PanelUtils', 'DeckUtils', 'switchHorizontal', 'switchVertical', 'stackOver', 'stackUnder', 'unstackCard', 'toggleOverlap',
-	function($rootScope, CoreVars, Bakery, PanelUtils, DeckUtils, switchHorizontal, switchVertical, stackOver, stackUnder, unstackCard, toggleOverlap){
+angular.module('move').factory('MoveHub', ['$rootScope', 'CoreVars', 'Bakery', 'PanelUtils', 'DeckUtils', 'switchHorizontal', 'switchVertical', 'moveHigher', 'moveLower', 'stackHigher', 'stackLower', 'unstackCard', 'toggleOverlap',
+	function($rootScope, CoreVars, Bakery, PanelUtils, DeckUtils, switchHorizontal, switchVertical, moveHigher, moveLower, stackHigher, stackLower, unstackCard, toggleOverlap){
 		
 		var service = {};
 		
@@ -22,52 +22,24 @@ angular.module('move').factory('MoveHub', ['$rootScope', 'CoreVars', 'Bakery', '
 		service.moveHorizontal = function(slot, panel){
 			var _deck = getCardList();
 			console.log('moveHorizontal');
-			if(panel.above.adjacent){
-				unstackCard(_deck, slot, panel);
-			} else {
+			// if(panel.above.adjacent){
+			// 	unstackCard(_deck, slot, panel);
+			// } else {
 				switchHorizontal(_deck, slot, panel);
-			}
-		};
-		
-		service.moveDiagonalUp = function(slot, panel){
-			var _deck = getCardList();
-			console.log('moveDiagonalUp');
-			if(PanelUtils.isInCluster(_deck, panel._id)){
-				switchHorizontal(_deck, slot, panel);
-			} else {
-				if(panel.above.overlap){
-					unstackCard(_deck, slot, panel);
-				} else {
-					stackUnder(_deck, slot, panel);
-				}
-			}
-		};
-		
-		service.moveDiagonalDown = function(slot, panel){
-			var _deck = getCardList();
-			console.log('moveDiagonalDown');
-			if(PanelUtils.isInCluster(_deck, panel._id)){
-				switchHorizontal(_deck, slot, panel);
-			} else {
-				if(panel.above.adjacent){
-					unstackCard(_deck, slot, panel);
-				} else {
-					stackOver(_deck, slot, panel);
-				}
-			}
+			// }
 		};
 		
 		service.moveVertical = function(slot, panel){
 			var _deck = getCardList();
-			switchVertical(_deck, slot, panel);
+			unstackCard(_deck, slot, panel);
 		};
 		
 		service.unstackLeft = function(panel){
 			if(panel.y_coord > 0){
 				console.log('unstackLeft');
 				var _deck = getCardList();
-				var unstack_coord = -CoreVars.x_dim_em;
-				unstackCard(_deck, {x_coord: unstack_coord}, panel);
+				var _first = PanelUtils.getFirst(_deck);
+				unstackCard(_deck, _first, panel);
 			}
 		};
 		
@@ -76,9 +48,32 @@ angular.module('move').factory('MoveHub', ['$rootScope', 'CoreVars', 'Bakery', '
 				console.log('unstackRight');
 				var _deck = getCardList();
 				var _last = PanelUtils.getLast(_deck);
-				var unstack_coord = _last.panel.x_coord + CoreVars.x_dim_em;
-				unstackCard(_deck, {x_coord: unstack_coord}, panel);
+				unstackCard(_deck, _last, panel);
 			}
+		};
+		
+		service.stackHigher = function(slot, panel){
+			console.log('stackHigher');
+			var _deck = getCardList();
+			stackHigher(_deck, slot, panel);
+		};
+		
+		service.stackLower = function(slot, panel){
+			console.log('stackLower');
+			var _deck = getCardList();
+			stackLower(_deck, slot, panel);
+		};
+		
+		service.moveHigher = function(slot, panel){
+			console.log('moveHigher');
+			var _deck = getCardList();
+			moveHigher(_deck, slot, panel);
+		};
+		
+		service.moveLower = function(slot, panel){
+			console.log('moveLower');
+			var _deck = getCardList();
+			moveLower(_deck, slot, panel);
 		};
 		
 		return service;

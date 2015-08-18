@@ -39,7 +39,7 @@ angular.module('pcs').factory('PcsFeats', ['PanelUtils',
 		};
 		
 		service.addFeat = function(pcResource, level){
-			var _lastPanel = PanelUtils.getLast(pcResource.cardList).panel;
+			var _lastPanel = PanelUtils.getLast(pcResource.cardList);
 			
 			var _newFeat = {
 				_id: 'feat'+level+'Id',
