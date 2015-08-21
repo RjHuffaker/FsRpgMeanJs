@@ -25,6 +25,14 @@
 	cursor: -webkit-grabbing;
 	cursor: -moz-grabbing;
 	cursor: grabbing;
+	padding: 0;
+}
+
+[card-panel].dragging > div > div {
+	border-top: 2px solid #222;
+	border-left: 2px solid #222;
+	border-right: 3px solid #111;
+	border-bottom: 3px solid #111;
 }
 
 [card-panel] > div > div {

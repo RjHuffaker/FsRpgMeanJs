@@ -3987,6 +3987,8 @@ angular.module('move').factory('stackLower', ['$rootScope', 'CoreVars', 'Bakery'
             
             if(CoreVars.cardMoving) return;
             
+            if(CoreVars.cardMoved) return;
+            
             console.log('stackLower');
             
             CoreVars.setCardMoving();
@@ -4021,9 +4023,9 @@ angular.module('move').factory('stackLower', ['$rootScope', 'CoreVars', 'Bakery'
                 
             }
             
-            console.log('Panel: '+panelStartPrev._id+' ['+panelStart._id+'-'+panelEnd._id+'] '+panelEndNext._id);
+            console.log('Panel: '+panelStartPrev._id+' ['+panelStart._id+'-'+panel._id+'-'+panelEnd._id+'] '+panelEndNext._id);
             
-            console.log('Slot: '+slotStartPrev._id+' ['+slotStart._id+'-'+slotEnd._id+'] '+slotEndNext._id);
+            console.log('Slot: '+slotStartPrev._id+' ['+slotStart._id+'-'+slot._id+'-'+slotEnd._id+'] '+slotEndNext._id);
             
             setPanelPosition(cardList);
             
@@ -4226,15 +4228,14 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
                 panelStartPrev = PanelUtils.getPrev(cardList, panelStart._id),
                 panelEndNext = PanelUtils.getNext(cardList, panelEnd._id);
             
-            var slotOrder = PanelUtils.getPanelOrder(cardList, slotStart._id),
-                panelOrder = PanelUtils.getPanelOrder(cardList, panelEnd._id);
-            
-            var slotEndOrder = PanelUtils.getPanelOrder(cardList, slotEnd._id),
+            var slotStartOrder = PanelUtils.getPanelOrder(cardList, slotStart._id),
+                panelEndOrder = PanelUtils.getPanelOrder(cardList, panelEnd._id),
+                slotEndOrder = PanelUtils.getPanelOrder(cardList, slotEnd._id),
                 panelStartOrder = PanelUtils.getPanelOrder(cardList, panelStart._id);
             
-            if(panelOrder < slotOrder){
+            if(panelStartOrder < slotStartOrder){
                 // Panel unstacking to the right ---->
-                if(slotOrder - panelOrder > 1){
+                if(slotStartOrder - panelEndOrder > 1){
                     // Panel unstacking to the right more than 1 card ---->
                     PanelUtils.setAdjacentHorizontal(panelEnd, slotStart);
                     PanelUtils.setAdjacentHorizontal(slotStartPrev, panelStart);
@@ -4244,13 +4245,15 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
                     PanelUtils.setAdjacentHorizontal(panelStartPrev, panelStart);
                 }
                 
-            } else if(slotOrder < panelOrder){
+            } else if(slotStartOrder < panelStartOrder){
                 // Panel unstacking to the left <----
                 if(slotEndOrder - panelStartOrder > 1){
+                    // Panel unstacking to the left more than 1 card <----
                     PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
                     PanelUtils.setAdjacentHorizontal(slotEnd, panelStart);
                     PanelUtils.setAdjacentHorizontal(panelEnd, slotEndNext);
                 } else {
+                    // Panel unstacking only 1 slot to the left <----
                     PanelUtils.setAdjacentHorizontal(slotStartPrev, panelStart);
                     PanelUtils.setAdjacentHorizontal(panelEnd, slotStart);
                     PanelUtils.setAdjacentHorizontal(slotEnd, panelEndNext);

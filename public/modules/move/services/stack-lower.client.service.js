@@ -8,6 +8,8 @@ angular.module('move').factory('stackLower', ['$rootScope', 'CoreVars', 'Bakery'
             
             if(CoreVars.cardMoving) return;
             
+            if(CoreVars.cardMoved) return;
+            
             console.log('stackLower');
             
             CoreVars.setCardMoving();
@@ -42,9 +44,9 @@ angular.module('move').factory('stackLower', ['$rootScope', 'CoreVars', 'Bakery'
                 
             }
             
-            console.log('Panel: '+panelStartPrev._id+' ['+panelStart._id+'-'+panelEnd._id+'] '+panelEndNext._id);
+            console.log('Panel: '+panelStartPrev._id+' ['+panelStart._id+'-'+panel._id+'-'+panelEnd._id+'] '+panelEndNext._id);
             
-            console.log('Slot: '+slotStartPrev._id+' ['+slotStart._id+'-'+slotEnd._id+'] '+slotEndNext._id);
+            console.log('Slot: '+slotStartPrev._id+' ['+slotStart._id+'-'+slot._id+'-'+slotEnd._id+'] '+slotEndNext._id);
             
             setPanelPosition(cardList);
             
