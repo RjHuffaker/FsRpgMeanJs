@@ -2,7 +2,7 @@
 
 // Directive for managing card decks.
 angular.module('move')
-	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'MoveHub', 'Bakery', 'CoreVars', 'checkEdge', 'onCardMove', 'PanelUtils', 'DeckUtils', function($document, $parse, $rootScope, $window, MoveHub, Bakery, CoreVars, checkEdge, onCardMove, PanelUtils, DeckUtils){
+	.directive('cardPanel', ['$document', '$parse', '$rootScope', '$window', 'Bakery', 'CoreVars', 'checkEdge', 'onCardMove', 'toggleOverlap', 'PanelUtils', 'DeckUtils', function($document, $parse, $rootScope, $window, Bakery, CoreVars, checkEdge, onCardMove, toggleOverlap, PanelUtils, DeckUtils){
 		return {
 			restrict: 'A',
 			templateUrl: '../modules/core/views/card-panel.html',
@@ -224,7 +224,7 @@ angular.module('move')
 							top: object.moveY + _startRow + 'px'
 						});
 					} else {
-						onCardMove(object);
+						onCardMove(Bakery.resource.cardList, object);
 					}
 				};
 				
@@ -240,7 +240,7 @@ angular.module('move')
 					if(Math.abs(_moveX) <= convertEm(1) && Math.abs(_moveY) <= convertEm(1)){
 						var _offset = element.offset();
 						var _nearest = checkEdge.crossing(_panel, _offset.left, _offset.top, _startX, _startY, convertEm(1));
-						MoveHub.triggerOverlap(_panel, _nearest);
+						toggleOverlap(Bakery.resource.cardList, _panel._id, _nearest);
 					}
 					CoreVars.cardMoved = false;
 					var _deck = Bakery.resource.cardList;

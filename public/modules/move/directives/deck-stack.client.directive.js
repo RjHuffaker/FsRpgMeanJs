@@ -2,7 +2,7 @@
 
 // Directive for managing card decks.
 angular.module('move')
-	.directive('deckStack', ['$rootScope', '$window', 'Bakery', 'DeckUtils', 'MoveHub', function($rootScope, $window, Bakery, DeckUtils, MoveHub){
+	.directive('deckStack', ['$rootScope', '$window', 'Bakery', 'PanelUtils', 'DeckUtils', 'unstackCard', function($rootScope, $window, Bakery, PanelUtils, DeckUtils, unstackCard){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -51,6 +51,10 @@ angular.module('move')
 					);
 				};
 				
+				var getCardList = function(){
+					return Bakery.resource.cardList;
+				};
+				
 				var convertEm = function(value) {
 					return value * getElementFontSize();
 				};
@@ -65,15 +69,18 @@ angular.module('move')
 				
 				var onMoveCard = function(event, object){
 					
-					var deckOffset = element.offset();
-					var deckWidth = DeckUtils.getDeckWidth(Bakery.resource.cardList);
-					var deckLeftEdge = deckOffset.left;
-					var deckRightEdge = convertEm(deckWidth + 3);
+					var _deckOffset = element.offset();
+					var _deckWidth = DeckUtils.getDeckWidth(Bakery.resource.cardList);
+					var _deckLeftEdge = _deckOffset.left;
+					var _deckRightEdge = convertEm(_deckWidth + 3);
+					var _deck = getCardList();
 					
-					if(object.mouseX <= deckLeftEdge){
-						MoveHub.unstackLeft(object.panel);
-					} else if(object.mouseX >= deckRightEdge){
-						MoveHub.unstackRight(object.panel);
+					if(object.mouseX <= _deckLeftEdge){
+						var _first = PanelUtils.getFirst(_deck);
+						unstackCard(_deck, _first, object.panel);
+					} else if(object.mouseX >= _deckRightEdge){
+						var _last = PanelUtils.getLast(_deck);
+						unstackCard(_deck, _last, object.panel);
 					}
 					
 				};

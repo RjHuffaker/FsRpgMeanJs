@@ -1,8 +1,8 @@
 'use strict';
 
 // Stack helper-functions
-angular.module('move').factory('DeckUtils', ['$rootScope', 'CoreVars', 'PanelUtils', 'setPanelPosition',
-    function($rootScope, CoreVars, PanelUtils, setPanelPosition) {
+angular.module('move').factory('DeckUtils', ['$rootScope', 'Bakery', 'CoreVars', 'PanelUtils', 'setPanelPosition',
+    function($rootScope, Bakery, CoreVars, PanelUtils, setPanelPosition) {
     
     var service = {};
     

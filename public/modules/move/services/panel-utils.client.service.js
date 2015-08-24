@@ -137,6 +137,14 @@ angular.module('move').factory('PanelUtils', ['$rootScope', '$resource', 'CoreVa
         rightPanel.left = { adjacent: null, overlap: leftPanel._id };
     };
     
+    service.mergeGap = function(panel_a, panel_b){
+        if(panel_a.below.adjacent && panel_b.above.adjacent){
+            service.setAdjacentVertical(panel_a, panel_b);
+        } else {
+            service.setAdjacentHorizontal(panel_a, panel_b);
+        }
+    };
+    
     service.getPanel = function(cardList, panelId){
         var _panel = CoreVars.nullPanel;
         for(var i = 0; i < cardList.length; i++){
@@ -242,7 +250,7 @@ angular.module('move').factory('PanelUtils', ['$rootScope', '$resource', 'CoreVa
         return _order;
     };
     
-    // Stack = a group of vertically-overlapping cards
+    // Stack: A group of vertically-overlapping cards
     
     service.getStackStart = function(cardList, panelId){
         var _panel = service.getPanel(cardList, panelId);
@@ -281,7 +289,7 @@ angular.module('move').factory('PanelUtils', ['$rootScope', '$resource', 'CoreVa
         }
     };
     
-    // Range = each card within one or more columns
+    // Range: Each card within a column, or multiple columns if horizontally overlapped
     
     service.getRangeStart = function(cardList, panelId){
         var _panel = service.getPanel(cardList, panelId);
@@ -343,7 +351,7 @@ angular.module('move').factory('PanelUtils', ['$rootScope', '$resource', 'CoreVa
         }
     };
     
-    // Cluster = group of overlapping cards
+    // Cluster: A group of overlapping cards (vertical or horizontal)
     
     service.getClusterStart = function(cardList, panelId){
         var _panel = service.getPanel(cardList, panelId);

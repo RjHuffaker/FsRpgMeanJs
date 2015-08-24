@@ -25,7 +25,6 @@
 	cursor: -webkit-grabbing;
 	cursor: -moz-grabbing;
 	cursor: grabbing;
-	padding: 0;
 }
 
 [card-panel].dragging > div > div {

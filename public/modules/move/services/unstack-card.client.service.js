@@ -1,6 +1,5 @@
 'use strict';
 
-// Factory-service for managing card-deck, card-slot and card-panel directives.
 angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery', 'PanelUtils', 'setPanelPosition',
     function($rootScope, CoreVars, Bakery, PanelUtils, setPanelPosition){
         

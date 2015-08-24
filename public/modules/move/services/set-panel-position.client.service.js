@@ -66,5 +66,7 @@ angular.module('move').factory('setPanelPosition', ['$rootScope', 'CoreVars', 'P
                     console.log('Sir, I believe we are experiencing an error.');
                 }
             }
+            
+            $rootScope.$digest();
         };
     }]);

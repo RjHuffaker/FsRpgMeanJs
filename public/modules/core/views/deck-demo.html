@@ -1,17 +1,16 @@
 <div class="content-panel" style="white-space: normal;">
     <p class="text-center text-6">
         Id: {{panel._id}}
-    </p>
-    <p  class="text-center text-6">
+        <br />
         X: {{panel.x_coord}} / Y: {{panel.y_coord}} / Z: {{panel.z_coord}}
-    </p>
-    <p class="text-center text-6">
+        <br />
         Above: {{panel.above.adjacent || 'null'}}/{{panel.above.overlap || 'null'}} - 
         Below: {{panel.below.adjacent || 'null'}}/{{panel.below.overlap || 'null'}}
-    </p>
-    <p class="text-center text-6">
+        <br />
         Left: {{panel.left.adjacent || 'null'}}/{{panel.left.overlap || 'null'}} - 
         right: {{panel.right.adjacent || 'null'}}/{{panel.right.overlap || 'null'}}
     </p>
-    {{panel.content}}
+    <p class="text-6">
+        {{panel.content}}
+    </p>
 </div>

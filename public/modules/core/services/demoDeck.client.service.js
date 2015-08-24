@@ -11,8 +11,8 @@ angular.module('core').factory('demoDeck', [function(){
                 panelType: 'deckDemo',
                 x_coord: 0,
                 y_coord: 0,
-                x_dim: 18,
-                y_dim: 21,
+                x_dim: 10,
+                y_dim: 14,
                 above: {
                     adjacent: null,
                     overlap: null
@@ -34,10 +34,10 @@ angular.module('core').factory('demoDeck', [function(){
             {
                 _id: 'DC2',
                 panelType: 'deckDemo',
-                x_coord: 18,
+                x_coord: 10,
                 y_coord: 0,
-                x_dim: 12,
-                y_dim: 21,
+                x_dim: 10,
+                y_dim: 14,
                 above: {
                     adjacent: null,
                     overlap: null
@@ -59,10 +59,10 @@ angular.module('core').factory('demoDeck', [function(){
             {
                 _id: 'DC3',
                 panelType: 'deckDemo',
-                x_coord: 30,
+                x_coord: 20,
                 y_coord: 0,
-                x_dim: 15,
-                y_dim: 21,
+                x_dim: 10,
+                y_dim: 14,
                 above: {
                     adjacent: null,
                     overlap: null
@@ -84,10 +84,10 @@ angular.module('core').factory('demoDeck', [function(){
             {
                 _id: 'DC4',
                 panelType: 'deckDemo',
-                x_coord: 45,
+                x_coord: 30,
                 y_coord: 0,
-                x_dim: 15,
-                y_dim: 21,
+                x_dim: 10,
+                y_dim: 14,
                 above: {
                     adjacent: null,
                     overlap: null
@@ -109,10 +109,10 @@ angular.module('core').factory('demoDeck', [function(){
             {
                 _id: 'DC5',
                 panelType: 'deckDemo',
-                x_coord: 60,
+                x_coord: 40,
                 y_coord: 0,
-                x_dim: 15,
-                y_dim: 21,
+                x_dim: 10,
+                y_dim: 14,
                 above: {
                     adjacent: null,
                     overlap: null
@@ -134,10 +134,10 @@ angular.module('core').factory('demoDeck', [function(){
             {
                 _id: 'DC6',
                 panelType: 'deckDemo',
-                x_coord: 75,
+                x_coord: 50,
                 y_coord: 0,
-                x_dim: 15,
-                y_dim: 21,
+                x_dim: 10,
+                y_dim: 14,
                 above: {
                     adjacent: null,
                     overlap: null
@@ -159,10 +159,10 @@ angular.module('core').factory('demoDeck', [function(){
             {
                 _id: 'DC7',
                 panelType: 'deckDemo',
-                x_coord: 90,
+                x_coord: 60,
                 y_coord: 0,
-                x_dim: 15,
-                y_dim: 21,
+                x_dim: 10,
+                y_dim: 14,
                 above: {
                     adjacent: null,
                     overlap: null
@@ -184,10 +184,10 @@ angular.module('core').factory('demoDeck', [function(){
             {
                 _id: 'DC8',
                 panelType: 'deckDemo',
-                x_coord: 105,
+                x_coord: 70,
                 y_coord: 0,
-                x_dim: 15,
-                y_dim: 21,
+                x_dim: 10,
+                y_dim: 14,
                 above: {
                     adjacent: null,
                     overlap: null

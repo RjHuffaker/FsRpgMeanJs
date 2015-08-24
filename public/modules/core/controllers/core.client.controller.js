@@ -39,6 +39,7 @@ angular.module('core')
 				$scope.$watch('CoreVars.EXP', PlayerHub.watchEXP);
 				$scope.$watch('Bakery.resource.experience', PlayerHub.watchExperience);
 				$scope.$watch('Bakery.resource.level', PlayerHub.watchLevel);
+				$rootScope.$on('CoreVars:getDeckWidth', DeckUtils.setDeckWidth(Bakery.resource.cardList));
 			};
 			
 			var onDestroy = function(){
