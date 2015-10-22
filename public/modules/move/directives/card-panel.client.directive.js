@@ -242,7 +242,7 @@ angular.module('move')
 						var _nearest = checkEdge.crossing(_panel, _offset.left, _offset.top, _startX, _startY, convertEm(1));
 						toggleOverlap(Bakery.resource.cardList, _panel._id, _nearest);
 					}
-					CoreVars.cardMoved = false;
+					CoreVars.cardMoved.length = 0;
 					var _deck = Bakery.resource.cardList;
 					for(var i = 0; i < _deck.length; i++){
 						_deck[i].dragging = false;

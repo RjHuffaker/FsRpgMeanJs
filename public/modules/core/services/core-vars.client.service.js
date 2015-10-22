@@ -31,8 +31,8 @@ angular.module('core').factory('CoreVars', ['$rootScope',
             right: { adjacent: null, overlap: null }
         };
         
-        service.cardMoved = false;
         service.cardMoving = false;
+        service.cardMoved = [];
         var moveTimer;
         
         service.modalShown = false;
@@ -43,10 +43,10 @@ angular.module('core').factory('CoreVars', ['$rootScope',
             service.windowHeight = object.newHeight;
         });
         
-        service.setCardMoving = function(){
+        service.setCardMoving = function(direction){
             clearTimeout(moveTimer);
             service.cardMoving = true;
-            service.cardMoved = true;
+            service.cardMoved.push(direction);
             moveTimer = setTimeout(function(){
                 service.cardMoving = false;
                 $rootScope.$broadcast('CoreVars:getDeckWidth');

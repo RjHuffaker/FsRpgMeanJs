@@ -5,10 +5,11 @@ angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Pane
     function($rootScope, CoreVars, PanelUtils, setPanelPosition){
         
         return function(cardList, panelId, nearest){
-            if(CoreVars.cardMoved || CoreVars.cardMoving) return;
-            if(nearest === 'higher' || nearest === 'lower') return;
             
-            console.log('toggleOverlap: '+nearest);
+            if(nearest === 'higher' || nearest === 'lower') return;
+            if(CoreVars.cardMoving || CoreVars.cardMoved.length) return;
+            
+            // console.log('toggleOverlap: '+nearest);
             
             var _curr = PanelUtils.getPanel(cardList, panelId);
             var _prev = PanelUtils.getPrev(cardList, panelId);
@@ -16,7 +17,7 @@ angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Pane
             var _start = PanelUtils.getStackStart(cardList, panelId);
             var _startPrev = PanelUtils.getPrev(cardList, _start._id);
             
-            CoreVars.setCardMoving();
+            CoreVars.setCardMoving('overlap');
             
             if(_curr.below.overlap && (nearest === 'above' || nearest === 'right')){
                 PanelUtils.setAdjacentVertical(_curr, _next);
@@ -34,7 +35,7 @@ angular.module('move').factory('toggleOverlap', ['$rootScope', 'CoreVars', 'Pane
             
             setPanelPosition(cardList);
             $rootScope.$digest();
-            CoreVars.cardMoved = false;
+            CoreVars.cardMoved.length = 0;
         };
         
     }]);

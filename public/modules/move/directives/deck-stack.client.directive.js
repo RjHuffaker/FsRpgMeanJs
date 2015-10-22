@@ -1,8 +1,8 @@
 'use strict';
 
 // Directive for managing card decks.
-angular.module('move')
-	.directive('deckStack', ['$rootScope', '$window', 'Bakery', 'PanelUtils', 'DeckUtils', 'unstackCard', function($rootScope, $window, Bakery, PanelUtils, DeckUtils, unstackCard){
+angular.module('move').directive('deckStack', ['$rootScope', '$window', 'Bakery', 'PanelUtils', 'DeckUtils', 'movePanel',
+	function($rootScope, $window, Bakery, PanelUtils, DeckUtils, movePanel){
 		return {
 			restrict: 'A',
 			link: function(scope, element, attrs) {
@@ -74,13 +74,18 @@ angular.module('move')
 					var _deckLeftEdge = _deckOffset.left;
 					var _deckRightEdge = convertEm(_deckWidth + 3);
 					var _deck = getCardList();
+					var _panel = object.panel;
 					
-					if(object.mouseX <= _deckLeftEdge){
-						var _first = PanelUtils.getFirst(_deck);
-						unstackCard(_deck, _first, object.panel);
-					} else if(object.mouseX >= _deckRightEdge){
-						var _last = PanelUtils.getLast(_deck);
-						unstackCard(_deck, _last, object.panel);
+					var _panelStart = PanelUtils.getClusterStart(_deck, _panel._id);
+					var _panelStartPrev = PanelUtils.getPrev(_deck, _panelStart._id);
+					var _panelEnd = PanelUtils.getClusterEnd(_deck, _panel._id);
+					var _panelEndNext = PanelUtils.getNext(_deck, _panelEnd._id);
+					
+					if(object.mouseX <= _deckLeftEdge && PanelUtils.hasPrev(_panel)){
+						movePanel(_deck, _panelStartPrev, object.panel, 'right', object.moveX, object.moveY);
+					} else if(object.mouseX >= _deckRightEdge && PanelUtils.hasPrev(_panel)){
+						var _slot = PanelUtils.getPrev(_deck);
+						movePanel(_deck, _panelStartPrev, object.panel, 'left', object.moveX, object.moveY);
 					}
 					
 				};

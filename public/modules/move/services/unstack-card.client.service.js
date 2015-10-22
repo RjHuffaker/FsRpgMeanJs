@@ -9,8 +9,6 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
             
             console.log('unstackCard');
             
-            CoreVars.setCardMoving();
-            
             var slotStart = PanelUtils.getStackStart(cardList, slot._id),
                 slotEnd = PanelUtils.getStackEnd(cardList, slot._id),
                 slotStartPrev = PanelUtils.getPrev(cardList, slotStart._id),
@@ -27,6 +25,8 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
             
             if(panelStartOrder < slotStartOrder){
                 // Panel unstacking to the right ---->
+                CoreVars.setCardMoving('right');
+                
                 if(slotStartOrder - panelEndOrder > 1){
                     // Panel unstacking to the right more than 1 card ---->
                     PanelUtils.setAdjacentHorizontal(panelEnd, slotStart);
@@ -39,6 +39,8 @@ angular.module('move').factory('unstackCard', ['$rootScope', 'CoreVars', 'Bakery
                 
             } else if(slotStartOrder < panelStartOrder){
                 // Panel unstacking to the left <----
+                CoreVars.setCardMoving('left');
+                
                 if(slotEndOrder - panelStartOrder > 1){
                     // Panel unstacking to the left more than 1 card <----
                     PanelUtils.setAdjacentHorizontal(panelStartPrev, panelEndNext);
